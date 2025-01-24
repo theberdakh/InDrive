@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Only Themes and ThemeOverlays -->
+    
+    <style name="Base.V24.Theme.InDrive" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> main color-->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> main color-->
+    </style>
+    
+    <style name="Base.Theme.InDrive" parent="Base.V24.Theme.InDrive">
+    </style>
+
+    <style name="Theme.InDrive" parent="Base.Theme.InDrive" />
+</resources>

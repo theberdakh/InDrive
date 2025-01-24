@@ -171,6 +171,13 @@
 - values/plurals.xml
 
   `<plurals name="<PLURALS_NAME>">`
+- values/styles.xml
+
+  `<style name="Theme.<APP_NAME>.<THEME_NAME">>` for theme
+  `<style name="Widget.<APP_NAME>.<WIDGET_NAME>.<VARIANCE>>` for widget
+  `<style name="TextAppearance.<APP_NAME>.<VARIANCE>>` for text appearance
+  `<style name="ShapeAppearance.<APP_NAME>.<VARIANCE>>` for text appearance
+
 
 <!-- values/attrs.xml values/dimens.xml values/styles.xml values/themes.xml values/ids.xml values/bools.xml -->
 
