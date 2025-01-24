@@ -21,3 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "In Drive"
 include ':app'
+include ':core:ui'
+include ':core:network'
+include ':core:data'
+include ':feature:auth'
+include ':core:prefs'
