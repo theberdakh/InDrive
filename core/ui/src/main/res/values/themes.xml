@@ -2,13 +2,14 @@
     <!-- Only Themes and ThemeOverlays -->
     
     <style name="Base.V24.Theme.InDrive" parent="Theme.Material3.Light.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> main color-->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> main color-->
+        <!-- Version-specific base configurations -->
     </style>
     
     <style name="Base.Theme.InDrive" parent="Base.V24.Theme.InDrive">
+        <!-- Application-wide theme configurations -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textViewStyle">@style/Widget.InDrive.TextView</item>
     </style>
 
-    <style name="Theme.InDrive" parent="Base.Theme.InDrive" />
+    <style name="Theme.InDrive" parent="Base.Theme.InDrive"/><!-- Final theme -->
 </resources>

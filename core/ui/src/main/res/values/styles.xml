@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Widget styles. Only. -->
+    <!--Layout dimensions / Padding/margin / Background color/drawable /Elevation /Shape/corner radius / Animation/state properties / Tint/color state lists/ Component-specific visual properties-->
+    <style name="Widget.InDrive.TextView" parent="Widget.AppCompat.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.Text.Title</item>
+    </style>
+
+    <style name="Widget.InDrive.TextView.Title">
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.Text.Title</item>
+    </style>
+
 </resources>
