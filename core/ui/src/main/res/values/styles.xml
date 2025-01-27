@@ -10,7 +10,7 @@
         <item name="android:textAppearance">@style/TextAppearance.InDrive.Text.Title</item>
     </style>
 
-    <style name="Widget.InDrive.PinView" parent="PinWidget.PinView">
+    <style name="Widget.InDrive.PinView" parent="Widget.AppCompat.EditText">
         <item name="android:cursorVisible">true</item>
         <item name="android:inputType">number</item>
         <item name="android:fontFamily">@font/inter_semibold</item>
@@ -20,7 +20,13 @@
         <item name="cursorColor">@drawable/selector_pin_view_cursor</item>
         <item name="android:textColor">@drawable/selector_pin_view_text</item>
         <item name="lineColor">@android:color/transparent</item>
-
+        <item name="android:background">@null</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textCursorDrawable">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandle">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
     </style>
 
 </resources>
