@@ -31,5 +31,13 @@
         <attr name="pinViewStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="EndTextEditText">
+        <attr name="endText" format="string" />
+        <attr name="endTextAppearance" format="reference" />
+    </declare-styleable>
+
+    <style name="EndTextEditTextTheme">
+        <item name="endTextAppearance">@style/TextAppearance.InDrive.Text</item>
+    </style>
 
 </resources>

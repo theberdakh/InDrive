@@ -8,6 +8,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.aralhub.ui.EndTextEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endText="sdf"
+        android:layout_margin="8dp" />
+
     <com.aralhub.ui.pin_view.PinView
         style="@style/Widget.InDrive.PinView"
         android:layout_width="match_parent"
