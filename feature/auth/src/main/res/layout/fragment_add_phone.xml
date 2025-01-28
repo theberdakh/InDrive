@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text" />
+
+    <com.aralhub.ui.EndTextEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endText="sdf"
+        android:layout_margin="8dp" />
+
+    <com.aralhub.ui.pin_view.PinView
+        style="@style/Widget.InDrive.PinView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.aralhub.ui.ProgressButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        app:text="Hello"
+        app:textAppearance="@style/TextAppearance.InDrive.Text.ButtonText"
+        app:background="@drawable/shape_loader_button_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.aralhub.ui.EndIconEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/ic_back_24"
+        android:layout_margin="8dp"
+        android:background="@drawable/shape_pin_view_selected"
+        app:iconTint="@android:color/holo_orange_dark"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_margin="4dp"
+            android:layout_height="wrap_content"/>
+
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="@android:color/holo_orange_dark"
+            android:background="@drawable/ic_back_24"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

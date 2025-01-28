@@ -16,6 +16,7 @@ public class ProgressButton extends FrameLayout {
     private TextView textView;
     private ProgressBar progressBar;
     private boolean isTapToStopEnabled;
+    private OnClickListener onClickListener;
     private boolean isProgressStarted = false;
 
     public ProgressButton(Context context) {
@@ -48,8 +49,6 @@ public class ProgressButton extends FrameLayout {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ProgressButton);
         isTapToStopEnabled = a.getBoolean(R.styleable.ProgressButton_enableTapToStop, true);
-        this.setBackground(a.getDrawable(R.styleable.ProgressButton_background));
-
         textView = new TextView(context);
         textView.setText(a.getText(R.styleable.ProgressButton_text));
         textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
@@ -73,24 +72,36 @@ public class ProgressButton extends FrameLayout {
         progressBarParams.gravity = Gravity.CENTER;
         addView(progressBar, progressBarParams);
 
-        this.setOnClickListener(v -> {
-            isProgressStarted = !isProgressStarted;
-            if (isProgressStarted) {
-                textView.setVisibility(GONE);
-                progressBar.setVisibility(VISIBLE);
-            } else {
-                if (isTapToStopEnabled) {
-                    textView.setVisibility(VISIBLE);
-                    progressBar.setVisibility(GONE);
-                }
+        super.setOnClickListener(v -> {
+            handleProgressState();
+            if (onClickListener != null) {
+                onClickListener.onClick(v);
             }
         });
 
         a.recycle();
     }
-    public void stopProgress() {
-        textView.setVisibility(VISIBLE);
-        progressBar.setVisibility(GONE);
+
+    private void handleProgressState() {
+        isProgressStarted = !isProgressStarted;
+        if (isProgressStarted) {
+            textView.setVisibility(GONE);
+            progressBar.setVisibility(VISIBLE);
+        } else {
+            if (isTapToStopEnabled) {
+                textView.setVisibility(VISIBLE);
+                progressBar.setVisibility(GONE);
+            }
+        }
+    }
+
+    @Override
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    private int dpToPx(float dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }
 
 }

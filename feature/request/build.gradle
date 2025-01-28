@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.dagger)
-    alias(libs.plugins.devtools.ksp)
 }
 
 android {
-    namespace 'com.aralhub.auth'
+    namespace 'com.aralhub.indrive.request'
     compileSdk 35
 
     defaultConfig {
@@ -36,16 +34,10 @@ android {
 
 dependencies {
 
-    implementation project(':core:ui')
-
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
-
-    //Dagger-Hilt for Dependency Injection
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
 }

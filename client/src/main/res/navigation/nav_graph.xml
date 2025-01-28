@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/logoFragment">
+
+    <fragment
+        android:id="@+id/logoFragment"
+        android:name="com.aralhub.auth.LogoFragment">
+        <action
+            android:id="@+id/action_logoFragment_to_addPhoneFragment"
+            app:destination="@id/addPhoneFragment" />
+        <action
+            android:id="@+id/action_logoFragment_to_requestTaxiFragment"
+            app:destination="@id/requestTaxiFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/addPhoneFragment"
+        android:name="com.aralhub.auth.AddPhoneFragment">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestTaxiFragment"
+        android:name="com.aralhub.indrive.request.RequestTaxiFragment"/>
+
+</navigation>

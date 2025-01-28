@@ -2,7 +2,6 @@
 <resources>
     <declare-styleable name="ProgressButton">
         <attr name="text" format="string" />
-        <attr name="background" format="reference" />
         <attr name="textAppearance" format="reference"/>
         <attr name="enableTapToStop" format="boolean"/>
     </declare-styleable>

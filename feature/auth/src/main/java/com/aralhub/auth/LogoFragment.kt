@@ -1,0 +1,25 @@
+package com.aralhub.auth
+
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.Fragment
+import com.aralhub.auth.databinding.FragmentLogoBinding
+import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.ui.utils.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class LogoFragment : Fragment(R.layout.fragment_logo) {
+    private val binding by viewBinding(FragmentLogoBinding::bind)
+    @Inject
+    lateinit var navigation: FeatureAuthNavigation
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btnStart.setOnClickListener {
+            navigation.goToRequestTaxi()
+        }
+    }
+}

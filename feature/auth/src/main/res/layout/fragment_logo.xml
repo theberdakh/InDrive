@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.InDrive"
+    android:orientation="vertical">
+
+    <com.aralhub.ui.ProgressButton
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/small_50"
+        android:background="@drawable/shape_loader_button_view"
+        app:text="Start"
+        android:layout_margin="@dimen/small_100"
+        app:textAppearance="@style/TextAppearance.InDrive.Text.ButtonText" />
+
+</LinearLayout>

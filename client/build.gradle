@@ -40,6 +40,7 @@ dependencies {
     //Core Modules
     implementation project(':core:ui')
     implementation project(':feature:auth')
+    implementation project(':feature:request')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
@@ -53,4 +54,7 @@ dependencies {
     //Dagger-Hilt for Dependency Injection
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
+
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
 }
