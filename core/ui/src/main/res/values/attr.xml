@@ -33,11 +33,13 @@
 
     <declare-styleable name="EndTextEditText">
         <attr name="endText" format="string" />
-        <attr name="endTextAppearance" format="reference" />
     </declare-styleable>
 
-    <style name="EndTextEditTextTheme">
-        <item name="endTextAppearance">@style/TextAppearance.InDrive.Text</item>
-    </style>
+    <declare-styleable name="EndIconEditText">
+        <attr name="icon" format="reference"/>
+        <attr name="iconTint" format="color"/>
+        <attr name="hint" format="string"/>
+        <attr name="fieldTextAppearance" format="reference"/>
+    </declare-styleable>
 
 </resources>

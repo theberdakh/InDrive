@@ -2,12 +2,9 @@ package com.aralhub.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -18,7 +15,6 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 
 public class EndTextEditText extends LinearLayout {
-
     private OnClickListener endTextClickListener;
 
 
@@ -59,7 +55,6 @@ public class EndTextEditText extends LinearLayout {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.EndTextEditText);
             String endText = a.getString(R.styleable.EndTextEditText_endText);
             endTextView.setText(endText);
-            endTextView.setTextAppearance(a.getResourceId(R.styleable.EndTextEditText_endTextAppearance, R.style.EndTextEditTextTheme));
             a.recycle();
         }
     }
@@ -75,6 +70,26 @@ public class EndTextEditText extends LinearLayout {
 
     private int dpToPx(float dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+    public interface OnTextChangedListener {
+        void onTextChanged(String text);
+    }
+
+    public void setOnTextChangedListener(final EndIconEditText.OnTextChangedListener onTextChangedListener) {
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(0);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
+                onTextChangedListener.onTextChanged(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
     }
 
 }
