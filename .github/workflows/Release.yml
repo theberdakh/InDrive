@@ -1,0 +1,56 @@
+name: Release app
+
+on:
+  push:
+    tags:
+      - "v*" # Trigger only for tags like v1.0.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+
+      # Step 2: Set up Java JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      # Step 3: Grant execute permission for gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Step 4: Build release APKs/AABs for all modules
+      - name: Build Release APKs/AABs
+        run: ./gradlew :client:assembleRelease :driver:assembleRelease
+
+      # Step 5: Upload artifacts for release
+      - name: Upload Client Release APK
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: Client-Release-APK
+          path: client/build/outputs/apk/release/client-release.apk
+
+      - name: Upload Driver Release APK
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: Driver-Release-APK
+          path: driver/build/outputs/apk/release/driver-release.apk
+
+      # Step 6: Create a GitHub release and attach artifacts
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1.15.0
+        with:
+          name: Release ${{ github.ref_name }}
+          commit: ${{ github.sha }}
+          tag: ${{ github.ref_name }}
+          artifacts: |
+            app/build/outputs/apk/release/client-release.apk
+            driver/build/outputs/apk/release/driver-release.apk
+          body: |
+            This is the release for version ${{ github.ref_name }}.
