@@ -1,4 +1,4 @@
-package com.aralhub.ui.pin_view;
+package com.aralhub.ui.components.pin_view;
 
 import android.text.Selection;
 import android.text.Spannable;

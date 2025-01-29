@@ -1,4 +1,4 @@
-package com.aralhub.ui;
+package com.aralhub.ui.components;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
+
+import com.aralhub.ui.R;
 
 public class EndIconEditText extends LinearLayout {
 

@@ -1,4 +1,4 @@
-package com.aralhub.ui;
+package com.aralhub.ui.components;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
+
+import com.aralhub.ui.R;
 
 public class EndTextEditText extends LinearLayout {
     private OnClickListener endTextClickListener;

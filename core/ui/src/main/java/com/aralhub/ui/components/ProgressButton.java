@@ -1,4 +1,4 @@
-package com.aralhub.ui;
+package com.aralhub.ui.components;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.aralhub.ui.R;
 
 public class ProgressButton extends FrameLayout {
 
@@ -50,7 +52,7 @@ public class ProgressButton extends FrameLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ProgressButton);
         isTapToStopEnabled = a.getBoolean(R.styleable.ProgressButton_enableTapToStop, true);
         textView = new TextView(context);
-        textView.setText(a.getText(R.styleable.ProgressButton_text));
+        textView.setText(a.getText(R.styleable.ProgressButton_progressButtonText));
         textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         textView.setTextAppearance(a.getResourceId(R.styleable.ProgressButton_textAppearance, 0));
         addView(textView, params);

@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Request Taxi"/>
+        android:orientation="vertical">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request Taxi"/>
+
+
+        <com.aralhub.ui.components.SlideFinishButton
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+        <com.aralhub.ui.components.ProgressiveButton
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textColor="@color/white"
+            app:progressColor="@android:color/holo_green_light"
+            app:progressiveButtonText="Text"/>
+
+
+    <!--    <com.aralhub.ui.components.ProgressiveButton
+            android:id="@+id/btn_request_taxi"
+            android:layout_width="match_parent"
+            android:layout_margin="8dp"
+            android:layout_height="wrap_content"/>-->
+
+    </LinearLayout>
+
+
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/menu_drawer"
+        />
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
