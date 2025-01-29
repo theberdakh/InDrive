@@ -28,5 +28,14 @@
         <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
         <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
     </style>
+    
+    <style name="Widget.InDrive.Button.Primary" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/selector_button_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
+    </style>
+    
+    <style name="Widget.InDrive.EditText"/>
+    <style name="Widget.InDrive.EditText.Auth" parent="ThemeOverlay.Material3.TextInputEditText">
+    </style>
 
 </resources>

@@ -29,6 +29,19 @@
             app:progressiveButtonText="Text"/>
 
 
+        <Button
+            style="@style/Widget.InDrive.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_margin="8dp"
+            android:enabled="false"
+            android:padding="16dp"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     <!--    <com.aralhub.ui.components.ProgressiveButton
             android:id="@+id/btn_request_taxi"
             android:layout_width="match_parent"

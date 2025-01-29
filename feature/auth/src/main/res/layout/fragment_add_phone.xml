@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/Theme.InDrive"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
@@ -27,7 +28,7 @@
         android:layout_margin="8dp"
         android:padding="8dp"
         app:progressButtonText="Hello"
-        app:textAppearance="@style/TextAppearance.InDrive.Text.ButtonText"
+        app:textAppearance="@style/TextAppearance.InDrive.PrimaryButton"
         app:background="@drawable/shape_loader_button_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,6 +65,8 @@
             android:backgroundTint="@android:color/holo_orange_dark" />
 
     </LinearLayout>
+
+
 
 
 </LinearLayout>
