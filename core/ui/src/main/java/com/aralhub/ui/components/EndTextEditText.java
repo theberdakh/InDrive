@@ -33,7 +33,7 @@ public class EndTextEditText extends LinearLayout {
     @SuppressLint("ClickableViewAccessibility")
     private void init(Context context, AttributeSet attrs) {
         setOrientation(HORIZONTAL);
-        EditText editText = new AppCompatEditText(context, attrs);
+        AppCompatEditText editText = new AppCompatEditText(context, attrs);
         LayoutParams editTextParams = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
         editTextParams.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
         addView(editText, editTextParams);

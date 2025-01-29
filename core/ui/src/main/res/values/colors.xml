@@ -3,7 +3,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="brand_primary">#2670FF</color>
-    <color name="gray_2">#E6E8EB</color>
+    <color name="color_brand_primary">#2670FF</color>
+
+    <color name="color_text_primary">#242323</color>
+    <color name="color_text_secondary">#6C757D</color>
+
+    <color name="color_tertiary">#B0BEC5</color>
+    <color name="color_interactive_control">#001934</color>
+
+    <color name="color_background_modal">#EBEDEF</color>
+    <color name="color_gray_1">#F1F3F5</color>
+    <color name="color_gray_2">#E6E8EB</color>
 
 </resources>

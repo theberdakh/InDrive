@@ -1,15 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Only Themes and ThemeOverlays -->
     
-    <style name="Base.V24.Theme.InDrive" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Base.V24.Theme.InDrive" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Version-specific base configurations -->
     </style>
     
     <style name="Base.Theme.InDrive" parent="Base.V24.Theme.InDrive">
         <!-- Application-wide theme configurations -->
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:background">@color/white</item>
         <item name="android:textViewStyle">@style/Widget.InDrive.TextView</item>
+        <item name="android:buttonStyle">@style/Widget.InDrive.Button.Primary</item>
+        <item name="editTextStyle">@style/Widget.InDrive.EditText</item>
     </style>
+
+    <style name="Theme.InDrive.Orange" parent="Base.Theme.InDrive">
+        <!-- Orange theme configurations -->
+    </style>
+
 
     <style name="Theme.InDrive" parent="Base.Theme.InDrive"/><!-- Final theme -->
 </resources>

@@ -3,17 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.InDrive"
     android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="sadf"/>
 
     <com.aralhub.ui.components.ProgressButton
         android:id="@+id/btn_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/small_50"
-        android:background="@drawable/shape_loader_button_view"
+        android:padding="@dimen/padding_small"
         app:progressButtonText="Start"
-        android:layout_margin="@dimen/small_100"
-        app:textAppearance="@style/TextAppearance.InDrive.PrimaryButton" />
+        android:layout_margin="@dimen/margin_medium" />
+
+<!--
+    <com.aralhub.ui.components.pin_view.PinView
+        style="@style/Widget.InDrive.PinView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.aralhub.ui.components.ProgressButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        app:progressButtonText="Hello"
+        app:background="@drawable/shape_loader_button_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="@android:color/holo_orange_dark" />
+
+    </LinearLayout>
 
 </LinearLayout>

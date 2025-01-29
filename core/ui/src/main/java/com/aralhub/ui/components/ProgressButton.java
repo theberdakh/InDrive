@@ -48,7 +48,6 @@ public class ProgressButton extends FrameLayout {
                 LayoutParams.WRAP_CONTENT
         );
         params.gravity = Gravity.CENTER;
-
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ProgressButton);
         isTapToStopEnabled = a.getBoolean(R.styleable.ProgressButton_enableTapToStop, true);
         textView = new TextView(context);
