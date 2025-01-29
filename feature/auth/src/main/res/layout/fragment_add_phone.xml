@@ -37,8 +37,8 @@
     <com.aralhub.ui.components.EndIconEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:icon="@drawable/ic_back_24"
         android:layout_margin="8dp"
+        app:icon="@drawable/ic_user"
         android:background="@drawable/shape_pin_view_selected"
         app:iconTint="@android:color/holo_orange_dark"/>
 
@@ -61,8 +61,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_margin="8dp"
-            android:backgroundTint="@android:color/holo_orange_dark"
-            android:background="@drawable/ic_back_24"/>
+            android:backgroundTint="@android:color/holo_orange_dark" />
 
     </LinearLayout>
 
