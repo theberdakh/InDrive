@@ -16,6 +16,7 @@ class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
 
         PhoneNumberFormatter(binding.etPhone) { isFinished ->
             binding.btnStart.isEnabled = isFinished
+
         }
         binding.btnStart.setOnClickListener {
             hideKeyboard(it)

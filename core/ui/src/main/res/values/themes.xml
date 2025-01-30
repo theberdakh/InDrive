@@ -18,6 +18,14 @@
         <!-- Orange theme configurations -->
     </style>
 
+    <style name="Theme.InDrive.Splash" parent="Base.Theme.InDrive">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+        <!-- Splash theme configurations -->
 
-    <style name="Theme.InDrive" parent="Base.Theme.InDrive"/><!-- Final theme -->
+    <style name="Theme.InDrive" parent="Base.Theme.InDrive">
+
+    </style>
+    <!-- Final theme -->
 </resources>
