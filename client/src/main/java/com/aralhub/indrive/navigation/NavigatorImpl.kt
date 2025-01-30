@@ -31,4 +31,8 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation {
     override fun goToAddSMSCode(phone: String) {
         navController?.navigate(R.id.action_addPhoneFragment_to_addSmsFragment,  AddSMSFragment.args(phone))
     }
+
+    override fun goToAddName() {
+        navController?.navigate(R.id.action_addSmsFragment_to_addNameFragment)
+    }
 }

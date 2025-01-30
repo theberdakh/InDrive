@@ -17,7 +17,7 @@ class LogoFragment : Fragment(R.layout.fragment_logo) {
     private val binding by viewBinding(FragmentLogoBinding::bind)
 
     @Inject
-    lateinit var navigation: FeatureAuthNavigation
+    lateinit var navigator: FeatureAuthNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,7 +25,7 @@ class LogoFragment : Fragment(R.layout.fragment_logo) {
         requireActivity().enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.BLACK))
 
         binding.viewNextButton.setOnClickListener {
-            navigation.goToAddPhoneNumber()
+            navigator.goToAddPhoneNumber()
         }
     }
 }

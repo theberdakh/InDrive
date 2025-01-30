@@ -27,11 +27,20 @@
 
     <fragment
         android:id="@+id/requestTaxiFragment"
-        android:name="com.aralhub.indrive.request.RequestTaxiFragment"/>
+        android:name="com.aralhub.indrive.request.RequestTaxiFragment" />
 
     <fragment
         android:id="@+id/addSmsFragment"
-        android:name="com.aralhub.auth.AddSMSFragment">
+        android:name="com.aralhub.auth.AddSMSFragment" >
+
+        <action
+            android:id="@+id/action_addSmsFragment_to_addNameFragment"
+            app:destination="@id/addNameFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/addNameFragment"
+        android:name="com.aralhub.auth.AddNameFragment" />
 
 </navigation>

@@ -4,4 +4,5 @@ interface FeatureAuthNavigation {
     fun goToAddPhoneNumber()
     fun goToRequestTaxi()
     fun goToAddSMSCode(phone: String)
+    fun goToAddName()
 }
