@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.InDrive">
@@ -22,22 +22,39 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="100dp"
                 android:gravity="center"
-                android:text="@string/label_enter"
+                android:text="@string/label_confirm"
                 android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/et_phone"
+            <TextView
+                android:id="@+id/tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/inter"
+                android:gravity="center"
+                android:padding="@dimen/padding_medium"
+                tools:text="@string/label_confirm_description" />
+
+
+            <com.aralhub.ui.components.pin_view.PinView
+                android:id="@+id/et_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
+                android:autofillHints="postalCode"
                 android:hint="@string/hint_phone"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:theme="@style/Widget.InDrive.PinView" />
+
 
             <TextView
                 android:id="@+id/tv_error"
                 style="@style/TextAppearance.InDrive.ErrorText"
                 android:layout_width="match_parent"
+                tools:text="Error"
+                android:padding="@dimen/padding_small"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
                 android:paddingHorizontal="@dimen/padding_large" />
@@ -51,8 +68,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:enabled="false"
         android:layout_margin="@dimen/margin_medium"
+        android:enabled="false"
         android:text="@string/label_continue" />
 
 

@@ -1,6 +1,7 @@
 package com.aralhub.indrive.navigation
 
 import androidx.navigation.NavController
+import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrive.R
 import javax.inject.Inject
@@ -25,5 +26,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation {
 
     override fun goToRequestTaxi() {
         navController?.navigate(R.id.action_logoFragment_to_requestTaxiFragment)
+    }
+
+    override fun goToAddSMSCode(phone: String) {
+        navController?.navigate(R.id.action_addPhoneFragment_to_addSmsFragment,  AddSMSFragment.args(phone))
     }
 }

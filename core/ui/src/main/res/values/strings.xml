@@ -4,6 +4,8 @@
     <string name="app_name">In Drive</string>
     <string name="label_continue">Dawam etiw</string>
     <string name="label_enter">Kiriw</string>
+    <string name="label_confirm">Tastıyıqlaw</string>
+    <string name="label_confirm_description">Siz kiritken  <b>%1$s</b> telefon nomerine tastıyıqlaw kodı jiberildi</string>
     <string name="hint_phone">Telefon</string>
     <string name="label_taxi_service">Taksi xizmeti</string>
     <string name="label_taxi_service_description">Mánzilińizge ańsat hám qolaylı bahada jetip alıń. Buyırtpa beriwdi házir-aq baslań.</string>

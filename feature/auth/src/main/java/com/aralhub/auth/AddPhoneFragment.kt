@@ -9,11 +9,20 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.Fragment
 import com.aralhub.auth.databinding.FragmentAddPhoneBinding
+import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter
 import com.aralhub.ui.utils.viewBinding
+import com.google.android.material.internal.ViewUtils.hideKeyboard
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
     private val binding by viewBinding(FragmentAddPhoneBinding::bind)
+
+    @Inject
+    lateinit var featureAuthNavigation: FeatureAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,16 +36,14 @@ class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
 
         PhoneNumberFormatter(binding.etPhone) { isFinished ->
             binding.btnStart.isEnabled = isFinished
-
+            if (isFinished) {
+                KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone)
+            }
         }
+
         binding.btnStart.setOnClickListener {
-            hideKeyboard(it)
+            featureAuthNavigation.goToAddSMSCode(binding.etPhone.text.toString())
         }
     }
 
-    private fun hideKeyboard(view: View) {
-        val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-
-    }
 }

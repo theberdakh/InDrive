@@ -19,10 +19,19 @@
         android:id="@+id/addPhoneFragment"
         android:name="com.aralhub.auth.AddPhoneFragment">
 
+        <action
+            android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
+            app:destination="@id/addSmsFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/requestTaxiFragment"
         android:name="com.aralhub.indrive.request.RequestTaxiFragment"/>
+
+    <fragment
+        android:id="@+id/addSmsFragment"
+        android:name="com.aralhub.auth.AddSMSFragment">
+    </fragment>
 
 </navigation>
