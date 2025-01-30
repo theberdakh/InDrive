@@ -4,6 +4,7 @@
         <attr name="progressButtonText" format="string" />
         <attr name="textAppearance" format="reference"/>
         <attr name="enableTapToStop" format="boolean"/>
+        <attr name="buttonEnabled" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="PinView">

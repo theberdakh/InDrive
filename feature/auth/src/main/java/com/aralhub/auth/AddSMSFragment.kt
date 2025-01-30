@@ -9,9 +9,12 @@ import android.text.style.StyleSpan
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.aralhub.auth.databinding.FragmentAddSmsBinding
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.viewBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private val binding by viewBinding(FragmentAddSmsBinding::bind)
@@ -26,6 +29,13 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
             binding.btnStart.isEnabled = it.toString().length == 4
             if(binding.btnStart.isEnabled){
                 KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone)
+            }
+        }
+
+        binding.btnStart.setOnClickListener {
+           lifecycleScope.launch {
+                delay(3000)
+                binding.btnStart.stopProgress()
             }
         }
 
