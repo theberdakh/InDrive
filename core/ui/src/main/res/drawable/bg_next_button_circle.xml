@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <padding android:left="8dp"
+                android:top="8dp"
+                android:right="8dp"
+                android:bottom="8dp" />
+            <solid android:color="@color/color_interactive_control" />
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/ic_material_symbols_arrow_right"
+        />
+</layer-list>

@@ -5,53 +5,52 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/im_taxi"
+        android:contentDescription="@string/hint_phone" />
+
     <TextView
+        style="@style/TextAppearance.InDrive.DisplaySmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="sadf"/>
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/padding_large"
+        android:paddingTop="@dimen/padding_large"
+        android:text="@string/label_taxi_service" />
 
-    <com.aralhub.ui.components.ProgressButton
-        android:id="@+id/btn_start"
+    <TextView
+        style="@style/TextAppearance.InDrive.BodyLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_small"
-        app:progressButtonText="Start"
-        android:layout_margin="@dimen/margin_medium" />
-
-<!--
-    <com.aralhub.ui.components.pin_view.PinView
-        style="@style/Widget.InDrive.PinView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <com.aralhub.ui.components.ProgressButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="8dp"
-        app:progressButtonText="Hello"
-        app:background="@drawable/shape_loader_button_view"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
-
+        android:gravity="center"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/label_taxi_service_description" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_margin="8dp"
-        android:orientation="horizontal">
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="@dimen/padding_medium">
 
-
+        <TextView
+            style="@style/TextAppearance.InDrive.BodyLarge.SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:padding="@dimen/padding_small"
+            android:text="@string/label_start" />
 
         <View
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="8dp"
-            android:backgroundTint="@android:color/holo_orange_dark" />
+            android:id="@+id/view_next_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_next_button_circle"
+            android:foreground="?selectableItemBackgroundBorderless" />
 
     </LinearLayout>
+
 
 </LinearLayout>

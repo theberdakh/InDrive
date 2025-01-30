@@ -1,6 +1,11 @@
 <resources>
+    <string name="cd_phone">Taxi photo</string>
+
     <string name="app_name">In Drive</string>
     <string name="label_continue">Dawam etiw</string>
     <string name="label_enter">Kiriw</string>
     <string name="hint_phone">Telefon</string>
+    <string name="label_taxi_service">Taksi xizmeti</string>
+    <string name="label_taxi_service_description">Mánzilińizge ańsat hám qolaylı bahada jetip alıń. Buyırtpa beriwdi házir-aq baslań.</string>
+    <string name="label_start">Baslaw</string>
 </resources>

@@ -16,21 +16,25 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var navigatorImpl: Navigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(com.aralhub.ui.R.style.Theme_InDrive)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        showLayoutOnTopOfSoftKeyboard()
+        setPadding()
 
+    }
+
+    private fun setPadding() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_nav_host)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        showLayoutOnTopOfSoftKeyboard()
-
-
     }
+
 
     /**
      * For some reason, solely changing  android:windowSoftInputMode="adjustResize" does not work.*/
