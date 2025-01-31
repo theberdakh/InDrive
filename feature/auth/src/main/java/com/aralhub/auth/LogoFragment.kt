@@ -25,7 +25,7 @@ class LogoFragment : Fragment(R.layout.fragment_logo) {
         requireActivity().enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.BLACK))
 
         binding.viewNextButton.setOnClickListener {
-            navigator.goToAddPhoneNumber()
+            navigator.goToRequestTaxiFromLogo()
         }
     }
 }

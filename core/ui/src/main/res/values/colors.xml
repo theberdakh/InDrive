@@ -15,4 +15,7 @@
     <color name="color_gray_1">#F1F3F5</color>
     <color name="color_gray_2">#E6E8EB</color>
 
+    <color name="color_error_crouton">#FF4040</color>
+    <color name="color_success_crouton">#1FCE47</color>
+
 </resources>

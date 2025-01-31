@@ -41,6 +41,11 @@
 
     <fragment
         android:id="@+id/addNameFragment"
-        android:name="com.aralhub.auth.AddNameFragment" />
+        android:name="com.aralhub.auth.AddNameFragment">
+
+        <action android:id="@+id/action_addNameFragment_to_requestTaxiFragment"
+            app:destination="@id/requestTaxiFragment" />
+
+    </fragment>
 
 </navigation>
