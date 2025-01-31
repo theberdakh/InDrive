@@ -4,7 +4,19 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.yandex.mapkit.mapview.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -44,13 +56,13 @@
             android:hint="asdf"
             style="@style/Widget.InDrive.EditText"/>
 
-    <!--    <com.aralhub.ui.components.ProgressiveButton
+    &lt;!&ndash;    <com.aralhub.ui.components.ProgressiveButton
             android:id="@+id/btn_request_taxi"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
-            android:layout_height="wrap_content"/>-->
+            android:layout_height="wrap_content"/>&ndash;&gt;
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
 
