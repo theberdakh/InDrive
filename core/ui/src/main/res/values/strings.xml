@@ -13,4 +13,7 @@
     <string name="label_taxi_service_description">Mánzilińizge ańsat hám qolaylı bahada jetip alıń. Buyırtpa beriwdi házir-aq baslań.</string>
     <string name="label_start">Baslaw</string>
     <string name="label_information">Maǵlıwmatlar</string>
+
+    <string name="error_network_connection">Internet baylanısı joq</string>
+    <string name="success_network_connection">Baylanıs qayta ornatıldı</string>
 </resources>
