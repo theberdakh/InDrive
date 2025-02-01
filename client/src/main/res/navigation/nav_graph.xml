@@ -11,8 +11,8 @@
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
             app:destination="@id/addPhoneFragment" />
         <action
-            android:id="@+id/action_logoFragment_to_requestTaxiFragment"
-            app:destination="@id/requestTaxiFragment" />
+            android:id="@+id/action_logoFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
 
     </fragment>
     <fragment
@@ -26,12 +26,12 @@
     </fragment>
 
     <fragment
-        android:id="@+id/requestTaxiFragment"
-        android:name="com.aralhub.indrive.request.RequestTaxiFragment" />
+        android:id="@+id/mainFragment"
+        android:name="com.aralhub.indrive.request.MainFragment" />
 
     <fragment
         android:id="@+id/addSmsFragment"
-        android:name="com.aralhub.auth.AddSMSFragment" >
+        android:name="com.aralhub.auth.AddSMSFragment">
 
         <action
             android:id="@+id/action_addSmsFragment_to_addNameFragment"
@@ -43,8 +43,9 @@
         android:id="@+id/addNameFragment"
         android:name="com.aralhub.auth.AddNameFragment">
 
-        <action android:id="@+id/action_addNameFragment_to_requestTaxiFragment"
-            app:destination="@id/requestTaxiFragment" />
+        <action
+            android:id="@+id/action_addNameFragment_to_MainFragment"
+            app:destination="@id/mainFragment" />
 
     </fragment>
 

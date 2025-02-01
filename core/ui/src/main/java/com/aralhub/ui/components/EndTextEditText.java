@@ -33,15 +33,18 @@ public class EndTextEditText extends LinearLayout {
     @SuppressLint("ClickableViewAccessibility")
     private void init(Context context, AttributeSet attrs) {
         setOrientation(HORIZONTAL);
+        setClickable(true);
+        setFocusable(true);
+        setBackground(ContextCompat.getDrawable(context, R.drawable.selector_edit_text_auth));
         AppCompatEditText editText = new AppCompatEditText(context, attrs);
+        editText.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
         LayoutParams editTextParams = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
-        editTextParams.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
         addView(editText, editTextParams);
 
         TextView endTextView = new TextView(context);
         LayoutParams endTextViewParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        endTextViewParams.setMargins(dpToPx(16), 0, dpToPx(16), 0);
         endTextViewParams.gravity = Gravity.CENTER_VERTICAL;
-        endTextViewParams.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
         endTextView.setClickable(true);
         endTextView.setFocusable(true);
         endTextView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_text));

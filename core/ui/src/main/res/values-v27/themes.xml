@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Theme.InDrive.Splash" parent="Base.Theme.InDrive">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
-        <item name="android:windowFullscreen">false</item>
-    </style>
-</resources>

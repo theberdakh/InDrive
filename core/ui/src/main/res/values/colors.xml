@@ -11,6 +11,9 @@
     <color name="color_tertiary">#B0BEC5</color>
     <color name="color_interactive_control">#001934</color>
 
+    <color name="color_content_primary">#2C2D2E</color>
+    <color name="color_content_tertiary">#8C8D8F</color>
+
     <color name="color_background_modal">#EBEDEF</color>
     <color name="color_gray_1">#F1F3F5</color>
     <color name="color_gray_2">#E6E8EB</color>

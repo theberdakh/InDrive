@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.aralhub.indrive.common'
-    compileSdk 34
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         minSdk 24

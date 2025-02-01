@@ -25,11 +25,11 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation {
     }
 
     override fun goToRequestTaxiFromLogo() {
-        navController?.navigate(R.id.action_logoFragment_to_requestTaxiFragment)
+        navController?.navigate(R.id.action_logoFragment_to_mainFragment)
     }
 
     override fun goToRequestTaxiFromAddName() {
-        navController?.navigate(R.id.action_addNameFragment_to_requestTaxiFragment)
+        navController?.navigate(R.id.action_addNameFragment_to_MainFragment)
     }
 
     override fun goToAddSMSCode(phone: String) {
