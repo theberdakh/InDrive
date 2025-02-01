@@ -33,6 +33,9 @@
 
     <declare-styleable name="EndTextEditText">
         <attr name="endText" format="string" />
+        <attr name="endTextVisible" format="boolean"/>
+        <attr name="android:hint" format="string" />
+        <attr name="hintTextColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="EndIconEditText">

@@ -3,29 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@style/Theme.InDrive">
 
     <com.aralhub.ui.components.EndTextEditText
+        android:id="@+id/et_from_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        app:endText="Karta" />
+        android:hint="@string/hint_from_location"
+        app:endText="Karta"
+        app:hintTextColor="@color/color_tertiary" />
 
-    <EditText
+    <com.aralhub.ui.components.EndTextEditText
+        android:id="@+id/et_to_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:hint="@string/hint_to_location"
-        android:inputType="text" />
+        app:endText="Karta"
+        app:hintTextColor="@color/color_tertiary" />
 
-  <!--  <androidx.recyclerview.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_locations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_location" />-->
+        tools:listitem="@layout/item_location" />
 
 
 </LinearLayout>

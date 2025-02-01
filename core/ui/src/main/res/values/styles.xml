@@ -45,6 +45,13 @@
 
     <style name="MyBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@color/white</item>
+        <item name="bottomSheetDragHandleStyle">@style/Widget.Material3.BottomSheet.DragHandle</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">@color/color_error_crouton</item>
+        <!--Alpha can be added optionally to achieve nice color blend-->
+        <item name="android:alpha">0.3</item>
     </style>
 
 </resources>

@@ -2,22 +2,17 @@ package com.aralhub.indrive.request
 
 import android.Manifest
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.aralhub.indrive.request.databinding.FragmentMainBinding
+import com.aralhub.indrive.request.navigation.BottomSheetNavigator
 import com.aralhub.network.utils.NetworkMonitor
 import com.aralhub.ui.components.crouton.Crouton
 import com.aralhub.ui.utils.CroutonInDriveStyle
@@ -33,6 +28,9 @@ import javax.inject.Inject
 class MainFragment : Fragment(R.layout.fragment_main) {
     @Inject
     lateinit var networkMonitor: NetworkMonitor
+    @Inject
+    lateinit var bottomSheetNavigator: BottomSheetNavigator
+
     private val binding by viewBinding(FragmentMainBinding::bind)
     private var bottomSheetBehavior = BottomSheetBehavior<View>()
     private val requiredPermissions = arrayOf(
@@ -50,7 +48,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         MapKitInitializer.init("eb911707-c4c6-4608-9917-f22012813a34", requireContext())
@@ -59,47 +56,29 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-   /*     bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottom)
-        bottomSheetBehavior.apply {
-            state = BottomSheetBehavior.STATE_COLLAPSED
-            // Ensure the bottom sheet sits above the keyboard
-            isDraggable = true
-            isFitToContents = true
-            isShouldRemoveExpandedCorners = true
-        }*/
-
-        lifecycleScope.launch {
-            monitorNetworkConnection()
-        }
-        //setUpDrawerLayout()
-        setLightStatusBar()
         locationPermissionLauncher.launch(requiredPermissions)
+        bottomSheetNavigator.bind(requireActivity().findNavController(R.id.bottom_sheet_nav_host))
+        lifecycleScope.launch { monitorNetworkConnection() }
+        setUpBottomSheet()
+        setUpDrawerLayout()
         setUpMapView()
-
     }
 
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.layoutBottom) { view, windowInsets ->
-            val imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
-            val navigationInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+    private fun setUpBottomSheet() {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottom)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
 
-            // Update bottom padding to account for IME and navigation bar
-            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = if (windowInsets.isVisible(WindowInsetsCompat.Type.ime())) {
-                    imeInsets.bottom
-                } else {
-                    navigationInsets.bottom
-                }
-            }
-
-            windowInsets
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        bottomSheetNavigator.unbind()
     }
 
     private fun setUpDrawerLayout() {
 
         binding.btnMenu.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START) }
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 bottomSheetBehavior.isHideable = true
@@ -152,13 +131,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-    private fun setLightStatusBar() {
-        requireActivity().enableEdgeToEdge(statusBarStyle = SystemBarStyle.auto(
-            lightScrim = Color.WHITE,
-            darkScrim = resources.getColor(com.aralhub.ui.R.color.color_interactive_control),
-            detectDarkMode = { resources ->
-                false
-            }
-        ))
-    }
 }
