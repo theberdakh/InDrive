@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/fragmentChangeOrCancelRequest"
+    android:id="@+id/nav_offers">
+
+    <fragment android:id="@+id/fragmentChangeOrCancelRequest"
+        tools:layout="@layout/fragment_change_or_cancel_request"
+        android:name="com.aralhub.offers.ChangeOrCancelRequestFragment"/>
+
+</navigation>

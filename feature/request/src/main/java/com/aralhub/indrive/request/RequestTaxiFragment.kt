@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import com.aralhub.indrive.request.adapter.LocationItemAdapter
 import com.aralhub.indrive.request.databinding.FragmentRequestTaxiBinding
 import com.aralhub.indrive.request.model.LocationItem
-import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
+import com.aralhub.indrive.request.navigation.FeatureRequestBottomSheetNavigation
 import com.aralhub.ui.components.EndTextEditText
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,7 +61,7 @@ internal class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
         )
     )
     @Inject
-    lateinit var navigator: FeatureRequestNavigation
+    lateinit var navigator: FeatureRequestBottomSheetNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

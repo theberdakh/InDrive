@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_small"
+    android:background="@drawable/shape_item_offer"
+    android:layout_margin="@dimen/margin_small"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:padding="@dimen/padding_small"
+        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.aralhub.ui.components.ProgressiveButton
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            app:progressiveButtonText="Kerek emes"
+            android:layout_margin="@dimen/margin_small"
+            android:layout_height="wrap_content"/>
+
+        <com.aralhub.ui.components.ProgressiveButton
+            android:layout_width="0dp"
+            app:progressColor="@color/color_success_crouton"
+            app:progressiveButtonText="Qabillaw"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/margin_small"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

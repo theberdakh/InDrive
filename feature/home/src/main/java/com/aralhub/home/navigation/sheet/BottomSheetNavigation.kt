@@ -1,6 +1,6 @@
 package com.aralhub.home.navigation.sheet
 
-import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
+import com.aralhub.indrive.request.navigation.FeatureRequestBottomSheetNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -11,6 +11,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class BottomSheetNavigation {
 
     @Binds
-    abstract fun bindFeatureRequestNavigation(bottomSheetNavigator: SheetNavigator): FeatureRequestNavigation
+    abstract fun bindFeatureRequestNavigation(bottomSheetNavigator: SheetNavigator): FeatureRequestBottomSheetNavigation
 
 }

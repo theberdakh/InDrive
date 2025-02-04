@@ -1,15 +1,18 @@
 package com.aralhub.indrive.navigation
 
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
-import com.aralhub.home.navigation.FeatureHomeNavigation
 import com.aralhub.indrive.R
+import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
+import com.aralhub.offers.GetOffersFromDriversFragment
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureHomeNavigation {
+class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureRequestNavigation {
 
     private var navController: NavController? = null
 
@@ -41,7 +44,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
         navController?.navigate(R.id.action_logoFragment_to_homeFragment)
     }
 
-    override fun goToGetOffersFromDriversFragment() {
+    override fun goToGetOffersFromSendOrderFragment() {
         navController?.navigate(R.id.action_homeFragment_to_getOffersFromDriversFragment)
     }
 

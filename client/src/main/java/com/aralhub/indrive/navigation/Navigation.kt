@@ -1,7 +1,7 @@
 package com.aralhub.indrive.navigation
 
 import com.aralhub.auth.navigation.FeatureAuthNavigation
-import com.aralhub.home.navigation.FeatureHomeNavigation
+import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ abstract class Navigation {
     abstract fun bindFeatureAuthNavigation(navigatorImpl: NavigatorImpl): FeatureAuthNavigation
 
     @Binds
-    abstract fun bindFeatureHomeNavigation(navigatorImpl: NavigatorImpl): FeatureHomeNavigation
+    abstract fun bindFeatureRequestNavigation(navigatorImpl: NavigatorImpl): FeatureRequestNavigation
 
     @Binds
     abstract fun bindNavigator(navigatorImpl: NavigatorImpl): Navigator
