@@ -1,5 +1,6 @@
 package com.aralhub.indrive.request
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -36,12 +37,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         lifecycleScope.launch { monitorNetworkConnection() }
         setUpDrawerLayout()
         setUpBottomSheet()
+        initMapController()
         initBottomNavController()
+    }
+
+    private fun initMapController() {
     }
 
     private fun setUpBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
-        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         binding.layoutBottomSheet.isVisible = true
     }
 
@@ -75,8 +80,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun initBottomNavController() {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let {
             bottomSheetNavigator.bind(navController)

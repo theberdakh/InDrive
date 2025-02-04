@@ -7,6 +7,15 @@
 
     <fragment android:id="@+id/mapFragment"
         tools:layout="@layout/fragment_map"
-        android:name="com.aralhub.indrive.request.MapFragment"/>
+        android:name="com.aralhub.indrive.request.MapFragment">
+
+        <action android:id="@+id/action_mapFragment_toGetRequestsFromDriversFragment"
+            app:destination="@+id/getRequestsFromDriversFragment"/>
+
+    </fragment>
+
+    <fragment android:id="@+id/getRequestsFromDriversFragment"
+        android:name="com.aralhub.indrive.request.GetRequestsFromDriversBottomSheetFragment"
+        tools:layout="@layout/fragment_get_requests_from_drivers"/>
 
 </navigation>

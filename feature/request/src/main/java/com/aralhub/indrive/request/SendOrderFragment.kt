@@ -14,6 +14,7 @@ class SendOrderFragment: Fragment(R.layout.fragment_send_order) {
     private var isConfiguring: Boolean = false
     private val changePaymentMethodBottomSheetFragment by lazy { ChangePaymentMethodBottomSheetFragment() }
     private val commentToDriverBottomSheetFragment by lazy { CommentToDriverBottomSheetFragment() }
+    private val getRequestsFromDriversBottomSheetFragment by lazy { GetRequestsFromDriversBottomSheetFragment() }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -24,7 +25,6 @@ class SendOrderFragment: Fragment(R.layout.fragment_send_order) {
         }
 
         binding.btnSendOffer.setOnClickListener {
-            findNavController().navigateUp()
         }
 
         binding.ivChangePaymentMethod.setOnClickListener {
