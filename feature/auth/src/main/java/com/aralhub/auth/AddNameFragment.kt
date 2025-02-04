@@ -29,7 +29,7 @@ class AddNameFragment : Fragment(R.layout.fragment_add_name) {
             lifecycleScope.launch {
                 delay(4000)
                 binding.btnSave.stopProgress()
-                navigator.goToRequestTaxiFromAddName()
+                navigator.goToHomeFragmentFromAddName()
             }
         }
 

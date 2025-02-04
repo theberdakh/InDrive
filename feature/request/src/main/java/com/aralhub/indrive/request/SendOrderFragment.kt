@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.aralhub.indrive.request.databinding.FragmentSendOrderBinding
+import com.aralhub.indrive.request.modal.ChangePaymentMethodBottomSheetFragment
+import com.aralhub.indrive.request.modal.CommentToDriverBottomSheetDialogFragment
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 
@@ -13,8 +14,7 @@ class SendOrderFragment: Fragment(R.layout.fragment_send_order) {
     private val binding by viewBinding(FragmentSendOrderBinding::bind)
     private var isConfiguring: Boolean = false
     private val changePaymentMethodBottomSheetFragment by lazy { ChangePaymentMethodBottomSheetFragment() }
-    private val commentToDriverBottomSheetFragment by lazy { CommentToDriverBottomSheetFragment() }
-    private val getRequestsFromDriversBottomSheetFragment by lazy { GetRequestsFromDriversBottomSheetFragment() }
+    private val commentToDriverBottomSheetDialogFragment by lazy { CommentToDriverBottomSheetDialogFragment() }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -25,6 +25,7 @@ class SendOrderFragment: Fragment(R.layout.fragment_send_order) {
         }
 
         binding.btnSendOffer.setOnClickListener {
+
         }
 
         binding.ivChangePaymentMethod.setOnClickListener {
@@ -32,7 +33,7 @@ class SendOrderFragment: Fragment(R.layout.fragment_send_order) {
         }
 
         binding.layoutCommentToDriver.setOnClickListener {
-            commentToDriverBottomSheetFragment.show(requireActivity().supportFragmentManager, "")
+            commentToDriverBottomSheetDialogFragment.show(requireActivity().supportFragmentManager, "")
         }
 
     }

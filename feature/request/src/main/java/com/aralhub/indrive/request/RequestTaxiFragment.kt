@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
+internal class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
     private val binding by viewBinding(FragmentRequestTaxiBinding::bind)
     private val locationItemAdapter = LocationItemAdapter()
     private val locationItems = listOf(
@@ -60,7 +60,6 @@ class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
             subtitle = "456 Business St"
         )
     )
-
     @Inject
     lateinit var navigator: FeatureRequestNavigation
 

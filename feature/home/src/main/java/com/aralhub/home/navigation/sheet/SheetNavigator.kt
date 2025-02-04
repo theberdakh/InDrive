@@ -1,12 +1,12 @@
-package com.aralhub.indrive.request.navigation
+package com.aralhub.home.navigation.sheet
 
 import androidx.navigation.NavController
-import com.aralhub.indrive.request.R
+import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BottomSheetNavigator @Inject constructor(): FeatureRequestNavigation{
+class SheetNavigator @Inject constructor(): FeatureRequestNavigation {
     private var navController : NavController? = null
 
     fun bind(navController: NavController) {
@@ -18,10 +18,10 @@ class BottomSheetNavigator @Inject constructor(): FeatureRequestNavigation{
     }
 
     override fun goToSelectLocationFromRequestTaxi() {
-        navController?.navigate(R.id.action_requestTaxiFragment_to_selectLocationFragment)
+        navController?.navigate(com.aralhub.home.R.id.action_requestTaxiFragment_to_selectLocationFragment)
     }
 
     override fun goToSendOrderFromRequestTaxi() {
-        navController?.navigate(R.id.action_requestTaxiFragment_to_sendOrderFragment)
+        navController?.navigate(com.aralhub.home.R.id.action_requestTaxiFragment_to_sendOrderFragment)
     }
 }
