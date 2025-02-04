@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_small">
+
+    <LinearLayout
+        android:id="@+id/layout_cash"
+        android:layout_width="match_parent"
+        android:foreground="@drawable/ripple_text"
+        android:padding="@dimen/padding_small"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_comment"
+            style="@style/Widget.InDrive.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Aydawshıǵa kommentariy"
+            android:textColor="@color/color_interactive_control"
+            android:gravity="top"
+            android:minLines="4"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_online"
+        android:layout_width="match_parent"
+        android:padding="@dimen/padding_small"
+        android:foreground="@drawable/ripple_text"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            style="@style/Widget.InDrive.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_save"
+            />
+    </LinearLayout>
+
+</LinearLayout>

@@ -20,4 +20,8 @@ class BottomSheetNavigator @Inject constructor(): FeatureRequestNavigation{
     override fun goToSelectLocationFromRequestTaxi() {
         navController?.navigate(R.id.action_requestTaxiFragment_to_selectLocationFragment)
     }
+
+    override fun goToSendOrderFromRequestTaxi() {
+        navController?.navigate(R.id.action_requestTaxiFragment_to_sendOrderFragment)
+    }
 }

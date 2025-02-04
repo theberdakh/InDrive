@@ -29,7 +29,7 @@
         <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
         <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
     </style>
-    
+
     <style name="Widget.InDrive.Button.Primary" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/selector_button_primary</item>
         <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
@@ -43,15 +43,34 @@
         <item name="android:textColorHint">@color/color_tertiary</item>
     </style>
 
-    <style name="MyBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@color/white</item>
-        <item name="bottomSheetDragHandleStyle">@style/Widget.Material3.BottomSheet.DragHandle</item>
+    <style name="Widget.InDrive.EditText.NoSelector" parent="Widget.AppCompat.EditText">
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.Text</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:padding">@dimen/small_125</item>
+        <item name="android:background">@drawable/selector_edit_text_auth</item>
+        <item name="android:textColorHint">@color/color_tertiary</item>
     </style>
 
-    <style name="Widget.MaterialComponents.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/color_error_crouton</item>
+    <style name="MyBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge</item>
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+        <item name="bottomSheetDragHandleStyle">@style/Widget.InDrive.BottomSheet.DragHandle</item>
+    </style>
+
+    <style name="Widget.InDrive.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">@color/color_gray_1</item>
+        <item name="android:minHeight">8dp</item>
+        <item name="android:paddingBottom">0dp</item>
         <!--Alpha can be added optionally to achieve nice color blend-->
-        <item name="android:alpha">0.3</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="backgroundTint">@color/color_success_crouton</item>
+        <item name="enforceMaterialTheme">false</item>
+        <item name="background">@drawable/bg_bottom_sheet</item>
+        <item name="behavior_peekHeight">100dp</item>
+        <item name="behavior_hideable">true</item>
+        <item name="behavior_draggable">true</item>
     </style>
 
 </resources>

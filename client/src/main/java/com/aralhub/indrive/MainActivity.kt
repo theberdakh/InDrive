@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private fun setPadding() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_nav_host)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, 0)
             insets
         }
     }

@@ -1,8 +1,8 @@
 package com.aralhub.indrive.request
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.aralhub.indrive.request.adapter.LocationItemAdapter
 import com.aralhub.indrive.request.databinding.FragmentRequestTaxiBinding
@@ -69,6 +69,12 @@ class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
 
         binding.rvLocations.adapter = locationItemAdapter
         setEditTexts(binding.etFromLocation, binding.etToLocation)
+        binding.etFromLocation.setEndTextClickListener {
+            navigator.goToSelectLocationFromRequestTaxi()
+        }
+        binding.etToLocation.setEndTextClickListener {
+             navigator.goToSendOrderFromRequestTaxi()
+        }
     }
 
     private fun setEditTexts(vararg endTexts: EndTextEditText) {
@@ -76,11 +82,9 @@ class RequestTaxiFragment : Fragment(R.layout.fragment_request_taxi) {
             endText.setOnActivatedListener { isActivated ->
                 endText.setEndTextVisible(isActivated)
             }
-            endText.setEndTextClickListener {
-                navigator.goToSelectLocationFromRequestTaxi()
-            }
             endText.setOnTextChangedListener {
                 if (it.isNotEmpty()) {
+                    binding.rvLocations.isVisible = true
                     locationItemAdapter.submitList(locationItems)
                 } else {
                     locationItemAdapter.submitList(emptyList())

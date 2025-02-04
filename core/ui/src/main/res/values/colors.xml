@@ -14,9 +14,12 @@
     <color name="color_content_primary">#2C2D2E</color>
     <color name="color_content_tertiary">#8C8D8F</color>
 
+    <color name="color_interactive_accent">#4096F2</color>
+
     <color name="color_background_modal">#EBEDEF</color>
     <color name="color_gray_1">#F1F3F5</color>
     <color name="color_gray_2">#E6E8EB</color>
+    <color name="color_gray_3">#C6CACF</color>
 
     <color name="color_error_crouton">#FF4040</color>
     <color name="color_success_crouton">#1FCE47</color>

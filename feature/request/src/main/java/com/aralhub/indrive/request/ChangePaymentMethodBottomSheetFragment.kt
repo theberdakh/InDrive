@@ -1,0 +1,5 @@
+package com.aralhub.indrive.request
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
+class ChangePaymentMethodBottomSheetFragment: BottomSheetDialogFragment(R.layout.fragment_change_payment_method)

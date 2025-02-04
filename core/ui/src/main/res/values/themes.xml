@@ -15,14 +15,20 @@
 
     <style name="Theme.InDrive" parent="Base.Theme.InDrive">
         <item name="android:windowBackground">@android:color/white</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.InDrive.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.InDrive.Splash" parent="Base.Theme.InDrive">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
     
-    <style name="Theme.InDrive.BottomSheet" parent="Theme.Design.BottomSheetDialog">
+    <style name="Theme.InDrive.BottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/MyBottomSheetStyle</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge</item>
+        <item name="editTextBackground">@drawable/selector_edit_text_auth</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateAlwaysVisible</item>
+
     </style>
 
 

@@ -15,11 +15,19 @@
             android:id="@+id/action_requestTaxiFragment_to_selectLocationFragment"
             app:destination="@id/selectLocationFragment" />
 
+        <action
+            android:id="@+id/action_requestTaxiFragment_to_sendOrderFragment"
+            app:destination="@id/sendOrderFragment"/>
+
     </fragment>
     <fragment
         android:id="@+id/selectLocationFragment"
         android:name="com.aralhub.indrive.request.SelectLocationFragment"
         android:label="select_location"
         tools:layout="@layout/fragment_select_location" />
+
+    <fragment android:id="@+id/sendOrderFragment"
+        android:name="com.aralhub.indrive.request.SendOrderFragment"
+        tools:layout="@layout/fragment_send_order"/>
 
 </navigation>
