@@ -8,6 +8,7 @@ import com.aralhub.offers.adapter.OfferItemAdapter
 import com.aralhub.offers.databinding.FragmentGetOffersFromDriversBinding
 import com.aralhub.offers.model.OfferItem
 import com.aralhub.offers.model.OfferItemDriver
+import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.offers.navigation.sheet.SheetNavigator
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.geometry.Point
@@ -20,6 +21,8 @@ class GetOffersFromDriversFragment : Fragment(R.layout.fragment_get_offers_from_
     private val binding by viewBinding(FragmentGetOffersFromDriversBinding::bind)
     @Inject
     lateinit var sheetNavigator: SheetNavigator
+    @Inject
+    lateinit var featureOffersNavigation: FeatureOffersNavigation
     private val offerItemAdapter by lazy { OfferItemAdapter() }
     private val offers = listOf(
         OfferItem(
@@ -96,6 +99,9 @@ class GetOffersFromDriversFragment : Fragment(R.layout.fragment_get_offers_from_
     private fun setUpRecyclerView() {
         binding.rvOffers.adapter = offerItemAdapter
         offerItemAdapter.submitList(offers)
+        offerItemAdapter.setOnItemAcceptClickListener {
+            featureOffersNavigation.goToWaitingFragment()
+        }
     }
 
     private fun initBottomNavController() {

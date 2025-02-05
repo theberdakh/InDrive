@@ -13,9 +13,17 @@ import com.bumptech.glide.request.RequestOptions
 class OfferItemAdapter :
     ListAdapter<OfferItem, OfferItemAdapter.ViewHolder>(OfferItemDiffCallback) {
 
+    private var onItemAcceptClickListener: ((OfferItem) -> Unit)? = null
+    fun setOnItemAcceptClickListener(listener: (OfferItem) -> Unit) {
+        onItemAcceptClickListener = listener
+    }
+
     inner class ViewHolder(private val itemOfferBinding: ItemOfferBinding) :
         RecyclerView.ViewHolder(itemOfferBinding.root) {
         fun bind(offerItem: OfferItem) {
+            itemOfferBinding.btnAccept.setOnClickListener {
+                onItemAcceptClickListener?.invoke(offerItem)
+            }
             itemOfferBinding.apply {
                 tvDriverName.text = offerItem.driver.name
                 tvPrice.text = offerItem.offeredPrice + " som"

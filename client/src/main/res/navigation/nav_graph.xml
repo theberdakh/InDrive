@@ -57,6 +57,17 @@
 
     <fragment
         android:id="@+id/getOffersFromDriversFragment"
-        android:name="com.aralhub.offers.GetOffersFromDriversFragment" />
+        android:name="com.aralhub.offers.GetOffersFromDriversFragment">
+
+        <action android:id="@+id/action_getOffersFromDriversFragment_to_waitingFragment"
+            app:popUpTo="@id/getOffersFromDriversFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/waitingFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/waitingFragment"
+        android:name="com.aralhub.indrive.waiting.WaitingFragment"/>
 
 </navigation>

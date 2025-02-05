@@ -1,18 +1,16 @@
 package com.aralhub.indrive.navigation
 
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import androidx.navigation.NavOptionsBuilder
 import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrive.R
 import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
-import com.aralhub.offers.GetOffersFromDriversFragment
+import com.aralhub.offers.navigation.FeatureOffersNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureRequestNavigation {
+class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation{
 
     private var navController: NavController? = null
 
@@ -46,6 +44,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
 
     override fun goToGetOffersFromSendOrderFragment() {
         navController?.navigate(R.id.action_homeFragment_to_getOffersFromDriversFragment)
+    }
+
+    override fun goToWaitingFragment() {
+        navController?.navigate(R.id.action_getOffersFromDriversFragment_to_waitingFragment)
     }
 
 }
