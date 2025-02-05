@@ -2,16 +2,83 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/padding_small"
     android:background="@drawable/shape_item_offer"
-    android:layout_margin="@dimen/margin_small"
+    android:layout_marginHorizontal="@dimen/margin_small"
+    android:layout_marginVertical="4dp"
+    android:elevation="1dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="32dp"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:layout_height="32dp"
+            tools:src="@tools:sample/avatars"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_driver_name"
+                    android:layout_width="wrap_content"
+                    tools:text="Basd"
+                    android:textSize="14sp"
+                    android:ellipsize="end"
+                    android:maxEms="10"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_rating"
+                    tools:text="4.8 ★"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:textColor="@color/color_interactive_accent"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_car"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Chevrolet Cobalt"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            tools:text="4 min"
+            android:layout_margin="@dimen/margin_small"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tv_price"
         android:padding="@dimen/padding_small"
-        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+        tools:text="14 000 som"
+        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -21,18 +88,22 @@
         android:orientation="horizontal">
 
         <com.aralhub.ui.components.ProgressiveButton
+            android:id="@+id/btn_decline"
             android:layout_width="0dp"
             android:layout_weight="1"
+            app:textColor="@color/color_content_tertiary"
             app:progressiveButtonText="Kerek emes"
-            android:layout_margin="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
             android:layout_height="wrap_content"/>
 
         <com.aralhub.ui.components.ProgressiveButton
+            android:id="@+id/btn_accept"
             android:layout_width="0dp"
-            app:progressColor="@color/color_success_crouton"
+            app:textColor="@color/white"
+            app:progressColor="@color/color_interactive_accent"
             app:progressiveButtonText="Qabillaw"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small"
+            android:layout_marginStart="@dimen/margin_small"
             android:layout_height="wrap_content"/>
 
 

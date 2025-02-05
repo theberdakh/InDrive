@@ -78,7 +78,7 @@ public class ProgressiveButton extends View {
 
     private void setupRipple() {
         post(() -> {
-            float cornerRadius = getHeight() / 4f;
+            float cornerRadius = getHeight() / 3f;
             float[] outerRadii = new float[8];
             for (int i = 0; i < 8; i++) {
                 outerRadii[i] = cornerRadius;
@@ -116,7 +116,7 @@ public class ProgressiveButton extends View {
         buttonRect.set(0, 0, w, h);
 
         // Update clip path for rounded corners
-        float cornerRadius = h / 4f;
+        float cornerRadius = h / 3f;
         clipPath.reset();
         clipPath.addRoundRect(buttonRect, cornerRadius, cornerRadius, Path.Direction.CW);
     }

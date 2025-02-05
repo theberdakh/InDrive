@@ -16,19 +16,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/item_offer"
-        android:clipToPadding="true"
-        android:paddingBottom="180dp"
+        android:clipToPadding="false"
+        android:paddingBottom="240dp"
         android:nestedScrollingEnabled="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@drawable/bg_bottom_sheet"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:paddingBottomSystemWindowInsets="true"
         app:paddingTopSystemWindowInsets="false">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            style="@style/Widget.InDrive.BottomSheet.DragHandle"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:padding="0dp"
+            android:paddingBottom="0dp" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/offers_nav_host"

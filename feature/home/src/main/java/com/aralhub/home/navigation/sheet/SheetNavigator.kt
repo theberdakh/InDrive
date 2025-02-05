@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SheetNavigator @Inject constructor(): FeatureRequestBottomSheetNavigation {
+internal class SheetNavigator @Inject constructor(): FeatureRequestBottomSheetNavigation {
     private var navController : NavController? = null
 
     fun bind(navController: NavController) {

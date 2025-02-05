@@ -8,7 +8,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class BottomSheetNavigation {
+internal abstract class BottomSheetNavigation {
 
     @Binds
     abstract fun bindFeatureRequestNavigation(bottomSheetNavigator: SheetNavigator): FeatureRequestBottomSheetNavigation

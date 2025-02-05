@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment: Fragment(R.layout.fragment_home) {
+internal class HomeFragment: Fragment(R.layout.fragment_home) {
     @Inject
     lateinit var networkMonitor: NetworkMonitor
     private val binding by viewBinding(FragmentHomeBinding::bind)

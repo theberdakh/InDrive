@@ -3,78 +3,107 @@ package com.aralhub.offers
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.offers.adapter.OfferItemAdapter
 import com.aralhub.offers.databinding.FragmentGetOffersFromDriversBinding
 import com.aralhub.offers.model.OfferItem
 import com.aralhub.offers.model.OfferItemDriver
+import com.aralhub.offers.navigation.sheet.SheetNavigator
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class GetOffersFromDriversFragment : Fragment(R.layout.fragment_get_offers_from_drivers) {
     private val binding by viewBinding(FragmentGetOffersFromDriversBinding::bind)
+    @Inject
+    lateinit var sheetNavigator: SheetNavigator
     private val offerItemAdapter by lazy { OfferItemAdapter() }
     private val offers = listOf(
         OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
-        ),  OfferItem(
-            1,
-            OfferItemDriver("Atabek", "Cobalt"),
-            "20,000"
+            id = 1,
+            driver = OfferItemDriver(
+                id = 1,
+                name = "John Doe",
+                carName = "Toyota Camry",
+                rating = 4.5f,
+                avatar = "https://randomuser.me/api/portraits/men/1.jpg"
+            ),
+            offeredPrice = "10000",
+            timeToArrive = "5 min"
         ),
-    )
+        OfferItem(
+            id = 1,
+            driver = OfferItemDriver(
+                id = 1,
+                name = "John Doe",
+                carName = "Toyota Camry",
+                rating = 4.5f,
+                avatar = "https://randomuser.me/api/portraits/men/3.jpg"
+            ),
+            offeredPrice = "10000",
+            timeToArrive = "5 min"
+        ),
+        OfferItem(
+            id = 1,
+            driver = OfferItemDriver(
+                id = 1,
+                name = "John Doe",
+                carName = "Toyota Camry",
+                rating = 4.5f,
+                avatar = "https://randomuser.me/api/portraits/men/4.jpg"
+            ),
+            offeredPrice = "10000",
+            timeToArrive = "5 min"
+        ),
+        OfferItem(
+            id = 1,
+            driver = OfferItemDriver(
+                id = 1,
+                name = "John Doe",
+                carName = "Toyota Camry",
+                rating = 4.5f,
+                avatar = "https://randomuser.me/api/portraits/women/3.jpg"
+            ),
+            offeredPrice = "10000",
+            timeToArrive = "5 min"
+        ),
+        OfferItem(
+            id = 1,
+            driver = OfferItemDriver(
+                id = 1,
+                name = "John Doe",
+                carName = "Last",
+                rating = 4.5f,
+                avatar = "https://randomuser.me/api/portraits/women/4.jpg"
+            ),
+            offeredPrice = "10000",
+            timeToArrive = "5 min"
+        ),
+
+
+        )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpMapView()
         setUpRecyclerView()
+        initBottomNavController()
     }
 
     private fun setUpRecyclerView() {
         binding.rvOffers.adapter = offerItemAdapter
         offerItemAdapter.submitList(offers)
+    }
+
+    private fun initBottomNavController() {
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.offers_nav_host) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.let {
+            sheetNavigator.bind(navController)
+        }
     }
 
     private fun setUpMapView() {
@@ -87,6 +116,11 @@ class GetOffersFromDriversFragment : Fragment(R.layout.fragment_get_offers_from_
                 /* tilt = */ 30.0f
             )
         )
+    }
+
+    override fun onDestroy() {
+        sheetNavigator.unbind()
+        super.onDestroy()
     }
 
 }

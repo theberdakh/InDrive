@@ -7,12 +7,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aralhub.offers.databinding.ItemOfferBinding
 import com.aralhub.offers.model.OfferItem
 import com.aralhub.offers.model.OfferItemDiffCallback
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
-class OfferItemAdapter: ListAdapter<OfferItem, OfferItemAdapter.ViewHolder>(OfferItemDiffCallback) {
+class OfferItemAdapter :
+    ListAdapter<OfferItem, OfferItemAdapter.ViewHolder>(OfferItemDiffCallback) {
 
-    inner class ViewHolder(private val itemOfferBinding: ItemOfferBinding): RecyclerView.ViewHolder(itemOfferBinding.root){
-        fun bind(offerItem: OfferItem){
-            itemOfferBinding.tvName.text = offerItem.driver.name
+    inner class ViewHolder(private val itemOfferBinding: ItemOfferBinding) :
+        RecyclerView.ViewHolder(itemOfferBinding.root) {
+        fun bind(offerItem: OfferItem) {
+            itemOfferBinding.apply {
+                tvDriverName.text = offerItem.driver.name
+                tvPrice.text = offerItem.offeredPrice + " som"
+                tvRating.text = "${offerItem.driver.rating} ★"
+                tvTime.text = offerItem.timeToArrive
+                tvCar.text = offerItem.driver.carName
+
+                Glide.with(itemOfferBinding.ivAvatar.context)
+                    .load(offerItem.driver.avatar)
+                    .centerCrop()
+                    .placeholder(com.aralhub.ui.R.drawable.ic_user)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(itemOfferBinding.ivAvatar)
+            }
         }
     }
 
@@ -21,5 +38,6 @@ class OfferItemAdapter: ListAdapter<OfferItem, OfferItemAdapter.ViewHolder>(Offe
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(getItem(position))
 }

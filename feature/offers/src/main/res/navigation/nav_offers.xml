@@ -2,11 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/fragmentChangeOrCancelRequest"
-    android:id="@+id/nav_offers">
+    android:id="@+id/nav_offers"
+    app:startDestination="@id/fragmentChangeOrCancelRequest">
 
-    <fragment android:id="@+id/fragmentChangeOrCancelRequest"
-        tools:layout="@layout/fragment_change_or_cancel_request"
-        android:name="com.aralhub.offers.ChangeOrCancelRequestFragment"/>
+    <fragment
+        android:id="@+id/fragmentChangeOrCancelRequest"
+        android:name="com.aralhub.offers.ChangeOrCancelRequestFragment"
+        tools:layout="@layout/fragment_change_or_cancel_request">
+
+        <action
+            android:id="@+id/action_fragmentChangeOrCancelRequest_to_changePriceFragment"
+            app:destination="@id/changePriceFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/changePriceFragment"
+        android:name="com.aralhub.offers.ChangePriceFragment" />
 
 </navigation>

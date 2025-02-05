@@ -2,16 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_medium">
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"/>
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter"
+            android:text="Eń jaqın aydawshınıń 10 000 somǵa shekemgi bolǵan usınısın avtomat túrde qabıllaw" />
+
+        <com.aralhub.ui.components.CustomToggleSwitch
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
 
     <Button
+        android:id="@+id/btn_change"
+        style="@style/Widget.InDrive.Button.Variant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"/>
+        android:layout_marginVertical="@dimen/margin_medium"
+        android:text="Bahanı ózgertiw" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        style="@style/Widget.InDrive.Button.Variant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sorawdı biykarlaw"
+        android:textColor="@color/color_status_error" />
 
 </LinearLayout>

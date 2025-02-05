@@ -35,6 +35,12 @@
         <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
     </style>
 
+    <style name="Widget.InDrive.Button.Variant" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/selector_button_primary_variant</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton.Variant</item>
+    </style>
+
     <style name="Widget.InDrive.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:textAppearance">@style/TextAppearance.InDrive.Text</item>
         <item name="android:minHeight">48dip</item>
@@ -61,7 +67,6 @@
         <item name="tint">@color/color_gray_1</item>
         <item name="android:minHeight">8dp</item>
         <item name="android:paddingBottom">0dp</item>
-        <!--Alpha can be added optionally to achieve nice color blend-->
     </style>
 
     <style name="CustomBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">

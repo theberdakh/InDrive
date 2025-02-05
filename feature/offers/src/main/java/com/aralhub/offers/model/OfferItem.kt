@@ -5,12 +5,16 @@ import androidx.recyclerview.widget.DiffUtil
 data class OfferItem(
     val id: Int,
     val driver: OfferItemDriver,
-    val offeredPrice: String
+    val offeredPrice: String,
+    val timeToArrive: String,
 )
 
 data class OfferItemDriver(
+    val id: Int,
     val name: String,
-    val carName: String
+    val carName: String,
+    val rating: Float,
+    val avatar: String
 )
 
 object OfferItemDiffCallback: DiffUtil.ItemCallback<OfferItem>(){
