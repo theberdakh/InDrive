@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/waitingForDriverFragment"
+    android:id="@+id/nav_waiting">
+
+    <fragment android:id="@+id/waitingForDriverFragment"
+        android:name="com.aralhub.indrive.ride.RideSheetFragment"
+        tools:layout="@layout/fragment_sheet_ride"/>
+
+</navigation>

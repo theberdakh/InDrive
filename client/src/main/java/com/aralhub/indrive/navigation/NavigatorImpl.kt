@@ -5,7 +5,7 @@ import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrive.R
 import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
-import com.aralhub.indrive.waiting.navigation.FeatureWaitingNavigation
+import com.aralhub.indrive.ride.navigation.FeatureWaitingNavigation
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
