@@ -2,11 +2,24 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/waitingForDriverFragment"
-    android:id="@+id/nav_waiting">
+    android:id="@+id/nav_waiting"
+    app:startDestination="@id/rideBottomSheet">
 
-    <fragment android:id="@+id/waitingForDriverFragment"
-        android:name="com.aralhub.indrive.ride.RideSheetFragment"
-        tools:layout="@layout/fragment_sheet_ride"/>
+    <fragment
+        android:id="@+id/rideBottomSheet"
+        android:name="com.aralhub.indrive.ride.RideBottomSheet"
+        tools:layout="@layout/bottom_sheet_ride">
 
+        <action
+            android:id="@+id/action_rideBottomSheet_to_rideFinishedBottomSheet"
+            app:destination="@+id/rideFinishedBottomSheet"
+            app:popUpTo="@id/rideBottomSheet"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/rideFinishedBottomSheet"
+        android:name="com.aralhub.indrive.ride.RideFinishedBottomSheet"
+        tools:layout="@layout/bottom_sheet_ride_finished" />
 </navigation>

@@ -68,13 +68,6 @@
 
     <fragment
         android:id="@+id/waitingFragment"
-        android:name="com.aralhub.indrive.ride.RideFragment">
-
-        <action android:id="@+id/action_waitingFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="false"/>
-
-    </fragment>
+        android:name="com.aralhub.indrive.ride.RideFragment"/>
 
 </navigation>

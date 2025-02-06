@@ -27,7 +27,7 @@
             android:paddingBottom="0dp" />
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/offers_nav_host"
+            android:id="@+id/ride_nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

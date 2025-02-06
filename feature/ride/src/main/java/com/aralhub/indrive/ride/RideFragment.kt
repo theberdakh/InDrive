@@ -2,9 +2,9 @@ package com.aralhub.indrive.ride
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import com.aralhub.indrive.ride.navigation.FeatureWaitingNavigation
+import androidx.navigation.fragment.NavHostFragment
+import com.aralhub.indrive.ride.navigation.sheet.SheetNavigator
 import com.aralhub.indrive.waiting.R
 import com.aralhub.indrive.waiting.databinding.FragmentRideBinding
 import com.aralhub.ui.utils.viewBinding
@@ -14,26 +14,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RideFragment: Fragment(R.layout.fragment_ride) {
+internal class RideFragment: Fragment(R.layout.fragment_ride) {
     private val binding by viewBinding(FragmentRideBinding::bind)
     @Inject
-    lateinit var waitingNavigation: FeatureWaitingNavigation
+    lateinit var sheetNavigator: SheetNavigator
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpMapView()
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true){
-            waitingNavigation.goBackToHomeFragment()
-        }
+        initBottomNavController()
 
     }
 
     private fun initBottomNavController() {
-       /* val navHostFragment = childFragmentManager.findFragmentById(R.id.offers_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.ride_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let {
             sheetNavigator.bind(navController)
-        }*/
+        }
     }
 
     private fun setUpMapView() {
@@ -46,6 +43,11 @@ class RideFragment: Fragment(R.layout.fragment_ride) {
                 /* tilt = */ 30.0f
             )
         )
+    }
+
+    override fun onDestroyView() {
+        sheetNavigator.unbind()
+        super.onDestroyView()
     }
 
 }

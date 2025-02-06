@@ -42,8 +42,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                tools:text="0:25"
-                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
+                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
+                tools:text="0:25" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -71,23 +71,23 @@
 
         <ImageView
             android:id="@+id/iv_driver"
-            tools:src="@tools:sample/avatars"
             android:layout_width="64dp"
             android:layout_height="64dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:foreground="@drawable/ripple_text"
-            android:background="@drawable/bg_rating"
-            android:paddingHorizontal="4dp"
-            android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
             android:layout_width="0dp"
-            android:text="4.8★"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/bg_rating"
+            android:foreground="@drawable/ripple_text"
+            android:paddingHorizontal="4dp"
+            android:text="4.8★"
+            android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
             android:textColor="@color/color_content_link"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="4.8 ★" />
 
@@ -97,23 +97,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
-        android:text="Babur" />
+        android:text="Babur"
+        android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
     <TextView
-        android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Aydawshi" />
+        android:text="Aydawshi"
+        android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
     <TextView
         android:id="@+id/tv_car_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        tools:text="Chevrolet Cobalt, 95 A 123 WE"
-        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+        tools:text="Chevrolet Cobalt, 95 A 123 WE" />
 
     <TextView
         android:layout_width="match_parent"
@@ -138,10 +138,10 @@
 
             <View
                 android:id="@+id/btn_cancel"
-                android:clickable="true"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@drawable/bg_cancel_button"
+                android:clickable="true"
                 android:foreground="@drawable/ripple_round" />
 
             <TextView
@@ -163,10 +163,10 @@
 
             <View
                 android:id="@+id/btn_call"
-                android:clickable="true"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@drawable/bg_call_button"
+                android:clickable="true"
                 android:foreground="@drawable/ripple_round" />
 
             <TextView
@@ -182,80 +182,152 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layout_route"
+        android:id="@+id/layout_money"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginVertical="@dimen/margin_small"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_material_symbols_price_change_outline" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/margin_small"
-            android:gravity="top"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <View
-                android:layout_width="24dp"
-                android:layout_height="48dp"
-                android:background="@drawable/ic_from_location" />
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:paddingHorizontal="@dimen/padding_small"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                tools:text="15 000" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/padding_small"
-                    android:text="Uy"
-                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/padding_small"
-                    android:text="Jumis"
-                    android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
-
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Jámi"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_from_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_small"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="48dp"
+            android:background="@drawable/ic_from_location" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/ic_material_symbols_radio_button_checked" />
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Uy"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/padding_small"
-                    android:text="Uy"
-                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/padding_small"
-                    android:text="Jumis"
-                    android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
-
-            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Jumis"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_to_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/layout_to_location_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_material_symbols_radio_button_checked" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Uy"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Jumis"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_payment_method"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_small"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_cash" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                tools:text="Naq pul" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Tólem usılı"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
 

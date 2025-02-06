@@ -5,13 +5,12 @@ import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrive.R
 import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
-import com.aralhub.indrive.ride.navigation.FeatureWaitingNavigation
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureWaitingNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation{
 
     private var navController: NavController? = null
 
@@ -50,9 +49,4 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
     override fun goToWaitingFragment() {
         navController?.navigate(R.id.action_getOffersFromDriversFragment_to_waitingFragment)
     }
-
-    override fun goBackToHomeFragment() {
-        navController?.navigate(R.id.action_waitingFragment_to_homeFragment)
-    }
-
 }

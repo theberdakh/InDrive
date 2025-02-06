@@ -2,7 +2,6 @@ package com.aralhub.indrive.ride.modal
 
 import android.os.Bundle
 import android.view.View
-import com.aralhub.indrive.ride.navigation.FeatureWaitingNavigation
 import com.aralhub.indrive.waiting.R
 import com.aralhub.indrive.waiting.databinding.FragmentCancelTripBinding
 import com.aralhub.ui.utils.viewBinding
@@ -16,8 +15,6 @@ class CancelTripFragment: BottomSheetDialogFragment(R.layout.fragment_cancel_tri
     companion object {
         const val TAG = "CancelTripFragment"
     }
-    @Inject
-    lateinit var waitingNavigation: FeatureWaitingNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
