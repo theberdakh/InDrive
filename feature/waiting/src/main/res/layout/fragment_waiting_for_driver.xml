@@ -1,11 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/padding_medium">
 
-    <Button
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Waiting For Driver"/>
+        android:text="Aydawshı ~4 minut ishinde jetip keledi"
+        android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection" />
+
+    <LinearLayout
+        android:id="@+id/layout_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_small"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/ic_baseline_timelapse" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_small"
+                tools:text="0:25"
+                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_mdi_question_mark_circle"
+                android:drawablePadding="@dimen/padding_small"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Biypul kútiw waqtı"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_driver"
+            tools:src="@tools:sample/avatars"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:foreground="@drawable/ripple_text"
+            android:background="@drawable/bg_rating"
+            android:paddingHorizontal="4dp"
+            android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
+            android:layout_width="0dp"
+            android:text="4.8★"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/color_content_link"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="4.8 ★" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
+        android:text="Babur" />
+
+    <TextView
+        android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Aydawshi" />
+
+    <TextView
+        android:id="@+id/tv_car_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        tools:text="Chevrolet Cobalt, 95 A 123 WE"
+        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Avtomobil"
+        android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:baselineAligned="false"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/btn_cancel"
+                android:clickable="true"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_cancel_button"
+                android:foreground="@drawable/ripple_round" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_small"
+                android:text="Sapardı biykarlaw"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/btn_call"
+                android:clickable="true"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_call_button"
+                android:foreground="@drawable/ripple_round" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_small"
+                android:text="Qońıraw etiw"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_route"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/margin_small"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_from_location" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:text="Uy"
+                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:text="Jumis"
+                    android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_material_symbols_radio_button_checked" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:text="Uy"
+                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:text="Jumis"
+                    android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
 
 </LinearLayout>

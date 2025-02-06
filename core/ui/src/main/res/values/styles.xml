@@ -85,5 +85,10 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
+    
+    <style name="Widget.InDrive.Radio.Button" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/selector_radio_button</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge</item>
+    </style>
 
 </resources>

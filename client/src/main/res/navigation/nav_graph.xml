@@ -27,16 +27,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.aralhub.home.HomeFragment">
-
-        <action
-            android:id="@+id/action_homeFragment_to_getOffersFromDriversFragment"
-            app:destination="@id/getOffersFromDriversFragment"/>
-
-    </fragment>
-
-    <fragment
         android:id="@+id/addSmsFragment"
         android:name="com.aralhub.auth.AddSMSFragment">
 
@@ -56,6 +46,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.aralhub.home.HomeFragment">
+
+        <action
+            android:id="@+id/action_homeFragment_to_getOffersFromDriversFragment"
+            app:destination="@id/getOffersFromDriversFragment"/>
+
+    </fragment>
+
+    <fragment
         android:id="@+id/getOffersFromDriversFragment"
         android:name="com.aralhub.offers.GetOffersFromDriversFragment">
 
@@ -68,6 +68,13 @@
 
     <fragment
         android:id="@+id/waitingFragment"
-        android:name="com.aralhub.indrive.waiting.WaitingFragment"/>
+        android:name="com.aralhub.indrive.waiting.WaitingFragment">
+
+        <action android:id="@+id/action_waitingFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false"/>
+
+    </fragment>
 
 </navigation>

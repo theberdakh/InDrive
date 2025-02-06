@@ -2,6 +2,7 @@ package com.aralhub.indrive.navigation
 
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrive.request.navigation.FeatureRequestNavigation
+import com.aralhub.indrive.waiting.navigation.FeatureWaitingNavigation
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import dagger.Binds
 import dagger.Module
@@ -20,6 +21,9 @@ abstract class Navigation {
 
     @Binds
     abstract fun bindFeatureOffersNavigation(navigatorImpl: NavigatorImpl): FeatureOffersNavigation
+
+    @Binds
+    abstract fun bindFeatureWaitingNavigation(navigatorImpl: NavigatorImpl): FeatureWaitingNavigation
 
     @Binds
     abstract fun bindNavigator(navigatorImpl: NavigatorImpl): Navigator

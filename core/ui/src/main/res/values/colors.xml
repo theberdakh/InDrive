@@ -14,6 +14,7 @@
     <color name="color_content_primary">#2C2D2E</color>
     <color name="color_content_secondary">#444547</color>
     <color name="color_content_tertiary">#8C8D8F</color>
+    <color name="color_content_link">#09417D</color>
 
     <color name="color_interactive_accent">#4096F2</color>
 

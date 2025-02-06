@@ -10,6 +10,7 @@
 
         <item name="android:textViewStyle">@style/Widget.InDrive.TextView</item>
         <item name="android:buttonStyle">@style/Widget.InDrive.Button.Primary</item>
+        <item name="android:radioButtonStyle">@style/Widget.InDrive.Radio.Button</item>
         <item name="editTextStyle">@style/Widget.InDrive.EditText</item>
     </style>
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.aralhub.auth.databinding.FragmentAddSmsBinding
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
-import com.aralhub.ui.utils.TextViewUtils
+import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -27,7 +27,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
 
         val phoneNumber = requireArguments().getString(ARG_PHONE) ?: ""
         val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, phoneNumber)
-        binding.tvDescription.text = TextViewUtils.setBoldSpan(fullText, phoneNumber, "#001934")
+        binding.tvDescription.text = StringUtils.getBoldSpanString(fullText, phoneNumber, "#001934")
 
         binding.etPhone.addTextChangedListener {
             binding.btnStart.isEnabled = it.toString().length == 4

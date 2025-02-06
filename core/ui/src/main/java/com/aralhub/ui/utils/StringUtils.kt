@@ -7,9 +7,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 
-object TextViewUtils {
+object StringUtils {
 
-    fun setBoldSpan(fullText: String, boldText: String, boldTextColorHex: String): SpannableString {
+    fun getBoldSpanString(fullText: String, boldText: String, boldTextColorHex: String): SpannableString {
         val spannableString = SpannableString(fullText)
         val startIndex = fullText.indexOf(boldText)
         val endIndex = startIndex + boldText.length
