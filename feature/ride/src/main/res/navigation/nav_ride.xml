@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_waiting"
+    app:startDestination="@id/waitingForDriverBottomSheet">
+
+    <fragment
+        android:id="@+id/waitingForDriverBottomSheet"
+        android:name="com.aralhub.indrive.ride.sheet.standard.WaitingForDriverBottomSheet">
+
+        <action
+            android:id="@+id/action_waitingForDriverBottomSheet_toDriverIsWaitingBottomSheet"
+            app:destination="@id/driverIsWaitingBottomSheet"
+            app:popUpTo="@id/waitingForDriverBottomSheet"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/driverIsWaitingBottomSheet"
+        android:name="com.aralhub.indrive.ride.sheet.standard.DriverIsWaitingBottomSheet">
+
+        <action
+            android:id="@+id/action_driverIsWaitingBottomSheet_toRideBottomSheet"
+            app:destination="@id/rideBottomSheet"
+            app:popUpTo="@id/driverIsWaitingBottomSheet"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/rideBottomSheet"
+        android:name="com.aralhub.indrive.ride.sheet.standard.RideBottomSheet"
+        tools:layout="@layout/bottom_sheet_ride">
+
+        <action
+            android:id="@+id/action_rideBottomSheet_to_rideFinishedBottomSheet"
+            app:destination="@+id/rideFinishedBottomSheet"
+            app:popUpTo="@id/rideBottomSheet"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/rideFinishedBottomSheet"
+        android:name="com.aralhub.indrive.ride.sheet.standard.RideFinishedBottomSheet"
+        tools:layout="@layout/bottom_sheet_ride_finished">
+
+        <action
+            android:id="@+id/action_rideFinishedBottomSheet_to_rateDriverBottomSheet"
+            app:destination="@+id/rateDriverBottomSheet"
+            app:popUpTo="@id/rideFinishedBottomSheet"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/rateDriverBottomSheet"
+        android:name="com.aralhub.indrive.ride.sheet.standard.RateDriverBottomSheet"
+        tools:layout="@layout/bottom_sheet_ride_finished" />
+</navigation>

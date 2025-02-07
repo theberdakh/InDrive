@@ -12,19 +12,19 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection"
-        tools:text="Mánzilge jetip barıw waqtı ~13 minut" />
+        tools:text="Aydawshı ~4 minut ishinde jetip keledi"
+        android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium">
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/iv_driver"
             android:layout_width="64dp"
-            android:layout_height="64dp"
             android:contentDescription="@string/cd_driver_avatar"
+            android:layout_height="64dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -50,8 +50,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
-        tools:text="Babur" />
+        tools:text="Babur"
+        android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
     <TextView
         android:layout_width="match_parent"
@@ -135,7 +135,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layout_money"
+        android:id="@+id/layout_from_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_small"
@@ -144,8 +144,8 @@
 
         <View
             android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_material_symbols_price_change_outline" />
+            android:layout_height="48dp"
+            android:background="@drawable/ic_from_location" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -153,21 +153,23 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_price"
+                android:id="@+id/tv_from_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                tools:text="15 000" />
+                tools:text="Uy"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:text="@string/label_total_money"
+                android:text="@string/label_pick_up_location"
                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -181,8 +183,7 @@
             android:id="@+id/layout_to_location_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_material_symbols_radio_button_checked"
-            android:backgroundTint="@color/color_interactive_accent" />
+            android:background="@drawable/ic_material_symbols_radio_button_checked" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -194,8 +195,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                tools:text="Uy" />
+                tools:text="Uy"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -205,46 +206,6 @@
                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/layout_payment_method"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin_small"
-        android:gravity="top"
-        android:orientation="horizontal">
-
-        <View
-            android:id="@+id/icon_payment_method"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_cash" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_payment_method"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                tools:text="Naq pul" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/padding_small"
-                android:text="@string/label_payment_method"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
-
-        </LinearLayout>
-
 
     </LinearLayout>
 

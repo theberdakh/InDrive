@@ -1,4 +1,4 @@
-package com.aralhub.indrive.ride
+package com.aralhub.indrive.ride.utils
 
 import android.os.CountDownTimer
 

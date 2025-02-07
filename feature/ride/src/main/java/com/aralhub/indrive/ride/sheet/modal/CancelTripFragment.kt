@@ -1,4 +1,4 @@
-package com.aralhub.indrive.ride.modal
+package com.aralhub.indrive.ride.sheet.modal
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,6 @@ import com.aralhub.indrive.waiting.databinding.FragmentCancelTripBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CancelTripFragment: BottomSheetDialogFragment(R.layout.fragment_cancel_trip) {

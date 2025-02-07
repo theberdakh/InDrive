@@ -17,8 +17,20 @@ internal class SheetNavigator @Inject constructor(): FeatureRideBottomSheetNavig
         this.navController = null
     }
 
-    override fun goToRideFinishedBottomSheetFromRideBottomSheet() {
-        navController?.navigate(R.id.action_rideBottomSheet_to_rideFinishedBottomSheet)
+    override fun goToDriverIsWaiting() {
+        navController?.navigate(R.id.driverIsWaitingBottomSheet)
+    }
+
+    override fun goToRide() {
+        navController?.navigate(R.id.rideBottomSheet)
+    }
+
+    override fun goToRideFinished() {
+        navController?.navigate(R.id.rideFinishedBottomSheet)
+    }
+
+    override fun goToRateDriverFromRideFinished() {
+        navController?.navigate(R.id.action_rideFinishedBottomSheet_to_rateDriverBottomSheet)
     }
 
 }

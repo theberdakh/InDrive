@@ -1,6 +1,8 @@
 <resources>
     <string name="cd_phone">Taxi photo</string>
+    <string name="cd_success_icon">Success</string>
     <string name="cd_menu">Menu</string>
+    <string name="cd_driver_avatar">Driver avatar</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_closed">Closed</string>
@@ -8,6 +10,7 @@
     <string name="app_name">In Drive</string>
     <string name="label_continue">Dawam etiw</string>
     <string name="label_save">Saqlaw</string>
+    <string name="label_send">Jollaw</string>
     <string name="label_enter">Kiriw</string>
     <string name="label_confirm">Tastıyıqlaw</string>
     <string name="label_confirm_description">Siz kiritken  <b>%1$s</b> telefon nomerine tastıyıqlaw kodı jiberildi</string>
@@ -16,10 +19,37 @@
     <string name="label_start">Baslaw</string>
     <string name="label_information">Maǵlıwmatlar</string>
 
+    <string name="label_car">Avtomobil</string>
+    <string name="label_pick_up_location">Alıp ketiw mánzili</string>
+    <string name="label_address_location">Barar mánzil</string>
+    <string name="label_add_location">Noqat qosıw</string>
+    <string name="label_cancel_trip">Sapardı biykarlaw</string>
+    <string name="label_call">Qońıraw etiw</string>
+    <string name="label_driver">Aydawshi</string>
+    <string name="label_driver_is_waiting">Aydawshı sizdi kútip tur</string>
+    <string name="label_driver_rating">%1$f★</string>
+    <string name="label_free_waiting_time">Biypul kútiw waqtı</string>
+    <string name="label_total_money">Jámi</string>
+    <string name="label_payment_method">Tólem usılı</string>
+    <string name="label_cash">Naq pul</string>
+    <string name="label_online_payment">Onlayn pul ótkeriw</string>
+
+    <string name="label_trip_ended">Sapar juwmaqlandı</string>
+    <string name="label_trip_ended_description_payment_online">Ótinish, tómendegi karta maǵlıwmatları arqalı jol haqın aydawshıǵa tikkeley ótkeriń.</string>
+    <string name="label_trip_ended_description_payment_cash">Ótinish, kelisilgen jol haqın naq pulda tikkeley aydawshınıń ózine tóleń.</string>
+    <string name="label_card_number">Karta nomeri</string>
+    <string name="label_close">Jabıw</string>
+    
+    <string name="message_card_number_is_copied">Karta maǵlıwmatları nusqalandı!</string>
+
+    <string name="label_rate_quality_of_service">Xızmet sapasın bahalań</string>
+
     <string name="hint_phone">Telefon</string>
     <string name="hint_name">Atıńız</string>
     <string name="hint_from_location">Alıp ketiw ornı?</string>
+    <string name="hint_address">Mánzil?</string>
     <string name="hint_to_location">Mánzil?</string>
+    <string name="hint_comment_to_driver">Kommentariy</string>
 
     <string name="error_network_connection">Internet baylanısı joq</string>
     <string name="success_network_connection">Baylanıs qayta ornatıldı</string>

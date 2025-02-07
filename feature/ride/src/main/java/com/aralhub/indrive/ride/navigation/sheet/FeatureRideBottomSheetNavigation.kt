@@ -1,5 +1,8 @@
 package com.aralhub.indrive.ride.navigation.sheet
 
 interface FeatureRideBottomSheetNavigation {
-    fun goToRideFinishedBottomSheetFromRideBottomSheet()
+    fun goToDriverIsWaiting()
+    fun goToRide()
+    fun goToRideFinished()
+    fun goToRateDriverFromRideFinished()
 }

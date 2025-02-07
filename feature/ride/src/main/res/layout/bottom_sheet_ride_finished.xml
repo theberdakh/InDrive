@@ -8,6 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/cd_success_icon"
         android:src="@drawable/im_done" />
 
     <TextView
@@ -15,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Sapar juwmaqlandı"
+        android:text="@string/label_trip_ended"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
 
     <TextView
@@ -23,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_small"
-        android:text="Ótinish, tómendegi karta maǵlıwmatları arqalı jol haqın aydawshıǵa tikkeley ótkeriń."
+        tools:text="@string/label_trip_ended_description_payment_online"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text"/>
 
@@ -34,6 +35,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_total_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/padding_small"
@@ -44,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/padding_small"
-            android:text="Jámi"
+            android:text="@string/label_total_money"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
     </LinearLayout>
@@ -65,19 +67,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:text="1234 5664 2222 2333"
                 android:id="@+id/tv_card_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                tools:text="15 000" />
+                tools:text="1543 3434 4343 4343" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:text="Jámi"
+                android:text="@string/label_card_number"
                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
@@ -96,7 +97,7 @@
         style="@style/Widget.InDrive.Button.Primary"
         android:id="@+id/btn_clear"
         android:enabled="false"
-        android:text="Túsinikli"
+        android:text="@string/label_close"
         android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

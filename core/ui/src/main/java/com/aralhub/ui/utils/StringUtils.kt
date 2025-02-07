@@ -9,7 +9,7 @@ import android.text.style.StyleSpan
 
 object StringUtils {
 
-    fun getBoldSpanString(fullText: String, boldText: String, boldTextColorHex: String): SpannableString {
+    fun getBoldSpanString(fullText: String, boldText: String, boldTextColorHex: String = "#2C2D2E"): SpannableString {
         val spannableString = SpannableString(fullText)
         val startIndex = fullText.indexOf(boldText)
         val endIndex = startIndex + boldText.length

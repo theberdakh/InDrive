@@ -1,17 +1,14 @@
-package com.aralhub.indrive.ride.modal
+package com.aralhub.indrive.ride.sheet.modal
 
 import android.os.Bundle
 import android.view.View
 import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.FragmentTripCancelledByDriverBinding
+import com.aralhub.indrive.waiting.databinding.FragmentWaitingTimeBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class TripCanceledByDriverFragment: BottomSheetDialogFragment(R.layout.fragment_trip_cancelled_by_driver) {
-    private val binding by viewBinding(FragmentTripCancelledByDriverBinding::bind)
+class WaitingTimeFragment: BottomSheetDialogFragment(R.layout.fragment_waiting_time) {
+    private val binding by viewBinding(FragmentWaitingTimeBinding::bind)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpListeners()
@@ -24,6 +21,6 @@ class TripCanceledByDriverFragment: BottomSheetDialogFragment(R.layout.fragment_
     }
 
     companion object {
-        const val TAG = "TripCanceledByDriverFragment"
+        const val TAG = "WaitingTimeFragment"
     }
 }

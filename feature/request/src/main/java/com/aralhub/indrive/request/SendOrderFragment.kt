@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.aralhub.indrive.request.databinding.FragmentSendOrderBinding
+import com.aralhub.indrive.request.modal.AddLocationModalBottomSheet
 import com.aralhub.indrive.request.modal.ChangePaymentMethodBottomSheetFragment
 import com.aralhub.indrive.request.modal.CommentToDriverBottomSheetDialogFragment
 import com.aralhub.indrive.request.navigation.FeatureRequestBottomSheetNavigation
@@ -43,6 +44,9 @@ class SendOrderFragment : Fragment(R.layout.fragment_send_order) {
                 requireActivity().supportFragmentManager,
                 ""
             )
+        }
+        binding.iconAdd.setOnClickListener {
+            AddLocationModalBottomSheet().show(requireActivity().supportFragmentManager, "")
         }
 
         binding.layoutCommentToDriver.setOnClickListener {

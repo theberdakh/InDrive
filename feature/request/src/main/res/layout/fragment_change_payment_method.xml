@@ -3,7 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/padding_small">
+    android:paddingHorizontal="@dimen/padding_small">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        style="@style/Widget.InDrive.BottomSheet.DragHandle"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:padding="0dp"
+        android:paddingBottom="0dp" />
 
     <LinearLayout
         android:id="@+id/layout_cash"

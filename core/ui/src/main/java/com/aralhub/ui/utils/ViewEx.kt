@@ -14,4 +14,12 @@ object ViewEx {
     fun View.invisible() {
         visibility = View.INVISIBLE
     }
+
+    fun View.enable() {
+        isEnabled = true
+    }
+
+    fun View.disable() {
+        isEnabled = false
+    }
 }
