@@ -5,11 +5,10 @@ plugins {
 
 android {
     namespace 'com.aralhub.ui'
-    compileSdk 35
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        it.targetSdk 34
-        minSdk 24
+        minSdk libs.versions.minSdk.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

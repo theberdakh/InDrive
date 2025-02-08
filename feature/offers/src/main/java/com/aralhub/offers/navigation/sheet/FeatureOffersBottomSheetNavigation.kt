@@ -1,5 +1,5 @@
 package com.aralhub.offers.navigation.sheet
 
-internal interface FeatureOffersBottomSheetNavigation {
+interface FeatureOffersBottomSheetNavigation {
     fun goToChangePriceFragment()
 }
