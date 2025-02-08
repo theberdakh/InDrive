@@ -12,7 +12,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.aralhub.indrive.ride.Ride
 import com.aralhub.indrive.ride.RideBottomSheetUiState
+import com.aralhub.indrive.ride.RideState
 import com.aralhub.indrive.ride.RideViewModel
 import com.aralhub.indrive.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.indrive.waiting.R
@@ -20,7 +22,6 @@ import com.aralhub.indrive.waiting.databinding.BottomSheetRideFinishedBinding
 import com.aralhub.ui.utils.ViewEx.enable
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,11 +51,26 @@ class RideFinishedBottomSheet : Fragment(R.layout.bottom_sheet_ride_finished) {
                         RideBottomSheetUiState.Loading -> {}
                         is RideBottomSheetUiState.Success -> {
                             Log.i("RideFinishedBottomSheet", "initObservers: ${state.rideState}")
+                            when(state.rideState){
+                                RideState.FINISHED -> {
+                                    Log.i("RideFinishedBottomSheet", "initObservers: ${state.rideState}")
+                                    initRideData(state.rideData)
+                                }
+                                RideState.WAITING_FOR_DRIVER -> {}
+                                RideState.DRIVER_IS_WAITING -> {}
+                                RideState.DRIVER_CANCELED -> {}
+                                RideState.IN_RIDE -> {}
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun initRideData(rideData: Ride) {
+        binding.tvTotalMoney.text = rideData.price
+        binding.tvCardNumber.text = rideData.driver.cardNumber
     }
 
     private fun Context.copyToClipboard(text: CharSequence) {
