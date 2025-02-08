@@ -18,7 +18,7 @@ import javax.inject.Inject
 internal class RideFragment : Fragment(R.layout.fragment_ride) {
     private val binding by viewBinding(FragmentRideBinding::bind)
     @Inject
-    lateinit var sheetNavigator: SheetNavigator
+    lateinit var navigator: SheetNavigator
     @Inject
     lateinit var bottomSheetNavigation: FeatureRideBottomSheetNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.ride_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
-        navController.let { sheetNavigator.bind(navController) }
+        navController.let { navigator.bind(navController) }
     }
 
     private fun setUpMapView() {
@@ -47,7 +47,7 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     }
 
     override fun onDestroyView() {
-        sheetNavigator.unbind()
+        navigator.unbind()
         super.onDestroyView()
     }
 

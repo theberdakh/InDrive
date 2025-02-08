@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.indrive.request.databinding.ItemLocationBinding
+import com.aralhub.indrive.request.databinding.LocationItemBinding
 import com.aralhub.indrive.request.model.LocationItem
 import com.aralhub.indrive.request.model.LocationItemDiffCallback
 
 class LocationItemAdapter: ListAdapter<LocationItem, LocationItemAdapter.ViewHolder>(
     LocationItemDiffCallback
 ) {
-    inner class ViewHolder(private val binding: ItemLocationBinding) :
+    inner class ViewHolder(private val binding: LocationItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(locationItem: LocationItem) {
             binding.apply {
@@ -23,7 +23,7 @@ class LocationItemAdapter: ListAdapter<LocationItem, LocationItemAdapter.ViewHol
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = LocationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

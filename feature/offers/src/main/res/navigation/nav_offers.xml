@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_offers"
-    app:startDestination="@id/fragmentChangeOrCancelRequest">
+    app:startDestination="@id/changeOrCancelRequestBottomSheet">
 
     <fragment
-        android:id="@+id/fragmentChangeOrCancelRequest"
-        android:name="com.aralhub.offers.ChangeOrCancelRequestFragment"
-        tools:layout="@layout/fragment_change_or_cancel_request">
+        android:id="@+id/changeOrCancelRequestBottomSheet"
+        android:name="com.aralhub.offers.sheet.standard.ChangeOrCancelRequestBottomSheet"
+        tools:layout="@layout/bottom_sheet_change_or_cancel_request">
 
         <action
-            android:id="@+id/action_fragmentChangeOrCancelRequest_to_changePriceFragment"
-            app:destination="@id/changePriceFragment" />
+            android:id="@+id/action_changeOrCancelRequestBottomSheet_to_changePriceBottomSheet"
+            app:destination="@id/changePriceBottomSheet" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/changePriceFragment"
-        android:name="com.aralhub.offers.ChangePriceFragment" />
+        android:id="@+id/changePriceBottomSheet"
+        android:name="com.aralhub.offers.sheet.standard.ChangePriceBottomSheet" />
 
 </navigation>

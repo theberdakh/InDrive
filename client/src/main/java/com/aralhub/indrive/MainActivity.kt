@@ -13,14 +13,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var navigatorImpl: Navigator
+    lateinit var navigator: Navigator
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(com.aralhub.ui.R.style.Theme_InDrive)
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setPadding()
-
     }
 
     private fun setPadding() {
@@ -33,11 +32,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        navigatorImpl.bind(findNavController(R.id.main_nav_host))
+        navigator.bind(findNavController(R.id.main_nav_host))
     }
 
     override fun onPause() {
-        navigatorImpl.unbind()
+        navigator.unbind()
         super.onPause()
     }
 }

@@ -43,10 +43,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
     }
 
     override fun goToGetOffersFromSendOrderFragment() {
-        navController?.navigate(R.id.action_homeFragment_to_getOffersFromDriversFragment)
+        navController?.navigate(R.id.action_homeFragment_to_offersFragment)
     }
 
-    override fun goToWaitingFragment() {
-        navController?.navigate(R.id.action_getOffersFromDriversFragment_to_waitingFragment)
+    override fun goToRideFragment() {
+        navController?.navigate(R.id.action_offersFragment_to_rideFragment)
     }
 }
