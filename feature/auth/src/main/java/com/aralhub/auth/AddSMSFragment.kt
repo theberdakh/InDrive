@@ -21,21 +21,17 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
 
     @Inject
     lateinit var navigator: FeatureAuthNavigation
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val phoneNumber = requireArguments().getString(ARG_PHONE) ?: ""
         val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, phoneNumber)
         binding.tvDescription.text = StringUtils.getBoldSpanString(fullText, phoneNumber, "#001934")
-
         binding.etPhone.addTextChangedListener {
             binding.btnStart.isEnabled = it.toString().length == 4
             if (binding.btnStart.isEnabled) {
                 KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone)
             }
         }
-
         binding.btnStart.setOnClickListener {
             lifecycleScope.launch {
                 delay(3000)
@@ -43,12 +39,10 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
                 navigator.goToAddName()
             }
         }
-
     }
 
     companion object {
         private const val ARG_PHONE = "phone"
-
         fun args(phone: String): Bundle {
             return Bundle().apply {
                 putString(ARG_PHONE, phone)
