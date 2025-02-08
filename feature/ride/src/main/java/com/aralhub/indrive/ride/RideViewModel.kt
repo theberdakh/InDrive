@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -16,35 +20,26 @@ class RideViewModel @Inject constructor() : ViewModel() {
         started = SharingStarted.WhileSubscribed(),
         initialValue = RideBottomSheetUiState.Loading
     )
+
+    private var _rideState =
+        MutableStateFlow<RideBottomSheetUiState>(RideBottomSheetUiState.Loading)
+    val rideState2 = _rideState.asStateFlow()
+
+    init {
+        getRideState().onEach {
+            _rideState.emit(it)
+        }.launchIn(viewModelScope)
+    }
 }
 
-val cardRideData = Ride(
-    driver = Driver(
-        name = "John Doe",
-        phone = "+1234567890",
-        rating = 4.5f,
-        avatar = "https://www.example.com/avatar.jpg",
-        cardNumber = "1234 5678 9012 3456"
-    ),
-    car = Car(
-        model = "Toyota Camry",
-        number = "A123BC"
-    ),
-    route = Route(
-        start = "Moscow, Russia",
-        end = "Saint Petersburg, Russia",
-        time = "1 hour 30 minutes"
-    ),
-    price = "1000 RUB",
-    paymentMethod = PaymentMethod.CARD,
-    driverWaitTime = "2 minutes",
-    waitForDriverTime = "5 minutes"
-)
-
 fun getRideState() = flow {
-    emit(RideBottomSheetUiState.Loading)
-    delay(10000)
     emit(RideBottomSheetUiState.Success(RideState.WAITING_FOR_DRIVER, cardRideData))
+    delay(3000)
+    emit(RideBottomSheetUiState.Success(RideState.DRIVER_IS_WAITING, cardRideData))
+    delay(3000)
+    emit(RideBottomSheetUiState.Success(RideState.IN_RIDE, cardRideData))
+    delay(3000)
+    emit(RideBottomSheetUiState.Success(RideState.FINISHED, cardRideData))
 }
 
 sealed interface RideBottomSheetUiState {
@@ -94,3 +89,26 @@ enum class RideState {
     IN_RIDE,
     FINISHED
 }
+
+val cardRideData = Ride(
+    driver = Driver(
+        name = "John Doe",
+        phone = "+1234567890",
+        rating = 4.5f,
+        avatar = "https://www.example.com/avatar.jpg",
+        cardNumber = "1234 5678 9012 3456"
+    ),
+    car = Car(
+        model = "Toyota Camry",
+        number = "A123BC"
+    ),
+    route = Route(
+        start = "Moscow, Russia",
+        end = "Saint Petersburg, Russia",
+        time = "1 hour 30 minutes"
+    ),
+    price = "1000 RUB",
+    paymentMethod = PaymentMethod.CARD,
+    driverWaitTime = "2 minutes",
+    waitForDriverTime = "5 minutes"
+)

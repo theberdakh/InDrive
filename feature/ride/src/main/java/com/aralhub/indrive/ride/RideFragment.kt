@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.indrive.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.indrive.ride.navigation.sheet.SheetNavigator
-import com.aralhub.indrive.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.indrive.waiting.R
 import com.aralhub.indrive.waiting.databinding.FragmentRideBinding
 import com.aralhub.ui.utils.viewBinding
@@ -21,7 +20,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class RideFragment : Fragment(R.layout.fragment_ride) {
-    private val rideViewModel: RideViewModel by viewModels()
+    private val rideViewModel: RideViewModel by activityViewModels()
     private val binding by viewBinding(FragmentRideBinding::bind)
     @Inject
     lateinit var sheetNavigator: SheetNavigator
@@ -32,29 +31,24 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
 
         setUpMapView()
         initBottomNavController()
-        initObservers()
     }
 
     private fun initObservers() {
         lifecycleScope.launch {
-            rideViewModel.rideState.collect {
+            rideViewModel.rideState2.collect {
                 when (it) {
                     RideBottomSheetUiState.Error -> {}
                     RideBottomSheetUiState.Loading -> {}
-                    is RideBottomSheetUiState.Success -> handleNavigation(it.rideState)
+                    is RideBottomSheetUiState.Success -> {
+                        Log.i("RideFragment", "initObservers: ${it.rideState}")
+                        handleNavigation(it.rideState)
+                    }
                 }
             }
         }
     }
 
     private fun handleNavigation(rideState: RideState) {
-        when(rideState){
-            RideState.WAITING_FOR_DRIVER -> {}
-            RideState.DRIVER_IS_WAITING -> bottomSheetNavigation.goToDriverIsWaiting()
-            RideState.DRIVER_CANCELED -> { TripCanceledByDriverFragment().show(childFragmentManager, TripCanceledByDriverFragment.TAG) }
-            RideState.IN_RIDE -> bottomSheetNavigation.goToRide()
-            RideState.FINISHED -> bottomSheetNavigation.goToRideFinished()
-        }
     }
 
     private fun initBottomNavController() {

@@ -7,6 +7,7 @@
 
     <fragment
         android:id="@+id/waitingForDriverBottomSheet"
+        tools:layout="@layout/bottom_sheet_waiting_for_driver"
         android:name="com.aralhub.indrive.ride.sheet.standard.WaitingForDriverBottomSheet">
 
         <action

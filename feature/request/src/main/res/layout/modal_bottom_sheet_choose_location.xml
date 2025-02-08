@@ -14,9 +14,10 @@
         android:paddingBottom="0dp" />
 
     <EditText
-        style="@style/Widget.InDrive.EditText"
+        style="@style/Widget.InDrive.EditText.NoSelector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/color_content_primary"
         android:autofillHints="importantForAutoFill"
         android:hint="@string/hint_to_location"
         android:layout_margin="@dimen/margin_small"
