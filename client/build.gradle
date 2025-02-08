@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'com.aralhub.indrive'
-    compileSdk 35
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "com.aralhub.indrive"
