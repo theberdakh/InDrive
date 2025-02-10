@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/logoFragment">
+
+    <fragment
+        android:id="@+id/logoFragment"
+        tools:layout="@layout/fragment_logo"
+        android:name="com.aralhub.auth.LogoFragment">
+        <action
+            android:id="@+id/action_logoFragment_to_addPhoneFragment"
+            app:destination="@id/addPhoneFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/addPhoneFragment"
+        tools:layout="@layout/fragment_add_phone"
+        android:name="com.aralhub.auth.AddPhoneFragment">
+
+        <action
+            android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
+            app:destination="@id/addSmsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addSmsFragment"
+        tools:layout="@layout/fragment_add_sms"
+        android:name="com.aralhub.auth.AddSMSFragment">
+
+        <action
+            android:id="@+id/action_addSmsFragment_to_addNameFragment"
+            app:destination="@id/addNameFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNameFragment"
+        tools:layout="@layout/fragment_add_name"
+        android:name="com.aralhub.auth.AddNameFragment">
+
+
+    </fragment>
+
 
 </navigation>
