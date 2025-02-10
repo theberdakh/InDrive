@@ -26,8 +26,12 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
         navController?.navigate(R.id.action_logoFragment_to_addPhoneFragment)
     }
 
-    override fun goToHomeFragmentFromAddName() {
-        navController?.navigate(R.id.action_addNameFragment_to_HomeFragment)
+    override fun goToRequestFromAddName() {
+        navController?.navigate(R.id.action_addNameFragment_to_requestFragment)
+    }
+
+    override fun goToOrdersFromAddName() {
+        // client does not have orders
     }
 
     override fun goToAddSMSCode(phone: String) {
@@ -38,8 +42,12 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
         navController?.navigate(R.id.action_addSmsFragment_to_addNameFragment)
     }
 
-    override fun goToHomeFragmentFromLogo() {
-        navController?.navigate(R.id.action_logoFragment_to_homeFragment)
+    override fun goToRequestFromLogo() {
+        navController?.navigate(R.id.action_logoFragment_to_requestFragment)
+    }
+
+    override fun goToOrdersFromLogo() {
+        // client does not have orders
     }
 
     override fun goToGetOffersFromSendOrderFragment() {

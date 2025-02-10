@@ -12,8 +12,8 @@
             app:destination="@id/addPhoneFragment" />
 
         <action
-            android:id="@+id/action_logoFragment_to_homeFragment"
-            app:destination="@id/homeFragment"/>
+            android:id="@+id/action_logoFragment_to_requestFragment"
+            app:destination="@id/requestFragment"/>
 
     </fragment>
     <fragment
@@ -40,13 +40,13 @@
         android:id="@+id/addNameFragment"
         android:name="com.aralhub.auth.AddNameFragment">
 
-        <action android:id="@+id/action_addNameFragment_to_HomeFragment"
-            app:destination="@id/homeFragment"/>
+        <action android:id="@+id/action_addNameFragment_to_requestFragment"
+            app:destination="@id/requestFragment"/>
 
     </fragment>
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/requestFragment"
         android:name="com.aralhub.indrive.request.RequestFragment">
 
         <action

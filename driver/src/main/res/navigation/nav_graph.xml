@@ -7,17 +7,20 @@
 
     <fragment
         android:id="@+id/logoFragment"
-        tools:layout="@layout/fragment_logo"
-        android:name="com.aralhub.auth.LogoFragment">
+        android:name="com.aralhub.auth.LogoFragment"
+        tools:layout="@layout/fragment_logo">
         <action
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
             app:destination="@id/addPhoneFragment" />
 
+        <action android:id="@+id/action_logoFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/addPhoneFragment"
-        tools:layout="@layout/fragment_add_phone"
-        android:name="com.aralhub.auth.AddPhoneFragment">
+        android:name="com.aralhub.auth.AddPhoneFragment"
+        tools:layout="@layout/fragment_add_phone">
 
         <action
             android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
@@ -27,8 +30,8 @@
 
     <fragment
         android:id="@+id/addSmsFragment"
-        tools:layout="@layout/fragment_add_sms"
-        android:name="com.aralhub.auth.AddSMSFragment">
+        android:name="com.aralhub.auth.AddSMSFragment"
+        tools:layout="@layout/fragment_add_sms">
 
         <action
             android:id="@+id/action_addSmsFragment_to_addNameFragment"
@@ -38,11 +41,17 @@
 
     <fragment
         android:id="@+id/addNameFragment"
-        tools:layout="@layout/fragment_add_name"
-        android:name="com.aralhub.auth.AddNameFragment">
+        android:name="com.aralhub.auth.AddNameFragment"
+        tools:layout="@layout/fragment_add_name">
 
-
+        <action
+            android:id="@+id/action_addNameFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.aralhub.indrive.driver.orders.OrdersFragment"
+        tools:layout="@layout/fragment_orders" />
 
 </navigation>

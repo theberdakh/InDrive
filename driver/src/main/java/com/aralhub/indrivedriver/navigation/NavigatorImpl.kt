@@ -16,7 +16,12 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
         navController?.navigate(R.id.action_logoFragment_to_addPhoneFragment)
     }
 
-    override fun goToHomeFragmentFromAddName() {}
+    override fun goToRequestFromAddName() {
+        // driver does not have request
+    }
+    override fun goToOrdersFromAddName() {
+        navController?.navigate(R.id.action_addNameFragment_to_ordersFragment)
+    }
 
     override fun goToAddSMSCode(phone: String) {
         navController?.navigate(R.id.action_addPhoneFragment_to_addSmsFragment, AddSMSFragment.args(phone))
@@ -26,7 +31,12 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
         navController?.navigate(R.id.action_addSmsFragment_to_addNameFragment)
     }
 
-    override fun goToHomeFragmentFromLogo(){}
+    override fun goToRequestFromLogo(){
+        // driver does not have request
+    }
+    override fun goToOrdersFromLogo() {
+        navController?.navigate(R.id.action_logoFragment_to_ordersFragment)
+    }
 
     override fun bind(navController: NavController) {
         this.navController = navController
