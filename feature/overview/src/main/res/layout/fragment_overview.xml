@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.InDrive"
     android:fitsSystemWindows="true">
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -16,11 +17,13 @@
             android:orientation="vertical">
 
             <Toolbar
-                android:id="@+id/tb_orders"
+                android:id="@+id/tb_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:navigationIcon="@drawable/ic_mdi_hamburger_menu"
-                android:title="Orders" />
+                android:title="Overview"/>
+
+
         </LinearLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -57,12 +60,14 @@
                 android:padding="0dp"
                 android:paddingBottom="0dp" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/bottom_sheet_nav_host"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+            <Button
+                android:id="@+id/btn_accept_orders"
+                style="@style/TextAppearance.InDrive.PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:defaultNavHost="true" />
+                android:layout_margin="@dimen/margin_small"
+                android:text="Buyırtpalardı qabıllaw"
+                />
 
         </LinearLayout>
 

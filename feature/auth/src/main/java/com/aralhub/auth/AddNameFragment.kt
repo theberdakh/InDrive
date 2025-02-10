@@ -30,7 +30,7 @@ class AddNameFragment : Fragment(R.layout.fragment_add_name) {
             lifecycleScope.launch {
                 delay(4000)
                 binding.btnSave.stopProgress()
-                if (isDriver) navigator.goToOrdersFromAddName()
+                if (isDriver) navigator.goToOverviewFromAddName()
                 else navigator.goToRequestFromAddName()
             }
         }

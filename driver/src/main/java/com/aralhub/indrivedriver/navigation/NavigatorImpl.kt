@@ -4,11 +4,12 @@ import androidx.navigation.NavController
 import com.aralhub.auth.AddSMSFragment
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrivedriver.R
+import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, FeatureOverviewNavigation{
 
     private var navController: NavController? = null
 
@@ -19,8 +20,8 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
     override fun goToRequestFromAddName() {
         // driver does not have request
     }
-    override fun goToOrdersFromAddName() {
-        navController?.navigate(R.id.action_addNameFragment_to_ordersFragment)
+    override fun goToOverviewFromAddName() {
+        navController?.navigate(R.id.action_addNameFragment_to_overviewFragment)
     }
 
     override fun goToAddSMSCode(phone: String) {
@@ -34,8 +35,8 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
     override fun goToRequestFromLogo(){
         // driver does not have request
     }
-    override fun goToOrdersFromLogo() {
-        navController?.navigate(R.id.action_logoFragment_to_ordersFragment)
+    override fun goToOverviewFromLogo() {
+        navController?.navigate(R.id.action_logoFragment_to_overviewFragment)
     }
 
     override fun bind(navController: NavController) {
@@ -44,5 +45,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation{
 
     override fun unbind() {
         this.navController = null
+    }
+
+    override fun goToAcceptOrders() {
+        navController?.navigate(R.id.action_overviewFragment_to_ordersFragment)
     }
 }

@@ -13,8 +13,9 @@
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
             app:destination="@id/addPhoneFragment" />
 
-        <action android:id="@+id/action_logoFragment_to_ordersFragment"
-            app:destination="@id/ordersFragment" />
+        <action
+            android:id="@+id/action_logoFragment_to_overviewFragment"
+            app:destination="@id/overviewFragment" />
 
     </fragment>
     <fragment
@@ -43,10 +44,20 @@
         android:id="@+id/addNameFragment"
         android:name="com.aralhub.auth.AddNameFragment"
         tools:layout="@layout/fragment_add_name">
+        <action
+            android:id="@+id/action_addNameFragment_to_overviewFragment"
+            app:destination="@id/overviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/overviewFragment"
+        android:name="com.aralhub.overview.OverviewFragment"
+        tools:layout="@layout/fragment_overview">
 
         <action
-            android:id="@+id/action_addNameFragment_to_ordersFragment"
+            android:id="@+id/action_overviewFragment_to_ordersFragment"
             app:destination="@id/ordersFragment" />
+
     </fragment>
 
     <fragment

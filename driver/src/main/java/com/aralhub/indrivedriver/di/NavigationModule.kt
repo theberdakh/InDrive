@@ -3,6 +3,7 @@ package com.aralhub.indrivedriver.di
 import com.aralhub.auth.navigation.FeatureAuthNavigation
 import com.aralhub.indrivedriver.navigation.Navigator
 import com.aralhub.indrivedriver.navigation.NavigatorImpl
+import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,6 +15,9 @@ abstract class NavigationModule {
 
     @Binds
     abstract fun bindFeatureAuthNavigation(navigatorImpl: NavigatorImpl): FeatureAuthNavigation
+
+    @Binds
+    abstract fun bindFeatureOverviewNavigation(navigatorImpl: NavigatorImpl): FeatureOverviewNavigation
 
     @Binds
     abstract fun bindNavigator(navigatorImpl: NavigatorImpl): Navigator

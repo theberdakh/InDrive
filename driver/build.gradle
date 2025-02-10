@@ -41,6 +41,7 @@ dependencies {
 
     //Feature Modules
     implementation project(':feature:auth')
+    implementation project(':feature:overview')
     implementation project(':feature:orders')
 
     implementation libs.androidx.core.ktx

@@ -30,7 +30,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
         navController?.navigate(R.id.action_addNameFragment_to_requestFragment)
     }
 
-    override fun goToOrdersFromAddName() {
+    override fun goToOverviewFromAddName() {
         // client does not have orders
     }
 
@@ -46,7 +46,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureAuthNavigation, Fea
         navController?.navigate(R.id.action_logoFragment_to_requestFragment)
     }
 
-    override fun goToOrdersFromLogo() {
+    override fun goToOverviewFromLogo() {
         // client does not have orders
     }
 
