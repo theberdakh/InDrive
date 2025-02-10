@@ -21,4 +21,8 @@ class ExitLineModalBottomSheet(
             dismissAllowingStateLoss()
         }
     }
+
+    companion object {
+        const val TAG ="ExitLineModalBottomSheet"
+    }
 }

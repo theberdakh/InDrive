@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.indrive.driver.orders.sheet.ExitLineModalBottomSheet
+import com.aralhub.indrive.driver.orders.sheet.FilterModalBottomSheet
 import com.aralhub.ui.utils.viewBinding
 
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
@@ -24,19 +25,19 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     showExitLineBottomSheet()
                     true
                 }
+
                 else -> false
             }
         }
-        binding.btnFilter.setOnClickListener {}
+        binding.btnFilter.setOnClickListener {
+            FilterModalBottomSheet().show(childFragmentManager, FilterModalBottomSheet.TAG)
+        }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
             showExitLineBottomSheet()
         }
     }
 
     private fun showExitLineBottomSheet() {
-        ExitLineModalBottomSheet(onExit = { findNavController().navigateUp() }).show(
-            childFragmentManager,
-            "ExitLineModalBottomSheet"
-        )
+        ExitLineModalBottomSheet(onExit = { findNavController().navigateUp() }).show(childFragmentManager, ExitLineModalBottomSheet.TAG)
     }
 }
