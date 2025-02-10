@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.indrive.driver.orders'
+    namespace 'com.aralhub.overview'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {

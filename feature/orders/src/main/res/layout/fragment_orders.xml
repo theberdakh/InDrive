@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:text="Orders"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Toolbar
+                android:id="@+id/tb_orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:navigationIcon="@drawable/ic_mdi_hamburger_menu"
+                android:title="Title" />
+        </LinearLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/layout_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet"
+        android:clickable="true"
+        android:fitsSystemWindows="false"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingTop="0dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:paddingBottomSystemWindowInsets="true"
+        app:paddingTopSystemWindowInsets="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                style="@style/Widget.InDrive.BottomSheet.DragHandle"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:padding="0dp"
+                android:paddingBottom="0dp" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/bottom_sheet_nav_host"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:defaultNavHost="true" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
