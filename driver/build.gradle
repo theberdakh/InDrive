@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.dagger)
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
@@ -34,6 +36,12 @@ android {
 
 dependencies {
 
+    //Core Modules
+    implementation project(':core:ui')
+
+    //Feature Modules
+    implementation project(':feature:auth')
+
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
@@ -42,4 +50,12 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+
+    //Dagger-Hilt for Dependency Injection
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
+
+    //Navigation Component
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
 }
