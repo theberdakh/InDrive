@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -13,15 +14,32 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#f1f3f5"
             android:orientation="vertical">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/tb_orders"
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/tb_orders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    app:menu="@menu/menu_orders"
+                    app:navigationIcon="@drawable/ic_mdi_hamburger_menu"
+                    app:title="Orders" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_orders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:menu="@menu/menu_orders"
-                app:navigationIcon="@drawable/ic_mdi_hamburger_menu"
-                app:title="Orders" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/order_item" />
 
 
             <View
@@ -30,8 +48,8 @@
                 android:layout_height="56dp"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/margin_medium"
-                android:foreground="@drawable/ripple_round"
-                android:background="@drawable/bg_fab_filter" />
+                android:background="@drawable/bg_fab_filter"
+                android:foreground="@drawable/ripple_round" />
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -44,41 +62,5 @@
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/layout_bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_bottom_sheet"
-        android:clickable="true"
-        android:fitsSystemWindows="false"
-        android:focusable="true"
-        android:orientation="vertical"
-        android:paddingTop="0dp"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        app:paddingBottomSystemWindowInsets="true"
-        app:paddingTopSystemWindowInsets="false">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-                style="@style/Widget.InDrive.BottomSheet.DragHandle"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:padding="0dp"
-                android:paddingBottom="0dp" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/bottom_sheet_nav_host"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:defaultNavHost="true" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

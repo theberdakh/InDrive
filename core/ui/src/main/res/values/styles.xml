@@ -35,6 +35,10 @@
         <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
     </style>
 
+    <style name="Widget.InDrive.Button.GreenGradient" parent="Widget.InDrive.Button.Primary">
+        <item name="android:background">@drawable/selector_button_green_gradient</item>
+    </style>
+
     <style name="Widget.InDrive.Slider.Tooltip" parent="android:Widget">
         <item name="android:layout_margin">8dp</item>
         <item name="android:minWidth">32dp</item>

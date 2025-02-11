@@ -24,8 +24,8 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
 
         setUpDrawerLayout()
         binding.btnAcceptOrders.setOnClickListener {
-            LocationServiceOffModalBottomSheet().show(childFragmentManager, LocationServiceOffModalBottomSheet.TAG)
-           // navigation.goToAcceptOrders()
+          //  LocationServiceOffModalBottomSheet().show(childFragmentManager, LocationServiceOffModalBottomSheet.TAG)
+        navigation.goToAcceptOrders()
         }
     }
 

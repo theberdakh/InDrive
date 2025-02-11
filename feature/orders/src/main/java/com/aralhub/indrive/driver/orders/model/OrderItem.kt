@@ -5,7 +5,11 @@ import androidx.recyclerview.widget.DiffUtil
 data class OrderItem(
     val id: Int,
     val name: String,
-    val pickUp: String
+    val pickUp: String,
+    val avatar: String,
+    val roadPrice: String = "",
+    val pickUpDistance: String = "",
+    val roadDistance: String = "",
 )
 
 object OrderItemDiffCallback: DiffUtil.ItemCallback<OrderItem>(){
