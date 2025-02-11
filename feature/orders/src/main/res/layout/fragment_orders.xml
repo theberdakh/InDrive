@@ -28,13 +28,14 @@
                     android:background="@color/white"
                     app:menu="@menu/menu_orders"
                     app:navigationIcon="@drawable/ic_mdi_hamburger_menu"
-                    app:title="Orders" />
+                    />
 
             </com.google.android.material.appbar.AppBarLayout>
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_orders"
+                android:paddingBottom="@dimen/padding_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

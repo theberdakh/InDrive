@@ -29,6 +29,9 @@ class OrderModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bottom_she
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MoneyFormatter(binding.etPrice)
+        binding.btnSendOffer.setOnClickListener {
+            OrderLoadingModalBottomSheet().show(parentFragmentManager, OrderLoadingModalBottomSheet.TAG)
+        }
         setWebView()
     }
 
