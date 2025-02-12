@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/padding_small"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
 
@@ -14,64 +14,13 @@
         android:padding="0dp"
         android:paddingBottom="0dp" />
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Jolawshı kútilip atır…"
-        android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection" />
-
-    <LinearLayout
-        android:id="@+id/layout_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin_small"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="top"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/ic_baseline_timelapse" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
-                tools:text="0:25" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_mdi_question_mark_circle"
-                android:drawablePadding="@dimen/padding_small"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="@dimen/padding_small"
-                android:text="@string/label_free_waiting_time"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/padding_small">
+        android:paddingHorizontal="@dimen/padding_small"
+        android:paddingBottom="@dimen/padding_small">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -192,7 +141,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/iv_payment_method"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:src="@drawable/ic_cash"
+            tools:text="4 min" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Onlayn pul ótkeriw"
+            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginHorizontal="@dimen/margin_small"
         android:baselineAligned="false"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
@@ -251,16 +227,22 @@
 
     <Button
         style="@style/Widget.InDrive.Button.Primary"
-        android:text="Jolǵa shıǵıw"
-        android:drawableEnd="@drawable/ic_content_copy"
+        android:text="Navigator"
+        android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 
-
-    <com.aralhub.ui.components.SlideFinishButton
+    <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_margin="@dimen/margin_small"
-        android:layout_height="50dp"/>
+        android:layout_height="1dp"/>
+
+
+    <com.aralhub.ui.components.SlideButton
+        android:id="@+id/slide_button_finish"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:SlideButtonText="Juwmaqlaw"
+        android:layout_margin="@dimen/margin_small"/>
 
 </LinearLayout>

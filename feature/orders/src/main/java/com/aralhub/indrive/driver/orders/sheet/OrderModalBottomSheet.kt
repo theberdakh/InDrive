@@ -9,15 +9,24 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.lifecycle.lifecycleScope
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
     private val binding by viewBinding(ModalBottomSheetOrderBinding::bind)
+    private val orderLoadingModalBottomSheet = OrderLoadingModalBottomSheet()
+
+    private var onOrderAccepted: (() -> Unit)? = null
+    fun setOnOrderAccepted(onOrderAccepted: () -> Unit) {
+        this.onOrderAccepted = onOrderAccepted
+    }
 
     override fun onStart() {
         super.onStart()
@@ -30,13 +39,20 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         super.onViewCreated(view, savedInstanceState)
         MoneyFormatter(binding.etPrice)
         setWebView()
+        binding.btnSendOffer.setOnClickListener {
+            orderLoadingModalBottomSheet.show(parentFragmentManager, OrderLoadingModalBottomSheet.TAG)
+            lifecycleScope.launch {
+                delay(3000)
+                orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                onOrderAccepted?.invoke()
+            }
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setWebView() {
         binding.wvMap.apply {
             setBackgroundColor(0)
-
             // Enable JavaScript
             settings.javaScriptEnabled = true
 

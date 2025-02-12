@@ -135,6 +135,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btn_close"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_margin="@dimen/margin_small"
         android:text="Jabıw"
