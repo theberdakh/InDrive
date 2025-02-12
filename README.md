@@ -8,6 +8,7 @@ Online Taxi ordering app
 
 ## Authors 
 - [Berdakh Tlepov](https://github.com/theberdakh)
+- [Atabek Utebay](https://github.com/atabekkr)
 
 
 
