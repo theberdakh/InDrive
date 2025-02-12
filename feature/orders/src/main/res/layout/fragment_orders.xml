@@ -46,6 +46,7 @@
             <View
                 android:id="@+id/btn_filter"
                 android:layout_width="56dp"
+                android:elevation="4dp"
                 android:layout_height="56dp"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/margin_medium"

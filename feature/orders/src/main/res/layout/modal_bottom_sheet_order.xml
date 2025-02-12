@@ -264,20 +264,21 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:padding="@dimen/padding_small"
+            android:layout_margin="@dimen/margin_small"
             android:textColor="@color/color_content_secondary"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="Usınıs etilgen baha 12 000 som"
             android:drawablePadding="@dimen/padding_small"
-            app:drawableStartCompat="@drawable/ic_info" />
+            android:drawableStart="@drawable/ic_info"/>
 
         <Button
             android:id="@+id/btn_send_offer"
             style="@style/Widget.InDrive.Button.Variant"
             android:layout_width="match_parent"
             android:text="Usınıstı jiberiw"
-            android:layout_margin="@dimen/margin_small"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

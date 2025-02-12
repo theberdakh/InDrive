@@ -1,9 +1,9 @@
 package com.aralhub.indrive.driver.orders.sheet
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -16,7 +16,7 @@ import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class OrderModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
+class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
     private val binding by viewBinding(ModalBottomSheetOrderBinding::bind)
 
     override fun onStart() {
@@ -29,12 +29,10 @@ class OrderModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bottom_she
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MoneyFormatter(binding.etPrice)
-        binding.btnSendOffer.setOnClickListener {
-            OrderLoadingModalBottomSheet().show(parentFragmentManager, OrderLoadingModalBottomSheet.TAG)
-        }
         setWebView()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setWebView() {
         binding.wvMap.apply {
             setBackgroundColor(0)
@@ -71,7 +69,12 @@ class OrderModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bottom_she
                 }
             }
             // Load the URL
-            loadUrl("https://unique-banoffee-29f6df.netlify.app/?z=17&center=38.899003%2C-77.040242&loc=38.900385%2C-77.036819&loc=38.898682%2C-77.042956&hl=ru&alt=0")
+            val startLat = 42.473810
+            val startLong = 59.615314
+
+            val endLat = 42.465140
+            val endLong = 59.612868
+            loadUrl("https://unique-banoffee-29f6df.netlify.app/?z=15&loc=$startLat%2C$startLong&loc=$endLat%2C$endLong&hl=ru&alt=0")
         }
     }
 
