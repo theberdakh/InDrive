@@ -16,6 +16,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddNameFragment : Fragment(R.layout.fragment_add_name) {
     private val binding by viewBinding(FragmentAddNameBinding::bind)
+    private var isDriver = true
     @Inject
     lateinit var navigator: FeatureAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,7 +30,8 @@ class AddNameFragment : Fragment(R.layout.fragment_add_name) {
             lifecycleScope.launch {
                 delay(4000)
                 binding.btnSave.stopProgress()
-                navigator.goToHomeFragmentFromAddName()
+                if (isDriver) navigator.goToOverviewFromAddName()
+                else navigator.goToRequestFromAddName()
             }
         }
 

@@ -2,8 +2,10 @@ package com.aralhub.auth.navigation
 
 interface FeatureAuthNavigation {
     fun goToAddPhoneNumber()
-    fun goToHomeFragmentFromAddName()
+    fun goToRequestFromAddName()
+    fun goToOverviewFromAddName()
     fun goToAddSMSCode(phone: String)
     fun goToAddName()
-    fun goToHomeFragmentFromLogo()
+    fun goToRequestFromLogo()
+    fun goToOverviewFromLogo()
 }
