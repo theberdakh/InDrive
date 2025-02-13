@@ -27,7 +27,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
         val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, phoneNumber)
         binding.tvDescription.text = StringUtils.getBoldSpanString(fullText, phoneNumber, "#001934")
         binding.etPhone.addTextChangedListener {
-            binding.btnStart.isEnabled = it.toString().length == 4
+            binding.btnStart.isEnabled = it.toString().length == 5
             if (binding.btnStart.isEnabled) {
                 KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone)
             }
@@ -36,7 +36,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
             lifecycleScope.launch {
                 delay(3000)
                 binding.btnStart.stopProgress()
-                navigator.goToAddName()
+                navigator.goToOverviewFromAddSMS()
             }
         }
     }

@@ -17,16 +17,12 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
         navController?.navigate(R.id.action_logoFragment_to_addPhoneFragment)
     }
 
-    override fun goToOverviewFromAddName() {
-        navController?.navigate(R.id.action_addNameFragment_to_overviewFragment)
+    override fun goToOverviewFromAddSMS() {
+        navController?.navigate(R.id.action_addSmsFragment_to_overviewFragment)
     }
 
     override fun goToAddSMSCode(phone: String) {
         navController?.navigate(R.id.action_addPhoneFragment_to_addSmsFragment, AddSMSFragment.args(phone))
-    }
-
-    override fun goToAddName() {
-        navController?.navigate(R.id.action_addSmsFragment_to_addNameFragment)
     }
 
     override fun goToOverviewFromLogo() {

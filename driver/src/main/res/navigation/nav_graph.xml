@@ -35,18 +35,9 @@
         tools:layout="@layout/fragment_add_sms">
 
         <action
-            android:id="@+id/action_addSmsFragment_to_addNameFragment"
-            app:destination="@id/addNameFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/addNameFragment"
-        android:name="com.aralhub.indrive.driver.driver_auth.AddNameFragment"
-        tools:layout="@layout/fragment_add_name">
-        <action
-            android:id="@+id/action_addNameFragment_to_overviewFragment"
+            android:id="@+id/action_addSmsFragment_to_overviewFragment"
             app:destination="@id/overviewFragment" />
+
     </fragment>
 
     <fragment
