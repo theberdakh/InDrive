@@ -15,6 +15,11 @@ class GoingToPickUpModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_b
         this.onClientPickedUp = onPickedUp
     }
 
+    private var rideCanceledListener: () -> Unit = {}
+    fun setOnRideCanceledListener(onRideCanceled: () -> Unit) {
+        this.rideCanceledListener = onRideCanceled
+    }
+
     override fun onStart() {
         super.onStart()
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
@@ -28,6 +33,9 @@ class GoingToPickUpModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_b
             if (it == 1f) {
                 onClientPickedUp.invoke()
             }
+        }
+        binding.btnCancel.setOnClickListener {
+           rideCanceledListener.invoke()
         }
     }
 

@@ -17,6 +17,11 @@ class WaitingForClientModalBottomSheet :
         this.onGoingToRideListener = onGoingToRide
     }
 
+    private var rideCanceledListener: () -> Unit = {}
+    fun setOnRideCanceledListener(onRideCanceled: () -> Unit) {
+        this.rideCanceledListener = onRideCanceled
+    }
+
     override fun onStart() {
         super.onStart()
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
@@ -28,6 +33,9 @@ class WaitingForClientModalBottomSheet :
         super.onViewCreated(view, savedInstanceState)
         binding.btnGoToRide.setOnClickListener {
             onGoingToRideListener.invoke()
+        }
+        binding.btnCancel.setOnClickListener {
+            rideCanceledListener.invoke()
         }
     }
 

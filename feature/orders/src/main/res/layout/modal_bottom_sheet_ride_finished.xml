@@ -161,6 +161,7 @@
 
 
     <Button
+        android:id="@+id/btn_close"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginVertical="@dimen/margin_small"

@@ -12,9 +12,8 @@ class FilterModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bottom_sh
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.slider.setOnValueChangeListener { value ->
-            binding.tvRadius.text = "$value km"
-        }
+        binding.slider.setOnValueChangeListener { value -> binding.tvRadius.text = "$value km" }
+        binding.btnApply.setOnClickListener { dismissAllowingStateLoss() }
     }
 
     companion object {

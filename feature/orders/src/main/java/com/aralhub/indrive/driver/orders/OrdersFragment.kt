@@ -107,27 +107,29 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initRideModalBottomSheet()
         initCancelTripModalBottomSheet()
         initTripCanceledModalBottomSheet()
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
-            showExitLineBottomSheet()
-        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
     }
 
     private fun initTripCanceledModalBottomSheet() {
-        tripCanceledModalBottomSheet.setOnBackListener {
+        tripCanceledModalBottomSheet.setOnCloseListener {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
-            rideModalBottomSheet.dismissAllowingStateLoss()
+            val activeBottomSheet = listOf(
+                rideModalBottomSheet,
+                waitingForClientModalBottomSheet,
+                goingToPickUpModalBottomSheet,
+                orderModalBottomSheet,
+                cancelTripModalBottomSheet
+            ).firstOrNull { it.isAdded }
+            activeBottomSheet?.dismissAllowingStateLoss()
         }
     }
 
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()
-            tripCanceledModalBottomSheet.show(
-                childFragmentManager,
-                TripCanceledModalBottomSheet.TAG
-            )
+            tripCanceledModalBottomSheet.show(childFragmentManager, TripCanceledModalBottomSheet.TAG)
         }
-
         cancelTripModalBottomSheet.setOnBackListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()
         }
@@ -136,10 +138,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initRideModalBottomSheet() {
         rideModalBottomSheet.setOnRideFinishedListener {
             rideModalBottomSheet.dismissAllowingStateLoss()
-            rideFinishedModalBottomSheet.show(
-                childFragmentManager,
-                RideFinishedModalBottomSheet.TAG
-            )
+            rideFinishedModalBottomSheet.show(childFragmentManager, RideFinishedModalBottomSheet.TAG)
         }
         rideModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -151,32 +150,31 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             waitingForClientModalBottomSheet.dismissAllowingStateLoss()
             rideModalBottomSheet.show(childFragmentManager, RideModalBottomSheet.TAG)
         }
+        waitingForClientModalBottomSheet.setOnRideCanceledListener {
+            cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
+        }
     }
 
     private fun initGoingToPickUpModalBottomSheet() {
         goingToPickUpModalBottomSheet.setOnClientPickedUp {
             goingToPickUpModalBottomSheet.dismissAllowingStateLoss()
-            waitingForClientModalBottomSheet.show(
-                childFragmentManager,
-                WaitingForClientModalBottomSheet.TAG
-            )
+            waitingForClientModalBottomSheet.show(childFragmentManager, WaitingForClientModalBottomSheet.TAG)
+        }
+        goingToPickUpModalBottomSheet.setOnRideCanceledListener {
+            cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
         }
     }
 
     private fun initViews() {
         initToolbar()
         initRecyclerView()
-        binding.btnFilter.setOnClickListener {
-            filterModalBottomSheet.show(childFragmentManager, FilterModalBottomSheet.TAG)
-        }
+        binding.btnFilter.setOnClickListener { filterModalBottomSheet.show(childFragmentManager, FilterModalBottomSheet.TAG) }
     }
 
     private fun initRecyclerView() {
         binding.rvOrders.adapter = adapter
         adapter.submitList(orders)
-        adapter.setOnItemClickListener {
-            orderModalBottomSheet.show(childFragmentManager, OrderModalBottomSheet.TAG)
-        }
+        adapter.setOnItemClickListener { orderModalBottomSheet.show(childFragmentManager, OrderModalBottomSheet.TAG) }
     }
 
     private fun initToolbar() {
@@ -189,6 +187,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     showExitLineBottomSheet()
                     true
                 }
+
                 else -> false
             }
         }
@@ -197,10 +196,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initOrderModalBottomSheet() {
         orderModalBottomSheet.setOnOrderAccepted {
             orderModalBottomSheet.dismissAllowingStateLoss()
-            goingToPickUpModalBottomSheet.show(
-                childFragmentManager,
-                GoingToPickUpModalBottomSheet.TAG
-            )
+            goingToPickUpModalBottomSheet.show(childFragmentManager, GoingToPickUpModalBottomSheet.TAG)
         }
     }
 

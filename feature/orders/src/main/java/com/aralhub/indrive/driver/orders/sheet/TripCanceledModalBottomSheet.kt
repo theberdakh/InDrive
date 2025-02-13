@@ -11,15 +11,15 @@ class TripCanceledModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_trip_canceled) {
     private val binding by viewBinding(ModalBottomSheetTripCanceledBinding::bind)
 
-    private var onBackListener: () -> Unit = {}
-    fun setOnBackListener(onBack: () -> Unit) {
-        this.onBackListener = onBack
+    private var onCloseListener: () -> Unit = {}
+    fun setOnCloseListener(onBack: () -> Unit) {
+        this.onCloseListener = onBack
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnClose.setOnClickListener {
-            onBackListener.invoke()
+            onCloseListener.invoke()
         }
     }
     companion object {
