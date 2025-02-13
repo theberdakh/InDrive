@@ -1,4 +1,4 @@
-package com.aralhub.auth
+package com.aralhub.client.client_auth
 
 import android.graphics.Color
 import android.os.Bundle
@@ -6,8 +6,8 @@ import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.Fragment
-import com.aralhub.auth.databinding.FragmentAddPhoneBinding
-import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.client.client_auth.databinding.FragmentAddPhoneBinding
+import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter
 import com.aralhub.ui.utils.viewBinding
@@ -19,7 +19,7 @@ class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
     private val binding by viewBinding(FragmentAddPhoneBinding::bind)
 
     @Inject
-    lateinit var navigator: FeatureAuthNavigation
+    lateinit var navigator: FeatureClientAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

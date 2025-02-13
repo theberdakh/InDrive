@@ -1,23 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger)
     alias(libs.plugins.devtools.ksp)
-
 }
 
 android {
-    namespace 'com.aralhub.indrive'
+    namespace 'com.aralhub.indrive.driver.driver_auth'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        applicationId "com.aralhub.indrive"
         minSdk libs.versions.minSdk.get().toInteger()
-        targetSdk 35
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -27,29 +23,24 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '11'
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 
 dependencies {
 
-    //Core Modules
     implementation project(':core:ui')
-    implementation project(':core:common')
-    implementation project(':feature:auth:client-auth')
-    implementation project(":feature:offers")
-    implementation project(":feature:request")
-    implementation project(':feature:ride')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
-    implementation libs.androidx.activity
-    implementation libs.androidx.constraintlayout
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
@@ -57,9 +48,4 @@ dependencies {
     //Dagger-Hilt for Dependency Injection
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
-
-    //Navigation Component
-    implementation libs.androidx.navigation.fragment.ktx
-    implementation libs.androidx.navigation.ui.ktx
-
 }

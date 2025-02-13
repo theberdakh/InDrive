@@ -1,12 +1,12 @@
-package com.aralhub.auth
+package com.aralhub.indrive.driver.driver_auth
 
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.auth.databinding.FragmentAddSmsBinding
-import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.indrive.driver.driver_auth.databinding.FragmentAddSmsBinding
+import com.aralhub.indrive.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
@@ -20,14 +20,14 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private val binding by viewBinding(FragmentAddSmsBinding::bind)
 
     @Inject
-    lateinit var navigator: FeatureAuthNavigation
+    lateinit var navigator: FeatureDriverAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val phoneNumber = requireArguments().getString(ARG_PHONE) ?: ""
         val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, phoneNumber)
         binding.tvDescription.text = StringUtils.getBoldSpanString(fullText, phoneNumber, "#001934")
         binding.etPhone.addTextChangedListener {
-            binding.btnStart.isEnabled = it.toString().length == 4
+            binding.btnStart.isEnabled = it.toString().length == 5
             if (binding.btnStart.isEnabled) {
                 KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone)
             }
@@ -36,7 +36,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
             lifecycleScope.launch {
                 delay(3000)
                 binding.btnStart.stopProgress()
-                navigator.goToAddName()
+                navigator.goToOverviewFromAddSMS()
             }
         }
     }

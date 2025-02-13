@@ -40,7 +40,7 @@ dependencies {
     implementation project(':core:ui')
 
     //Feature Modules
-    implementation project(':feature:auth')
+    implementation project(':feature:auth:driver-auth')
     implementation project(':feature:overview')
     implementation project(':feature:orders')
 

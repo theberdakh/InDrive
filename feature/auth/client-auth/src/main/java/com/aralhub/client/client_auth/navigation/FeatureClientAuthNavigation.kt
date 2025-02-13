@@ -1,11 +1,9 @@
-package com.aralhub.auth.navigation
+package com.aralhub.client.client_auth.navigation
 
-interface FeatureAuthNavigation {
+interface FeatureClientAuthNavigation {
     fun goToAddPhoneNumber()
     fun goToRequestFromAddName()
-    fun goToOverviewFromAddName()
     fun goToAddSMSCode(phone: String)
     fun goToAddName()
     fun goToRequestFromLogo()
-    fun goToOverviewFromLogo()
 }

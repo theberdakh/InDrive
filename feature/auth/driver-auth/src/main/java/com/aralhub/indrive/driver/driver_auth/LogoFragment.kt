@@ -1,10 +1,10 @@
-package com.aralhub.auth
+package com.aralhub.indrive.driver.driver_auth
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.aralhub.auth.databinding.FragmentLogoBinding
-import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.indrive.driver.driver_auth.databinding.FragmentLogoBinding
+import com.aralhub.indrive.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -13,12 +13,12 @@ import javax.inject.Inject
 class LogoFragment : Fragment(R.layout.fragment_logo) {
     private val binding by viewBinding(FragmentLogoBinding::bind)
     @Inject
-    lateinit var navigator: FeatureAuthNavigation
+    lateinit var navigator: FeatureDriverAuthNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewNextButton.setOnClickListener {
-            navigator.goToOverviewFromLogo()
+            navigator.goToAddPhoneNumber()
         }
     }
 }
