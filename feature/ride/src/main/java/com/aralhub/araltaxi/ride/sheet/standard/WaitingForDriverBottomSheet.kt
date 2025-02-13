@@ -8,6 +8,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.aralhub.araltaxi.client.ride.R
+import com.aralhub.araltaxi.client.ride.databinding.BottomSheetWaitingForDriverBinding
 import com.aralhub.araltaxi.ride.Ride
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
 import com.aralhub.araltaxi.ride.RideState
@@ -16,8 +18,6 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigati
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
-import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.BottomSheetWaitingForDriverBinding
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

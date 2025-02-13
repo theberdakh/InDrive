@@ -3,10 +3,9 @@ package com.aralhub.offers.sheet.standard
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.aralhub.offers.R
-import com.aralhub.offers.databinding.BottomSheetChangeOrCancelRequestBinding
+import com.aralhub.araltaxi.client.offers.R
+import com.aralhub.araltaxi.client.offers.databinding.BottomSheetChangeOrCancelRequestBinding
 import com.aralhub.offers.navigation.sheet.FeatureOffersBottomSheetNavigation
-import com.aralhub.offers.navigation.sheet.SheetNavigatorImpl
 import com.aralhub.offers.sheet.modal.CancelRequestModalBottomSheet
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

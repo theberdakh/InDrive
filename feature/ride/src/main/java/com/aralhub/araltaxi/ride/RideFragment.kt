@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.aralhub.araltaxi.client.ride.R
+import com.aralhub.araltaxi.client.ride.databinding.FragmentRideBinding
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.navigation.sheet.SheetNavigator
-import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.FragmentRideBinding
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition

@@ -1,4 +1,4 @@
-package com.aralhub.indrivedriver
+package com.aralhub.araltaxi
 
 import org.junit.Test
 

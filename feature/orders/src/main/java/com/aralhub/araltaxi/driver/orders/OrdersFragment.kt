@@ -7,7 +7,6 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
-import com.aralhub.araltaxi.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
@@ -19,6 +18,8 @@ import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
+import com.aralhub.indrive.driver.orders.R
+import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
 
 class OrdersFragment : Fragment(R.layout.fragment_orders) {

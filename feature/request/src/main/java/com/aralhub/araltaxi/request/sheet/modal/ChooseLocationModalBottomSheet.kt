@@ -2,10 +2,10 @@ package com.aralhub.araltaxi.request.sheet.modal
 
 import android.os.Bundle
 import android.view.View
+import com.aralhub.araltaxi.client.request.R
+import com.aralhub.araltaxi.client.request.databinding.ModalBottomSheetChooseLocationBinding
 import com.aralhub.araltaxi.request.adapter.LocationItemAdapter
 import com.aralhub.araltaxi.request.model.LocationItem
-import com.aralhub.indrive.request.R
-import com.aralhub.indrive.request.databinding.ModalBottomSheetChooseLocationBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

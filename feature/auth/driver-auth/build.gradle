@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.indrive.driver.driver_auth'
+    namespace 'com.aralhub.indrive.driver.auth'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {

@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.aralhub.araltaxi.client.request.R
+import com.aralhub.araltaxi.client.request.databinding.BottomSheetSendOrderBinding
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
 import com.aralhub.araltaxi.request.sheet.modal.AddLocationModalBottomSheet
 import com.aralhub.araltaxi.request.sheet.modal.ChangePaymentMethodModalBottomSheet
 import com.aralhub.araltaxi.request.sheet.modal.CommentToDriverModalBottomSheet
-import com.aralhub.indrive.request.R
-import com.aralhub.indrive.request.databinding.BottomSheetSendOrderBinding
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

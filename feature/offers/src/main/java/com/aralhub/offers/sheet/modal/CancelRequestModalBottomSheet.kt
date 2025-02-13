@@ -2,8 +2,8 @@ package com.aralhub.offers.sheet.modal
 
 import android.os.Bundle
 import android.view.View
-import com.aralhub.offers.R
-import com.aralhub.offers.databinding.ModalBottomSheetCancelRequestBinding
+import com.aralhub.araltaxi.client.offers.R
+import com.aralhub.araltaxi.client.offers.databinding.ModalBottomSheetCancelRequestBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

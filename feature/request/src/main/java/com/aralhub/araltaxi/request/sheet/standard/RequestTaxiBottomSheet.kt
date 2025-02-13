@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.aralhub.araltaxi.client.request.R
+import com.aralhub.araltaxi.client.request.databinding.BottomSheetRequestTaxiBinding
 import com.aralhub.araltaxi.request.adapter.LocationItemAdapter
 import com.aralhub.araltaxi.request.model.LocationItem
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
-import com.aralhub.indrive.request.R
-import com.aralhub.indrive.request.databinding.BottomSheetRequestTaxiBinding
 import com.aralhub.ui.components.EndTextEditText
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

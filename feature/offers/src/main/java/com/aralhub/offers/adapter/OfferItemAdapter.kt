@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.offers.databinding.ItemOfferBinding
+import com.aralhub.araltaxi.client.offers.databinding.ItemOfferBinding
 import com.aralhub.offers.model.OfferItem
 import com.aralhub.offers.model.OfferItemDiffCallback
 import com.bumptech.glide.Glide

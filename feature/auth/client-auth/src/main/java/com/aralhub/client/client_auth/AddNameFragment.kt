@@ -5,7 +5,8 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.client.client_auth.databinding.FragmentAddNameBinding
+import com.aralhub.araltaxi.client.auth.R
+import com.aralhub.araltaxi.client.auth.databinding.FragmentAddNameBinding
 import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

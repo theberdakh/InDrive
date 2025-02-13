@@ -5,8 +5,9 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.araltaxi.driver.driver_auth.databinding.FragmentAddSmsBinding
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.indrive.driver.auth.R
+import com.aralhub.indrive.driver.auth.databinding.FragmentAddSmsBinding
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding

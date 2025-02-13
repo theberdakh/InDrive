@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.overview'
+    namespace 'com.aralhub.araltaxi.overview'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {

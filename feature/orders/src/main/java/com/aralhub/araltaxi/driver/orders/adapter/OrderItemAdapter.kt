@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.driver.orders.databinding.OrderItemBinding
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.model.OrderItemDiffCallback
+import com.aralhub.indrive.driver.orders.databinding.OrderItemBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 

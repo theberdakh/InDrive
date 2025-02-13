@@ -3,7 +3,8 @@ package com.aralhub.client.client_auth
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.aralhub.client.client_auth.databinding.FragmentLogoBinding
+import com.aralhub.araltaxi.client.auth.R
+import com.aralhub.araltaxi.client.auth.databinding.FragmentLogoBinding
 import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

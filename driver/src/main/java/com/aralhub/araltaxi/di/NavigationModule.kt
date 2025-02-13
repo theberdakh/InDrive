@@ -1,8 +1,8 @@
-package com.aralhub.indrivedriver.di
+package com.aralhub.araltaxi.di
 
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
-import com.aralhub.indrivedriver.navigation.Navigator
-import com.aralhub.indrivedriver.navigation.NavigatorImpl
+import com.aralhub.araltaxi.navigation.Navigator
+import com.aralhub.araltaxi.navigation.NavigatorImpl
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import dagger.Binds
 import dagger.Module

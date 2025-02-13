@@ -1,4 +1,4 @@
-package com.aralhub.indrivedriver
+package com.aralhub.araltaxi
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -6,7 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
-import com.aralhub.indrivedriver.navigation.Navigator
+import com.aralhub.araltaxi.driver.R
+import com.aralhub.araltaxi.navigation.Navigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

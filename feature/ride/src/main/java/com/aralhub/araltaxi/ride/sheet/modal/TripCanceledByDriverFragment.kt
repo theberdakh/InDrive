@@ -2,8 +2,8 @@ package com.aralhub.araltaxi.ride.sheet.modal
 
 import android.os.Bundle
 import android.view.View
-import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.FragmentTripCancelledByDriverBinding
+import com.aralhub.araltaxi.client.ride.R
+import com.aralhub.araltaxi.client.ride.databinding.FragmentTripCancelledByDriverBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint

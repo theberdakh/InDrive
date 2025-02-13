@@ -1,7 +1,7 @@
 package com.aralhub.araltaxi.ride.navigation.sheet
 
 import androidx.navigation.NavController
-import com.aralhub.indrive.waiting.R
+import com.aralhub.araltaxi.client.ride.R
 import javax.inject.Inject
 import javax.inject.Singleton
 

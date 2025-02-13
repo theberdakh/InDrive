@@ -3,8 +3,9 @@ package com.aralhub.araltaxi.driver.driver_auth
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.aralhub.araltaxi.driver.driver_auth.databinding.FragmentLogoBinding
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.indrive.driver.auth.R
+import com.aralhub.indrive.driver.auth.databinding.FragmentLogoBinding
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

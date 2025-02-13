@@ -5,9 +5,9 @@ import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.aralhub.overview.databinding.FragmentOverviewBinding
+import com.aralhub.araltaxi.overview.R
+import com.aralhub.araltaxi.overview.databinding.FragmentOverviewBinding
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
-import com.aralhub.overview.sheet.LocationServiceOffModalBottomSheet
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint

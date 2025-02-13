@@ -6,7 +6,8 @@ import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.Fragment
-import com.aralhub.client.client_auth.databinding.FragmentAddPhoneBinding
+import com.aralhub.araltaxi.client.auth.R
+import com.aralhub.araltaxi.client.auth.databinding.FragmentAddPhoneBinding
 import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter

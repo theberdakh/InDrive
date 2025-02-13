@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.indrive.waiting'
+    namespace 'com.aralhub.araltaxi.client.ride'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {

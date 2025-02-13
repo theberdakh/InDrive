@@ -8,11 +8,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.aralhub.araltaxi.client.ride.R
+import com.aralhub.araltaxi.client.ride.databinding.BottomSheetRateDriverBinding
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
-import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.BottomSheetRateDriverBinding
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

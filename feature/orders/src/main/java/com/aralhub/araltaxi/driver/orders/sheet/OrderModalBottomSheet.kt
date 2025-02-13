@@ -10,8 +10,8 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.araltaxi.driver.orders.R
-import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetOrderBinding
+import com.aralhub.indrive.driver.orders.R
+import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior

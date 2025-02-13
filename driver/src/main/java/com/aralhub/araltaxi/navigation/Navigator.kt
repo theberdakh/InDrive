@@ -1,4 +1,4 @@
-package com.aralhub.indrivedriver.navigation
+package com.aralhub.araltaxi.navigation
 
 import androidx.navigation.NavController
 

@@ -3,11 +3,11 @@ package com.aralhub.araltaxi.request.sheet.modal
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.aralhub.araltaxi.client.request.R
+import com.aralhub.araltaxi.client.request.databinding.ModalBottomSheetAddLocationBinding
 import com.aralhub.araltaxi.request.adapter.LocationItemDraggableAdapter
 import com.aralhub.araltaxi.request.adapter.LocationItemTouchCallback
 import com.aralhub.araltaxi.request.model.LocationItem
-import com.aralhub.indrive.request.R
-import com.aralhub.indrive.request.databinding.ModalBottomSheetAddLocationBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

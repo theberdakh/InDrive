@@ -12,13 +12,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.aralhub.araltaxi.client.ride.R
+import com.aralhub.araltaxi.client.ride.databinding.BottomSheetRideFinishedBinding
 import com.aralhub.araltaxi.ride.Ride
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
 import com.aralhub.araltaxi.ride.RideState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
-import com.aralhub.indrive.waiting.R
-import com.aralhub.indrive.waiting.databinding.BottomSheetRideFinishedBinding
 import com.aralhub.ui.utils.ViewEx.enable
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

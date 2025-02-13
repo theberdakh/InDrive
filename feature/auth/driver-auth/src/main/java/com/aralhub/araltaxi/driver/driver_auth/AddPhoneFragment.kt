@@ -6,8 +6,9 @@ import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.Fragment
-import com.aralhub.araltaxi.driver.driver_auth.databinding.FragmentAddPhoneBinding
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.indrive.driver.auth.R
+import com.aralhub.indrive.driver.auth.databinding.FragmentAddPhoneBinding
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter
 import com.aralhub.ui.utils.viewBinding
@@ -17,7 +18,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
     private val binding by viewBinding(FragmentAddPhoneBinding::bind)
-
     @Inject
     lateinit var navigator: FeatureDriverAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

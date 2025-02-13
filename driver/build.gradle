@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.indrivedriver'
+    namespace 'com.aralhub.araltaxi.driver'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        applicationId "com.aralhub.indrivedriver"
+        applicationId "com.aralhub.araltaxi.driver"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk 34
         versionCode 1

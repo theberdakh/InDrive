@@ -3,8 +3,8 @@ package com.aralhub.araltaxi.request.sheet.standard
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.aralhub.indrive.request.R
-import com.aralhub.indrive.request.databinding.BottomSheetSelectLocationBinding
+import com.aralhub.araltaxi.client.request.R
+import com.aralhub.araltaxi.client.request.databinding.BottomSheetSelectLocationBinding
 import com.aralhub.ui.utils.viewBinding
 
 class SelectLocationBottomSheet: Fragment(R.layout.bottom_sheet_select_location) {

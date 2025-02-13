@@ -1,7 +1,7 @@
 package com.aralhub.araltaxi.navigation
 
 import androidx.navigation.NavController
-import com.aralhub.araltaxi.R
+import com.aralhub.araltaxi.client.R
 import com.aralhub.client.client_auth.AddSMSFragment
 import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
