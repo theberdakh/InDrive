@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/requestFragment"
-        android:name="com.aralhub.indrive.request.RequestFragment">
+        android:name="com.aralhub.araltaxi.request.RequestFragment">
 
         <action
             android:id="@+id/action_homeFragment_to_offersFragment"
@@ -68,6 +68,6 @@
 
     <fragment
         android:id="@+id/rideFragment"
-        android:name="com.aralhub.indrive.ride.RideFragment"/>
+        android:name="com.aralhub.araltaxi.ride.RideFragment"/>
 
 </navigation>

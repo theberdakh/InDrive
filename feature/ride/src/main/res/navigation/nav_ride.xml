@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/waitingForDriverBottomSheet"
         tools:layout="@layout/bottom_sheet_waiting_for_driver"
-        android:name="com.aralhub.indrive.ride.sheet.standard.WaitingForDriverBottomSheet">
+        android:name="com.aralhub.araltaxi.ride.sheet.standard.WaitingForDriverBottomSheet">
 
         <action
             android:id="@+id/action_waitingForDriverBottomSheet_toDriverIsWaitingBottomSheet"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/driverIsWaitingBottomSheet"
-        android:name="com.aralhub.indrive.ride.sheet.standard.DriverIsWaitingBottomSheet">
+        android:name="com.aralhub.araltaxi.ride.sheet.standard.DriverIsWaitingBottomSheet">
 
         <action
             android:id="@+id/action_driverIsWaitingBottomSheet_toRideBottomSheet"
@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/rideBottomSheet"
-        android:name="com.aralhub.indrive.ride.sheet.standard.RideBottomSheet"
+        android:name="com.aralhub.araltaxi.ride.sheet.standard.RideBottomSheet"
         tools:layout="@layout/bottom_sheet_ride">
 
         <action
@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/rideFinishedBottomSheet"
-        android:name="com.aralhub.indrive.ride.sheet.standard.RideFinishedBottomSheet"
+        android:name="com.aralhub.araltaxi.ride.sheet.standard.RideFinishedBottomSheet"
         tools:layout="@layout/bottom_sheet_ride_finished">
 
         <action
@@ -58,6 +58,6 @@
 
     <fragment
         android:id="@+id/rateDriverBottomSheet"
-        android:name="com.aralhub.indrive.ride.sheet.standard.RateDriverBottomSheet"
+        android:name="com.aralhub.araltaxi.ride.sheet.standard.RateDriverBottomSheet"
         tools:layout="@layout/bottom_sheet_ride_finished" />
 </navigation>

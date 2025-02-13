@@ -1,6 +1,6 @@
 package com.aralhub.indrivedriver.di
 
-import com.aralhub.indrive.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.indrivedriver.navigation.Navigator
 import com.aralhub.indrivedriver.navigation.NavigatorImpl
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
