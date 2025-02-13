@@ -1,12 +1,12 @@
-package com.aralhub.auth
+package com.aralhub.client.client_auth
 
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.auth.databinding.FragmentAddSmsBinding
-import com.aralhub.auth.navigation.FeatureAuthNavigation
+import com.aralhub.client.client_auth.databinding.FragmentAddSmsBinding
+import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
@@ -20,7 +20,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private val binding by viewBinding(FragmentAddSmsBinding::bind)
 
     @Inject
-    lateinit var navigator: FeatureAuthNavigation
+    lateinit var navigator: FeatureClientAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val phoneNumber = requireArguments().getString(ARG_PHONE) ?: ""
