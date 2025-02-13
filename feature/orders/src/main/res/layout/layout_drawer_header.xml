@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="56dp"
+        android:contentDescription="@string/cd_avatar"
+        android:layout_margin="@dimen/margin_medium"
+        android:background="@drawable/shape_circle_icon_gray"
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_user"
+        android:layout_height="56dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_medium"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection"
+            android:text="Muhammed"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+998 91 293 13 12"
+            android:textAppearance="@style/TextAppearance.InDrive.TitleGroup"/>
+
+    </LinearLayout>
+
+</LinearLayout>
