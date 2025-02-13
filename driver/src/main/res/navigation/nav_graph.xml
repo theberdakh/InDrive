@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/logoFragment"
-        android:name="com.aralhub.auth.LogoFragment"
+        android:name="com.aralhub.indrive.driver.driver_auth.LogoFragment"
         tools:layout="@layout/fragment_logo">
         <action
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/addPhoneFragment"
-        android:name="com.aralhub.auth.AddPhoneFragment"
+        android:name="com.aralhub.indrive.driver.driver_auth.AddPhoneFragment"
         tools:layout="@layout/fragment_add_phone">
 
         <action
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/addSmsFragment"
-        android:name="com.aralhub.auth.AddSMSFragment"
+        android:name="com.aralhub.indrive.driver.driver_auth.AddSMSFragment"
         tools:layout="@layout/fragment_add_sms">
 
         <action
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/addNameFragment"
-        android:name="com.aralhub.auth.AddNameFragment"
+        android:name="com.aralhub.indrive.driver.driver_auth.AddNameFragment"
         tools:layout="@layout/fragment_add_name">
         <action
             android:id="@+id/action_addNameFragment_to_overviewFragment"
