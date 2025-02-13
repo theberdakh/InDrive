@@ -42,10 +42,9 @@
                 android:paddingHorizontal="@dimen/padding_small"
                 android:maxEms="10"
                 android:maxLines="1"
-                android:text="Babur"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold"
                 android:textSize="14sp"
-                tools:text="Basd" />
+                tools:text="Babur" />
 
 
             <TextView
@@ -150,19 +149,20 @@
 
         <ImageView
             android:id="@+id/iv_payment_method"
+            android:contentDescription="@string/cd_payment_method_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/margin_small"
-            android:src="@drawable/ic_cash"
+            tools:src="@drawable/ic_cash"
             tools:text="4 min" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="10 000 som"
+            tools:text="10 000 som"
             android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
         <TextView
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:text="7 km"
+            tools:text="7 km"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
             android:textColor="@color/color_content_secondary" />
 
@@ -237,6 +237,14 @@
 
     </LinearLayout>
 
+    <Button
+        style="@style/Widget.InDrive.Button.Primary"
+        android:text="@string/label_navigator"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
@@ -245,7 +253,7 @@
     <com.aralhub.ui.components.SlideButton
         android:id="@+id/slide_arrived"
         android:layout_width="match_parent"
-        app:SlideButtonText="Jetip keldim"
+        app:SlideButtonText="@string/label_arrived"
         android:layout_margin="@dimen/margin_small"
         android:layout_height="56dp" />
 

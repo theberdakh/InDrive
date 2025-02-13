@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Liniyadan shıǵıw"
+        android:text="@string/label_exit_line"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
         />
@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Buyırtpalardı qabıllaw rejiminen shıǵıwdı tastıyıqlaysız ba?"
+        android:text="@string/label_exit_line_description"
         android:gravity="center"
         android:padding="@dimen/padding_small"
         android:textColor="@color/color_content_secondary"
@@ -34,7 +34,7 @@
         android:id="@+id/btn_exit"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_width="match_parent"
-        android:text="Shıǵıw"
+        android:text="@string/label_exit"
         android:backgroundTint="@color/color_status_error"
         android:layout_marginVertical="@dimen/margin_small"
         android:textColor="@color/white"
@@ -44,7 +44,7 @@
         android:id="@+id/btn_back"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_width="match_parent"
-        android:text="Artqa"
+        android:text="@string/label_back"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -11,7 +11,7 @@ import com.aralhub.indrive.request.model.LocationItem
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class AddLocationModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet) {
+class AddLocationModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_add_location) {
     private val locationItems = arrayListOf(
         LocationItem(
             id = 1,

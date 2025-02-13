@@ -56,4 +56,32 @@
 
     <string name="error_network_connection">Internet baylanısı joq</string>
     <string name="success_network_connection">Baylanıs qayta ornatıldı</string>
+
+    <string name="label_cancel_trip_description">Saparlardı jiyi-jiyi biykarlaw reytingińizdiń túsiwine alıp keliwi múmkin. Ótinish, zárúrli bolǵanda ǵana, bunı ámelge asırıń.</string>
+    <string name="label_cancel">Biykarlaw</string>
+    <string name="label_back">Artqa</string>
+    <string name="label_exit_line">Liniyadan shıǵıw</string>
+    <string name="label_exit_line_description">Buyırtpalardı qabıllaw rejiminen shıǵıwdı tastıyıqlaysız ba?</string>
+    <string name="label_exit">Shıǵıw</string>
+    <string name="label_apply">Qollanıw</string>
+    <string name="label_5_km">5 km</string>
+    <string name="label_4_km">4 km</string>
+    <string name="label_3_km">3 km</string>
+    <string name="label_2_km">2 km</string>
+    <string name="label_1_km">1 km</string>
+    <string name="label_accept_radius_description">Buyırtpalardı tek usı radiustaǵı aralıqtan alıw:</string>
+    <string name="label_filter">Filter</string>
+    <string name="label_clear">Tazalaw</string>
+    <string name="cd_payment_method_icon">Payment Method</string>
+    <string name="label_arrived">Jetip keldim</string>
+    <string name="cd_avatar">Client avatar</string>
+    <string name="label_send_offer">Usınıstı jiberiw</string>
+    <string name="label_navigator">Navigator</string>
+    <string name="label_finish">Juwmaqlaw</string>
+    <string name="label_payment_method_online">Onlayn pul ótkeriw</string>
+    <string name="label_offline_payment">Naq pul</string>
+    <string name="label_total">Jámi</string>
+    <string name="label_total_distance">Ulıwma aralıq</string>
+    <string name="label_trip_duration">Sapar dawamlılıǵı</string>
+    <string name="label_paid_waiting_time_started">Tólemli kútiw waqtı baslandı</string>
 </resources>

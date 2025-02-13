@@ -41,6 +41,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:contentDescription="@string/cd_avatar"
             android:id="@+id/iv_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -94,6 +95,7 @@
 
         <ImageView
             android:id="@+id/iv_payment_method"
+            android:contentDescription="@string/cd_payment_method_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
@@ -106,7 +108,7 @@
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
             android:layout_height="wrap_content"
-            android:text="10 000 som"/>
+            tools:text="10 000 som"/>
 
         <TextView
             android:layout_width="0dp"
@@ -115,7 +117,7 @@
             android:textColor="@color/color_content_secondary"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
             android:layout_height="wrap_content"
-            android:text="7 km"/>
+            tools:text="7 km"/>
 
     </LinearLayout>
 
@@ -270,13 +272,13 @@
             android:gravity="center_vertical"
             android:text="Usınıs etilgen baha 12 000 som"
             android:drawablePadding="@dimen/padding_small"
-            android:drawableStart="@drawable/ic_info"/>
+            app:drawableStartCompat="@drawable/ic_info" />
 
         <Button
             android:id="@+id/btn_send_offer"
             style="@style/Widget.InDrive.Button.Variant"
             android:layout_width="match_parent"
-            android:text="Usınıstı jiberiw"
+            android:text="@string/label_send_offer"
             android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_height="wrap_content"/>

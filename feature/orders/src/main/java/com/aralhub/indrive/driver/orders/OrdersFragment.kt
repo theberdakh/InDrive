@@ -14,6 +14,7 @@ import com.aralhub.indrive.driver.orders.sheet.ExitLineModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.FilterModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.GoingToPickUpModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.OrderModalBottomSheet
+import com.aralhub.indrive.driver.orders.sheet.ReasonCancelModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.indrive.driver.orders.sheet.TripCanceledModalBottomSheet
@@ -31,6 +32,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val cancelTripModalBottomSheet = CancelTripModalBottomSheet()
     private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
     private val filterModalBottomSheet = FilterModalBottomSheet()
+    private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
     private val exitLineModalBottomSheet = ExitLineModalBottomSheet { findNavController().navigateUp() }
     private val orders = listOf(
         OrderItem(
@@ -107,8 +109,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initRideModalBottomSheet()
         initCancelTripModalBottomSheet()
         initTripCanceledModalBottomSheet()
+        initReasonCancelModalBottomSheet()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
+    }
+
+    private fun initReasonCancelModalBottomSheet() {
+        reasonCancelModalBottomSheet.setSendReasonListener {
+            reasonCancelModalBottomSheet.dismissAllowingStateLoss()
+            tripCanceledModalBottomSheet.show(childFragmentManager, TripCanceledModalBottomSheet.TAG)
+        }
     }
 
     private fun initTripCanceledModalBottomSheet() {
@@ -128,7 +138,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()
-            tripCanceledModalBottomSheet.show(childFragmentManager, TripCanceledModalBottomSheet.TAG)
+            reasonCancelModalBottomSheet.show(childFragmentManager, ReasonCancelModalBottomSheet.TAG)
         }
         cancelTripModalBottomSheet.setOnBackListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()

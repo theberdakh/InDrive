@@ -50,16 +50,15 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
-                tools:text="0:25" />
+                android:text="0:25" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_mdi_question_mark_circle"
                 android:drawablePadding="@dimen/padding_small"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:text="@string/label_free_waiting_time"
+                android:text="@string/label_paid_waiting_time_started"
                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
                 android:textSize="14sp" />
 
