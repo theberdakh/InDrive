@@ -1,13 +1,13 @@
 package com.aralhub.network.impl
 
-import com.aralhub.network.WebSocketClientDataSource
+import com.aralhub.network.WebSocketClientNetworkDataSource
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
 import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 
-class WebSocketClientDataSourceImpl(private val api: WebSocketClientNetworkApi): WebSocketClientDataSource {
+class WebSocketClientNetworkDataSourceImpl(private val api: WebSocketClientNetworkApi): WebSocketClientNetworkDataSource {
     override fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse> {
         return api.clientRide(clientRideRequest).safeRequestServerResponse()
     }

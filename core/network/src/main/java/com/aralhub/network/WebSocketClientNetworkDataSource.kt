@@ -3,10 +3,8 @@ package com.aralhub.network
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
-import retrofit2.http.Path
-import retrofit2.http.Query
 
-interface WebSocketClientDataSource {
+interface WebSocketClientNetworkDataSource {
     fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
 
     fun putClientRideAmount(
