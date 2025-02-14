@@ -10,18 +10,19 @@ import com.aralhub.network.models.user.NetworkUserRefreshResponse
 import com.aralhub.network.models.user.NetworkUserVerifyRequest
 import com.aralhub.network.models.user.NetworkUserVerifyResponse
 import com.aralhub.network.utils.NetworkEx.safeRequest
+import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 
 class UserNetworkDataSourceImpl(private val api: UserNetworkApi): UserNetworkDataSource {
     override suspend fun userAuth(networkUserAuthRequest: NetworkUserAuthRequest): NetworkResult<Unit> {
-       return api.userAuth(networkUserAuthRequest).safeRequest()
+       return api.userAuth(networkUserAuthRequest).safeRequestServerResponse()
     }
 
     override suspend fun userVerify(networkUserVerifyRequest: NetworkUserVerifyRequest): NetworkResult<NetworkUserVerifyResponse> {
-        return api.userVerify(networkUserVerifyRequest).safeRequest()
+        return api.userVerify(networkUserVerifyRequest).safeRequestServerResponse()
     }
 
     override suspend fun userProfile(networkUserProfileRequest: NetworkUserProfileRequest): NetworkResult<Unit> {
-        return api.userProfile(networkUserProfileRequest).safeRequest()
+        return api.userProfile(networkUserProfileRequest).safeRequestServerResponse()
     }
 
     override suspend fun getUserMe(): NetworkResult<NetworkUserMeResponse> {
@@ -37,10 +38,10 @@ class UserNetworkDataSourceImpl(private val api: UserNetworkApi): UserNetworkDat
     }
 
     override suspend fun userPhoto(): NetworkResult<Unit> {
-        return api.userPhoto().safeRequest()
+        return api.userPhoto().safeRequestServerResponse()
     }
 
     override suspend fun deleteUserProfile(): NetworkResult<Unit> {
-        return api.deleteUserProfile().safeRequest()
+        return api.deleteUserProfile().safeRequestServerResponse()
     }
 }

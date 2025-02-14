@@ -10,27 +10,20 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
-import com.aralhub.network.utils.NetworkMonitor
-import com.aralhub.ui.components.crouton.Crouton
-import com.aralhub.ui.utils.CroutonInDriveStyle
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class RequestFragment: Fragment(R.layout.fragment_request) {
-    @Inject
-    lateinit var networkMonitor: NetworkMonitor
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? =null
     private val requiredPermissions = arrayOf(
@@ -61,7 +54,6 @@ internal class RequestFragment: Fragment(R.layout.fragment_request) {
         setUpMapView()
         setUpBottomSheet()
         setUpDrawerLayout()
-        monitorNetworkConnection()
         initBottomNavController()
     }
 
@@ -117,29 +109,6 @@ internal class RequestFragment: Fragment(R.layout.fragment_request) {
         val navController = navHostFragment.navController
         navController.let {
            sheetNavigator.bind(navController)
-        }
-    }
-
-
-    private fun monitorNetworkConnection() {
-        var isDisconnected = false
-        lifecycleScope.launch {
-            networkMonitor.isOnline.collect {
-                if (!it) {
-                    isDisconnected = true
-                    Crouton.makeText(
-                        requireActivity(),
-                        com.aralhub.ui.R.string.error_network_connection,
-                        CroutonInDriveStyle.errorStyle
-                    ).show()
-                } else if (isDisconnected) {
-                    Crouton.makeText(
-                        requireActivity(),
-                        com.aralhub.ui.R.string.success_network_connection,
-                        CroutonInDriveStyle.successStyle
-                    ).show()
-                }
-            }
         }
     }
 

@@ -5,7 +5,7 @@ import com.aralhub.network.models.ServerResponse
 import retrofit2.Response
 
 object NetworkEx {
-    fun <T> Response<ServerResponse<T>>.safeRequest(): NetworkResult<T> {
+    fun <T> Response<ServerResponse<T>>.safeRequestServerResponse(): NetworkResult<T> {
         return try {
             if (isSuccessful) {
                 body()?.let { serverResponse ->
