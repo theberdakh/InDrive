@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sapardı biykarlaw"
+        android:text="@string/label_cancel_trip"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
         />
@@ -31,7 +31,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Saparlardı jiyi-jiyi biykarlaw reytingińizdiń túsiwine alıp keliwi múmkin. Ótinish, zárúrli bolǵanda ǵana, bunı ámelge asırıń."
+        android:text="@string/label_cancel_trip_description"
         android:gravity="center"
 
         android:textColor="@color/color_content_secondary"
@@ -41,7 +41,7 @@
         android:id="@+id/btn_cancel"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_width="match_parent"
-        android:text="Biykarlaw"
+        android:text="@string/label_cancel"
         android:backgroundTint="@color/color_status_error"
         android:layout_marginVertical="@dimen/margin_small"
         android:textColor="@color/white"
@@ -51,7 +51,7 @@
         android:id="@+id/btn_back"
         style="@style/Widget.InDrive.Button.Variant"
         android:layout_width="match_parent"
-        android:text="Artqa"
+        android:text="@string/label_back"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

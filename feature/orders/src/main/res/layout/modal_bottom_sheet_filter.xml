@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/padding_small"
-            android:text="Filter"
+            android:text="@string/label_filter"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         <TextView
@@ -24,7 +25,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:padding="@dimen/padding_small"
-            android:text="Tazalaw"
+            android:text="@string/label_clear"
             android:textAppearance="@style/TextAppearance.InDrive.TitleGroup"
             android:textColor="@color/color_interactive_accent" />
 
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/padding_medium"
-        android:text="Buyırtpalardı tek usı radiustaǵı aralıqtan alıw:"
+        android:text="@string/label_accept_radius_description"
         android:textAppearance="@style/TextAppearance.InDrive.TitleGroup" />
 
     <TextView
@@ -44,7 +45,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/padding_small"
-        android:text="1 km"
+        tools:text="1 km"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
 
     <com.aralhub.ui.components.Material3SliderView
@@ -65,21 +66,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-            android:text="1 km" />
+            android:text="@string/label_1_km" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-            android:text="2 km" />
+            android:text="@string/label_2_km" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="3 km"
+            android:text="@string/label_3_km"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         <TextView
@@ -88,14 +89,14 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-            android:text="4 km" />
+            android:text="@string/label_4_km" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="5 km"
+            android:text="@string/label_5_km"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
 
@@ -103,10 +104,11 @@
 
 
     <Button
+        android:id="@+id/btn_apply"
         style="@style/Widget.InDrive.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
-        android:text="Qollanıw" />
+        android:text="@string/label_apply" />
 
 </LinearLayout>

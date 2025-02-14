@@ -1,7 +1,7 @@
 package com.aralhub.offers.navigation.sheet
 
 import androidx.navigation.NavController
-import com.aralhub.offers.R
+import com.aralhub.araltaxi.client.offers.R
 import javax.inject.Inject
 import javax.inject.Singleton
 

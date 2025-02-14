@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.client.client_auth'
+    namespace 'com.aralhub.araltaxi.client.auth'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {

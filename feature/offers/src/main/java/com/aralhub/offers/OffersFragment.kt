@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.aralhub.araltaxi.client.offers.R
+import com.aralhub.araltaxi.client.offers.databinding.FragmentOffersBinding
 import com.aralhub.offers.adapter.OfferItemAdapter
-import com.aralhub.offers.databinding.FragmentOffersBinding
 import com.aralhub.offers.model.OfferItem
 import com.aralhub.offers.model.OfferItemDriver
 import com.aralhub.offers.navigation.FeatureOffersNavigation

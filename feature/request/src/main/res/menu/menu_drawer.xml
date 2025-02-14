@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-    </group>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_my_addresses"
+        android:title="Mánzillerim"
+        android:icon="@drawable/ic_map_marker_outline"/>
+
+    <item android:id="@+id/action_trip_history"
+        android:title="Saparlar tariyxı"
+        android:icon="@drawable/ic_trip_history"/>
+
+    <item android:id="@+id/action_support"
+        android:title="Qollap-quwatlaw"
+        android:icon="@drawable/ic_baseline_support_agent"/>
+
+    <item android:id="@+id/action_log_out"
+        android:title="Shıǵıw"
+        android:icon="@drawable/ic_logout"/>
 </menu>

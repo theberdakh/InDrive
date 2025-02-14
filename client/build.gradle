@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.aralhub.indrive'
+    namespace 'com.aralhub.araltaxi.client'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        applicationId "com.aralhub.indrive"
+        applicationId "com.aralhub.araltaxi.client"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk 35
         versionCode 1

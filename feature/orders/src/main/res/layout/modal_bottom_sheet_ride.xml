@@ -23,6 +23,7 @@
         android:paddingBottom="@dimen/padding_small">
 
         <ImageView
+            android:contentDescription="@string/cd_avatar"
             android:id="@+id/iv_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -159,7 +160,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Onlayn pul ótkeriw"
+            android:text="@string/label_payment_method_online"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
     </LinearLayout>
@@ -227,7 +228,7 @@
 
     <Button
         style="@style/Widget.InDrive.Button.Primary"
-        android:text="Navigator"
+        android:text="@string/label_navigator"
         android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -242,7 +243,7 @@
         android:id="@+id/slide_button_finish"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:SlideButtonText="Juwmaqlaw"
+        app:SlideButtonText="@string/label_finish"
         android:layout_margin="@dimen/margin_small"/>
 
 </LinearLayout>

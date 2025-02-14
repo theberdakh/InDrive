@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_my_revenue"
+        android:icon="@drawable/ic_material_symbols_money_bag_outline"
+        android:title="Meniń dáramatlarım" />
+    <item
+        android:id="@+id/action_order_history"
+        android:icon="@drawable/ic_mdi_hail_taxi"
+        android:title="Buyırtpalar tariyxı" />
+    <item
+        android:id="@+id/action_support"
+        android:icon="@drawable/ic_baseline_support_agent"
+        android:title="Qollap-quwatlaw" />
+    <item
+        android:id="@+id/action_log_out"
+        android:icon="@drawable/ic_logout"
+        android:title="Shıǵıw" />
+</menu>

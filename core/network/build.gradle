@@ -32,8 +32,10 @@ android {
 }
 
 dependencies {
-    testImplementation libs.junit
+    implementation libs.gson
+    implementation libs.retrofit
 
+    testImplementation libs.junit
     // Dagger-Hilt
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
