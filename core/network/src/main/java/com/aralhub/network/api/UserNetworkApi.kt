@@ -1,7 +1,6 @@
 package com.aralhub.network.api
 
 import com.aralhub.network.api.model.ServerResponse
-import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserMeResponse
 import com.aralhub.network.models.user.NetworkUserProfileRequest
@@ -39,5 +38,4 @@ interface UserNetworkApi {
 
     @DELETE("/user/delete/profile")
     fun deleteUserProfile(): Response<ServerResponse<Unit>>
-
 }
