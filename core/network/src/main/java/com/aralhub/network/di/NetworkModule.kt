@@ -1,4 +1,4 @@
-package com.aralhub.network
+package com.aralhub.network.di
 
 import com.aralhub.network.utils.ConnectivityManagerNetworkMonitor
 import com.aralhub.network.utils.NetworkMonitor
