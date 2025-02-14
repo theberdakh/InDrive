@@ -1,6 +1,6 @@
 package com.aralhub.network.api
 
-import com.aralhub.network.api.model.ServerResponse
+import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
 import retrofit2.Response
