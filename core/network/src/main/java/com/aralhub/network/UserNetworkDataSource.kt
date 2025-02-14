@@ -1,20 +1,20 @@
 package com.aralhub.network
 
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.user.NetworkAuthRequest
-import com.aralhub.network.models.user.NetworkMeResponse
-import com.aralhub.network.models.user.NetworkProfileRequest
-import com.aralhub.network.models.user.NetworkRefreshResponse
-import com.aralhub.network.models.user.NetworkVerifyRequest
-import com.aralhub.network.models.user.NetworkVerifyResponse
+import com.aralhub.network.models.user.NetworkUserAuthRequest
+import com.aralhub.network.models.user.NetworkUserMeResponse
+import com.aralhub.network.models.user.NetworkUserProfileRequest
+import com.aralhub.network.models.user.NetworkUserRefreshResponse
+import com.aralhub.network.models.user.NetworkUserVerifyRequest
+import com.aralhub.network.models.user.NetworkUserVerifyResponse
 
 interface UserNetworkDataSource {
-    suspend fun auth(networkAuthRequest: NetworkAuthRequest): NetworkResult<Unit>
-    suspend fun verify(networkVerifyRequest: NetworkVerifyRequest): NetworkResult<NetworkVerifyResponse>
-    suspend fun profile(networkProfileRequest: NetworkProfileRequest): NetworkResult<Unit>
-    suspend fun getMe(): NetworkResult<NetworkMeResponse>
-    suspend fun refresh(): NetworkResult<NetworkRefreshResponse>
-    suspend fun logout(): NetworkResult<Unit>
-    suspend fun photo(): NetworkResult<Unit>
-    suspend fun deleteProfile(): NetworkResult<Unit>
+    suspend fun userAuth(networkUserAuthRequest: NetworkUserAuthRequest): NetworkResult<Unit>
+    suspend fun userVerify(networkUserVerifyRequest: NetworkUserVerifyRequest): NetworkResult<NetworkUserVerifyResponse>
+    suspend fun userProfile(networkUserProfileRequest: NetworkUserProfileRequest): NetworkResult<Unit>
+    suspend fun getUserMe(): NetworkResult<NetworkUserMeResponse>
+    suspend fun userRefresh(): NetworkResult<NetworkUserRefreshResponse>
+    suspend fun userLogout(): NetworkResult<Unit>
+    suspend fun userPhoto(): NetworkResult<Unit>
+    suspend fun userDeleteProfile(): NetworkResult<Unit>
 }

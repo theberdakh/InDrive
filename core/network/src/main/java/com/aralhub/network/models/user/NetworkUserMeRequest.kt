@@ -2,7 +2,7 @@ package com.aralhub.network.models.user
 
 import com.google.gson.annotations.SerializedName
 
-data class NetworkMeResponse(
+data class NetworkUserMeResponse(
     val id: Int,
     @SerializedName("full_name")
     val fullName: String,
