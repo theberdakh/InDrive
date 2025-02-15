@@ -1,6 +1,6 @@
 package com.aralhub.network.utils
 
-import com.aralhub.network.models.NetworkWrappedResult
+import com.aralhub.network.models.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -8,28 +8,25 @@ import retrofit2.Response
 
 object NetworkUtils {
 
-    suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkWrappedResult<T> {
+    suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiCall.invoke()
                 if (response.isSuccessful) {
-                    NetworkWrappedResult.Success(response.body()!!)
+                    NetworkResult.Success(response.body()!!)
                 } else {
                     val except = when (response.code()) {
-
                         in 400..499 -> {
                             fetchErrorResponseMessage(response.errorBody())
                         }
-
                         in 500..599 -> {
                             "Server Error!"
                         }
-
                         else -> {
                             "Http unknown exception"
                         }
                     }
-                    NetworkWrappedResult.Error(
+                    NetworkResult.Error(
                         except ?: "error"
                     )
                 }
@@ -95,7 +92,7 @@ object NetworkUtils {
 //
 //                }
 
-                NetworkWrappedResult.Error("Error")
+                NetworkResult.Error("Error")
             }
         }
     }
