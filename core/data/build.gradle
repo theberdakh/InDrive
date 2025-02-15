@@ -32,10 +32,12 @@ android {
 }
 
 dependencies {
+    testImplementation libs.junit
 
-    // Dagger-Hilt
+    implementation project(":core:common")
+    implementation project(":core:network")
+
+    //Dagger-Hilt for Dependency Injection
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
-
-    testImplementation libs.junit
 }

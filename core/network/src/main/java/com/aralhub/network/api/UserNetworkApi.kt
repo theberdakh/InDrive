@@ -1,6 +1,7 @@
 package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.user.NetworkAuthResponseData
 import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserMeResponse
 import com.aralhub.network.models.user.NetworkUserProfileRequest
@@ -16,7 +17,7 @@ import retrofit2.http.POST
 interface UserNetworkApi {
 
     @POST("/user/auth")
-    fun userAuth(@Body networkUserAuthRequest: NetworkUserAuthRequest): Response<ServerResponse<Unit>>
+    suspend fun userAuth(@Body networkUserAuthRequest: NetworkUserAuthRequest): Response<NetworkAuthResponseData>
 
     @POST("/user/verify/")
     fun userVerify(@Body networkUserVerifyRequest: NetworkUserVerifyRequest): Response<ServerResponse<NetworkUserVerifyResponse>>
