@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth
+package com.aralhub.client.clientauth
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

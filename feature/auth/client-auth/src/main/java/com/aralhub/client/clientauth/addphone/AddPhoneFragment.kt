@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth.add_phone
+package com.aralhub.client.clientauth.addphone
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.auth.R
 import com.aralhub.araltaxi.client.auth.databinding.FragmentAddPhoneBinding
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter
 import com.aralhub.ui.utils.viewBinding

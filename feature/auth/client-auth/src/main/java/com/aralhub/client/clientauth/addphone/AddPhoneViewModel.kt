@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth.add_phone
+package com.aralhub.client.clientauth.addphone
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,13 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddPhoneViewModel @Inject constructor(
-    private val useCase: ClientAuthUseCase,
-) : ViewModel() {
-
+class AddPhoneViewModel @Inject constructor(private val useCase: ClientAuthUseCase) : ViewModel() {
     private val _addPhoneUiState = MutableSharedFlow<AddPhoneUiState>()
     val addPhoneUiState = _addPhoneUiState.asSharedFlow()
-
     fun auth(phone: String) = viewModelScope.launch {
         _addPhoneUiState.emit(AddPhoneUiState.Loading)
         _addPhoneUiState.emit(useCase(AuthRequest(phoneNumber = phone)).let {

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/logoFragment"
-        android:name="com.aralhub.client.client_auth.LogoFragment">
+        android:name="com.aralhub.client.clientauth.LogoFragment">
         <action
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
             app:destination="@id/addPhoneFragment" />
@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/addPhoneFragment"
-        android:name="com.aralhub.client.client_auth.add_phone.AddPhoneFragment">
+        android:name="com.aralhub.client.clientauth.addphone.AddPhoneFragment">
 
         <action
             android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/addSmsFragment"
-        android:name="com.aralhub.client.client_auth.AddSMSFragment">
+        android:name="com.aralhub.client.clientauth.addsms.AddSMSFragment">
 
         <action
             android:id="@+id/action_addSmsFragment_to_addNameFragment"
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/addNameFragment"
-        android:name="com.aralhub.client.client_auth.AddNameFragment">
+        android:name="com.aralhub.client.clientauth.AddNameFragment">
 
         <action android:id="@+id/action_addNameFragment_to_requestFragment"
             app:destination="@id/requestFragment"/>

@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth
+package com.aralhub.client.clientauth
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.auth.R
 import com.aralhub.araltaxi.client.auth.databinding.FragmentAddNameBinding
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay

@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth.navigation
+package com.aralhub.client.clientauth.navigation
 
 interface FeatureClientAuthNavigation {
     fun goToAddPhoneNumber()

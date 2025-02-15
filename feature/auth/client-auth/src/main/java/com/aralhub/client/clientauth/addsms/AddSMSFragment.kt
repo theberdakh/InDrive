@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth
+package com.aralhub.client.clientauth.addsms
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.auth.R
 import com.aralhub.araltaxi.client.auth.databinding.FragmentAddSmsBinding
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
@@ -19,14 +19,17 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private val binding by viewBinding(FragmentAddSmsBinding::bind)
-
-    @Inject
-    lateinit var navigator: FeatureClientAuthNavigation
+    private var _phone: String = ""
+    private val boldTextHex = "#001934"
+    @Inject lateinit var navigator: FeatureClientAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val phoneNumber = requireArguments().getString(ARG_PHONE) ?: ""
-        val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, phoneNumber)
-        binding.tvDescription.text = StringUtils.getBoldSpanString(fullText, phoneNumber, "#001934")
+        initArgs()
+        initViews()
+        initListeners()
+    }
+
+    private fun initListeners() {
         binding.etPhone.addTextChangedListener {
             binding.btnStart.isEnabled = it.toString().length == 4
             if (binding.btnStart.isEnabled) {
@@ -40,6 +43,13 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
                 navigator.goToAddName()
             }
         }
+    }
+
+    private fun initArgs() { _phone = requireArguments().getString(ARG_PHONE) ?: "" }
+
+    private fun initViews() {
+        val fullText = getString(com.aralhub.ui.R.string.label_confirm_description, _phone)
+        binding.tvDescription.text = StringUtils.getBoldSpanString(fullText = fullText, boldText = _phone, boldTextColorHex = boldTextHex)
     }
 
     companion object {

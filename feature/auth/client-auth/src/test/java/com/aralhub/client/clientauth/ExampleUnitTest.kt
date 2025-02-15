@@ -1,4 +1,4 @@
-package com.aralhub.client.client_auth
+package com.aralhub.client.clientauth
 
 import org.junit.Test
 
