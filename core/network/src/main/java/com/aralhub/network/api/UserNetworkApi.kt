@@ -1,6 +1,7 @@
 package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.user.NetworkAuthResponseData
 import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserMeResponse
@@ -17,13 +18,13 @@ import retrofit2.http.POST
 interface UserNetworkApi {
 
     @POST("/user/auth")
-    suspend fun userAuth(@Body networkUserAuthRequest: NetworkUserAuthRequest): Response<NetworkAuthResponseData>
+    suspend fun userAuth(@Body networkUserAuthRequest: NetworkUserAuthRequest): Response<ServerResponseEmpty>
 
     @POST("/user/verify/")
     fun userVerify(@Body networkUserVerifyRequest: NetworkUserVerifyRequest): Response<ServerResponse<NetworkUserVerifyResponse>>
 
     @POST("/user/profile/")
-    fun userProfile(@Body networkUserProfileRequest: NetworkUserProfileRequest): Response<ServerResponse<Unit>>
+    fun userProfile(@Body networkUserProfileRequest: NetworkUserProfileRequest): Response<ServerResponseEmpty>
 
     @GET("/user/me/")
     fun getUserMe(): Response<NetworkUserMeResponse>
@@ -35,8 +36,8 @@ interface UserNetworkApi {
     fun userLogout(): Response<String>
 
     @POST("/user/profile/photo/")
-    fun userPhoto(): Response<ServerResponse<Unit>>
+    fun userPhoto(): Response<ServerResponseEmpty>
 
     @DELETE("/user/delete/profile")
-    fun deleteUserProfile(): Response<ServerResponse<Unit>>
+    fun deleteUserProfile(): Response<ServerResponseEmpty>
 }

@@ -6,4 +6,4 @@ data class AuthRequest(
     val phoneNumber: String,
 )
 
-fun AuthRequest.toDTO() = NetworkUserAuthRequest(this.phoneNumber)
+fun AuthRequest.toNetwork() = NetworkUserAuthRequest(this.phoneNumber)

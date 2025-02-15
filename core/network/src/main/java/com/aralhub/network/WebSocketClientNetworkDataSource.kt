@@ -1,6 +1,8 @@
 package com.aralhub.network
 
 import com.aralhub.network.models.NetworkResult
+import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
 
@@ -10,16 +12,16 @@ interface WebSocketClientNetworkDataSource {
     fun putClientRideAmount(
         rideId: String,
         amount: Number
-    ): NetworkResult<Unit>
+    ): NetworkResult<Boolean>
 
-    fun clientAcceptOffer(offerId: String): NetworkResult<Unit>
+    fun clientAcceptOffer(offerId: String): NetworkResult<Boolean>
 
-    fun clientRejectOffer(offerId: String): NetworkResult<Unit>
+    fun clientRejectOffer(offerId: String): NetworkResult<Boolean>
 
-    fun clientCancelOffer(rideId: String): NetworkResult<Unit>
+    fun clientCancelOffer(rideId: String): NetworkResult<Boolean>
 
-    fun getActiveOfferByRideId(rideId: String): NetworkResult<Unit>
+    fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
 
-    fun getActiveRideByPassenger(userId: Int): NetworkResult<Unit>
+    fun getActiveRideByPassenger(userId: Int): NetworkResult<Boolean>
 
 }

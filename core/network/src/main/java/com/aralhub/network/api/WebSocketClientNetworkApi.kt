@@ -2,6 +2,7 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
 import retrofit2.Response
@@ -19,20 +20,20 @@ interface WebSocketClientNetworkApi {
     fun putClientRideAmount(
         @Path("ride_id") rideId: String,
         @Query("amount") amount: Number
-    ): Response<ServerResponse<Unit>>
+    ): Response<ServerResponseEmpty>
 
     @POST("/websocket/offer/{offer_id}/accept")
-    fun clientAcceptOffer(@Path("offer_id") offerId: String): Response<ServerResponse<Unit>>
+    fun clientAcceptOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
 
     @POST("/websocket/offer/{offer_id}/reject")
-    fun clientRejectOffer(@Path("offer_id") offerId: String): Response<ServerResponse<Unit>>
+    fun clientRejectOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
 
     @POST("/websocket/ride/cancel/{ride_id}")
-    fun clientCancelOffer(@Path("ride_id") rideId: String): Response<ServerResponse<Unit>>
+    fun clientCancelOffer(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
     @GET("/websocket/get_active_offer_by_ride_id/{ride_id}")
-    fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponse<Unit>>
+    fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
     @GET("/websocket/get_active_ride_by_passenger")
-    fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponse<Unit>>
+    fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponseEmpty>
 }

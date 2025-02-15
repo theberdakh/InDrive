@@ -52,7 +52,7 @@ class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
             sendRequest("+998912345678")
         }
 
-        sendRequest("+998912345678")
+        sendRequest("+998912345677")
     }
 
     private fun sendRequest(phone: String) {

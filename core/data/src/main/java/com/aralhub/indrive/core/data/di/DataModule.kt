@@ -1,7 +1,7 @@
 package com.aralhub.indrive.core.data.di
 
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
-import com.aralhub.indrive.core.data.repository.client.ClientAuthRepositoryImpl
+import com.aralhub.indrive.core.data.repository.client.impl.ClientAuthRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
