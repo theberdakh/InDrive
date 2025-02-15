@@ -1,5 +1,6 @@
 package com.aralhub.network.utils
 
+import android.util.Log
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
@@ -22,11 +23,12 @@ object NetworkEx {
         }
     }
 
-    fun <T> Response<ServerResponse<T>>.safeRequestServerResponse(): NetworkResult<T> {
+     fun <T> Response<ServerResponse<T>>.safeRequestServerResponse(): NetworkResult<T> {
         return try {
             if (isSuccessful) {
                 body()?.let { serverResponse ->
-                    if (serverResponse.success) {
+                    NetworkResult.Success(data = serverResponse.data)
+                   if (serverResponse.success) {
                         NetworkResult.Success(data = serverResponse.data)
                     } else {
                         NetworkResult.Error(message = serverResponse.message)

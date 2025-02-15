@@ -1,4 +1,4 @@
-package com.aralhub.client.clientauth.addsms
+package com.aralhub.araltaxi.driver.driver_auth.addsms
 
 import android.os.Bundle
 import android.util.Log
@@ -7,10 +7,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.araltaxi.client.auth.R
-import com.aralhub.araltaxi.client.auth.databinding.FragmentAddSmsBinding
-import com.aralhub.client.clientauth.addphone.AddPhoneViewModel
-import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
+import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.indrive.driver.auth.R
+import com.aralhub.indrive.driver.auth.databinding.FragmentAddSmsBinding
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.ViewEx.hide
@@ -29,7 +28,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private var _phone: String = ""
     private val boldTextHex = "#001934"
     private val viewModel by viewModels<AddSMSViewModel>()
-    @Inject lateinit var navigator: FeatureClientAuthNavigation
+    @Inject lateinit var navigator: FeatureDriverAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initArgs()
@@ -56,7 +55,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     }
 
     private fun navigateToAddName() {
-        navigator.goToAddName()
+        navigator.goToOverviewFromAddSMS()
     }
 
     private fun displayError(errorMessage: String) {

@@ -5,30 +5,32 @@ import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
+import javax.inject.Inject
 
-class DriverNetworkDataSourceImpl(private val api: DriverNetworkApi): DriverNetworkDataSource {
-    override fun driverAuth(networkDriverAuthRequest: NetworkDriverAuthRequest): NetworkResult<String> {
+class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNetworkApi): DriverNetworkDataSource {
+    override suspend fun driverAuth(networkDriverAuthRequest: NetworkDriverAuthRequest): NetworkResult<String> {
         return  api.driverAuth(networkDriverAuthRequest).safeRequestServerResponse()
     }
 
-    override fun driverVerify(networkDriverAuthRequest: NetworkDriverAuthRequest): NetworkResult<String> {
-        return api.driverVerify(networkDriverAuthRequest).safeRequestServerResponse()
+    override suspend fun driverVerify(networkDriverVerifyRequest: NetworkDriverVerifyRequest): NetworkResult<String> {
+        return api.driverVerify(networkDriverVerifyRequest).safeRequestServerResponse()
     }
 
-    override fun getDriverVehicle(): NetworkResult<String> {
+    override suspend fun getDriverVehicle(): NetworkResult<String> {
         return api.getDriverVehicle().safeRequestServerResponse()
     }
 
-    override fun getDriverInfo(): NetworkResult<String> {
+    override suspend fun getDriverInfo(): NetworkResult<String> {
         return api.getDriverInfo().safeRequestServerResponse()
     }
 
-    override fun getDriverInfoWithVehicle(): NetworkResult<String> {
+    override suspend fun getDriverInfoWithVehicle(): NetworkResult<String> {
         return api.getDriverInfoWithVehicle().safeRequestServerResponse()
     }
 
-    override fun driverCard(networkDriverCardRequest: NetworkDriverCardRequest): NetworkResult<String> {
+    override suspend fun driverCard(networkDriverCardRequest: NetworkDriverCardRequest): NetworkResult<String> {
         return api.driverCard(networkDriverCardRequest).safeRequestServerResponse()
     }
 }

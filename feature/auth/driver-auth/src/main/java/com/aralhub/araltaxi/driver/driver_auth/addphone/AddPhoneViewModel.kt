@@ -1,8 +1,8 @@
-package com.aralhub.client.clientauth.addphone
+package com.aralhub.araltaxi.driver.driver_auth.addphone
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aralhub.araltaxi.core.domain.client.ClientAddPhoneUseCase
+import com.aralhub.araltaxi.core.domain.driver.DriverAddPhoneUseCase
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddPhoneViewModel @Inject constructor(private val useCase: ClientAddPhoneUseCase) : ViewModel() {
+class AddPhoneViewModel @Inject constructor(private val useCase: DriverAddPhoneUseCase): ViewModel() {
     private val _addPhoneUiState = MutableSharedFlow<AddPhoneUiState>()
     val addPhoneUiState = _addPhoneUiState.asSharedFlow()
 

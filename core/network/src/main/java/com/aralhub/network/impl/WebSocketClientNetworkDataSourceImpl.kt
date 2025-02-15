@@ -10,33 +10,33 @@ import com.aralhub.network.utils.NetworkEx.safeRequestServerResponseEmpty
 
 class WebSocketClientNetworkDataSourceImpl(private val api: WebSocketClientNetworkApi) :
     WebSocketClientNetworkDataSource {
-    override fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse> {
+    override suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse> {
         return api.clientRide(clientRideRequest).safeRequestServerResponse()
     }
-    override fun putClientRideAmount(
+    override suspend fun putClientRideAmount(
         rideId: String,
         amount: Number
     ): NetworkResult<Boolean> {
         return api.putClientRideAmount(rideId, amount).safeRequestServerResponseEmpty()
     }
 
-    override fun clientAcceptOffer(offerId: String): NetworkResult<Boolean> {
+    override suspend fun clientAcceptOffer(offerId: String): NetworkResult<Boolean> {
         return api.clientAcceptOffer(offerId).safeRequestServerResponseEmpty()
     }
 
-    override fun clientRejectOffer(offerId: String): NetworkResult<Boolean> {
+    override suspend fun clientRejectOffer(offerId: String): NetworkResult<Boolean> {
         return api.clientRejectOffer(offerId).safeRequestServerResponseEmpty()
     }
 
-    override fun clientCancelOffer(rideId: String): NetworkResult<Boolean> {
+    override suspend fun clientCancelOffer(rideId: String): NetworkResult<Boolean> {
         return api.clientCancelOffer(rideId).safeRequestServerResponseEmpty()
     }
 
-    override fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean> {
+    override suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean> {
         return api.getActiveOfferByRideId(rideId).safeRequestServerResponseEmpty()
     }
 
-    override fun getActiveRideByPassenger(userId: Int): NetworkResult<Boolean> {
+    override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<Boolean> {
         return api.getActiveRideByPassenger(userId).safeRequestServerResponseEmpty()
     }
 }

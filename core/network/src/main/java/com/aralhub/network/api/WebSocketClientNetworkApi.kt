@@ -14,26 +14,26 @@ import retrofit2.http.Query
 
 interface WebSocketClientNetworkApi {
     @POST("/websocket/ride/client")
-    fun clientRide(clientRideRequest: ClientRideRequest): Response<ServerResponse<ClientRideResponse>>
+    suspend fun clientRide(clientRideRequest: ClientRideRequest): Response<ServerResponse<ClientRideResponse>>
 
     @PUT("/websocket/ride/update_amount/{ride_id}")
-    fun putClientRideAmount(
+    suspend fun putClientRideAmount(
         @Path("ride_id") rideId: String,
         @Query("amount") amount: Number
     ): Response<ServerResponseEmpty>
 
     @POST("/websocket/offer/{offer_id}/accept")
-    fun clientAcceptOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
+    suspend fun clientAcceptOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
 
     @POST("/websocket/offer/{offer_id}/reject")
-    fun clientRejectOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
+    suspend fun clientRejectOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
 
     @POST("/websocket/ride/cancel/{ride_id}")
-    fun clientCancelOffer(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
+    suspend fun clientCancelOffer(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
     @GET("/websocket/get_active_offer_by_ride_id/{ride_id}")
-    fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
+    suspend fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
     @GET("/websocket/get_active_ride_by_passenger")
-    fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponseEmpty>
+    suspend fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponseEmpty>
 }

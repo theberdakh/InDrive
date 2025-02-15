@@ -19,7 +19,7 @@ class LogoFragment : Fragment(R.layout.fragment_logo) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewNextButton.setOnClickListener {
-            navigator.goToOverviewFromLogo()
+            navigator.goToAddPhoneNumber()
         }
     }
 }

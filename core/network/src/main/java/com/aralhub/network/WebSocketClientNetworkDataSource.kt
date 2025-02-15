@@ -7,21 +7,21 @@ import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
 
 interface WebSocketClientNetworkDataSource {
-    fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
+    suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
 
-    fun putClientRideAmount(
+    suspend fun putClientRideAmount(
         rideId: String,
         amount: Number
     ): NetworkResult<Boolean>
 
-    fun clientAcceptOffer(offerId: String): NetworkResult<Boolean>
+    suspend fun clientAcceptOffer(offerId: String): NetworkResult<Boolean>
 
-    fun clientRejectOffer(offerId: String): NetworkResult<Boolean>
+    suspend fun clientRejectOffer(offerId: String): NetworkResult<Boolean>
 
-    fun clientCancelOffer(rideId: String): NetworkResult<Boolean>
+    suspend fun clientCancelOffer(rideId: String): NetworkResult<Boolean>
 
-    fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
+    suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
 
-    fun getActiveRideByPassenger(userId: Int): NetworkResult<Boolean>
+    suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<Boolean>
 
 }

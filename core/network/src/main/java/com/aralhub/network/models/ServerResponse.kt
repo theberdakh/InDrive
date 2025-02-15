@@ -1,6 +1,6 @@
 package com.aralhub.network.models
 
-sealed class ServerResponse<out T>(
+data class ServerResponse<out T>(
     val success: Boolean,
     val message: String,
     val data: T
