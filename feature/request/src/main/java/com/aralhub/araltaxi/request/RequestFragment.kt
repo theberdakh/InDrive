@@ -75,6 +75,16 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navigation.goToProfileFromRequestFragment()
         }
+        binding.navigationView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.action_support -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToSupportFromRequestFragment()
+                    true
+                }
+                else -> false
+             }
+        }
         if (bottomSheetBehavior != null) {
             binding.drawerLayout.addDrawerListener(
                 BottomSheetBehaviorDrawerListener(

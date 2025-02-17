@@ -57,6 +57,9 @@
             android:id="@+id/action_requestFragment_to_profileFragment"
             app:destination="@id/profileFragment"/>
 
+        <action android:id="@+id/action_requestFragment_to_supportFragment"
+            app:destination="@id/supportFragment"/>
+
     </fragment>
 
     <fragment
@@ -77,5 +80,9 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.aralhub.araltaxi.profile.client.ProfileFragment"/>
+
+    <fragment
+        android:id="@+id/supportFragment"
+        android:name="com.aralhub.araltaxi.profile.client.SupportFragment"/>
 
 </navigation>
