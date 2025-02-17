@@ -46,6 +46,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
         navController?.navigate(R.id.action_homeFragment_to_offersFragment)
     }
 
+    override fun goToProfileFromRequestFragment() {
+        navController?.navigate(R.id.action_requestFragment_to_profileFragment)
+    }
+
     override fun goToRideFragment() {
         navController?.navigate(R.id.action_offersFragment_to_rideFragment)
     }
