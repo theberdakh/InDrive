@@ -49,11 +49,65 @@
             android:id="@+id/action_overviewFragment_to_ordersFragment"
             app:destination="@id/ordersFragment" />
 
+        <action
+            android:id="@+id/action_overviewFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+
+        <action
+            android:id="@+id/action_overviewFragment_to_supportFragment"
+            app:destination="@id/supportFragment" />
+
+        <action
+            android:id="@+id/action_overviewFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+
+        <action
+            android:id="@+id/action_overviewFragment_to_revenueFragment"
+            app:destination="@id/revenueFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/ordersFragment"
         android:name="com.aralhub.araltaxi.driver.orders.OrdersFragment"
-        tools:layout="@layout/fragment_orders" />
+        tools:layout="@layout/fragment_orders">
+
+        <action
+            android:id="@+id/action_ordersFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+
+        <action
+            android:id="@+id/action_ordersFragment_to_supportFragment"
+            app:destination="@id/supportFragment" />
+
+        <action
+            android:id="@+id/action_ordersFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+
+        <action
+            android:id="@+id/action_ordersFragment_to_revenueFragment"
+            app:destination="@id/revenueFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.aralhub.araltaxi.profile.driver.ProfileFragment"
+        tools:layout="@layout/fragment_profile"/>
+
+    <fragment
+        android:id="@+id/supportFragment"
+        android:name="com.aralhub.araltaxi.profile.driver.SupportFragment"
+        tools:layout="@layout/fragment_support"/>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.aralhub.araltaxi.history.driver.HistoryFragment"
+        tools:layout="@layout/fragment_history"/>
+
+    <fragment
+        android:id="@+id/revenueFragment"
+        android:name="com.aralhub.araltaxi.revenue.RevenueFragment"
+        tools:layout="@layout/fragment_revenue"/>
 
 </navigation>

@@ -84,4 +84,12 @@
     <string name="label_total_distance">Ulıwma aralıq</string>
     <string name="label_trip_duration">Sapar dawamlılıǵı</string>
     <string name="label_paid_waiting_time_started">Tólemli kútiw waqtı baslandı</string>
+
+    <string name="label_account_info">Akkaunt maǵlıwmaları</string>
+    <string name="label_delete_account">Akkaunttı óshiriw</string>
+    <string name="label_support">Qollap-quwatlaw</string>
+    <string name="label_telegram_bot">Telegram-bot</string>
+    <string name="label_telegram_bot_description">Sorawlarıńızǵa operativ túrde juwap alıw ushın, Telegramdaǵı chat-botımız arqalı xabarlasıń.</string>
+    <string name="label_go_to_telegram">Telegramǵa ótiw</string>
+    <string name="label_exit_description">Siz akkauntı tárk etip atırsız. Ámeldi tastıyıqlaysız ba?</string>
 </resources>

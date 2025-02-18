@@ -14,6 +14,7 @@ import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
+import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.ui.utils.viewBinding
@@ -80,6 +81,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 R.id.action_support -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToSupportFromRequestFragment()
+                    true
+                }
+                R.id.action_log_out -> {
+                    LogoutModalBottomSheet.show(childFragmentManager)
                     true
                 }
                 else -> false

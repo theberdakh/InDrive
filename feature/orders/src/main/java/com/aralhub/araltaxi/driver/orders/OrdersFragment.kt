@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
+import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.FilterModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.GoingToPickUpModalBottomSheet
+import com.aralhub.araltaxi.driver.orders.sheet.LogoutModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.OrderModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ReasonCancelModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
@@ -21,7 +23,10 @@ import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
@@ -100,6 +105,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
     )
+    @Inject lateinit var navigation: FeatureOrdersNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,8 +117,40 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initCancelTripModalBottomSheet()
         initTripCanceledModalBottomSheet()
         initReasonCancelModalBottomSheet()
+        initListeners()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
+    }
+
+    private fun initListeners() {
+        binding.navigationView.getHeaderView(0).setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navigation.goToProfileFromOrders()
+        }
+        binding.navigationView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.action_support -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToSupportFromOrders()
+                    true
+                }
+                R.id.action_log_out -> {
+                    LogoutModalBottomSheet.show(childFragmentManager)
+                    true
+                }
+                R.id.action_my_revenue -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToRevenueFromOrders()
+                    true
+                }
+                R.id.action_order_history -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToHistoryFromOrders()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun initReasonCancelModalBottomSheet() {
