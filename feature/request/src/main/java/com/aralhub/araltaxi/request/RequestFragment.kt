@@ -87,6 +87,16 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     LogoutModalBottomSheet.show(childFragmentManager)
                     true
                 }
+                R.id.action_my_addresses -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToSavedPlacesFromRequestFragment()
+                    true
+                }
+                R.id.action_trip_history -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToHistoryFromRequestFragment()
+                    true
+                }
                 else -> false
              }
         }
