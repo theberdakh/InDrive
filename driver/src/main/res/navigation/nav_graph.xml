@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/addPhoneFragment"
-        android:name="com.aralhub.araltaxi.driver.driver_auth.AddPhoneFragment"
+        android:name="com.aralhub.araltaxi.driver.driver_auth.addphone.AddPhoneFragment"
         tools:layout="@layout/fragment_add_phone">
 
         <action
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/addSmsFragment"
-        android:name="com.aralhub.araltaxi.driver.driver_auth.AddSMSFragment"
+        android:name="com.aralhub.araltaxi.driver.driver_auth.addsms.AddSMSFragment"
         tools:layout="@layout/fragment_add_sms">
 
         <action

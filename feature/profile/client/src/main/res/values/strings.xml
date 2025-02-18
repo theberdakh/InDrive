@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_account_info">Akkaunt maǵlıwmaları</string>
+    <string name="label_delete_account">Akkaunttı óshiriw</string>
+    <string name="label_support">Qollap-quwatlaw</string>
+    <string name="label_telegram_bot">Telegram-bot</string>
+    <string name="label_telegram_bot_description">Sorawlarıńızǵa operativ túrde juwap alıw ushın, Telegramdaǵı chat-botımız arqalı xabarlasıń.</string>
+    <string name="label_go_to_telegram">Telegramǵa ótiw</string>
+</resources>

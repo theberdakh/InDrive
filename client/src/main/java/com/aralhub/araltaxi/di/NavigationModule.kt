@@ -1,6 +1,6 @@
 package com.aralhub.araltaxi.di
 
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.navigation.Navigator
 import com.aralhub.araltaxi.navigation.NavigatorImpl
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation

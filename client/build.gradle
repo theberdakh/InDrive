@@ -44,6 +44,7 @@ dependencies {
     implementation project(":feature:offers")
     implementation project(":feature:request")
     implementation project(':feature:ride')
+    implementation project(':feature:profile:client')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat

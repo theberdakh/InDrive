@@ -2,8 +2,8 @@ package com.aralhub.araltaxi.navigation
 
 import androidx.navigation.NavController
 import com.aralhub.araltaxi.client.R
-import com.aralhub.client.client_auth.AddSMSFragment
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
+import com.aralhub.client.clientauth.addsms.AddSMSFragment
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import javax.inject.Inject
@@ -44,6 +44,14 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun goToGetOffersFromSendOrderFragment() {
         navController?.navigate(R.id.action_homeFragment_to_offersFragment)
+    }
+
+    override fun goToProfileFromRequestFragment() {
+        navController?.navigate(R.id.action_requestFragment_to_profileFragment)
+    }
+
+    override fun goToSupportFromRequestFragment() {
+        navController?.navigate(R.id.action_requestFragment_to_supportFragment)
     }
 
     override fun goToRideFragment() {

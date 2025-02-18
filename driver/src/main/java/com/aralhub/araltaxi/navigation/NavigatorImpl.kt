@@ -2,7 +2,7 @@ package com.aralhub.araltaxi.navigation
 
 import androidx.navigation.NavController
 import com.aralhub.araltaxi.driver.R
-import com.aralhub.araltaxi.driver.driver_auth.AddSMSFragment
+import com.aralhub.araltaxi.driver.driver_auth.addsms.AddSMSFragment
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import javax.inject.Inject
