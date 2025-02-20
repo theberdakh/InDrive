@@ -16,7 +16,9 @@
 
 package com.aralhub.network.di
 
+import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.UserNetworkDataSource
+import com.aralhub.network.impl.DriverNetworkDataSourceImpl
 import com.aralhub.network.impl.UserNetworkDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -30,4 +32,7 @@ abstract class NetworkDataSourceModule {
 
     @[Binds Singleton]
     abstract fun bindClientNetworkDataSource(networkDataSource: UserNetworkDataSourceImpl): UserNetworkDataSource
+
+    @[Binds Singleton]
+    abstract fun bindDriverNetworkDataSource(driverNetworkDataSourceImpl: DriverNetworkDataSourceImpl): DriverNetworkDataSource
 }

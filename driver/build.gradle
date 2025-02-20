@@ -43,6 +43,9 @@ dependencies {
     implementation project(':feature:auth:driver-auth')
     implementation project(':feature:overview')
     implementation project(':feature:orders')
+    implementation project(':feature:profile:driver')
+    implementation project(':feature:history:driver')
+    implementation project(':feature:revenue')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
