@@ -10,6 +10,7 @@ import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserProfileRequest
 import com.aralhub.network.models.user.NetworkUserVerifyRequest
 import com.aralhub.network.utils.LocalStorage
+import java.io.File
 import javax.inject.Inject
 
 class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val clientNetworkDataSource: UserNetworkDataSource) :
@@ -40,6 +41,15 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
 
     override suspend fun userProfile(fullName: String): Result<Boolean> {
         clientNetworkDataSource.userProfile(NetworkUserProfileRequest(fullName)).let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(data = true)
+            }
+        }
+    }
+
+    override suspend fun uploadPhoto(file: File): Result<Boolean> {
+        clientNetworkDataSource.userPhoto(file).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(data = true)

@@ -14,6 +14,7 @@
         android:title="@string/label_account_info" />
 
     <ImageView
+        android:id="@+id/iv_avatar"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"

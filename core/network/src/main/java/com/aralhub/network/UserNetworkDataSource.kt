@@ -10,6 +10,7 @@ import com.aralhub.network.models.user.NetworkUserRefreshResponse
 import com.aralhub.network.models.user.NetworkUserVerifyRequest
 import com.aralhub.network.models.user.NetworkUserVerifyResponse
 import com.aralhub.network.utils.RefreshTokenRequestData
+import java.io.File
 
 interface UserNetworkDataSource {
     suspend fun userAuth(networkUserAuthRequest: NetworkUserAuthRequest): NetworkResult<NetworkAuthResponseData>
@@ -17,7 +18,7 @@ interface UserNetworkDataSource {
     suspend fun userProfile(networkUserProfileRequest: NetworkUserProfileRequest): NetworkResult<NetworkAuthResponseData>
     suspend fun getUserMe(): NetworkResult<NetworkUserMeResponse>
     suspend fun userLogout(): NetworkResult<String>
-    suspend fun userPhoto(): NetworkResult<Unit>
+    suspend fun userPhoto(file: File): NetworkResult<NetworkAuthResponseData>
     suspend fun deleteUserProfile(): NetworkResult<Unit>
     suspend fun userRefresh(data: RefreshTokenRequestData): NetworkResult<NetworkUserRefreshResponse>
 }
