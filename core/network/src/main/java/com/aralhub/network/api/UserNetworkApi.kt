@@ -14,6 +14,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface UserNetworkApi {
 
@@ -21,19 +22,19 @@ interface UserNetworkApi {
     suspend fun userAuth(@Body networkUserAuthRequest: NetworkUserAuthRequest): Response<NetworkAuthResponseData>
 
     @POST("/user/verify/")
-    fun userVerify(@Body networkUserVerifyRequest: NetworkUserVerifyRequest): Response<ServerResponse<NetworkUserVerifyResponse>>
+    suspend fun userVerify(@Body networkUserVerifyRequest: NetworkUserVerifyRequest): Response<ServerResponse<NetworkUserVerifyResponse>>
 
     @POST("/user/profile/")
-    fun userProfile(@Body networkUserProfileRequest: NetworkUserProfileRequest): Response<ServerResponse<Unit>>
+    suspend fun userProfile(@Body networkUserProfileRequest: NetworkUserProfileRequest): Response<NetworkAuthResponseData>
 
     @GET("/user/me/")
     fun getUserMe(): Response<NetworkUserMeResponse>
 
     @POST("/user/token/refresh/")
-    fun userRefresh(refreshTokenData: RefreshTokenRequestData): Response<ServerResponse<NetworkUserRefreshResponse>>
+    suspend fun userRefresh(@Body refreshTokenData: RefreshTokenRequestData): Response<ServerResponse<NetworkUserRefreshResponse>>
 
     @POST("/user/logout/")
-    fun userLogout(): Response<String>
+    suspend fun userLogout(): Response<String>
 
     @POST("/user/profile/photo/")
     fun userPhoto(): Response<ServerResponse<Unit>>

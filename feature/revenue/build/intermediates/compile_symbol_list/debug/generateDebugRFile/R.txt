@@ -1,2 +1,0 @@
-int id tb_revenue 0x0
-int layout fragment_revenue 0x0
