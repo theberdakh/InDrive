@@ -1,7 +1,10 @@
 package com.aralhub.network.utils
 
+import com.aralhub.network.models.CustomError
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.ValidationError
+import com.google.gson.Gson
 import retrofit2.Response
 
 object NetworkEx {
@@ -16,7 +19,29 @@ object NetworkEx {
                     }
                 } ?: NetworkResult.Error(message = "Response body is null")
             } else {
-                NetworkResult.Error(message = "Response is not successful: ${code()}")
+                val gson = Gson()
+                val errorBody = errorBody()
+                return when (code()) {
+                    422 -> {
+                        return if (errorBody == null) {
+                            NetworkResult.Error(message = "Error body is null")
+                        } else {
+                            val error = gson.fromJson(errorBody.string(), ValidationError::class.java)
+                            NetworkResult.Error(message = error.detail[0].msg)
+                        }
+                    }
+                    500 -> {
+                        NetworkResult.Error(message = "Server Error")
+                    }
+                    else -> {
+                        return if (errorBody == null) {
+                            NetworkResult.Error(message = "Error body is null")
+                        } else {
+                            val error = gson.fromJson(errorBody.string(), CustomError::class.java)
+                            NetworkResult.Error(message = error.detail.kk)
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             NetworkResult.Error(message = e.message ?: "Unknown error", exception = e)
@@ -29,9 +54,29 @@ object NetworkEx {
                 body()?.let {
                     NetworkResult.Success(data = it)
                 } ?: NetworkResult.Error(message = "Response body is null")
-            } else {
-                val errorBody = errorBody()?.string()
-                NetworkResult.Error(message = errorBody ?: message())
+            } else { val gson = Gson()
+                val errorBody = errorBody()
+                return when (code()) {
+                    422 -> {
+                        return if (errorBody == null) {
+                            NetworkResult.Error(message = "Error body is null")
+                        } else {
+                            val error = gson.fromJson(errorBody.string(), ValidationError::class.java)
+                            NetworkResult.Error(message = error.detail[0].msg)
+                        }
+                    }
+                    500 -> {
+                        NetworkResult.Error(message = "Server Error")
+                    }
+                    else -> {
+                        return if (errorBody == null) {
+                            NetworkResult.Error(message = "Error body is null")
+                        } else {
+                            val error = gson.fromJson(errorBody.string(), CustomError::class.java)
+                            NetworkResult.Error(message = error.detail.kk)
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             NetworkResult.Error(message = e.localizedMessage ?: "Unknown error", exception = e)
