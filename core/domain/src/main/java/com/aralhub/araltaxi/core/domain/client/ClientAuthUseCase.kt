@@ -10,9 +10,4 @@ class ClientAuthUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(authRequest: ClientAddPhoneRequest) =
         repository.clientAuth(authRequest)
-
-    suspend fun userVerify(data: ClientVerifyRequest) =
-        repository.userVerify(
-            data
-        )
 }

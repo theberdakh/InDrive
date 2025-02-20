@@ -57,6 +57,8 @@
     <string name="error_network_connection">Internet baylanısı joq</string>
     <string name="success_network_connection">Baylanıs qayta ornatıldı</string>
 
+    <string name="error_field_is_blank">Bos bo</string>
+
     <string name="label_cancel_trip_description">Saparlardı jiyi-jiyi biykarlaw reytingińizdiń túsiwine alıp keliwi múmkin. Ótinish, zárúrli bolǵanda ǵana, bunı ámelge asırıń.</string>
     <string name="label_cancel">Biykarlaw</string>
     <string name="label_back">Artqa</string>

@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/addNameFragment"
-        android:name="com.aralhub.client.clientauth.AddNameFragment">
+        android:name="com.aralhub.client.clientauth.addname.AddNameFragment">
 
         <action android:id="@+id/action_addNameFragment_to_requestFragment"
             app:destination="@id/requestFragment"/>
