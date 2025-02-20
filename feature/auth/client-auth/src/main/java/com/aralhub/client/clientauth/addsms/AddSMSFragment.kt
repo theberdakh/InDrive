@@ -75,7 +75,7 @@ class AddSMSFragment : Fragment(R.layout.fragment_add_sms) {
     private fun initListeners() {
         binding.etPhone.addTextChangedListener {
             binding.tvError.hide()
-            binding.btnStart.isEnabled = it.toString().length == 4
+            binding.btnStart.isEnabled = it.toString().length == 5
             if (binding.btnStart.isEnabled) { KeyboardUtils.hideKeyboardFragment(requireContext(), binding.etPhone) }
         }
         binding.btnStart.setOnClickListener {

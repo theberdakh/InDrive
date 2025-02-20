@@ -1,6 +1,8 @@
 package com.aralhub.network.utils
 
+import android.util.Log
 import com.aralhub.network.api.UserNetworkApi
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Interceptor
@@ -17,11 +19,11 @@ enum class ClientType {
 }
 
 class AuthInterceptor @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val localStorage: LocalStorage
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
-        tokenManager.token.let { token ->
+        localStorage.access.let { token ->
             request.addHeader("Authorization", "Bearer $token")
         }
         return chain.proceed(request.build())
@@ -40,10 +42,10 @@ class TokenAuthenticator @Inject constructor(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         return runBlocking {
-            val refreshTokenRequestData = RefreshTokenRequestData(localStorage.refresh)
             val responseRefresh = authService.userRefresh(
-                refreshTokenRequestData
+                RefreshTokenRequestData(localStorage.refresh)
             )
+            Log.i("AccessToken", localStorage.access)
             if (responseRefresh.isSuccessful && responseRefresh.code() == 200) {
                 val data = responseRefresh.body()!!
                 localStorage.access = data.data.accessToken

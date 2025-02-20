@@ -11,9 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.auth.R
 import com.aralhub.araltaxi.client.auth.databinding.FragmentAddPhoneBinding
-import com.aralhub.client.client_auth.model.AuthRequestUI
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.client.client_auth.viewmodel.AuthViewModel
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
+import com.aralhub.indrive.core.data.model.client.ClientAddPhoneRequest
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.PhoneNumberFormatter
 import com.aralhub.ui.utils.viewBinding
@@ -60,8 +60,9 @@ class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {
     }
 
     private fun sendRequest(phone: String) {
-        viewModel.auth(AuthRequestUI(phone))
+        viewModel.auth(ClientAddPhoneRequest(phone))
         viewModel.authState.onEach { state ->
+            val phone = ""
             when (state) {
                 is AuthViewModel.LoginUiState.Error -> Log.d("LoginState", state.message)
                 AuthViewModel.LoginUiState.Loading -> Log.d("LoginState", "loading")

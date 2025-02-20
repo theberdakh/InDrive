@@ -1,3 +1,0 @@
-com.aralhub.araltaxi.revenue
-id tb_revenue
-layout fragment_revenue

@@ -1,3 +1,0 @@
-com.aralhub.araltaxi.history.client
-id tb_history
-layout fragment_history

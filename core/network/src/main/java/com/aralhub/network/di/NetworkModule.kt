@@ -2,6 +2,7 @@ package com.aralhub.network.di
 
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.api.UserNetworkApi
+import com.aralhub.network.utils.AuthInterceptor
 import com.aralhub.network.utils.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
@@ -35,9 +36,11 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideMainOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
         tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
         .build()
 

@@ -9,18 +9,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.auth.R
 import com.aralhub.araltaxi.client.auth.databinding.FragmentAddSmsBinding
-import com.aralhub.client.client_auth.model.AuthRequestUI
-import com.aralhub.client.client_auth.navigation.FeatureClientAuthNavigation
 import com.aralhub.client.client_auth.viewmodel.AuthViewModel
+import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.indrive.core.data.model.client.ClientVerifyRequest
 import com.aralhub.ui.utils.KeyboardUtils
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
