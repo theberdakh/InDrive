@@ -47,6 +47,7 @@ dependencies {
     implementation project(':feature:profile:client')
     implementation project(':feature:history:client')
     implementation project(':feature:saved-places')
+    implementation project(':core:network')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat

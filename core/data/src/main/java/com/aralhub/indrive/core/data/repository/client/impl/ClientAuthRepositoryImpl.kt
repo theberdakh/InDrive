@@ -1,13 +1,7 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
-import android.util.Log
-import com.aralhub.indrive.core.data.model.client.AuthResponse
 import com.aralhub.indrive.core.data.model.client.ClientAddPhoneRequest
-import com.aralhub.indrive.core.data.model.client.ClientVerifyPhoneRequest
 import com.aralhub.indrive.core.data.model.client.ClientVerifyRequest
-import com.aralhub.indrive.core.data.model.client.ClientVerifyResponse
-import com.aralhub.indrive.core.data.model.client.asDomain
-import com.aralhub.indrive.core.data.model.client.toNetwork
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.UserNetworkDataSource
@@ -20,36 +14,17 @@ import javax.inject.Inject
 
 class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val clientNetworkDataSource: UserNetworkDataSource) :
     ClientAuthRepository {
-    /* override suspend fun clientAuth(clientAddPhoneRequest: ClientAddPhoneRequest): Result<Boolean> {
-        clientNetworkDataSource.userAuth(networkUserAuthRequest = clientAddPhoneRequest.toNetwork()).let {
-            return when (it) {
-                is NetworkResult.Error -> Result.Error(it.message)
-                is NetworkResult.Success -> Result.Success(it.data)
-            }
-        }
-    }
 
-    override suspend fun clientAuthVerify(clientVerifyPhoneRequest: ClientVerifyPhoneRequest): Result<Boolean> {
-        clientNetworkDataSource.userVerify(networkUserVerifyRequest = NetworkUserVerifyRequest(clientVerifyPhoneRequest.phone, clientVerifyPhoneRequest.code)).let {
-            return when (it) {
-                is NetworkResult.Error -> Result.Error(it.message)
-                is NetworkResult.Success -> Result.Success(data = true)
-            }
-        }
-    }*/
-    override suspend fun clientAuth(authRequest: ClientAddPhoneRequest): Result<AuthResponse> {
+    override suspend fun clientAuth(authRequest: ClientAddPhoneRequest): Result<Boolean> {
         clientNetworkDataSource.userAuth(NetworkUserAuthRequest(authRequest.phoneNumber)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
-                is NetworkResult.Success -> {
-                    Log.i("TokenSave", localStorage.access)
-                    Result.Success(it.data.asDomain())
-                }
+                is NetworkResult.Success ->  Result.Success(data = true)
             }
         }
     }
 
-    override suspend fun userVerify(networkUserVerifyRequest: ClientVerifyRequest): Result<ClientVerifyResponse> {
+    override suspend fun userVerify(networkUserVerifyRequest: ClientVerifyRequest): Result<Boolean> {
         clientNetworkDataSource.userVerify(NetworkUserVerifyRequest(networkUserVerifyRequest.phoneNumber, networkUserVerifyRequest.code)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
@@ -57,7 +32,7 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                     localStorage.access = it.data.token
                     localStorage.refresh = it.data.refreshToken
                     localStorage.isLogin = true
-                    Result.Success(it.data.asDomain())
+                    Result.Success(data = true)
                 }
             }
         }

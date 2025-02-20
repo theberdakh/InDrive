@@ -9,7 +9,5 @@ import javax.inject.Inject
 class ClientVerifyPhoneUseCase @Inject constructor(
     private val repository: ClientAuthRepository
 ) {
-    suspend operator fun invoke(phone: String, code: String): Result<ClientVerifyResponse> {
-        return repository.userVerify(ClientVerifyRequest(code = code, phoneNumber = phone))
-    }
+    suspend operator fun invoke(phone: String, code: String) = repository.userVerify(ClientVerifyRequest(code = code, phoneNumber = phone))
 }

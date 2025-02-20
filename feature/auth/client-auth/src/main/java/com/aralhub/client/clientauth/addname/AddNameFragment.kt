@@ -46,7 +46,7 @@ class AddNameFragment : Fragment(R.layout.fragment_add_name) {
 
     private fun initListeners() {
         binding.etName.addTextChangedListener {
-            binding.btnSave.isEnabled = it.toString().isNotEmpty()
+            binding.btnSave.isEnabled = it.toString().length >= 3
         }
 
         binding.btnSave.setOnClickListener {

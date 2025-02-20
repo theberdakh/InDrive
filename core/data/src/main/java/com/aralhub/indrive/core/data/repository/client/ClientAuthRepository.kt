@@ -7,7 +7,7 @@ import com.aralhub.indrive.core.data.model.client.ClientVerifyResponse
 import com.aralhub.indrive.core.data.result.Result
 
 interface ClientAuthRepository {
-    suspend fun clientAuth(authRequest: ClientAddPhoneRequest): Result<AuthResponse>
-    suspend fun userVerify(networkUserVerifyRequest: ClientVerifyRequest): Result<ClientVerifyResponse>
+    suspend fun clientAuth(authRequest: ClientAddPhoneRequest): Result<Boolean>
+    suspend fun userVerify(networkUserVerifyRequest: ClientVerifyRequest): Result<Boolean>
     suspend fun userProfile(fullName: String): Result<Boolean>
 }

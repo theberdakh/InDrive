@@ -9,6 +9,8 @@
         android:name="com.aralhub.client.clientauth.LogoFragment">
         <action
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
+            app:popUpTo="@id/logoFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addPhoneFragment" />
 
         <action
@@ -22,6 +24,8 @@
 
         <action
             android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
+            app:popUpTo="@id/addPhoneFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addSmsFragment" />
 
     </fragment>
@@ -32,6 +36,8 @@
 
         <action
             android:id="@+id/action_addSmsFragment_to_addNameFragment"
+            app:popUpTo="@id/addSmsFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addNameFragment" />
 
     </fragment>
@@ -40,7 +46,10 @@
         android:id="@+id/addNameFragment"
         android:name="com.aralhub.client.clientauth.addname.AddNameFragment">
 
-        <action android:id="@+id/action_addNameFragment_to_requestFragment"
+        <action
+            android:id="@+id/action_addNameFragment_to_requestFragment"
+            app:popUpTo="@id/addNameFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/requestFragment"/>
 
     </fragment>
