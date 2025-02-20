@@ -4,7 +4,7 @@ import com.aralhub.network.models.user.NetworkAuthResponseData
 
 data class AuthResponse(
     val success: Boolean,
-    val message: String,
+    val message: Any,
 )
 
 fun NetworkAuthResponseData.asDomain() = AuthResponse(this.success, this.message)

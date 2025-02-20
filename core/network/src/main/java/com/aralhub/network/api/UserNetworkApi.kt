@@ -8,6 +8,7 @@ import com.aralhub.network.models.user.NetworkUserProfileRequest
 import com.aralhub.network.models.user.NetworkUserRefreshResponse
 import com.aralhub.network.models.user.NetworkUserVerifyRequest
 import com.aralhub.network.models.user.NetworkUserVerifyResponse
+import com.aralhub.network.utils.RefreshTokenRequestData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -29,7 +30,7 @@ interface UserNetworkApi {
     fun getUserMe(): Response<NetworkUserMeResponse>
 
     @POST("/user/token/refresh/")
-    fun userRefresh(): Response<NetworkUserRefreshResponse>
+    fun userRefresh(refreshTokenData: RefreshTokenRequestData): Response<ServerResponse<NetworkUserRefreshResponse>>
 
     @POST("/user/logout/")
     fun userLogout(): Response<String>

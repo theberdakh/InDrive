@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientAuthUseCase
 import com.aralhub.client.client_auth.model.AuthRequestUI
 import com.aralhub.client.client_auth.model.toDomain
+import com.aralhub.indrive.core.data.model.client.ClientVerifyRequest
 import com.aralhub.indrive.core.data.result.WrappedResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +24,17 @@ class AuthViewModel @Inject constructor(
     fun auth(authRequestUI: AuthRequestUI) {
         viewModelScope.launch {
             _authState.emit(useCase.invoke(authRequestUI.toDomain()).let {
+                when (it) {
+                    is WrappedResult.Error -> LoginUiState.Error(it.message)
+                    is WrappedResult.Loading -> LoginUiState.Loading
+                    is WrappedResult.Success -> LoginUiState.Success
+                }
+            })
+        }
+    }
+    fun verify(request: ClientVerifyRequest) {
+        viewModelScope.launch {
+            _authState.emit(useCase.userVerify(request).let {
                 when (it) {
                     is WrappedResult.Error -> LoginUiState.Error(it.message)
                     is WrappedResult.Loading -> LoginUiState.Loading

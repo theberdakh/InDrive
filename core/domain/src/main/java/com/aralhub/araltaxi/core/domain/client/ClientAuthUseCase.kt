@@ -1,6 +1,7 @@
 package com.aralhub.araltaxi.core.domain.client
 
 import com.aralhub.indrive.core.data.model.client.AuthRequest
+import com.aralhub.indrive.core.data.model.client.ClientVerifyRequest
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import javax.inject.Inject
 
@@ -9,4 +10,9 @@ class ClientAuthUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(authRequest: AuthRequest) =
         repository.clientAuth(authRequest)
+
+    suspend fun userVerify(data: ClientVerifyRequest) =
+        repository.userVerify(
+            data
+        )
 }

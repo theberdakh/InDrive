@@ -1,0 +1,2 @@
+int id tb_saved_places 0x0
+int layout fragment_saved_places 0x0

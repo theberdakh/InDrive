@@ -1,0 +1,3 @@
+com.aralhub.araltaxi.saved_places
+id tb_saved_places
+layout fragment_saved_places

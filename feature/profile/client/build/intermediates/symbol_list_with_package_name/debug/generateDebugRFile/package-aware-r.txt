@@ -1,0 +1,10 @@
+com.aralhub.araltaxi.profile.client
+id btn_back
+id btn_go_to_telegram
+id ll_call_center
+id ll_telegram_bot
+id tb_profile
+id tb_support
+layout fragment_profile
+layout fragment_support
+layout modal_bottom_sheet_telegram_bot

@@ -12,7 +12,7 @@ object NetworkEx {
                     if (serverResponse.success) {
                         NetworkResult.Success(data = serverResponse.data)
                     } else {
-                        NetworkResult.Error(message = serverResponse.message)
+                        NetworkResult.Error(message = serverResponse.message.toString())
                     }
                 } ?: NetworkResult.Error(message = "Response body is null")
             } else {
