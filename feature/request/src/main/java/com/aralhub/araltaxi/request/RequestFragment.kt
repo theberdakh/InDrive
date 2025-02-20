@@ -5,10 +5,13 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
@@ -17,11 +20,14 @@ import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
 import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
+import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,6 +51,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 )
             }
         }
+    private val viewModel by viewModels<RequestViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,6 +63,23 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         launchPermissions()
         initViews()
         initListeners()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewModel.getProfile()
+        viewModel.profileUiState.onEach {
+            when(it){
+                is ProfileUiState.Error -> Log.i("RequestFragment", "profileUiState: error ${it.message}")
+                ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
+                is ProfileUiState.Success -> displayProfile(it.profile)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun displayProfile(profile: ClientProfile) {
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
     }
 
     private fun launchPermissions() {

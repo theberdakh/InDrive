@@ -1,7 +1,7 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
-import com.aralhub.indrive.core.data.model.client.ClientAddPhoneRequest
-import com.aralhub.indrive.core.data.model.client.ClientVerifyRequest
+import android.util.Log
+import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.UserNetworkDataSource
@@ -15,8 +15,8 @@ import javax.inject.Inject
 class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val clientNetworkDataSource: UserNetworkDataSource) :
     ClientAuthRepository {
 
-    override suspend fun clientAuth(authRequest: ClientAddPhoneRequest): Result<Boolean> {
-        clientNetworkDataSource.userAuth(NetworkUserAuthRequest(authRequest.phoneNumber)).let {
+    override suspend fun clientAuth(phone: String): Result<Boolean> {
+        clientNetworkDataSource.userAuth(NetworkUserAuthRequest(phone)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success ->  Result.Success(data = true)
@@ -24,8 +24,8 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
         }
     }
 
-    override suspend fun userVerify(networkUserVerifyRequest: ClientVerifyRequest): Result<Boolean> {
-        clientNetworkDataSource.userVerify(NetworkUserVerifyRequest(networkUserVerifyRequest.phoneNumber, networkUserVerifyRequest.code)).let {
+    override suspend fun userVerify(phone: String, code: String): Result<Boolean> {
+        clientNetworkDataSource.userVerify(NetworkUserVerifyRequest(phone, code)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
@@ -43,6 +43,25 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(data = true)
+            }
+        }
+    }
+
+    override suspend fun userMe(): Result<ClientProfile> {
+        clientNetworkDataSource.getUserMe().let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> {
+                    Log.i("Network", "${it.data}")
+                    Result.Success(
+                        ClientProfile(
+                            id = it.data.id,
+                            fullName = it.data.fullName,
+                            phone = it.data.phoneNumber,
+                            profilePhoto = it.data.profilePhotoUrl ?: ""
+                        )
+                    )
+                }
             }
         }
     }

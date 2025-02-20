@@ -2,7 +2,7 @@ package com.aralhub.client.clientauth.addname
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aralhub.araltaxi.core.domain.client.ClientProfileUseCase
+import com.aralhub.araltaxi.core.domain.client.ClientAddNameUseCase
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddNameViewModel @Inject constructor(private val useCase: ClientProfileUseCase) :
+class AddNameViewModel @Inject constructor(private val useCase: ClientAddNameUseCase) :
     ViewModel() {
 
     private val _addNameUiState = MutableSharedFlow<AddNameUiState>()

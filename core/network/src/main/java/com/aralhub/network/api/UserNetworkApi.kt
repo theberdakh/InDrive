@@ -28,7 +28,7 @@ interface UserNetworkApi {
     suspend fun userProfile(@Body networkUserProfileRequest: NetworkUserProfileRequest): Response<NetworkAuthResponseData>
 
     @GET("/user/me/")
-    fun getUserMe(): Response<NetworkUserMeResponse>
+    suspend fun getUserMe(): Response<ServerResponse<NetworkUserMeResponse>>
 
     @POST("/user/token/refresh/")
     suspend fun userRefresh(@Body refreshTokenData: RefreshTokenRequestData): Response<ServerResponse<NetworkUserRefreshResponse>>
@@ -37,8 +37,8 @@ interface UserNetworkApi {
     suspend fun userLogout(): Response<String>
 
     @POST("/user/profile/photo/")
-    fun userPhoto(): Response<ServerResponse<Unit>>
+    suspend fun userPhoto(): Response<ServerResponse<Unit>>
 
     @DELETE("/user/delete/profile")
-    fun deleteUserProfile(): Response<ServerResponse<Unit>>
+    suspend fun deleteUserProfile(): Response<ServerResponse<Unit>>
 }

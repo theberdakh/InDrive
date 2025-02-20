@@ -94,7 +94,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.aralhub.araltaxi.profile.client.ProfileFragment"/>
+        android:name="com.aralhub.araltaxi.profile.client.profile.ProfileFragment"/>
 
     <fragment
         android:id="@+id/supportFragment"

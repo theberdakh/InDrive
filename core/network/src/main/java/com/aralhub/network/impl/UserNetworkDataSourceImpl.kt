@@ -30,7 +30,7 @@ class UserNetworkDataSourceImpl @Inject constructor(private val api: UserNetwork
     }
 
     override suspend fun getUserMe(): NetworkResult<NetworkUserMeResponse> {
-        return api.getUserMe().safeRequest()
+        return api.getUserMe().safeRequestServerResponse()
     }
 
     override suspend fun userRefresh(data: RefreshTokenRequestData): NetworkResult<NetworkUserRefreshResponse> {
