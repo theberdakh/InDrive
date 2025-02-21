@@ -43,6 +43,6 @@ interface UserNetworkApi {
     @POST("/user/profile/photo")
     suspend fun userPhoto(@Part photo: MultipartBody.Part): Response<NetworkAuthResponseData>
 
-    @DELETE("/user/delete/profile")
+    @DELETE("/user/delete/profile/")
     suspend fun deleteUserProfile(): Response<ServerResponse<Unit>>
 }

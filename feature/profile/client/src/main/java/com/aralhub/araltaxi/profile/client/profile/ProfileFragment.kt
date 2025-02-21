@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.profile.client.R
 import com.aralhub.araltaxi.profile.client.databinding.FragmentProfileBinding
+import com.aralhub.araltaxi.profile.client.navigation.FeatureProfileNavigation
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
@@ -24,13 +25,14 @@ import kotlinx.coroutines.flow.onEach
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment: Fragment(R.layout.fragment_profile) {
     private val binding by viewBinding(FragmentProfileBinding::bind)
     private val viewModel by viewModels<ProfileViewModel>()
-    private val pickMedia: ActivityResultLauncher<PickVisualMediaRequest?> =
-        registerForActivityResult<PickVisualMediaRequest, Uri>(PickVisualMedia()) { uri: Uri? ->
+    @Inject lateinit var navigation: FeatureProfileNavigation
+    private val pickMedia: ActivityResultLauncher<PickVisualMediaRequest?> = registerForActivityResult<PickVisualMediaRequest, Uri>(PickVisualMedia()) { uri: Uri? ->
             if (uri != null) {
                 val file = getFileFromUri(requireContext(), uri)
                 Log.d("PhotoPicker", "Selected URI: $uri")
@@ -69,6 +71,17 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.deleteProfileUiState.onEach {
+            when(it){
+                is DeleteProfileUiState.Error -> Log.i("ProfileFragment: delete", "error: $it" )
+                DeleteProfileUiState.Loading -> Log.i("ProfileFragment: delete", "loading: $it" )
+                DeleteProfileUiState.Success -> {
+                    Log.i("ProfileFragment: delete", "error: $it" )
+                    navigation.goToLogoFragmentFromProfileFragment()
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(profile: ClientProfile) {
@@ -76,12 +89,11 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
         binding.tvPhone.text = profile.phone
 
         Glide.with(requireContext())
-            .load(profile.profilePhoto)
+            .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
             .centerCrop()
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
             .apply(RequestOptions.circleCropTransform())
             .into(binding.ivAvatar)
-
     }
 
     private fun initListeners() {
@@ -93,16 +105,14 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                 .setMediaType(PickVisualMedia.ImageOnly)
                 .build())
         }
+        binding.tvDeleteAccount.setOnClickListener { viewModel.deleteProfile() }
     }
 
     private fun getFileFromUri(context: Context, uri: Uri): File? {
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
         val tempFile = File.createTempFile("upload", ".jpg", context.cacheDir)
-
         inputStream?.use { input ->
-            FileOutputStream(tempFile).use { output ->
-                input.copyTo(output)
-            }
+            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
         }
         return tempFile
     }

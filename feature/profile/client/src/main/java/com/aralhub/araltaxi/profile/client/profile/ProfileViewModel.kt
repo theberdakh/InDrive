@@ -2,6 +2,7 @@ package com.aralhub.araltaxi.profile.client.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.client.ClientDeleteProfileUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientProfileUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientUploadProfileImageUseCase
 import com.aralhub.indrive.core.data.model.client.ClientProfile
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val clientProfileUseCase: ClientProfileUseCase,
-    private val clientUploadProfileImageUseCase: ClientUploadProfileImageUseCase): ViewModel() {
+    private val clientUploadProfileImageUseCase: ClientUploadProfileImageUseCase,
+    private val clientDeleteProfileUseCase: ClientDeleteProfileUseCase): ViewModel() {
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -43,6 +45,24 @@ class ProfileViewModel @Inject constructor(private val clientProfileUseCase: Cli
         })
     }
 
+    private val _deleteProfileUiState = MutableSharedFlow<DeleteProfileUiState>()
+    val deleteProfileUiState = _deleteProfileUiState.asSharedFlow()
+
+    fun deleteProfile() = viewModelScope.launch {
+        _deleteProfileUiState.emit(DeleteProfileUiState.Loading)
+        _deleteProfileUiState.emit(clientDeleteProfileUseCase().let {
+            when(it){
+                is Result.Error -> DeleteProfileUiState.Error(it.message)
+                is Result.Success -> DeleteProfileUiState.Success
+            }
+        })
+    }
+}
+
+sealed interface DeleteProfileUiState {
+    data object Success : DeleteProfileUiState
+    data class Error(val message: String) : DeleteProfileUiState
+    data object Loading : DeleteProfileUiState
 }
 
 sealed interface ProfileUiState {

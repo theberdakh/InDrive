@@ -1,6 +1,5 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
-import android.util.Log
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import com.aralhub.indrive.core.data.result.Result
@@ -62,7 +61,6 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
-                    Log.i("Network", "${it.data}")
                     Result.Success(
                         ClientProfile(
                             id = it.data.id,
@@ -72,6 +70,15 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         )
                     )
                 }
+            }
+        }
+    }
+
+    override suspend fun deleteUserProfile(): Result<Boolean> {
+        clientNetworkDataSource.deleteUserProfile().let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(data = true)
             }
         }
     }

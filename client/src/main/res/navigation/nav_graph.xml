@@ -94,7 +94,15 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.aralhub.araltaxi.profile.client.profile.ProfileFragment"/>
+        android:name="com.aralhub.araltaxi.profile.client.profile.ProfileFragment">
+
+        <action
+            android:id="@+id/action_profileFragment_to_logoFragment"
+            app:destination="@id/logoFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/supportFragment"
