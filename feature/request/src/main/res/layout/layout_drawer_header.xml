@@ -5,11 +5,11 @@
     android:orientation="horizontal">
 
     <ImageView
+        android:id="@+id/iv_avatar"
         android:layout_width="56dp"
         android:contentDescription="@string/cd_avatar"
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/shape_circle_icon_gray"
-        android:padding="@dimen/padding_medium"
         android:src="@drawable/ic_user"
         android:layout_height="56dp"/>
 

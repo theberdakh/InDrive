@@ -82,4 +82,13 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
             }
         }
     }
+
+    override suspend fun logout(): Result<Boolean> {
+        clientNetworkDataSource.userLogout(refreshToken = localStorage.refresh).let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(data = true)
+            }
+        }
+    }
 }

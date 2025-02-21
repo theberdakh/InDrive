@@ -5,6 +5,7 @@ import com.aralhub.network.api.UserNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.user.NetworkAuthResponseData
+import com.aralhub.network.models.user.NetworkLogoutRequest
 import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserMeResponse
 import com.aralhub.network.models.user.NetworkUserProfileRequest
@@ -41,8 +42,8 @@ class UserNetworkDataSourceImpl @Inject constructor(private val api: UserNetwork
         return api.userRefresh(data).safeRequestServerResponse()
     }
 
-    override suspend fun userLogout(): NetworkResult<String> {
-        return api.userLogout().safeRequest()
+    override suspend fun userLogout(refreshToken: String): NetworkResult<NetworkAuthResponseData> {
+        return api.userLogout(NetworkLogoutRequest(refreshToken)).safeRequest()
     }
 
     override suspend fun userPhoto(file: File): NetworkResult<NetworkAuthResponseData> {

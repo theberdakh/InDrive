@@ -22,6 +22,9 @@ import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -34,16 +37,10 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-    @Inject
-    lateinit var sheetNavigator: SheetNavigator
-    @Inject
-    lateinit var navigation: FeatureRequestNavigation
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+    private val requiredPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    @Inject lateinit var sheetNavigator: SheetNavigator
+    @Inject lateinit var navigation: FeatureRequestNavigation
+    private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
                 Log.i(
                     "RequestTaxiFragment",
@@ -75,11 +72,29 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is ProfileUiState.Success -> displayProfile(it.profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.logOutUiState.onEach {
+            when(it){
+                is LogOutUiState.Error -> Log.i("RequestFragment", "logOutUiState: error ${it.message}")
+                LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
+                LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            profile.phone
+
+        Log.i("My Url", "url: ${profile.profilePhoto}")
+
+        Glide.with(this)
+            .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
+            .apply(RequestOptions.circleCropTransform())
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .into(binding.navigationView.getHeaderView(0).findViewById(R.id.iv_avatar))
     }
 
     private fun launchPermissions() {
@@ -108,7 +123,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     true
                 }
                 R.id.action_log_out -> {
-                    LogoutModalBottomSheet.show(childFragmentManager)
+                    val logOutModalBottomSheet = LogoutModalBottomSheet()
+                    logOutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
+                    logOutModalBottomSheet.setOnLogoutListener {
+                        logOutModalBottomSheet.dismissAllowingStateLoss()
+                        viewModel.logOut()
+                    }
                     true
                 }
                 R.id.action_my_addresses -> {

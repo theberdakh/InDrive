@@ -75,6 +75,12 @@
         <action android:id="@+id/action_requestFragment_to_savedPlacesFragment"
             app:destination="@id/savedPlacesFragment"/>
 
+        <action
+            android:id="@+id/action_requestFragment_to_logoFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/logoFragment"/>
+
     </fragment>
 
     <fragment

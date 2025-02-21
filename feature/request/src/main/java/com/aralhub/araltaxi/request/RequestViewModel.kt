@@ -1,19 +1,23 @@
 package com.aralhub.araltaxi.request
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.client.ClientLogOutUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientProfileUseCase
 import com.aralhub.indrive.core.data.model.client.ClientProfile
+import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.aralhub.indrive.core.data.result.Result
 
 @HiltViewModel
-class RequestViewModel @Inject constructor(private val clientProfileUseCase: ClientProfileUseCase) :
+class RequestViewModel @Inject constructor(private val clientProfileUseCase: ClientProfileUseCase,
+    private val clientLogOutUseCase: ClientLogOutUseCase) :
     ViewModel() {
+
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
 
@@ -26,10 +30,30 @@ class RequestViewModel @Inject constructor(private val clientProfileUseCase: Cli
             }
         })
     }
+
+    private val _logOutUiState = MutableSharedFlow<LogOutUiState>()
+    val logOutUiState = _logOutUiState.asSharedFlow()
+
+    fun logOut() = viewModelScope.launch {
+        _logOutUiState.emit(LogOutUiState.Loading)
+        _logOutUiState.emit(clientLogOutUseCase().let {
+            when (it) {
+                is Result.Error -> LogOutUiState.Error(it.message)
+                is Result.Success -> LogOutUiState.Success
+            }
+        })
+    }
+
 }
 
 sealed interface ProfileUiState {
     data class Success(val profile: ClientProfile) : ProfileUiState
     data class Error(val message: String) : ProfileUiState
     data object Loading : ProfileUiState
+}
+
+sealed interface LogOutUiState {
+    data object Success : LogOutUiState
+    data class Error(val message: String) : LogOutUiState
+    data object Loading : LogOutUiState
 }

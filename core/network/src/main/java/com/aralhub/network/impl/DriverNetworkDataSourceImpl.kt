@@ -5,7 +5,9 @@ import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverInfoResponse
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
 import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 import javax.inject.Inject
 
@@ -14,7 +16,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return  api.driverAuth(networkDriverAuthRequest).safeRequestServerResponse()
     }
 
-    override suspend fun driverVerify(networkDriverVerifyRequest: NetworkDriverVerifyRequest): NetworkResult<String> {
+    override suspend fun driverVerify(networkDriverVerifyRequest: NetworkDriverVerifyRequest): NetworkResult<NetworkDriverVerifyResponse> {
         return api.driverVerify(networkDriverVerifyRequest).safeRequestServerResponse()
     }
 
@@ -22,7 +24,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return api.getDriverVehicle().safeRequestServerResponse()
     }
 
-    override suspend fun getDriverInfo(): NetworkResult<String> {
+    override suspend fun getDriverInfo(): NetworkResult<NetworkDriverInfoResponse> {
         return api.getDriverInfo().safeRequestServerResponse()
     }
 

@@ -11,4 +11,5 @@ interface ClientAuthRepository {
     suspend fun uploadPhoto(file: File): Result<Boolean>
     suspend fun userMe(): Result<ClientProfile>
     suspend fun deleteUserProfile(): Result<Boolean>
+    suspend fun logout(): Result<Boolean>
 }

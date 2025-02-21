@@ -50,6 +50,9 @@ dependencies {
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
 
+    //Image Loading
+    implementation libs.glide
+
     // Map
     implementation libs.yandex.mapkit
 

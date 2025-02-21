@@ -2,6 +2,7 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.user.NetworkAuthResponseData
+import com.aralhub.network.models.user.NetworkLogoutRequest
 import com.aralhub.network.models.user.NetworkUserAuthRequest
 import com.aralhub.network.models.user.NetworkUserMeResponse
 import com.aralhub.network.models.user.NetworkUserProfileRequest
@@ -37,7 +38,7 @@ interface UserNetworkApi {
     suspend fun userRefresh(@Body refreshTokenData: RefreshTokenRequestData): Response<ServerResponse<NetworkUserRefreshResponse>>
 
     @POST("/user/logout/")
-    suspend fun userLogout(): Response<String>
+    suspend fun userLogout(@Body logoutRequest: NetworkLogoutRequest): Response<NetworkAuthResponseData>
 
     @Multipart
     @POST("/user/profile/photo")

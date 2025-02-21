@@ -19,9 +19,13 @@ import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -33,15 +37,13 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     private val viewModel by viewModels<ProfileViewModel>()
     @Inject lateinit var navigation: FeatureProfileNavigation
     private val pickMedia: ActivityResultLauncher<PickVisualMediaRequest?> = registerForActivityResult<PickVisualMediaRequest, Uri>(PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
+        if (uri != null) {
                 val file = getFileFromUri(requireContext(), uri)
-                Log.d("PhotoPicker", "Selected URI: $uri")
-                Log.d("PhotoPicker", "Selected URI file: $file")
                 file?.let {
                     viewModel.uploadImage(it)
                 }
             } else {
-                Log.d("PhotoPicker", "No media selected")
+                Log.i("PhotoPicker", "No media selected")
             }
         }
 
@@ -65,10 +67,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             when(it){
                 is UploadImageUiState.Error -> Log.i("ProfileFragment: uploadImage", "error: $it" )
                 UploadImageUiState.Loading ->  Log.i("ProfileFragment: uploadImage", "loading: $it" )
-                UploadImageUiState.Success -> {
-                    Log.i("ProfileFragment: uploadImage", "success: $it")
-                    viewModel.getProfile()
-                }
+                UploadImageUiState.Success -> viewModel.getProfile()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -76,10 +75,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             when(it){
                 is DeleteProfileUiState.Error -> Log.i("ProfileFragment: delete", "error: $it" )
                 DeleteProfileUiState.Loading -> Log.i("ProfileFragment: delete", "loading: $it" )
-                DeleteProfileUiState.Success -> {
-                    Log.i("ProfileFragment: delete", "error: $it" )
-                    navigation.goToLogoFragmentFromProfileFragment()
-                }
+                DeleteProfileUiState.Success -> navigation.goToLogoFragmentFromProfileFragment()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -87,11 +83,11 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     private fun displayProfile(profile: ClientProfile) {
         binding.tvName.text = profile.fullName
         binding.tvPhone.text = profile.phone
-
         Glide.with(requireContext())
             .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
             .centerCrop()
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
+            .signature(ObjectKey(System.currentTimeMillis()))
             .apply(RequestOptions.circleCropTransform())
             .into(binding.ivAvatar)
     }

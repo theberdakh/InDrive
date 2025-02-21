@@ -15,9 +15,11 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val clientProfileUseCase: ClientProfileUseCase,
+class ProfileViewModel @Inject constructor(
+    private val clientProfileUseCase: ClientProfileUseCase,
     private val clientUploadProfileImageUseCase: ClientUploadProfileImageUseCase,
-    private val clientDeleteProfileUseCase: ClientDeleteProfileUseCase): ViewModel() {
+    private val clientDeleteProfileUseCase: ClientDeleteProfileUseCase
+) : ViewModel() {
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -32,15 +34,17 @@ class ProfileViewModel @Inject constructor(private val clientProfileUseCase: Cli
         })
     }
 
+
     private val _uploadImageUiState = MutableSharedFlow<UploadImageUiState>()
     val uploadImageUiState = _uploadImageUiState.asSharedFlow()
 
     fun uploadImage(file: File) = viewModelScope.launch {
         _uploadImageUiState.emit(UploadImageUiState.Loading)
         _uploadImageUiState.emit(clientUploadProfileImageUseCase(file).let {
-            when(it){
+            when (it) {
                 is Result.Error -> UploadImageUiState.Error(it.message)
                 is Result.Success -> UploadImageUiState.Success
+
             }
         })
     }
@@ -51,7 +55,7 @@ class ProfileViewModel @Inject constructor(private val clientProfileUseCase: Cli
     fun deleteProfile() = viewModelScope.launch {
         _deleteProfileUiState.emit(DeleteProfileUiState.Loading)
         _deleteProfileUiState.emit(clientDeleteProfileUseCase().let {
-            when(it){
+            when (it) {
                 is Result.Error -> DeleteProfileUiState.Error(it.message)
                 is Result.Success -> DeleteProfileUiState.Success
             }
