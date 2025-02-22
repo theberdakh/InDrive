@@ -2,11 +2,14 @@ package com.aralhub.araltaxi.request
 
 import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -28,14 +31,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
-import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.location.LocationManager
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateReason
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.Map.CameraCallback
-import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -46,10 +45,18 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private val requiredPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-    @Inject lateinit var sheetNavigator: SheetNavigator
-    @Inject lateinit var navigation: FeatureRequestNavigation
-    private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+    private val requiredPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+    private var selectLocationCameraListener: SelectLocationCameraListener? = null
+    @Inject
+    lateinit var sheetNavigator: SheetNavigator
+
+    @Inject
+    lateinit var navigation: FeatureRequestNavigation
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
                 Log.i(
                     "RequestTaxiFragment",
@@ -57,8 +64,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 )
             }
         }
+
     private val viewModel by viewModels<RequestViewModel>()
-    private var currentPlaceMark:PlacemarkMapObject? = null
+    private var locationManager: LocationManager? = null
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,7 +76,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onStart() {
         super.onStart()
-        setUpMapView()
+        binding.mapView.onStart()
     }
 
     override fun onStop() {
@@ -75,10 +84,40 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         binding.mapView.onStop()
     }
 
+    private val locationListener = LocationListener { location ->
+        Log.i("RequestFragment", "onLocationChanged: ${location.longitude} ${location.latitude}")
+        setUpMapView(
+            latitude = location.latitude,
+            longitude = location.longitude
+        )
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
         launchPermissions()
+        selectLocationCameraListener = SelectLocationCameraListener(ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_center_people))
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        setUpSelectLocation()
+        locationManager.requestLocationUpdates(
+            android.location.LocationManager.GPS_PROVIDER,
+            1000L,
+            1f,
+            locationListener
+        )
+
         initViews()
         initListeners()
         initObservers()
@@ -87,16 +126,24 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private fun initObservers() {
         viewModel.getProfile()
         viewModel.profileUiState.onEach {
-            when(it){
-                is ProfileUiState.Error -> Log.i("RequestFragment", "profileUiState: error ${it.message}")
+            when (it) {
+                is ProfileUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "profileUiState: error ${it.message}"
+                )
+
                 ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
                 is ProfileUiState.Success -> displayProfile(it.profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.logOutUiState.onEach {
-            when(it){
-                is LogOutUiState.Error -> Log.i("RequestFragment", "logOutUiState: error ${it.message}")
+            when (it) {
+                is LogOutUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "logOutUiState: error ${it.message}"
+                )
+
                 LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
                 LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
             }
@@ -104,8 +151,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            profile.phone
 
         Glide.with(this)
             .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
@@ -132,12 +181,13 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             navigation.goToProfileFromRequestFragment()
         }
         binding.navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.action_support -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToSupportFromRequestFragment()
                     true
                 }
+
                 R.id.action_log_out -> {
                     val logOutModalBottomSheet = LogoutModalBottomSheet()
                     logOutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
@@ -147,18 +197,21 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     }
                     true
                 }
+
                 R.id.action_my_addresses -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToSavedPlacesFromRequestFragment()
                     true
                 }
+
                 R.id.action_trip_history -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToHistoryFromRequestFragment()
                     true
                 }
+
                 else -> false
-             }
+            }
         }
         if (bottomSheetBehavior != null) {
             binding.drawerLayout.addDrawerListener(
@@ -169,27 +222,25 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
     }
 
-    private fun setUpSelectLocation(){
-        val centeredImageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_center_people)
-        binding.mapView.mapWindow.map.addCameraListener(SelectLocationCameraListener(centeredImageProvider))
+    private fun setUpSelectLocation() {
+        selectLocationCameraListener?.let {
+            binding.mapView.mapWindow.map.addCameraListener(selectLocationCameraListener!!)
+            it.setOnLocationChangedListener {
+                Log.i("RequestFragment", "onLocationChanged: $it")
+            }
+        }
+
     }
 
-    private fun setUpMapView() {
-        binding.mapView.onStart()
-        val point =  Point(42.4619, 59.6166)
+    private fun setUpMapView(latitude: Double, longitude: Double) {
+        val point = Point(latitude, longitude)
         val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-        val placeMark = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+        binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
             geometry = point
             setIcon(imageProvider)
         }
-
         val cameraCallback = CameraCallback {}
-
-        binding.mapView.mapWindow.map.move(
-            CameraPosition(point,/* zoom = */ 17.0f,/* azimuth = */ 150.0f,/* tilt = */ 30.0f),
-            Animation(Animation.Type.LINEAR, 1f),
-            cameraCallback
-        )
+        binding.mapView.mapWindow.map.move(CameraPosition(point,/* zoom = */ 17.0f,/* azimuth = */ 150.0f,/* tilt = */ 30.0f), Animation(Animation.Type.LINEAR, 1f), cameraCallback)
     }
 
     private fun setUpBottomSheet() {

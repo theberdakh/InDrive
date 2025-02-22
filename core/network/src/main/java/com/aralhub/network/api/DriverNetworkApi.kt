@@ -1,8 +1,12 @@
 package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.driver.DriverInfoWithVehicleResponse
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
+import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverCardResponse
 import com.aralhub.network.models.driver.NetworkDriverInfoResponse
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
@@ -10,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface DriverNetworkApi {
 
@@ -26,8 +31,18 @@ interface DriverNetworkApi {
     suspend fun getDriverInfo(): Response<ServerResponse<NetworkDriverInfoResponse>>
 
     @GET("/driver/info_with_vehicle")
-    suspend fun getDriverInfoWithVehicle(): Response<ServerResponse<String>>
+    suspend fun getDriverInfoWithVehicle(): Response<ServerResponse<DriverInfoWithVehicleResponse>>
 
-    @POST("driver/card")
-    suspend fun driverCard(@Body networkDriverCardRequest: NetworkDriverCardRequest): Response<ServerResponse<String>>
+    @GET("/driver/card")
+    suspend fun getDriverCard(): Response<ServerResponse<NetworkDriverCardResponse>>
+
+    @POST("/driver/card")
+    suspend fun driverCard(@Body networkDriverCardRequest: NetworkDriverCardRequest): Response<ServerResponseEmpty>
+
+    @PUT("/driver/card")
+    suspend fun updateDriverCard(@Body networkDriverCardRequest: NetworkDriverCardRequest): Response<ServerResponse<ServerResponseEmpty>>
+
+    @GET("/driver/balance")
+    suspend fun getDriverBalance(): Response<ServerResponse<NetworkDriverBalanceResponse>>
+
 }

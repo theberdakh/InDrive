@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.profile.driver.R
 import com.aralhub.araltaxi.profile.driver.databinding.FragmentProfileBinding
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -34,6 +35,35 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 is ProfileUiState.Success -> displayProfile(it.driverProfile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+        viewModel.getDriverCard()
+        viewModel.cardUiState.onEach {
+            when(it){
+                is CardUiState.Error -> Log.i("RequestFragment", "cardUiState: error ${it.message}")
+                CardUiState.Loading -> Log.i("RequestFragment", "cardUiState: loading")
+                is CardUiState.Success -> displayCard(it.card, it.cardHolder)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.getDriverProfileWithVehicle()
+        viewModel.profileWithVehicleUiState.onEach {
+            when(it){
+                is ProfileWithVehicleUiState.Error -> Log.i("RequestFragment", "profileWithVehicleUiState: error ${it.message}")
+                ProfileWithVehicleUiState.Loading -> Log.i("RequestFragment", "profileWithVehicleUiState: loading")
+                is ProfileWithVehicleUiState.Success -> displayProfileWithVehicle(it.driverProfileWithVehicle)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+    }
+
+    private fun displayProfileWithVehicle(driverProfileWithVehicle: DriverProfileWithVehicle) {
+        binding.tvCar.text = driverProfileWithVehicle.vehicleType
+        binding.tvCarNumber.text = driverProfileWithVehicle.plateNumber
+        binding.tvCarColor.text = driverProfileWithVehicle.color
+    }
+
+    private fun displayCard(cardNumber: String, nameOnCard: String) {
+        binding.tvCard.text = cardNumber
+        binding.tvCardLabel.text = nameOnCard
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {

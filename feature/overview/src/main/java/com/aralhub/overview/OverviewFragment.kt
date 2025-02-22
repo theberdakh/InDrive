@@ -48,6 +48,18 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
                 is ProfileUiState.Success -> displayProfile(it.profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.getBalance()
+        viewModel.balanceUiState.onEach {
+            when(it){
+                is DriverBalanceUiState.Error -> Log.i("RequestFragment", "balanceUiState: error ${it.message}")
+                DriverBalanceUiState.Loading -> Log.i("RequestFragment", "balanceUiState: loading")
+                is DriverBalanceUiState.Success -> {
+                    binding.tvBalance.text= it.balance.toString()
+                    binding.tvDailyIncome.text = it.dayBalance.toString()
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun initListeners() {

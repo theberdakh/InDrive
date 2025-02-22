@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:theme="@style/Theme.InDrive">
 
@@ -65,9 +66,10 @@
                             android:paddingHorizontal="@dimen/padding_medium">
 
                             <TextView
+                                android:id="@+id/tv_daily_income"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="86 000"
+                                tools:text="86 000"
                                 android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
                             <TextView
@@ -89,15 +91,16 @@
                             android:paddingHorizontal="@dimen/padding_medium">
 
                             <TextView
+                                android:id="@+id/tv_balance"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="86 000"
+                                tools:text="86 000"
                                 android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Búgingi dáramat"
+                                android:text="Balans"
                                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
 
@@ -109,6 +112,7 @@
                         android:layout_height="0dp"
                         android:layout_marginTop="1dp"
                         android:layout_weight="1"
+                        android:visibility="gone"
                         android:background="@drawable/round_bottom"
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/padding_medium"

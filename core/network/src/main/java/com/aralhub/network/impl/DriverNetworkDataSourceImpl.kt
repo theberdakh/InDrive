@@ -3,11 +3,16 @@ package com.aralhub.network.impl
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
+import com.aralhub.network.models.driver.DriverInfoWithVehicleResponse
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
+import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverCardResponse
 import com.aralhub.network.models.driver.NetworkDriverInfoResponse
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
+import com.aralhub.network.utils.NetworkEx.safeRequest
+import com.aralhub.network.utils.NetworkEx.safeRequestEmpty
 import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 import javax.inject.Inject
 
@@ -28,11 +33,20 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return api.getDriverInfo().safeRequestServerResponse()
     }
 
-    override suspend fun getDriverInfoWithVehicle(): NetworkResult<String> {
+    override suspend fun getDriverInfoWithVehicle(): NetworkResult<DriverInfoWithVehicleResponse> {
         return api.getDriverInfoWithVehicle().safeRequestServerResponse()
     }
 
-    override suspend fun driverCard(networkDriverCardRequest: NetworkDriverCardRequest): NetworkResult<String> {
-        return api.driverCard(networkDriverCardRequest).safeRequestServerResponse()
+
+    override suspend fun driverCard(networkDriverCardRequest: NetworkDriverCardRequest): NetworkResult<Boolean> {
+        return api.driverCard(networkDriverCardRequest).safeRequestEmpty()
+    }
+
+    override suspend fun getDriverBalance(): NetworkResult<NetworkDriverBalanceResponse> {
+        return api.getDriverBalance().safeRequestServerResponse()
+    }
+
+    override suspend fun getDriverCard(): NetworkResult<NetworkDriverCardResponse> {
+        return api.getDriverCard().safeRequestServerResponse()
     }
 }
