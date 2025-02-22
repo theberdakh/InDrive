@@ -40,16 +40,13 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
                     Result.Success(DriverProfile(
-                        id = it.data.id,
                         driverId = it.data.driverId,
-                        address = it.data.address,
-                        licenseNumber = it.data.licenseNumber,
-                        dateOfIssue = it.data.dateOfIssue,
-                        dateOfExpiry = it.data.dateOfExpiry,
-                        cardNumber = it.data.cardNumber,
-                        cardHolder = it.data.nameOnCard,
-                        frontPhotoUrl = it.data.frontPhotoUrl ?: "",
-                        backPhotoUrl = it.data.backPhotoUrl ?: ""
+                        fullName = it.data.fullName,
+                        rating = it.data.rating,
+                        color = it.data.color,
+                        vehicleType = it.data.vehicleType,
+                        plateNumber = it.data.plateNumber,
+                        phoneNumber = it.data.phoneNumber
                     ))
                 }
             }

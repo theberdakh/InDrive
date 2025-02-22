@@ -1,10 +1,14 @@
-package com.aralhub.araltaxi.driver.orders
+package com.aralhub.araltaxi.driver.orders.orders
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
@@ -20,16 +24,20 @@ import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
+import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
+    private val viewModel by viewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
@@ -110,6 +118,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        initObservers()
         initOrderModalBottomSheet()
         initGoingToPickUpModalBottomSheet()
         initWaitingForClientModalBottomSheet()
@@ -120,6 +129,24 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initListeners()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
+    }
+
+    private fun initObservers() {
+        viewModel.getDriverProfile()
+        viewModel.profileUiState.onEach {
+            when(it){
+                is ProfileUiState.Error -> Log.d("OrdersFragment", "profileUiState: error ${it.message}")
+                ProfileUiState.Loading -> Log.d("OrdersFragment", "profileUiState: loading")
+                is ProfileUiState.Success -> displayProfile(it.driverProfile)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun displayProfile(driverProfile: DriverProfile) {
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            driverProfile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            driverProfile.phoneNumber
     }
 
     private fun initListeners() {

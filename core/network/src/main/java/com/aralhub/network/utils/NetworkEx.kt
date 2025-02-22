@@ -26,8 +26,7 @@ object NetworkEx {
                         return if (errorBody == null) {
                             NetworkResult.Error(message = "Error body is null")
                         } else {
-                            val error =
-                                gson.fromJson(errorBody.string(), ValidationError::class.java)
+                            val error = gson.fromJson(errorBody.string(), ValidationError::class.java)
                             NetworkResult.Error(message = error.detail[0].msg)
                         }
                     }

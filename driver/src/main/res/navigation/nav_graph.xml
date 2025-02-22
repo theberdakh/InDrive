@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/ordersFragment"
-        android:name="com.aralhub.araltaxi.driver.orders.OrdersFragment"
+        android:name="com.aralhub.araltaxi.driver.orders.orders.OrdersFragment"
         tools:layout="@layout/fragment_orders">
 
         <action
@@ -92,7 +92,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.aralhub.araltaxi.profile.driver.ProfileFragment"
+        android:name="com.aralhub.araltaxi.profile.driver.profile.ProfileFragment"
         tools:layout="@layout/fragment_profile"/>
 
     <fragment
