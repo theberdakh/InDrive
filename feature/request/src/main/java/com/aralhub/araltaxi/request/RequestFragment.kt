@@ -20,14 +20,23 @@ import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
 import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
+import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.Map.CameraCallback
+import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -49,14 +58,26 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
     private val viewModel by viewModels<RequestViewModel>()
+    private var currentPlaceMark:PlacemarkMapObject? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        MapKitInitializer.init("eb911707-c4c6-4608-9917-f22012813a34", requireContext())
+        MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setUpMapView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.mapView.onStop()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         launchPermissions()
         initViews()
         initListeners()
@@ -83,12 +104,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
-            profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
-            profile.phone
-
-        Log.i("My Url", "url: ${profile.profilePhoto}")
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
 
         Glide.with(this)
             .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
@@ -102,7 +119,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initViews() {
-        setUpMapView()
         setUpBottomSheet()
         initBottomNavController()
     }
@@ -153,15 +169,26 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
     }
 
+    private fun setUpSelectLocation(){
+        val centeredImageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_center_people)
+        binding.mapView.mapWindow.map.addCameraListener(SelectLocationCameraListener(centeredImageProvider))
+    }
+
     private fun setUpMapView() {
         binding.mapView.onStart()
+        val point =  Point(42.4619, 59.6166)
+        val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+        val placeMark = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+            geometry = point
+            setIcon(imageProvider)
+        }
+
+        val cameraCallback = CameraCallback {}
+
         binding.mapView.mapWindow.map.move(
-            CameraPosition(
-                Point(42.4619, 59.6166),
-                /* zoom = */ 17.0f,
-                /* azimuth = */ 150.0f,
-                /* tilt = */ 30.0f
-            )
+            CameraPosition(point,/* zoom = */ 17.0f,/* azimuth = */ 150.0f,/* tilt = */ 30.0f),
+            Animation(Animation.Type.LINEAR, 1f),
+            cameraCallback
         )
     }
 
@@ -172,8 +199,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initBottomNavController() {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let { sheetNavigator.bind(navController) }
     }
