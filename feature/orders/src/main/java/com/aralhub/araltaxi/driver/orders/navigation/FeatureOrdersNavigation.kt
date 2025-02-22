@@ -5,4 +5,5 @@ interface FeatureOrdersNavigation {
     fun goToSupportFromOrders()
     fun goToHistoryFromOrders()
     fun goToRevenueFromOrders()
+    fun goToLogoFromOrders()
 }

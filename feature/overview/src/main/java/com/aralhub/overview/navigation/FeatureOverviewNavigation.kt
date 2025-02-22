@@ -6,4 +6,5 @@ interface FeatureOverviewNavigation {
     fun goToSupportFromOverview()
     fun goToHistoryFromOverview()
     fun goToRevenueFromOverview()
+    fun goToLogoFromOverview()
 }

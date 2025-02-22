@@ -10,6 +10,7 @@ import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
 import javax.inject.Inject
 import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.utils.LocalStorage
 
@@ -97,6 +98,18 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         balance = it.data.balance ?: 0,
                         dailyBalance = it.data.dayBalance ?: 0
                     ))
+                }
+            }
+        }
+    }
+
+    override suspend fun driverLogout(): Result<Boolean> {
+        driverNetworkDataSource.driverLogout(NetworkDriverLogoutRequest(localStorage.refresh)).let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> {
+                    localStorage.clear()
+                    Result.Success(data = true)
                 }
             }
         }

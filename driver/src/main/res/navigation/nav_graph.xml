@@ -65,6 +65,11 @@
             android:id="@+id/action_overviewFragment_to_revenueFragment"
             app:destination="@id/revenueFragment" />
 
+        <action android:id="@+id/action_overviewFragment_to_logoFragment"
+            app:popUpTo="@id/overviewFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/logoFragment"/>
+
     </fragment>
 
     <fragment
@@ -87,6 +92,12 @@
         <action
             android:id="@+id/action_ordersFragment_to_revenueFragment"
             app:destination="@id/revenueFragment" />
+
+        <action
+            android:id="@+id/action_ordersFragment_to_logoFragment"
+            app:popUpTo="@id/overviewFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/logoFragment"/>
 
     </fragment>
 

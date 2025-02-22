@@ -32,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.math.log
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
@@ -140,6 +141,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 is ProfileUiState.Success -> displayProfile(it.driverProfile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.logoutUiState.onEach {
+            when(it){
+                is LogoutUiState.Error -> Log.d("OrdersFragment", "logoutUiState: error ${it.message}")
+                LogoutUiState.Loading -> Log.d("OrdersFragment", "logoutUiState: loading")
+                LogoutUiState.Success -> navigation.goToLogoFromOrders()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {
@@ -162,7 +171,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     true
                 }
                 R.id.action_log_out -> {
-                    LogoutModalBottomSheet.show(childFragmentManager)
+                    val logoutModalBottomSheet = LogoutModalBottomSheet()
+                    logoutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
+                    logoutModalBottomSheet.setOnLogoutListener {
+                        logoutModalBottomSheet.dismissAllowingStateLoss()
+                        viewModel.logout()
+                    }
                     true
                 }
                 R.id.action_my_revenue -> {

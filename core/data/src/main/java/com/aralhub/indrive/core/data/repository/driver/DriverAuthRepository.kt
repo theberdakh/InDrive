@@ -13,4 +13,5 @@ interface DriverAuthRepository {
     suspend fun driverInfoWithVehicle(): Result<DriverProfileWithVehicle>
     suspend fun getDriverCard(): Result<DriverCard>
     suspend fun getDriverBalance(): Result<DriverBalance>
+    suspend fun driverLogout(): Result<Boolean>
 }

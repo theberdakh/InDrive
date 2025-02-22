@@ -12,4 +12,11 @@ class LocalStorage(preference: SharedPreferences) {
 
     var isLogin by BooleanPreference(preference, false)
 
+    fun clear() {
+        access = ""
+        refresh = ""
+        phoneNumber = ""
+        isLogin = false
+    }
+
 }

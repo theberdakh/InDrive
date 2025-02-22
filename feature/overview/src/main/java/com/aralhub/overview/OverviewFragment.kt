@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.math.log
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment(R.layout.fragment_overview) {
@@ -60,6 +61,14 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.logoutUiState.onEach {
+            when(it){
+                is LogoutUiState.Error -> Log.i("RequestFragment", "logoutUiState: error ${it.message}")
+                LogoutUiState.Loading -> Log.i("RequestFragment", "logoutUiState: loading")
+                LogoutUiState.Success -> navigation.goToLogoFromOverview()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun initListeners() {
@@ -85,7 +94,12 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
                 }
 
                 R.id.action_log_out -> {
-                    LogoutModalBottomSheet.show(childFragmentManager)
+                    val logoutModalBottomSheet = LogoutModalBottomSheet()
+                    logoutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
+                    logoutModalBottomSheet.setOnLogoutListener {
+                        logoutModalBottomSheet.dismissAllowingStateLoss()
+                        viewModel.logout()
+                    }
                     true
                 }
 

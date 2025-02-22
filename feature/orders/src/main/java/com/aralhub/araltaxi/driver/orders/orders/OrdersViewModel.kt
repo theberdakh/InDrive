@@ -2,6 +2,7 @@ package com.aralhub.araltaxi.driver.orders.orders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,7 +13,8 @@ import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
-class OrdersViewModel @Inject constructor(private val driverProfileUseCase: DriverProfileUseCase): ViewModel() {
+class OrdersViewModel @Inject constructor(private val driverProfileUseCase: DriverProfileUseCase,
+    private val driverLogoutUseCase: DriverLogoutUseCase): ViewModel() {
 
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -29,6 +31,28 @@ class OrdersViewModel @Inject constructor(private val driverProfileUseCase: Driv
             }
         }
     }
+
+    private val _logoutUiState = MutableSharedFlow<LogoutUiState>()
+    val logoutUiState = _logoutUiState.asSharedFlow()
+    fun logout() = viewModelScope.launch {
+        _logoutUiState.emit(LogoutUiState.Loading)
+        driverLogoutUseCase().let { result ->
+            when(result){
+                is Result.Success -> {
+                    _logoutUiState.emit(LogoutUiState.Success)
+                }
+                is Result.Error -> {
+                    _logoutUiState.emit(LogoutUiState.Error(result.message))
+                }
+            }
+        }
+    }
+}
+
+sealed interface LogoutUiState {
+    data object Loading : LogoutUiState
+    data object Success : LogoutUiState
+    data class Error(val message: String) : LogoutUiState
 }
 
 sealed interface ProfileUiState {

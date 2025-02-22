@@ -58,6 +58,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
         navController?.navigate(R.id.action_overviewFragment_to_revenueFragment)
     }
 
+    override fun goToLogoFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_logoFragment)
+    }
+
     override fun goToProfileFromOrders() {
         navController?.navigate(R.id.action_ordersFragment_to_profileFragment)
     }
@@ -72,5 +76,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
 
     override fun goToRevenueFromOrders() {
         navController?.navigate(R.id.action_ordersFragment_to_revenueFragment)
+    }
+
+    override fun goToLogoFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_logoFragment)
     }
 }

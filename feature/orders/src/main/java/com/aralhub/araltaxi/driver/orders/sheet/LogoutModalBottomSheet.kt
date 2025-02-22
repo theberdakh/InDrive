@@ -10,11 +10,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class LogoutModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_logout) {
     private val binding by viewBinding(ModalBottomSheetLogoutBinding::bind)
+
+    private var _onLogoutListener: (() -> Unit) = {}
+    fun setOnLogoutListener(listener: () -> Unit) {
+        _onLogoutListener = listener
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogout.setOnClickListener {
-            dismissAllowingStateLoss()
+            _onLogoutListener.invoke()
         }
 
         binding.btnBack.setOnClickListener {
@@ -23,7 +28,7 @@ class LogoutModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_s
     }
 
     companion object {
-        private const val TAG = "LogoutModalBottomSheet"
+        const val TAG = "LogoutModalBottomSheet"
         fun show(fragmentManager: FragmentManager) {
             LogoutModalBottomSheet().show(fragmentManager, TAG)
         }

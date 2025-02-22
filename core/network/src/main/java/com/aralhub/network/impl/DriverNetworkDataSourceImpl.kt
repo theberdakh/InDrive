@@ -9,6 +9,7 @@ import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
 import com.aralhub.network.models.driver.NetworkDriverCardResponse
 import com.aralhub.network.models.driver.NetworkDriverInfoResponse
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
 import com.aralhub.network.utils.NetworkEx.safeRequest
@@ -48,5 +49,9 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
 
     override suspend fun getDriverCard(): NetworkResult<NetworkDriverCardResponse> {
         return api.getDriverCard().safeRequestServerResponse()
+    }
+
+    override suspend fun driverLogout(networkDriverLogoutRequest: NetworkDriverLogoutRequest): NetworkResult<Boolean> {
+        return api.driverLogout(networkDriverLogoutRequest).safeRequestEmpty()
     }
 }

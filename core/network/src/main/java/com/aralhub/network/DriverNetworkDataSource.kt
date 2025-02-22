@@ -8,6 +8,7 @@ import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
 import com.aralhub.network.models.driver.NetworkDriverCardResponse
 import com.aralhub.network.models.driver.NetworkDriverInfoResponse
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
 
@@ -20,4 +21,5 @@ interface DriverNetworkDataSource {
     suspend fun driverCard(networkDriverCardRequest: NetworkDriverCardRequest): NetworkResult<Boolean>
     suspend fun getDriverBalance(): NetworkResult<NetworkDriverBalanceResponse>
     suspend fun getDriverCard(): NetworkResult<NetworkDriverCardResponse>
+    suspend fun driverLogout(networkDriverLogoutRequest: NetworkDriverLogoutRequest): NetworkResult<Boolean>
 }

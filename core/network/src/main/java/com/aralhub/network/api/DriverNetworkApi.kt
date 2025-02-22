@@ -8,6 +8,7 @@ import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
 import com.aralhub.network.models.driver.NetworkDriverCardRequest
 import com.aralhub.network.models.driver.NetworkDriverCardResponse
 import com.aralhub.network.models.driver.NetworkDriverInfoResponse
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
 import retrofit2.Response
@@ -44,5 +45,8 @@ interface DriverNetworkApi {
 
     @GET("/driver/balance")
     suspend fun getDriverBalance(): Response<ServerResponse<NetworkDriverBalanceResponse>>
+
+    @POST("/driver/logout/")
+    suspend fun driverLogout(@Body networkDriverRequest: NetworkDriverLogoutRequest): Response<ServerResponseEmpty>
 
 }

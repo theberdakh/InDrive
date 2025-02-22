@@ -2,6 +2,7 @@ package com.aralhub.overview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetDriverBalanceUseCase
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OverviewViewModel @Inject constructor(
     private val driverProfileUseCase: DriverProfileUseCase,
-    private val driverBalanceUseCase: GetDriverBalanceUseCase
+    private val driverBalanceUseCase: GetDriverBalanceUseCase,
+    private val driverLogoutUseCase: DriverLogoutUseCase
 ) : ViewModel() {
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -36,10 +38,31 @@ class OverviewViewModel @Inject constructor(
         _balanceUiState.emit(driverBalanceUseCase().let {
             when (it) {
                 is Result.Error -> DriverBalanceUiState.Error(it.message)
-                is Result.Success -> DriverBalanceUiState.Success(it.data.balance, it.data.dailyBalance)
+                is Result.Success -> DriverBalanceUiState.Success(
+                    it.data.balance,
+                    it.data.dailyBalance
+                )
             }
         })
     }
+
+    private val _logoutUiState = MutableSharedFlow<LogoutUiState>()
+    val logoutUiState = _logoutUiState.asSharedFlow()
+    fun logout() = viewModelScope.launch {
+        _logoutUiState.emit(LogoutUiState.Loading)
+        _logoutUiState.emit(driverLogoutUseCase().let {
+            when (it) {
+                is Result.Error -> LogoutUiState.Error(it.message)
+                is Result.Success -> LogoutUiState.Success
+            }
+        })
+    }
+}
+
+sealed interface LogoutUiState {
+    data object Success : LogoutUiState
+    data class Error(val message: String) : LogoutUiState
+    data object Loading : LogoutUiState
 }
 
 sealed interface DriverBalanceUiState {
