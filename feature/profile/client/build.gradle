@@ -51,4 +51,7 @@ dependencies {
     //Dagger-Hilt for Dependency Injection
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
+
+    //Image Loading
+    implementation libs.glide
 }

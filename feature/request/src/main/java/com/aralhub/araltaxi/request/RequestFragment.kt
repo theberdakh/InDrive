@@ -2,25 +2,43 @@ package com.aralhub.araltaxi.request
 
 import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
+import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
+import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
+import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.location.LocationManager
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.Map.CameraCallback
+import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,8 +49,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+    private var selectLocationCameraListener: SelectLocationCameraListener? = null
     @Inject
     lateinit var sheetNavigator: SheetNavigator
+
     @Inject
     lateinit var navigation: FeatureRequestNavigation
     private val locationPermissionLauncher =
@@ -45,16 +65,102 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
+    private val viewModel by viewModels<RequestViewModel>()
+    private var locationManager: LocationManager? = null
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        MapKitInitializer.init("eb911707-c4c6-4608-9917-f22012813a34", requireContext())
+        MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
     }
+
+    override fun onStart() {
+        super.onStart()
+        binding.mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.mapView.onStop()
+    }
+
+    private val locationListener = LocationListener { location ->
+        Log.i("RequestFragment", "onLocationChanged: ${location.longitude} ${location.latitude}")
+        setUpMapView(
+            latitude = location.latitude,
+            longitude = location.longitude
+        )
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         launchPermissions()
+        selectLocationCameraListener = SelectLocationCameraListener(ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_center_people))
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        setUpSelectLocation()
+        locationManager.requestLocationUpdates(
+            android.location.LocationManager.GPS_PROVIDER,
+            1000L,
+            1f,
+            locationListener
+        )
+
         initViews()
         initListeners()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewModel.getProfile()
+        viewModel.profileUiState.onEach {
+            when (it) {
+                is ProfileUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "profileUiState: error ${it.message}"
+                )
+
+                ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
+                is ProfileUiState.Success -> displayProfile(it.profile)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.logOutUiState.onEach {
+            when (it) {
+                is LogOutUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "logOutUiState: error ${it.message}"
+                )
+
+                LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
+                LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun displayProfile(profile: ClientProfile) {
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            profile.phone
+
+        Glide.with(this)
+            .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
+            .apply(RequestOptions.circleCropTransform())
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .into(binding.navigationView.getHeaderView(0).findViewById(R.id.iv_avatar))
     }
 
     private fun launchPermissions() {
@@ -62,7 +168,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initViews() {
-        setUpMapView()
         setUpBottomSheet()
         initBottomNavController()
     }
@@ -76,14 +181,37 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             navigation.goToProfileFromRequestFragment()
         }
         binding.navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.action_support -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToSupportFromRequestFragment()
                     true
                 }
+
+                R.id.action_log_out -> {
+                    val logOutModalBottomSheet = LogoutModalBottomSheet()
+                    logOutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
+                    logOutModalBottomSheet.setOnLogoutListener {
+                        logOutModalBottomSheet.dismissAllowingStateLoss()
+                        viewModel.logOut()
+                    }
+                    true
+                }
+
+                R.id.action_my_addresses -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToSavedPlacesFromRequestFragment()
+                    true
+                }
+
+                R.id.action_trip_history -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    navigation.goToHistoryFromRequestFragment()
+                    true
+                }
+
                 else -> false
-             }
+            }
         }
         if (bottomSheetBehavior != null) {
             binding.drawerLayout.addDrawerListener(
@@ -94,16 +222,25 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
     }
 
-    private fun setUpMapView() {
-        binding.mapView.onStart()
-        binding.mapView.mapWindow.map.move(
-            CameraPosition(
-                Point(42.4619, 59.6166),
-                /* zoom = */ 17.0f,
-                /* azimuth = */ 150.0f,
-                /* tilt = */ 30.0f
-            )
-        )
+    private fun setUpSelectLocation() {
+        selectLocationCameraListener?.let {
+            binding.mapView.mapWindow.map.addCameraListener(selectLocationCameraListener!!)
+            it.setOnLocationChangedListener {
+                Log.i("RequestFragment", "onLocationChanged: $it")
+            }
+        }
+
+    }
+
+    private fun setUpMapView(latitude: Double, longitude: Double) {
+        val point = Point(latitude, longitude)
+        val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+        binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+            geometry = point
+            setIcon(imageProvider)
+        }
+        val cameraCallback = CameraCallback {}
+        binding.mapView.mapWindow.map.move(CameraPosition(point,/* zoom = */ 17.0f,/* azimuth = */ 150.0f,/* tilt = */ 30.0f), Animation(Animation.Type.LINEAR, 1f), cameraCallback)
     }
 
     private fun setUpBottomSheet() {
@@ -113,8 +250,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initBottomNavController() {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let { sheetNavigator.bind(navController) }
     }

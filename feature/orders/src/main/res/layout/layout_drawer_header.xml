@@ -20,15 +20,15 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection"
-            android:text="Muhammed"/>
+            android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection" />
 
         <TextView
+            android:id="@+id/tv_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="+998 91 293 13 12"
             android:textAppearance="@style/TextAppearance.InDrive.TitleGroup"/>
 
     </LinearLayout>

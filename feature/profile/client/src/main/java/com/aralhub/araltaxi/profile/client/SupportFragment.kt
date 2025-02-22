@@ -25,7 +25,4 @@ class SupportFragment: Fragment(R.layout.fragment_support) {
         intent.data = android.net.Uri.parse("tel:$phone")
         startActivity(intent)
     }
-
-
-
 }

@@ -9,7 +9,7 @@ data class NetworkUserMeResponse(
     @SerializedName("phone_number")
     val phoneNumber: String,
     @SerializedName("profile_photo_url")
-    val profilePhotoUrl: String,
+    val profilePhotoUrl: String?,
     @SerializedName("is_fully_registered")
     val isFullyRegistered: Boolean
 )

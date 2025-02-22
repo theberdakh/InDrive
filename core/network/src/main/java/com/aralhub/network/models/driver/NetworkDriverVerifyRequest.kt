@@ -7,3 +7,12 @@ data class NetworkDriverVerifyRequest(
     val phoneNumber: String,
     val code: String
 )
+
+data class NetworkDriverVerifyResponse(
+    @SerializedName("access_token")
+    val accessToken: String,
+    @SerializedName("refresh_token")
+    val refreshToken: String,
+    @SerializedName("token_type")
+    val tokenType: String,
+)

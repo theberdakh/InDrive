@@ -20,9 +20,7 @@ class AddSMSViewModel @Inject constructor(private val useCase: ClientVerifyPhone
         _addSMSUiState.emit(AddSMSUiState.Loading)
         _addSMSUiState.emit(useCase(phone = phone, code = code).let {
             when (it) {
-                is Result.Error -> {
-                    AddSMSUiState.Error(message = it.message)
-                }
+                is Result.Error -> AddSMSUiState.Error(message = it.message)
                 is Result.Success -> AddSMSUiState.Success
             }
         })

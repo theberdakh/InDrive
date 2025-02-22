@@ -4,12 +4,13 @@ import androidx.navigation.NavController
 import com.aralhub.araltaxi.driver.R
 import com.aralhub.araltaxi.driver.driver_auth.addsms.AddSMSFragment
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
+import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigation, FeatureOverviewNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigation, FeatureOverviewNavigation, FeatureOrdersNavigation{
 
     private var navController: NavController? = null
 
@@ -39,5 +40,45 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
 
     override fun goToAcceptOrders() {
         navController?.navigate(R.id.action_overviewFragment_to_ordersFragment)
+    }
+
+    override fun goToProfileFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_profileFragment)
+    }
+
+    override fun goToSupportFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_supportFragment)
+    }
+
+    override fun goToHistoryFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_historyFragment)
+    }
+
+    override fun goToRevenueFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_revenueFragment)
+    }
+
+    override fun goToLogoFromOverview() {
+        navController?.navigate(R.id.action_overviewFragment_to_logoFragment)
+    }
+
+    override fun goToProfileFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_profileFragment)
+    }
+
+    override fun goToSupportFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_supportFragment)
+    }
+
+    override fun goToHistoryFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_historyFragment)
+    }
+
+    override fun goToRevenueFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_revenueFragment)
+    }
+
+    override fun goToLogoFromOrders() {
+        navController?.navigate(R.id.action_ordersFragment_to_logoFragment)
     }
 }
