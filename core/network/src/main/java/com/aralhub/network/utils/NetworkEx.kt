@@ -26,13 +26,24 @@ object NetworkEx {
                         return if (errorBody == null) {
                             NetworkResult.Error(message = "Error body is null")
                         } else {
-                            val error = gson.fromJson(errorBody.string(), ValidationError::class.java)
+                            val error =
+                                gson.fromJson(errorBody.string(), ValidationError::class.java)
                             NetworkResult.Error(message = error.detail[0].msg)
                         }
                     }
-                    500 -> {
+
+                    in 500..502 -> {
+                        NetworkResult.Error("Server Error")
+                    }
+
+                    in 504..599 -> {
                         NetworkResult.Error(message = "Server Error")
                     }
+
+                    503 -> {
+                        NetworkResult.Error(message = "No Internet")
+                    }
+
                     else -> {
                         return if (errorBody == null) {
                             NetworkResult.Error(message = "Error body is null")
@@ -54,20 +65,32 @@ object NetworkEx {
                 body()?.let {
                     NetworkResult.Success(data = it)
                 } ?: NetworkResult.Error(message = "Response body is null")
-            } else { val gson = Gson()
+            } else {
+                val gson = Gson()
                 val errorBody = errorBody()
                 return when (code()) {
                     422 -> {
                         return if (errorBody == null) {
                             NetworkResult.Error(message = "Error body is null")
                         } else {
-                            val error = gson.fromJson(errorBody.string(), ValidationError::class.java)
+                            val error =
+                                gson.fromJson(errorBody.string(), ValidationError::class.java)
                             NetworkResult.Error(message = error.detail[0].msg)
                         }
                     }
-                    500 -> {
+
+                    in 500..502 -> {
+                        NetworkResult.Error("Server Error")
+                    }
+
+                    in 504..599 -> {
                         NetworkResult.Error(message = "Server Error")
                     }
+
+                    503 -> {
+                        NetworkResult.Error(message = "No Internet")
+                    }
+
                     else -> {
                         return if (errorBody == null) {
                             NetworkResult.Error(message = "Error body is null")
