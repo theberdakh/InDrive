@@ -81,5 +81,14 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
                 is ActivePaymentMethodUiState.Success -> {}
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.getRideOptions()
+        viewModel.rideOptionsUiState.onEach {
+            when(it){
+                is RideOptionsUiState.Error -> {}
+                RideOptionsUiState.Loading -> {}
+                is RideOptionsUiState.Success -> {}
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

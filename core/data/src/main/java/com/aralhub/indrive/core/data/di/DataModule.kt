@@ -8,6 +8,8 @@ import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverAuthRepositoryImpl
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.repository.payment.impl.PaymentRepositoryImpl
+import com.aralhub.indrive.core.data.repository.rideoption.RideOptionRepository
+import com.aralhub.indrive.core.data.repository.rideoption.impl.RideOptionRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -36,6 +38,11 @@ abstract class DataModule {
     internal abstract fun bindsPaymentRepository(
         topicsRepository: PaymentRepositoryImpl,
     ): PaymentRepository
+
+    @Binds
+    internal abstract fun bindsRideOptionRepository(
+        topicsRepository: RideOptionRepositoryImpl,
+    ): RideOptionRepository
 
 
 }

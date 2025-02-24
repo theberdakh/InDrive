@@ -18,10 +18,12 @@ package com.aralhub.network.di
 
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.PaymentMethodNetworkDataSource
+import com.aralhub.network.RideOptionNetworkDataSource
 import com.aralhub.network.UserNetworkDataSource
 import com.aralhub.network.WebSocketClientNetworkDataSource
 import com.aralhub.network.impl.DriverNetworkDataSourceImpl
 import com.aralhub.network.impl.PaymentMethodNetworkDataSourceImpl
+import com.aralhub.network.impl.RideOptionNetworkDataSourceImpl
 import com.aralhub.network.impl.UserNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketClientNetworkDataSourceImpl
 import dagger.Binds
@@ -44,5 +46,8 @@ abstract class NetworkDataSourceModule {
     abstract fun bindClientWebsocketNetworkDataSource(clientWebsocketNetworkDataSourceImpl: WebSocketClientNetworkDataSourceImpl): WebSocketClientNetworkDataSource
 
     @[Binds Singleton]
-    abstract fun bindUserNetworkDataSource(paymentMethodNetworkDataSourceImpl: PaymentMethodNetworkDataSourceImpl): PaymentMethodNetworkDataSource
+    abstract fun bindPaymentMethodDataSource(paymentMethodNetworkDataSourceImpl: PaymentMethodNetworkDataSourceImpl): PaymentMethodNetworkDataSource
+
+    @[Binds Singleton]
+    abstract fun bindRideOptionNetworkDataSource(rideOptionNetworkDataSourceImpl: RideOptionNetworkDataSourceImpl): RideOptionNetworkDataSource
 }

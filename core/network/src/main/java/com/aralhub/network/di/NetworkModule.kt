@@ -2,6 +2,7 @@ package com.aralhub.network.di
 
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.api.PaymentMethodsNetworkApi
+import com.aralhub.network.api.RideOptionNetworkApi
 import com.aralhub.network.api.UserNetworkApi
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.utils.AuthInterceptor
@@ -64,5 +65,9 @@ object NetworkModule {
     @[Provides Singleton]
     fun providePaymentMethodNetworkApi(retrofit: Retrofit): PaymentMethodsNetworkApi =
         retrofit.create(PaymentMethodsNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideRideOptionNetworkApi(retrofit: Retrofit): RideOptionNetworkApi =
+        retrofit.create(RideOptionNetworkApi::class.java)
 
 }

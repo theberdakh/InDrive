@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCreateRideUseCase
 import com.aralhub.araltaxi.core.domain.payment.GetActivePaymentMethodUseCase
+import com.aralhub.araltaxi.core.domain.rideoption.GetRideOptionsUseCase
 import com.aralhub.indrive.core.data.model.client.ClientRide
 import com.aralhub.indrive.core.data.model.client.ClientRideRequest
 import com.aralhub.indrive.core.data.model.client.ClientRideRequestLocations
@@ -12,6 +13,7 @@ import com.aralhub.indrive.core.data.model.client.ClientRideRequestLocationsItem
 import com.aralhub.indrive.core.data.model.client.ClientRideRequestLocationsItemsCoordinates
 import com.aralhub.indrive.core.data.model.client.ClientRideRequestRecommendedAmount
 import com.aralhub.indrive.core.data.model.payment.PaymentMethod
+import com.aralhub.indrive.core.data.model.rideoption.RideOption
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SendOrderBottomSheetViewModel @Inject constructor(private val useCase: ClientCreateRideUseCase,
-    private val getActivePaymentMethodUseCase: GetActivePaymentMethodUseCase) :
+    private val getActivePaymentMethodUseCase: GetActivePaymentMethodUseCase,
+    private val getRideOptionsUseCase: GetRideOptionsUseCase) :
     ViewModel() {
 
     private var _sendOrderBottomSheetUiState = MutableSharedFlow<SendOrderBottomSheetUiState>()
@@ -98,6 +101,25 @@ class SendOrderBottomSheetViewModel @Inject constructor(private val useCase: Cli
             }
         }
     }
+
+    private var _rideOptionsUiState = MutableSharedFlow<RideOptionsUiState>()
+    val rideOptionsUiState = _rideOptionsUiState.asSharedFlow()
+    fun getRideOptions() = viewModelScope.launch {
+        _rideOptionsUiState.emit(RideOptionsUiState.Loading)
+        getRideOptionsUseCase.invoke().let {
+            when (it) {
+                is Result.Error -> {
+                    _rideOptionsUiState.emit(RideOptionsUiState.Error(it.message))
+                    Log.i("SendOrderBottomSheetViewModel", "Error: ${it.message}")
+                }
+
+                is Result.Success -> {
+                    _rideOptionsUiState.emit(RideOptionsUiState.Success(it.data))
+                    Log.i("SendOrderBottomSheetViewModel", "Success: ${it.data}")
+                }
+            }
+        }
+    }
 }
 
 
@@ -111,4 +133,10 @@ sealed interface ActivePaymentMethodUiState {
     data class Success(val paymentMethod: PaymentMethod) : ActivePaymentMethodUiState
     data class Error(val message: String) : ActivePaymentMethodUiState
     data object Loading : ActivePaymentMethodUiState
+}
+
+sealed interface RideOptionsUiState {
+    data class Success(val rideOptions: List<RideOption>) : RideOptionsUiState
+    data class Error(val message: String) : RideOptionsUiState
+    data object Loading : RideOptionsUiState
 }
