@@ -27,4 +27,6 @@ interface WebSocketClientNetworkDataSource {
 
     suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse>
 
+    suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
+
 }

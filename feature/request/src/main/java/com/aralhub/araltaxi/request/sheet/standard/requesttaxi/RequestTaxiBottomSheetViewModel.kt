@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientGetRecommendedPriceUseCase
 import com.aralhub.indrive.core.data.model.client.GeoPoint
+import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,14 +27,14 @@ class RequestTaxiBottomSheetViewModel @Inject constructor(private val clientNetw
                     _requestTaxiBottomSheetUiState.emit(RequestTaxiBottomSheetUiState.Error(it.message))
                 }
                 is Result.Success -> {
-                    _requestTaxiBottomSheetUiState.emit(RequestTaxiBottomSheetUiState.Success(it.data.recommendedAmount))
+                    _requestTaxiBottomSheetUiState.emit(RequestTaxiBottomSheetUiState.Success(it.data))
                 }      }
         }
     }
 }
 
 sealed interface RequestTaxiBottomSheetUiState {
-    data class Success(val recommendedPrice: Number): RequestTaxiBottomSheetUiState
+    data class Success(val recommendedPrice: RecommendedPrice): RequestTaxiBottomSheetUiState
     data class Error(val message: String): RequestTaxiBottomSheetUiState
     data object Loading: RequestTaxiBottomSheetUiState
 }

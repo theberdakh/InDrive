@@ -1,32 +1,22 @@
-package com.aralhub.network.models.websocketclient
+package com.aralhub.indrive.core.data.model.client
 
-import com.google.gson.annotations.SerializedName
+
 
 data class ClientRideRequest(
-    @SerializedName("passenger_id")
     val passengerId: Int,
-    @SerializedName("base_amount")
     val baseAmount: Number,
-    @SerializedName("recommended_amount")
     val recommendedAmount: ClientRideRequestRecommendedAmount,
     val locations: ClientRideRequestLocations,
     val comment: String,
-    @SerializedName("auto_take")
     val autoTake: Boolean,
-    @SerializedName("payment_id")
     val paymentId: Int,
-    @SerializedName("option_ids")
     val optionIds: List<Int>,
-    @SerializedName("cancel_cause_id")
     val cancelCauseId: Int? = null
 )
 
 data class ClientRideRequestRecommendedAmount(
-    @SerializedName("min_amount")
     val minAmount: Number,
-    @SerializedName("max_amount")
     val maxAmount: Number,
-    @SerializedName("recommended_amount")
     val recommendedAmount: Number
 )
 
@@ -44,46 +34,35 @@ data class ClientRideRequestLocationsItemsCoordinates(
     val latitude: Number
 )
 
-data class ClientRideResponse(
+data class ClientRide(
     val uuid: String,
     val passenger: ClientRideResponsePassenger,
-    @SerializedName("base_amount")
     val baseAmount: Number,
-    @SerializedName("updated_amount")
     val updatedAmount: Number? = null,
-    @SerializedName("recommended_amount")
     val recommendedAmount: ClientRideResponseRecommendedAmount,
     val locations: ClientRideResponseLocations,
     val comment: String,
-    @SerializedName("payment_method")
     val paymentMethod: ClientRideResponsePaymentMethod,
     val options: ClientRideResponseOptions,
-    @SerializedName("auto_take")
     val autoTake: Boolean,
     val distance: ClientRideResponseDistance,
-    @SerializedName("cancel_cause_id")
     val cancelCauseId: Int? = null
 )
 
 data class ClientRideResponseRecommendedAmount(
-    @SerializedName("min_amount")
     val minAmount: Number,
-    @SerializedName("max_amount")
     val maxAmount: Number,
-    @SerializedName("recommended_amount")
     val recommendedAmount: Number
 )
 
 data class ClientRideResponseDistance(
     val segments: List<ClientRideResponseDistanceItem>,
-    @SerializedName("total_distance")
     val totalDistance: Number,
     val totalDuration: Number)
 
 data class ClientRideResponseDistanceItem(
     val distance: Number,
     val duration: Number,
-    @SerializedName("start_point")
     val startPoint: ClientRideResponseDistanceItemPoint,
     val endPoint: ClientRideResponseDistanceItemPoint,
 )
@@ -114,16 +93,12 @@ data class ClientRideResponseOptionsItem(
 data class ClientRideResponsePaymentMethod(
     val id: Int,
     val name: String,
-    @SerializedName("is_active")
     val isActive: Boolean
 )
 
 data class ClientRideResponsePassenger(
-    @SerializedName("user_id")
     val userId: Int,
-    @SerializedName("user_fullname")
     val userFullName: String,
-    @SerializedName("user_rating")
     val userRating: Number
 )
 
@@ -140,3 +115,5 @@ data class ClientRideResponseLocationsItemsCoordinates(
     val longitude: Number,
     val latitude: Number
 )
+
+

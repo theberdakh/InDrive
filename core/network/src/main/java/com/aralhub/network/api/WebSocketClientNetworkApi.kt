@@ -16,8 +16,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WebSocketClientNetworkApi {
-    @POST("/websocket/ride/client")
-    suspend fun clientRide(clientRideRequest: ClientRideRequest): Response<ServerResponse<ClientRideResponse>>
+    @POST("/websocket/ride/create")
+    suspend fun clientRide(@Body clientRideRequest: ClientRideRequest): Response<ServerResponse<ClientRideResponse>>
 
     @PUT("/websocket/ride/update_amount/{ride_id}")
     suspend fun putClientRideAmount(

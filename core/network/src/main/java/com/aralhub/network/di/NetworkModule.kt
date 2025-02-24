@@ -1,6 +1,7 @@
 package com.aralhub.network.di
 
 import com.aralhub.network.api.DriverNetworkApi
+import com.aralhub.network.api.PaymentMethodsNetworkApi
 import com.aralhub.network.api.UserNetworkApi
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.utils.AuthInterceptor
@@ -25,15 +26,6 @@ object NetworkModule {
     fun provideHttpLoggingInterceptor() = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-
-//    @[Provides Singleton]
-//    fun provideDriverOkHttpClient(
-//        httpLoggingInterceptor: HttpLoggingInterceptor,
-//        tokenManager: TokenManager
-//    ): OkHttpClient = OkHttpClient.Builder()
-//        .addInterceptor(AuthInterceptor(tokenManager))
-//        .addInterceptor(httpLoggingInterceptor)
-//        .build()
 
     @[Provides Singleton]
     fun provideMainOkHttpClient(
@@ -68,5 +60,9 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideWebsocketClientNetworkApi(retrofit: Retrofit): WebSocketClientNetworkApi =
         retrofit.create(WebSocketClientNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun providePaymentMethodNetworkApi(retrofit: Retrofit): PaymentMethodsNetworkApi =
+        retrofit.create(PaymentMethodsNetworkApi::class.java)
 
 }

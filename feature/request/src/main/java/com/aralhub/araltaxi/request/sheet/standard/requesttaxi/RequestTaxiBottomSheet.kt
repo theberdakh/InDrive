@@ -85,6 +85,9 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        requestTaxiBottomSheetViewModel.requestTaxiBottomSheetUiState.onEach {
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
 
