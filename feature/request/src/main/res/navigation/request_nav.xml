@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/requestTaxiBottomSheet"
-        android:name="com.aralhub.araltaxi.request.sheet.standard.RequestTaxiBottomSheet"
+        android:name="com.aralhub.araltaxi.request.sheet.standard.requesttaxi.RequestTaxiBottomSheet"
         tools:layout="@layout/bottom_sheet_request_taxi">
 
         <action

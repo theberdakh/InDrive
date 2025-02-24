@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.request
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientLogOutUseCase
@@ -9,14 +8,25 @@ import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RequestViewModel @Inject constructor(private val clientProfileUseCase: ClientProfileUseCase,
-    private val clientLogOutUseCase: ClientLogOutUseCase) :
+class RequestViewModel @Inject constructor(
+    private val clientProfileUseCase: ClientProfileUseCase,
+    private val clientLogOutUseCase: ClientLogOutUseCase
+) :
     ViewModel() {
+
+    private var _locationEnabled = MutableStateFlow<Boolean>(false)
+    val locationEnabled = _locationEnabled.asStateFlow()
+    fun updateLocationEnabled(value: Boolean) {
+        _locationEnabled.value = value
+    }
+
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()

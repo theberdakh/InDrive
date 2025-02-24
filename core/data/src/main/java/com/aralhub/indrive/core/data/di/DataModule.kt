@@ -1,7 +1,9 @@
 package com.aralhub.indrive.core.data.di
 
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
+import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.repository.client.impl.ClientAuthRepositoryImpl
+import com.aralhub.indrive.core.data.repository.client.impl.ClientWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverAuthRepositoryImpl
 import dagger.Binds
@@ -22,6 +24,11 @@ abstract class DataModule {
     internal abstract fun bindsDriverAuthRepository(
         topicsRepository: DriverAuthRepositoryImpl,
     ): DriverAuthRepository
+
+    @Binds
+    internal abstract fun bindsClientWebSocketRepository(
+        topicsRepository: ClientWebSocketRepositoryImpl,
+    ): ClientWebSocketRepository
 
 
 }

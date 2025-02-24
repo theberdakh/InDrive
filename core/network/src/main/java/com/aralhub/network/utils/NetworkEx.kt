@@ -1,5 +1,6 @@
 package com.aralhub.network.utils
 
+import android.util.Log
 import com.aralhub.network.models.CustomError
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
@@ -13,6 +14,7 @@ object NetworkEx {
         return try {
             if (isSuccessful) {
                 body()?.let { serverResponse ->
+                    Log.i("WebSocketClientNetworkDataSourceImpl", "serverResponse $serverResponse")
                     if (serverResponse.success) {
                         NetworkResult.Success(data = serverResponse.data)
                     } else {

@@ -7,7 +7,8 @@ data class LocationItem(
     val id: Int,
     val title: String,
     @DrawableRes val icon: Int = com.aralhub.ui.R.drawable.ic_carbon_location_current,
-    val subtitle: String
+    val subtitle: String,
+    val onClick: () -> Unit
 )
 
 object LocationItemDiffCallback : DiffUtil.ItemCallback<LocationItem>() {

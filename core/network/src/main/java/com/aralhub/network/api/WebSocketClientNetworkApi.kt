@@ -1,11 +1,14 @@
 package com.aralhub.network.api
 
-import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
+import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePricePoint
+import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceRequest
+import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -36,4 +39,7 @@ interface WebSocketClientNetworkApi {
 
     @GET("/websocket/get_active_ride_by_passenger")
     suspend fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponseEmpty>
+
+    @POST("/websocket/get_ride_price")
+    suspend fun getRidePrice(@Body getRideRecommendedRidePriceRequest: NetworkGetRecommendedRidePriceRequest): Response<ServerResponse<NetworkGetRecommendedRidePriceResponse>>
 }

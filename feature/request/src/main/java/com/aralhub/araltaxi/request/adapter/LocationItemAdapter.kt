@@ -18,6 +18,7 @@ class LocationItemAdapter: ListAdapter<LocationItem, LocationItemAdapter.ViewHol
                 tvTitle.text = locationItem.title
                 tvSubtitle.text = locationItem.subtitle
                 ivIcon.setImageResource(locationItem.icon)
+                root.setOnClickListener { locationItem.onClick() }
             }
         }
     }

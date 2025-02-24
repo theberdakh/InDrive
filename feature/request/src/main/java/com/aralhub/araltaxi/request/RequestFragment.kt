@@ -3,7 +3,6 @@ package com.aralhub.araltaxi.request
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +10,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -37,7 +35,6 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.Map.CameraCallback
-import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,8 +51,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
     private var selectLocationCameraListener: SelectLocationCameraListener? = null
-    @Inject lateinit var sheetNavigator: SheetNavigator
-    @Inject lateinit var navigation: FeatureRequestNavigation
+    @Inject
+    lateinit var sheetNavigator: SheetNavigator
+    @Inject
+    lateinit var navigation: FeatureRequestNavigation
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
@@ -67,6 +66,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
     private val viewModel by viewModels<RequestViewModel>()
     private var placeMarkObject: PlacemarkMapObject? = null
+    private var locationManager: LocationManager? = null
+    private var gpsEnabled: Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -81,6 +82,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     override fun onStop() {
         super.onStop()
         binding.mapView.onStop()
+        locationManager = null
     }
 
     @SuppressLint("MissingPermission")
@@ -96,22 +98,40 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     private fun listenToLocationUpdates() {
         launchPermissions()
-        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f) {
-                val map = binding.mapView.mapWindow.map
-                val point = Point(it.latitude, it.longitude)
-                val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-                map.move(cameraPosition)
-                val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-                setPlaceMarkToPosition(cameraPosition, binding.mapView.mapWindow.map, point,
-                    imageProvider
-                ) { placeMarkPoint ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Tapped. lat: ${placeMarkPoint.latitude}, ${placeMarkPoint.longitude}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        try {
+            val isProviderEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            gpsEnabled = isProviderEnabled == true
+            viewModel.updateLocationEnabled(gpsEnabled)
+        } catch (_: Exception) {
+            gpsEnabled = false
+            viewModel.updateLocationEnabled(gpsEnabled)
+            Toast.makeText(requireContext(), "Location is off", Toast.LENGTH_SHORT).show()
+        }
+        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f) {
+            Toast.makeText(
+                requireContext(),
+                "Requesting Location Updates",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            val map = binding.mapView.mapWindow.map
+            val point = Point(it.latitude, it.longitude)
+            val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
+            map.move(cameraPosition)
+            val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+            setPlaceMarkToPosition(
+                cameraPosition,
+                binding.mapView.mapWindow.map,
+                point,
+                imageProvider
+            ) { placeMarkPoint ->
+                Toast.makeText(
+                    requireContext(),
+                    "Tapped. lat: ${placeMarkPoint.latitude}, ${placeMarkPoint.longitude}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -123,7 +143,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         onPlaceMarkTap: (point: Point) -> Unit
     ) {
         map.move(position)
-        if (placeMarkObject == null){
+        if (placeMarkObject == null) {
             placeMarkObject = map.mapObjects.addPlacemark().apply {
                 geometry = point
                 setIcon(imageProvider)
@@ -135,21 +155,17 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         } else {
             placeMarkObject!!.geometry = point
         }
-
-
-    }
-
-    private fun checkSelf(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
     }
 
     private fun initObservers() {
+        viewModel.locationEnabled.onEach { isEnabled ->
+            if (isEnabled) {
+                Toast.makeText(requireContext(), "Location is enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Location is disabled", Toast.LENGTH_SHORT).show()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.getProfile()
         viewModel.profileUiState.onEach {
             when (it) {
@@ -164,11 +180,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         viewModel.logOutUiState.onEach {
             when (it) {
-                is LogOutUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "logOutUiState: error ${it.message}"
-                )
-
+                is LogOutUiState.Error -> Log.i("RequestFragment", "logOutUiState: error ${it.message}")
                 LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
                 LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
             }
@@ -180,7 +192,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             profile.fullName
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
             profile.phone
-
         Glide.with(this)
             .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
             .apply(RequestOptions.circleCropTransform())

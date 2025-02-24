@@ -2,6 +2,7 @@ package com.aralhub.network.di
 
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.api.UserNetworkApi
+import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.utils.AuthInterceptor
 import com.aralhub.network.utils.NetworkErrorInterceptor
 import com.aralhub.network.utils.TokenAuthenticator
@@ -63,5 +64,9 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideDriverNetworkApi(retrofit: Retrofit): DriverNetworkApi =
         retrofit.create(DriverNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideWebsocketClientNetworkApi(retrofit: Retrofit): WebSocketClientNetworkApi =
+        retrofit.create(WebSocketClientNetworkApi::class.java)
 
 }
