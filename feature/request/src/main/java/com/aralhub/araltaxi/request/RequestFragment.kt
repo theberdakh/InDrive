@@ -1,13 +1,15 @@
 package com.aralhub.araltaxi.request
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
@@ -32,9 +34,11 @@ import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.location.LocationManager
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.Map.CameraCallback
+import com.yandex.mapkit.map.MapObjectTapListener
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -50,11 +54,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
     private var selectLocationCameraListener: SelectLocationCameraListener? = null
-    @Inject
-    lateinit var sheetNavigator: SheetNavigator
-
-    @Inject
-    lateinit var navigation: FeatureRequestNavigation
+    @Inject lateinit var sheetNavigator: SheetNavigator
+    @Inject lateinit var navigation: FeatureRequestNavigation
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
@@ -64,10 +65,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 )
             }
         }
-
     private val viewModel by viewModels<RequestViewModel>()
-    private var locationManager: LocationManager? = null
-
+    private var placeMarkObject: PlacemarkMapObject? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -84,43 +83,70 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         binding.mapView.onStop()
     }
 
-    private val locationListener = LocationListener { location ->
-        Log.i("RequestFragment", "onLocationChanged: ${location.longitude} ${location.latitude}")
-        setUpMapView(
-            latitude = location.latitude,
-            longitude = location.longitude
-        )
-    }
-
-
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        launchPermissions()
-        selectLocationCameraListener = SelectLocationCameraListener(ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_center_people))
-        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
-
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-
-        setUpSelectLocation()
-        locationManager.requestLocationUpdates(
-            android.location.LocationManager.GPS_PROVIDER,
-            1000L,
-            1f,
-            locationListener
-        )
-
+        listenToLocationUpdates()
         initViews()
         initListeners()
         initObservers()
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private fun listenToLocationUpdates() {
+        launchPermissions()
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f) {
+                val map = binding.mapView.mapWindow.map
+                val point = Point(it.latitude, it.longitude)
+                val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
+                map.move(cameraPosition)
+                val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+                setPlaceMarkToPosition(cameraPosition, binding.mapView.mapWindow.map, point,
+                    imageProvider
+                ) { placeMarkPoint ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Tapped. lat: ${placeMarkPoint.latitude}, ${placeMarkPoint.longitude}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+    }
+
+    private fun setPlaceMarkToPosition(
+        position: CameraPosition,
+        map: Map,
+        point: Point,
+        imageProvider: ImageProvider,
+        onPlaceMarkTap: (point: Point) -> Unit
+    ) {
+        map.move(position)
+        if (placeMarkObject == null){
+            placeMarkObject = map.mapObjects.addPlacemark().apply {
+                geometry = point
+                setIcon(imageProvider)
+            }
+            placeMarkObject!!.addTapListener { _, placeMarkPoint ->
+                onPlaceMarkTap(placeMarkPoint)
+                true
+            }
+        } else {
+            placeMarkObject!!.geometry = point
+        }
+
+
+    }
+
+    private fun checkSelf(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
     }
 
     private fun initObservers() {
@@ -136,7 +162,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is ProfileUiState.Success -> displayProfile(it.profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-
         viewModel.logOutUiState.onEach {
             when (it) {
                 is LogOutUiState.Error -> Log.i(
@@ -234,13 +259,21 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun setUpMapView(latitude: Double, longitude: Double) {
         val point = Point(latitude, longitude)
-        val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+        val imageProvider =
+            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
         binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
             geometry = point
             setIcon(imageProvider)
         }
         val cameraCallback = CameraCallback {}
-        binding.mapView.mapWindow.map.move(CameraPosition(point,/* zoom = */ 17.0f,/* azimuth = */ 150.0f,/* tilt = */ 30.0f), Animation(Animation.Type.LINEAR, 1f), cameraCallback)
+        binding.mapView.mapWindow.map.move(
+            CameraPosition(
+                point,/* zoom = */
+                17.0f,/* azimuth = */
+                150.0f,/* tilt = */
+                30.0f
+            ), Animation(Animation.Type.LINEAR, 1f), cameraCallback
+        )
     }
 
     private fun setUpBottomSheet() {
@@ -250,7 +283,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initBottomNavController() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let { sheetNavigator.bind(navController) }
     }
