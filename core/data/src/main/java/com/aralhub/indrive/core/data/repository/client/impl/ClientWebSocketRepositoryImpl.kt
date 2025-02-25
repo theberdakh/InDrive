@@ -11,6 +11,7 @@ import com.aralhub.indrive.core.data.model.client.ClientRideResponsePassenger
 import com.aralhub.indrive.core.data.model.client.ClientRideResponsePaymentMethod
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
+import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.WebSocketClientNetworkDataSource
@@ -136,6 +137,52 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: 
                         totalDuration = it.data.distance.totalDuration
                     ),
                     cancelCauseId = it.data.cancelCauseId
+                ))
+            }
+        }
+    }
+
+    override suspend fun getActiveRideByPassenger(userId: Int): Result<ActiveRide> {
+        return dataSource.getActiveRideByPassenger(userId).let {
+            when (it) {
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(ActiveRide(
+                    id = it.data.id,
+                    uuid = it.data.uuid,
+                    status = it.data.status,
+                    amount = it.data.amount,
+                    waitAmount = it.data.waitAmount,
+                    distance = it.data.distance,
+                    locations = it.data.locations,
+                    isActive = it.data.isActive,
+                    createdAt = it.data.createdAt,
+                    driver = com.aralhub.indrive.core.data.model.ride.ActiveRideDriver(
+                        driverId = it.data.driver.driverId,
+                        fullName = it.data.driver.fullName,
+                        rating = it.data.driver.rating,
+                        vehicleColor = com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleColor(
+                            ru = it.data.driver.vehicleColor.ru,
+                            en = it.data.driver.vehicleColor.en,
+                            kk = it.data.driver.vehicleColor.kk
+                        ),
+                        vehicleType = com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleType(
+                            ru = it.data.driver.vehicleType.ru,
+                            en = it.data.driver.vehicleType.en,
+                            kk = it.data.driver.vehicleType.kk
+                        ),
+                        vehicleNumber = it.data.driver.vehicleNumber
+                    ),
+                    paymentMethod = com.aralhub.indrive.core.data.model.ride.ActiveRidePaymentMethod(
+                        id = it.data.paymentMethod.id,
+                        name = it.data.paymentMethod.name,
+                        isActive = it.data.paymentMethod.isActive
+                    ),
+                    options = it.data.options.map { option ->
+                        com.aralhub.indrive.core.data.model.ride.ActiveRideOptions(
+                            id = option.id,
+                            name = option.name
+                        )
+                    }
                 ))
             }
         }

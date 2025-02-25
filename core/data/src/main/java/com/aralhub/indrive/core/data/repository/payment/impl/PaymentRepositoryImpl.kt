@@ -1,6 +1,7 @@
 package com.aralhub.indrive.core.data.repository.payment.impl
 
 import com.aralhub.indrive.core.data.model.payment.PaymentMethod
+import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.PaymentMethodNetworkDataSource
@@ -31,7 +32,7 @@ class PaymentRepositoryImpl @Inject constructor(private val paymentMethodNetwork
                 is NetworkResult.Success -> Result.Success(PaymentMethod(
                     id = it.data.id,
                     name = it.data.name,
-                    isActive = it.data.isActive
+                    isActive = it.data.isActive,
                 ))
             }
         }

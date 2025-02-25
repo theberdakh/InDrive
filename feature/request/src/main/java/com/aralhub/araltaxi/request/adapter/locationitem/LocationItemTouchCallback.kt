@@ -1,8 +1,8 @@
-package com.aralhub.araltaxi.request.adapter
+package com.aralhub.araltaxi.request.adapter.locationitem
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.request.model.LocationItem
+import com.aralhub.araltaxi.request.adapter.locationitem.model.LocationItem
 import java.util.Collections
 
 class LocationItemTouchCallback(private val locations: List<LocationItem>) :

@@ -50,3 +50,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.24" }
 dagger = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltVersion" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-parcelize = {id = "org.jetbrains.kotlin.parcelize", version.ref = "kotlin" }

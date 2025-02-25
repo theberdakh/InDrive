@@ -58,10 +58,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
-                Log.i(
-                    "RequestTaxiFragment",
-                    "Permission: ${permission.key} is granted: ${permission.value}"
-                )
+                Log.i("RequestTaxiFragment", "Permission: ${permission.key} is granted: ${permission.value}")
             }
         }
     private val viewModel by viewModels<RequestViewModel>()

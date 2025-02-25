@@ -9,7 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.BottomSheetRequestTaxiBinding
-import com.aralhub.araltaxi.request.adapter.LocationItemAdapter
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.request.adapter.locationitem.LocationItemAdapter
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
 import com.aralhub.araltaxi.request.sheet.modal.addlocation.MapViewModel
 import com.aralhub.indrive.core.data.model.client.GeoPoint
@@ -25,10 +26,21 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
     private val binding by viewBinding(BottomSheetRequestTaxiBinding::bind)
     private val locationItemAdapter = LocationItemAdapter()
     private val viewModel by viewModels<MapViewModel>()
+    @Inject lateinit var errorHandler: ErrorHandler
     private val requestTaxiBottomSheetViewModel by viewModels<RequestTaxiBottomSheetViewModel>()
 
-    @Inject
-    lateinit var navigator: FeatureRequestBottomSheetNavigation
+    @Inject lateinit var navigator: FeatureRequestBottomSheetNavigation
+    val mockGeoList =listOf(
+        GeoPoint(
+            latitude = 42.482461,
+            longitude = 59.613237,
+            name = "string"
+        ), GeoPoint(
+            latitude = 42.466078,
+            longitude = 59.611981,
+            name = "string"
+        )
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,49 +56,30 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
         binding.etToLocation.setEndTextClickListener {
             navigator.goToSendOrderFromRequestTaxi()
         }
-
-        // 42.482461, 59.613237
-        // 42.466078, 59.611981
-
-        requestTaxiBottomSheetViewModel.getRecommendedPrice(
-            listOf(
-                GeoPoint(
-                    latitude = 42.482461,
-                    longitude = 59.613237,
-                    name = "string"
-                ), GeoPoint(
-                    latitude = 42.466078,
-                    longitude = 59.611981,
-                    name = "string"
-                )
-            )
-        )
         initObservers()
     }
 
     private fun initObservers() {
-        requestTaxiBottomSheetViewModel.requestTaxiBottomSheetUiState.onEach {
-            when (it) {
-                is RequestTaxiBottomSheetUiState.Error -> {
-                    Toast.makeText(
-                        requireContext(),
-                        it.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                RequestTaxiBottomSheetUiState.Loading -> Log.i("RequestTaxiBottomSheet", "Loading")
-                is RequestTaxiBottomSheetUiState.Success -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "${it.recommendedPrice}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        requestTaxiBottomSheetViewModel.getActiveRide(39)
+        requestTaxiBottomSheetViewModel.activeRideUiState.onEach {
+            when(it){
+                is ActiveRideUiState.Error -> errorHandler.showToast(it.message)
+                ActiveRideUiState.Loading -> {}
+                is ActiveRideUiState.Success -> {
+                    Log.d("TAG", "initObservers: ${it.activeRide}")
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        requestTaxiBottomSheetViewModel.requestTaxiBottomSheetUiState.onEach {
+        requestTaxiBottomSheetViewModel.getCancelCauses()
+        requestTaxiBottomSheetViewModel.cancelRideUiState.onEach {
+            when(it){
+                is CancelRideUiState.Error -> errorHandler.showToast(it.message)
+                CancelRideUiState.Loading -> {}
+                is CancelRideUiState.Success -> {
+                    Log.d("TAG", "initObservers: ${it.cancelCauses}")
+                }
+            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 

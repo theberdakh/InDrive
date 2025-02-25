@@ -1,4 +1,4 @@
-package com.aralhub.araltaxi.request.model
+package com.aralhub.araltaxi.request.adapter.locationitem.model
 
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.DiffUtil

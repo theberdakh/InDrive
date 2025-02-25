@@ -16,7 +16,12 @@ object NetworkEx {
                 body()?.let { serverResponse ->
                     Log.i("WebSocketClientNetworkDataSourceImpl", "serverResponse $serverResponse")
                     if (serverResponse.success) {
-                        NetworkResult.Success(data = serverResponse.data)
+                        if (serverResponse.data == null) {
+                            return NetworkResult.Error(message = serverResponse.message.kk)
+                        } else {
+                            NetworkResult.Success(data = serverResponse.data)
+                        }
+
                     } else {
                         NetworkResult.Error(message = serverResponse.message.toString())
                     }

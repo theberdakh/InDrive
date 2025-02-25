@@ -2,7 +2,7 @@ package com.aralhub.araltaxi.request.sheet.modal.addlocation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aralhub.araltaxi.request.model.LocationItem
+import com.aralhub.araltaxi.request.adapter.locationitem.model.LocationItem
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.map.VisibleRegion
