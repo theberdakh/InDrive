@@ -59,10 +59,24 @@ class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSo
             address.address,
             address.latitude,
             address.longitude
-        )).let {
+        )
+        ).let {
             when(it) {
                 is NetworkResult.Success -> {
                     return Result.Success(Address(it.data.id, it.data.userId, it.data.name, it.data.address, it.data.latitude, it.data.longitude))
+                }
+                is NetworkResult.Error -> {
+                    return Result.Error(it.message)
+                }
+            }
+        }
+    }
+
+    override suspend fun deleteAddress(addressId: Int): Result<Boolean> {
+        addressNetworkDataSource.deleteAddress(addressId).let {
+            when(it) {
+                is NetworkResult.Success -> {
+                    return Result.Success(true)
                 }
                 is NetworkResult.Error -> {
                     return Result.Error(it.message)

@@ -71,7 +71,10 @@ class SavedPlacesFragment : Fragment(R.layout.fragment_saved_places) {
             when (it) {
                 is CreateAddressUiState.Error -> errorHandler.showToast(it.message)
                 CreateAddressUiState.Loading -> {}
-                is CreateAddressUiState.Success -> errorHandler.showToast("Address created successfully")
+                is CreateAddressUiState.Success -> {
+                    errorHandler.showToast("Address created successfully")
+                    viewModel.getAllSavedAddresses(38)
+                }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

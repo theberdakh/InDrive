@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.saved_places.R
 import com.aralhub.araltaxi.saved_places.databinding.FragmentEditSavedPlaceBinding
+import com.aralhub.araltaxi.savedplaces.sheet.DeleteSavedAddressModalBottomSheet
 import com.aralhub.indrive.core.data.model.address.Address
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import com.aralhub.ui.utils.viewBinding
@@ -27,6 +28,7 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
     private var savedPlaceId: Int = DEFAULT_SAVED_PLACE_ID
     @Inject lateinit var errorHandler: ErrorHandler
     private val viewModel by viewModels<EditSavedPlaceViewModel>()
+    private val deleteSavedAddressModalBottomSheet by lazy { DeleteSavedAddressModalBottomSheet() }
     private val binding by viewBinding(FragmentEditSavedPlaceBinding::bind)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,6 +58,18 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
                 is UpdateAddressUiState.Error -> errorHandler.showToast(it.message)
                 UpdateAddressUiState.Loading -> {}
                 is UpdateAddressUiState.Success -> {
+                    findNavController().navigateUp()
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.deleteAddressUiState.onEach {
+            when(it){
+                is DeleteAddressUiState.Error -> {
+                    errorHandler.showToast(it.message)
+                }
+                DeleteAddressUiState.Loading -> {}
+                is DeleteAddressUiState.Success -> {
                     findNavController().navigateUp()
                 }
             }
@@ -99,8 +113,15 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
     }
 
     private fun initListeners() {
-        binding.tbEditSavedPlaces.setNavigationOnClickListener {
+        binding.flBack.setOnClickListener {
             findNavController().navigateUp()
+        }
+        binding.tvDelete.setOnClickListener {
+            deleteSavedAddressModalBottomSheet.show(childFragmentManager, DeleteSavedAddressModalBottomSheet.TAG)
+            deleteSavedAddressModalBottomSheet.setOnDeleteClickListener {
+                viewModel.deleteAddress(savedPlaceId)
+                deleteSavedAddressModalBottomSheet.dismissAllowingStateLoss()
+            }
         }
         binding.btnSave.setOnClickListener {
             viewModel.updateAddress(savedPlaceId, CreateAddressRequest(

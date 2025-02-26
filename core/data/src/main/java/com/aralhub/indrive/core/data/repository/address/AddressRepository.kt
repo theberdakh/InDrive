@@ -9,4 +9,5 @@ interface AddressRepository {
     suspend fun getAllAddresses(userId: Int): Result<List<Address>>
     suspend fun getAddressById(addressId: Int): Result<Address>
     suspend fun updateAddress(addressId: Int, address: CreateAddressRequest): Result<Address>
+    suspend fun deleteAddress(addressId: Int): Result<Boolean>
 }
