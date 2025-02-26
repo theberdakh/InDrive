@@ -12,6 +12,7 @@ import com.aralhub.indrive.core.data.model.client.ClientRideResponsePaymentMetho
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.WebSocketClientNetworkDataSource
@@ -183,6 +184,79 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: 
                             name = option.name
                         )
                     }
+                ))
+            }
+        }
+    }
+
+    override suspend fun getSearchRideByPassengerId(userId: Int): Result<SearchRide> {
+        return dataSource.getSearchRideByPassengerId(userId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(
+                    SearchRide(
+                        uuid = it.data.uuid,
+                        passenger = com.aralhub.indrive.core.data.model.ride.SearchRideDriver(
+                            userId = it.data.passenger.userId,
+                            userFullName = it.data.passenger.userFullName,
+                            userRating = it.data.passenger.userRating
+                        ),
+                        baseAmount = it.data.baseAmount,
+                        updatedAmount = it.data.updatedAmount ?: 0,
+                        recommendedAmount = com.aralhub.indrive.core.data.model.ride.RecommendedAmount(
+                            minAmount = it.data.recommendedAmount.minAmount,
+                            maxAmount = it.data.recommendedAmount.maxAmount,
+                            recommendedAmount = it.data.recommendedAmount.recommendedAmount
+                        ),
+                        locations = com.aralhub.indrive.core.data.model.ride.SearchRideLocations(
+                            points = it.data.locations.points.map { point ->
+                                com.aralhub.indrive.core.data.model.ride.LocationPoint(
+                                    coordinates = com.aralhub.indrive.core.data.model.ride.LocationPointCoordinates(
+                                        longitude = point.coordinates.longitude,
+                                        latitude = point.coordinates.latitude
+                                    ),
+                                    name = point.name
+                                )
+                            }
+                        ),
+                        comment = it.data.comment,
+                        paymentMethod = com.aralhub.indrive.core.data.model.ride.PaymentMethod(
+                            id = it.data.paymentMethod.id,
+                            name = it.data.paymentMethod.name,
+                            isActive = it.data.paymentMethod.isActive
+                        ),
+                        options = it.data.options.options.map { option ->
+                            com.aralhub.indrive.core.data.model.ride.RideOption(
+                                id = option.id,
+                                name = option.name
+                            )
+                        },
+                        autoTake = it.data.autoTake,
+                        distance = com.aralhub.indrive.core.data.model.ride.Distance(
+                            segments = it.data.distance.segments.map { segment ->
+                                com.aralhub.indrive.core.data.model.ride.DistanceSegment(
+                                    distance = segment.distance,
+                                    duration = segment.duration,
+                                    startPoint = com.aralhub.indrive.core.data.model.ride.LocationPoint(
+                                        coordinates = com.aralhub.indrive.core.data.model.ride.LocationPointCoordinates(
+                                            longitude = segment.startPoint.coordinates.longitude,
+                                            latitude = segment.startPoint.coordinates.latitude
+                                        ),
+                                        name = segment.startPoint.name
+                                    ),
+                                    endPoint = com.aralhub.indrive.core.data.model.ride.LocationPoint(
+                                        coordinates = com.aralhub.indrive.core.data.model.ride.LocationPointCoordinates(
+                                            longitude = segment.endPoint.coordinates.longitude,
+                                            latitude = segment.endPoint.coordinates.latitude
+                                        ),
+                                        name = segment.endPoint.name
+                                    )
+                                )
+                            },
+                            totalDistance = it.data.distance.totalDistance,
+                            totalDuration = it.data.distance.totalDuration
+                        ),
+                        cancelCauseId = it.data.cancelCauseId ?: 0
                 ))
             }
         }

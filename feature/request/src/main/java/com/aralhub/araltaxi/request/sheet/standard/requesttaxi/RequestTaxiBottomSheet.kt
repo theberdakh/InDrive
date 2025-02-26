@@ -60,7 +60,16 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
     }
 
     private fun initObservers() {
-        requestTaxiBottomSheetViewModel.getActiveRide(39)
+        requestTaxiBottomSheetViewModel.getSearchRide(39)
+        requestTaxiBottomSheetViewModel.searchRideUiState.onEach {
+            when(it){
+                is SearchRideUiState.Error -> errorHandler.showToast(it.message)
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> {
+                    Log.d("TAG", "initObservers: ${it.searchRide}")
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
         requestTaxiBottomSheetViewModel.activeRideUiState.onEach {
             when(it){
                 is ActiveRideUiState.Error -> errorHandler.showToast(it.message)

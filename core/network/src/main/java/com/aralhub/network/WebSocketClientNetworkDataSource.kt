@@ -2,6 +2,7 @@ package com.aralhub.network
 
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ride.NetworkActiveRideResponse
+import com.aralhub.network.models.ride.NetworkSearchRide
 import com.aralhub.network.models.websocketclient.ClientRideRequest
 import com.aralhub.network.models.websocketclient.ClientRideResponse
 import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePricePoint
@@ -27,6 +28,8 @@ interface WebSocketClientNetworkDataSource {
     //suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
 
     suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse>
+
+    suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkSearchRide>
 
     suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse>
 

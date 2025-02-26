@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.cancel.GetAllCancelCausesUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
-import com.aralhub.araltaxi.core.domain.client.ClientGetRecommendedPriceUseCase
+import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
 import com.aralhub.indrive.core.data.model.cancel.CancelCause
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,11 +18,30 @@ import javax.inject.Inject
 @HiltViewModel
 class RequestTaxiBottomSheetViewModel @Inject constructor(
     private val clientGetActiveRideUseCase: ClientGetActiveRideUseCase,
-    private val clientCancelCausesUseCase: GetAllCancelCausesUseCase
+    private val clientCancelCausesUseCase: GetAllCancelCausesUseCase,
+    private val clientGetSearchRideUseCase: ClientGetSearchRideUseCase
 ) : ViewModel() {
 
     private val _activeRideUiState = MutableSharedFlow<ActiveRideUiState>()
     val activeRideUiState = _activeRideUiState.asSharedFlow()
+
+    private val _cancelRideUiState = MutableSharedFlow<CancelRideUiState>()
+    val cancelRideUiState = _cancelRideUiState.asSharedFlow()
+
+    private val _searchRideUiState = MutableSharedFlow<SearchRideUiState>()
+    val searchRideUiState = _searchRideUiState.asSharedFlow()
+
+    fun getSearchRide(userId: Int) = viewModelScope.launch {
+        _searchRideUiState.emit(SearchRideUiState.Loading)
+        _searchRideUiState.emit(clientGetSearchRideUseCase(userId).let {
+            when (it) {
+                is Result.Error -> SearchRideUiState.Error(it.message)
+                is Result.Success -> SearchRideUiState.Success(it.data)
+            }
+        })
+    }
+
+
     fun getActiveRide(userId: Int) = viewModelScope.launch {
         _activeRideUiState.emit(ActiveRideUiState.Loading)
         _activeRideUiState.emit(clientGetActiveRideUseCase(userId).let {
@@ -32,8 +52,6 @@ class RequestTaxiBottomSheetViewModel @Inject constructor(
         })
     }
 
-    private val _cancelRideUiState = MutableSharedFlow<CancelRideUiState>()
-    val cancelRideUiState = _cancelRideUiState.asSharedFlow()
     fun getCancelCauses() = viewModelScope.launch {
         _cancelRideUiState.emit(CancelRideUiState.Loading)
         _cancelRideUiState.emit(clientCancelCausesUseCase().let {
@@ -44,6 +62,12 @@ class RequestTaxiBottomSheetViewModel @Inject constructor(
         })
     }
 
+}
+
+sealed interface SearchRideUiState {
+    data class Success(val searchRide: SearchRide) : SearchRideUiState
+    data class Error(val message: String) : SearchRideUiState
+    data object Loading : SearchRideUiState
 }
 
 sealed interface CancelRideUiState {
