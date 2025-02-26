@@ -17,7 +17,7 @@ class AddressNetworkDataSourceImpl @Inject constructor(private val api: AddressN
         return api.address(networkAddressRequest).safeRequestServerResponse()
     }
 
-    override suspend fun getAddressByUserId(userId: Int): NetworkResult<NetworkAddressByUserIdResponse> {
+    override suspend fun getAddressByUserId(userId: Int): NetworkResult<List<NetworkAddressByUserIdResponse>> {
         return api.getAddressByUserId(userId).safeRequestServerResponse()
     }
 

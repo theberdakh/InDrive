@@ -9,7 +9,12 @@ import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.saved_places.R
 import com.aralhub.araltaxi.saved_places.databinding.FragmentSavedPlacesBinding
+import com.aralhub.araltaxi.savedplaces.adapter.AddressCategory
+import com.aralhub.araltaxi.savedplaces.adapter.AddressItem
+import com.aralhub.araltaxi.savedplaces.adapter.AddressItemAdapter
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
+import com.aralhub.ui.utils.ViewEx.hide
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -17,22 +22,54 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SavedPlacesFragment: Fragment(R.layout.fragment_saved_places) {
+class SavedPlacesFragment : Fragment(R.layout.fragment_saved_places) {
     private val binding by viewBinding(FragmentSavedPlacesBinding::bind)
     private val viewModel by viewModels<SavedPlacesViewModel>()
-    @Inject lateinit var errorHandler: ErrorHandler
+
+    @Inject
+    lateinit var errorHandler: ErrorHandler
+    private val adapter = AddressItemAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
         initListeners()
         initObservers()
     }
 
+    private fun initViews() {
+        binding.rvSavedPlaces.adapter = adapter
+    }
+
     private fun initObservers() {
+        viewModel.getAllSavedAddresses(38)
+        viewModel.savedPlacesUiState.onEach {
+            when (it) {
+                is SavedPlacesUiState.Error -> errorHandler.showToast(it.message)
+                SavedPlacesUiState.Loading -> {}
+                is SavedPlacesUiState.Success -> {
+                    if (it.data.isNotEmpty()){
+                        binding.tvNoSavedPlaces.hide()
+                        adapter.submitList(it.data.map { address ->
+                            AddressItem(
+                                id = address.id,
+                                name = address.name,
+                                address = address.address,
+                                category = AddressCategory.OTHER
+                            )
+                        })
+                    } else {
+                        binding.tvNoSavedPlaces.show()
+                    }
+
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.uiState.onEach {
-            when(it){
-                is HistoryUiState.Error -> errorHandler.showToast(it.message)
-                HistoryUiState.Loading -> {}
-                is HistoryUiState.Success -> errorHandler.showToast("Address created successfully")
+            when (it) {
+                is CreateAddressUiState.Error -> errorHandler.showToast(it.message)
+                CreateAddressUiState.Loading -> {}
+                is CreateAddressUiState.Success -> errorHandler.showToast("Address created successfully")
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

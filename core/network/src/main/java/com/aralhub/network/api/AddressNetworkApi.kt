@@ -21,7 +21,7 @@ interface AddressNetworkApi {
     suspend fun address(@Body networkAddressRequest: NetworkAddressRequest): Response<ServerResponse<NetworkAddressResponse>>
 
     @GET("/address/get_adress_by_user_id")
-    suspend fun getAddressByUserId(@Query("user_id") userId: Int): Response<ServerResponse<NetworkAddressByUserIdResponse>>
+    suspend fun getAddressByUserId(@Query("user_id") userId: Int): Response<ServerResponse<List<NetworkAddressByUserIdResponse>>>
 
     @GET("/address/get_adress_by_id")
     suspend fun getAddressById(@Query("address_id") addressId: Int): Response<ServerResponse<NetworkAddressByIdResponse>>

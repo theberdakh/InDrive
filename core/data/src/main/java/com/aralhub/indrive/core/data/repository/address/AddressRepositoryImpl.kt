@@ -21,4 +21,21 @@ class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSo
             }
         }
     }
+
+    override suspend fun getAllAddresses(userId: Int): Result<List<Address>> {
+        addressNetworkDataSource.getAddressByUserId(userId).let {
+            when(it) {
+                is NetworkResult.Success -> {
+                    val addresses = mutableListOf<Address>()
+                    it.data.forEach { address ->
+                        addresses.add(Address(address.id, address.userId, address.name, address.address, address.latitude, address.longitude))
+                    }
+                    return Result.Success(addresses.toList())
+                }
+                is NetworkResult.Error -> {
+                    return Result.Error(it.message)
+                }
+            }
+        }
+    }
 }
