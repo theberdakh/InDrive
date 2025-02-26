@@ -53,6 +53,7 @@
         android:layout_height="match_parent">
 
         <Button
+            android:id="@+id/btn_save"
             android:text="@string/label_save"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"

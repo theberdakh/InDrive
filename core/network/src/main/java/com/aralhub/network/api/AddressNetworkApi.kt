@@ -27,7 +27,7 @@ interface AddressNetworkApi {
     suspend fun getAddressById(@Query("address_id") addressId: Int): Response<ServerResponse<NetworkAddressByIdResponse>>
 
     @PUT("/address/update_adress")
-    suspend fun updateAddress(@Query("address_id") addressId: Int): Response<ServerResponse<NetworkUpdateAddressResponse>>
+    suspend fun updateAddress(@Query("address_id") addressId: Int, @Body updatedAddress: NetworkAddressRequest): Response<ServerResponse<NetworkUpdateAddressResponse>>
 
     @DELETE("address/delete_adress")
     suspend fun deleteAddress(@Query("address_id") addressId: Int): Response<ServerResponse<NetworkDeleteAddressResponse>>

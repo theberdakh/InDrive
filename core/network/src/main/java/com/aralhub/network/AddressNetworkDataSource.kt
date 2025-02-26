@@ -13,6 +13,6 @@ interface AddressNetworkDataSource {
     suspend fun address(networkAddressRequest: NetworkAddressRequest): NetworkResult<NetworkAddressResponse>
     suspend fun getAddressByUserId(userId: Int): NetworkResult<List<NetworkAddressByUserIdResponse>>
     suspend fun getAddressById(addressId: Int): NetworkResult<NetworkAddressByIdResponse>
-    suspend fun updateAddress(addressId: Int): NetworkResult<NetworkUpdateAddressResponse>
+    suspend fun updateAddress(addressId: Int, networkAddressRequest: NetworkAddressRequest): NetworkResult<NetworkUpdateAddressResponse>
     suspend fun deleteAddress(addressId: Int): NetworkResult<NetworkDeleteAddressResponse>
 }

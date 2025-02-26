@@ -9,4 +9,5 @@ data class NetworkUpdateAddressResponse(
     val address: String,
     val latitude: Int,
     val longitude: Int,
+    val id: Int
 )

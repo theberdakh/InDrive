@@ -15,6 +15,7 @@ import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.saved_places.R
 import com.aralhub.araltaxi.saved_places.databinding.FragmentEditSavedPlaceBinding
 import com.aralhub.indrive.core.data.model.address.Address
+import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -47,6 +48,16 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
                 is GetAddressByIdUiState.Error -> errorHandler.showToast(it.message)
                 GetAddressByIdUiState.Loading -> {}
                 is GetAddressByIdUiState.Success -> { displayAddress(it.data) }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.updateAddressUiState.onEach {
+            when(it){
+                is UpdateAddressUiState.Error -> errorHandler.showToast(it.message)
+                UpdateAddressUiState.Loading -> {}
+                is UpdateAddressUiState.Success -> {
+                    findNavController().navigateUp()
+                }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -90,6 +101,15 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
     private fun initListeners() {
         binding.tbEditSavedPlaces.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+        binding.btnSave.setOnClickListener {
+            viewModel.updateAddress(savedPlaceId, CreateAddressRequest(
+                name = binding.etPlaceName.text.toString(),
+                address = binding.itemAddress.tvSubtitle.text.toString(),
+                latitude = 0.0,
+                longitude = 0.0,
+                userId = 38
+            ))
         }
     }
 

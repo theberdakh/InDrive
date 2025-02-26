@@ -3,7 +3,9 @@ package com.aralhub.araltaxi.savedplaces.editsavedplace
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.address.GetAddressByIdUseCase
+import com.aralhub.araltaxi.core.domain.address.UpdateAddressUseCase
 import com.aralhub.indrive.core.data.model.address.Address
+import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,10 +14,24 @@ import com.aralhub.indrive.core.data.result.Result
 import javax.inject.Inject
 
 @HiltViewModel
-class EditSavedPlaceViewModel @Inject constructor(private val getAddressByIdUseCase: GetAddressByIdUseCase): ViewModel() {
+class EditSavedPlaceViewModel @Inject constructor(private val getAddressByIdUseCase: GetAddressByIdUseCase,
+    private val updateAddressUseCase: UpdateAddressUseCase): ViewModel() {
 
     private val _getAddressByIdUiState = MutableSharedFlow<GetAddressByIdUiState>()
     val getAddressByIdUiState = _getAddressByIdUiState.asSharedFlow()
+
+    private val _updateAddressUiState = MutableSharedFlow<UpdateAddressUiState>()
+    val updateAddressUiState = _updateAddressUiState.asSharedFlow()
+
+    fun updateAddress(addressId: Int, address: CreateAddressRequest) = viewModelScope.launch {
+        _updateAddressUiState.emit(UpdateAddressUiState.Loading)
+        _updateAddressUiState.emit(updateAddressUseCase(addressId, address).let {
+            when(it) {
+                is Result.Success -> UpdateAddressUiState.Success(it.data)
+                is Result.Error -> UpdateAddressUiState.Error(it.message)
+            }
+        })
+    }
 
     fun getAddressById(addressId: Int) = viewModelScope.launch {
         _getAddressByIdUiState.emit(GetAddressByIdUiState.Loading)
@@ -26,7 +42,6 @@ class EditSavedPlaceViewModel @Inject constructor(private val getAddressByIdUseC
             }
         })
     }
-
 }
 
 sealed interface GetAddressByIdUiState {
@@ -35,3 +50,8 @@ sealed interface GetAddressByIdUiState {
     data class Error(val message: String) : GetAddressByIdUiState
 }
 
+sealed interface UpdateAddressUiState {
+    data object Loading : UpdateAddressUiState
+    data class Success(val data: Address) : UpdateAddressUiState
+    data class Error(val message: String) : UpdateAddressUiState
+}
