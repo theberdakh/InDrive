@@ -7,4 +7,5 @@ import com.aralhub.indrive.core.data.result.Result
 interface AddressRepository {
     suspend fun createAddress(address: CreateAddressRequest): Result<Address>
     suspend fun getAllAddresses(userId: Int): Result<List<Address>>
+    suspend fun getAddressById(addressId: Int): Result<Address>
 }

@@ -38,4 +38,17 @@ class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSo
             }
         }
     }
+
+    override suspend fun getAddressById(addressId: Int): Result<Address> {
+        addressNetworkDataSource.getAddressById(addressId).let {
+            when(it) {
+                is NetworkResult.Success -> {
+                    return Result.Success(Address(it.data.id, it.data.userId, it.data.name, it.data.address, it.data.latitude, it.data.longitude))
+                }
+                is NetworkResult.Error -> {
+                    return Result.Error(it.message)
+                }
+            }
+        }
+    }
 }

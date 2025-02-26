@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <Toolbar
-        android:id="@+id/tb_saved_places"
+        android:id="@+id/tb_edit_saved_places"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:navigationIcon="@drawable/ic_material_symbols_arrow_back"
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="190dp"
         android:layout_margin="@dimen/margin_small"
-        app:cardElevation="0dp"
+        app:cardElevation="1dp"
         app:cardCornerRadius="16dp">
 
         <LinearLayout
