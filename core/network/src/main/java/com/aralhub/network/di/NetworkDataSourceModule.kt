@@ -16,12 +16,14 @@
 
 package com.aralhub.network.di
 
+import com.aralhub.network.AddressNetworkDataSource
 import com.aralhub.network.CancelCauseNetworkDataSource
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.PaymentMethodNetworkDataSource
 import com.aralhub.network.RideOptionNetworkDataSource
 import com.aralhub.network.UserNetworkDataSource
 import com.aralhub.network.WebSocketClientNetworkDataSource
+import com.aralhub.network.impl.AddressNetworkDataSourceImpl
 import com.aralhub.network.impl.CancelCauseNetworkDataSourceImpl
 import com.aralhub.network.impl.DriverNetworkDataSourceImpl
 import com.aralhub.network.impl.PaymentMethodNetworkDataSourceImpl
@@ -55,4 +57,7 @@ abstract class NetworkDataSourceModule {
 
     @[Binds Singleton]
     abstract fun bindCancelCauseNetworkDataSource(cancelCauseNetworkDataSourceImpl: CancelCauseNetworkDataSourceImpl): CancelCauseNetworkDataSource
+
+    @[Binds Singleton]
+    abstract fun bindAddressNetworkDataSource(addressNetworkDataSourceImpl: AddressNetworkDataSourceImpl): AddressNetworkDataSource
 }

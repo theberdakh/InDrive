@@ -1,5 +1,6 @@
 package com.aralhub.network.di
 
+import com.aralhub.network.api.AddressNetworkApi
 import com.aralhub.network.api.CancelCauseNetworkApi
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.api.PaymentMethodsNetworkApi
@@ -74,5 +75,9 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideCancelCauseNetworkApi(retrofit: Retrofit): CancelCauseNetworkApi =
         retrofit.create(CancelCauseNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideAddressNetworkApi(retrofit: Retrofit): AddressNetworkApi =
+        retrofit.create(AddressNetworkApi::class.java)
 
 }

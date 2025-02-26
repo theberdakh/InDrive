@@ -1,6 +1,5 @@
 package com.aralhub.network.impl
 
-import android.util.Log
 import com.aralhub.network.WebSocketClientNetworkDataSource
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.models.NetworkResult

@@ -22,9 +22,9 @@ interface WebSocketClientNetworkDataSource {
 
     suspend fun clientCancelOffer(rideId: String): NetworkResult<Boolean>
 
-    suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
-
  */
+
+    //suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
 
     suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse>
 

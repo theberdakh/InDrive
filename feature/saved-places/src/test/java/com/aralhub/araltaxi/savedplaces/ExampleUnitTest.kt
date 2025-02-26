@@ -1,4 +1,4 @@
-package com.aralhub.araltaxi.saved_places
+package com.aralhub.araltaxi.savedplaces
 
 import org.junit.Test
 

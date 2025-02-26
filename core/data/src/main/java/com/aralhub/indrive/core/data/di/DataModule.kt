@@ -1,5 +1,7 @@
 package com.aralhub.indrive.core.data.di
 
+import com.aralhub.indrive.core.data.repository.address.AddressRepository
+import com.aralhub.indrive.core.data.repository.address.AddressRepositoryImpl
 import com.aralhub.indrive.core.data.repository.cancel.CancelRepository
 import com.aralhub.indrive.core.data.repository.cancel.impl.CancelRepositoryImpl
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
@@ -51,4 +53,8 @@ abstract class DataModule {
         topicsRepository: CancelRepositoryImpl,
     ): CancelRepository
 
+    @Binds
+    internal abstract fun bindsAddressRepository(
+        topicsRepository: AddressRepositoryImpl,
+    ): AddressRepository
 }
