@@ -14,14 +14,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedPlacesViewModel @Inject constructor(private val createAddressUseCase: CreateAddressUseCase,
-    private val getAllSavedAddressesUseCase: GetAllSavedAddressesUseCase) : ViewModel() {
+class SavedPlacesViewModel @Inject constructor(
+    private val createAddressUseCase: CreateAddressUseCase,
+    private val getAllSavedAddressesUseCase: GetAllSavedAddressesUseCase
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<CreateAddressUiState>(CreateAddressUiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    private val _createAddressUiState = MutableStateFlow<CreateAddressUiState>(CreateAddressUiState.Loading)
+    val createAddressUiState = _createAddressUiState.asStateFlow()
+
+    private val _savedPlacesUiState =
+        MutableStateFlow<SavedPlacesUiState>(SavedPlacesUiState.Loading)
+    val savedPlacesUiState = _savedPlacesUiState.asStateFlow()
 
     fun createAddress(address: CreateAddressRequest) = viewModelScope.launch {
-        _uiState.value = createAddressUseCase.invoke(address).let {
+        _createAddressUiState.value = createAddressUseCase.invoke(address).let {
             when (it) {
                 is Result.Error -> CreateAddressUiState.Error(it.message)
                 is Result.Success -> CreateAddressUiState.Success(it.data)
@@ -29,8 +35,6 @@ class SavedPlacesViewModel @Inject constructor(private val createAddressUseCase:
         }
     }
 
-    private val _savedPlacesUiState = MutableStateFlow<SavedPlacesUiState>(SavedPlacesUiState.Loading)
-    val savedPlacesUiState = _savedPlacesUiState.asStateFlow()
     fun getAllSavedAddresses(userId: Int) = viewModelScope.launch {
         _savedPlacesUiState.value = getAllSavedAddressesUseCase.invoke(userId).let {
             when (it) {
@@ -39,7 +43,6 @@ class SavedPlacesViewModel @Inject constructor(private val createAddressUseCase:
             }
         }
     }
-
 }
 
 sealed interface CreateAddressUiState {

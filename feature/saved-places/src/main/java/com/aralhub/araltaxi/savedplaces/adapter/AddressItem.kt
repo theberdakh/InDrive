@@ -12,7 +12,9 @@ data class AddressItem(
     val id: Int,
     val name: String,
     val address: String,
-    val category: AddressCategory
+    val category: AddressCategory,
+    val latitude: Number,
+    val longitude: Number
 )
 
 object AddressItemDiffCallback: DiffUtil.ItemCallback<AddressItem>() {

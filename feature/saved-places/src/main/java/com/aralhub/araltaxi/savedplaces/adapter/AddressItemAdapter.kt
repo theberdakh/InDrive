@@ -8,6 +8,11 @@ import com.aralhub.araltaxi.saved_places.databinding.ItemAddressBinding
 
 class AddressItemAdapter: ListAdapter<AddressItem, AddressItemAdapter.AddressItemViewHolder>(AddressItemDiffCallback) {
 
+    private var onItemClickListener: ((AddressItem) -> Unit) = {}
+    fun setOnItemClickListener(listener: (AddressItem) -> Unit){
+        onItemClickListener = listener
+    }
+
     inner class AddressItemViewHolder(private val binding: ItemAddressBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(addressItem: AddressItem){
             binding.tvTitle.text = addressItem.name
@@ -16,6 +21,9 @@ class AddressItemAdapter: ListAdapter<AddressItem, AddressItemAdapter.AddressIte
                 AddressCategory.HOME -> binding.ivIcon.setImageResource(com.aralhub.ui.R.drawable.ic_ic_round_pin_drop)
                 AddressCategory.WORK -> binding.ivIcon.setImageResource(com.aralhub.ui.R.drawable.ic_ic_round_pin_drop)
                 AddressCategory.OTHER -> binding.ivIcon.setImageResource(com.aralhub.ui.R.drawable.ic_ic_round_pin_drop)
+            }
+            binding.root.setOnClickListener {
+                onItemClickListener(addressItem)
             }
         }
     }

@@ -7,12 +7,19 @@
     android:paddingVertical="@dimen/padding_small"
     android:paddingHorizontal="@dimen/padding_medium">
 
-    <ImageView
-        android:id="@+id/iv_icon"
+    <FrameLayout
         android:layout_width="32dp"
-        android:layout_gravity="center_vertical"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_user"/>
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="32dp"
+            android:layout_gravity="center"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_user"/>
+
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

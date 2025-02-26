@@ -120,6 +120,16 @@
 
     <fragment
         android:id="@+id/savedPlacesFragment"
-        android:name="com.aralhub.araltaxi.savedplaces.SavedPlacesFragment"/>
+        android:name="com.aralhub.araltaxi.savedplaces.SavedPlacesFragment">
+
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_editSavedPlaceFragment"
+            app:destination="@id/editSavedPlaceFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editSavedPlaceFragment"
+        android:name="com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment"/>
 
 </navigation>

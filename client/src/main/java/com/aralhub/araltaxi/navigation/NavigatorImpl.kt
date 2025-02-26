@@ -6,12 +6,14 @@ import com.aralhub.araltaxi.profile.client.navigation.FeatureProfileNavigation
 import com.aralhub.client.clientauth.addsms.AddSMSFragment
 import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
+import com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment
+import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation, FeatureSavedPlaceNavigation{
 
     private var navController: NavController? = null
 
@@ -73,5 +75,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun goToLogoFragmentFromProfileFragment() {
         navController?.navigate(R.id.action_profileFragment_to_logoFragment)
+    }
+
+    override fun navigateToEditSavedPlace(savedPlaceId: Int) {
+        navController?.navigate(R.id.action_savedPlacesFragment_to_editSavedPlaceFragment, EditSavedPlaceFragment.args(savedPlaceId))
     }
 }
