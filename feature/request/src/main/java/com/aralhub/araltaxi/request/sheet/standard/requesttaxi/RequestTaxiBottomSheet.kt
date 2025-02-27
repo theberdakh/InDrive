@@ -11,6 +11,7 @@ import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.BottomSheetRequestTaxiBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.adapter.locationitem.LocationItemAdapter
+import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
 import com.aralhub.araltaxi.request.sheet.modal.addlocation.MapViewModel
 import com.aralhub.indrive.core.data.model.client.GeoPoint
@@ -26,6 +27,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
     private val binding by viewBinding(BottomSheetRequestTaxiBinding::bind)
     private val locationItemAdapter = LocationItemAdapter()
     private val viewModel by viewModels<MapViewModel>()
+    @Inject lateinit var featureRequestNavigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
     private val requestTaxiBottomSheetViewModel by viewModels<RequestTaxiBottomSheetViewModel>()
 
@@ -66,7 +68,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
                 is SearchRideUiState.Error -> errorHandler.showToast(it.message)
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
-                    Log.d("TAG", "initObservers: ${it.searchRide}")
+                    featureRequestNavigation.goToGetOffersFromSendOrderFragment()
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -80,16 +82,6 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        requestTaxiBottomSheetViewModel.getCancelCauses()
-        requestTaxiBottomSheetViewModel.cancelRideUiState.onEach {
-            when(it){
-                is CancelRideUiState.Error -> errorHandler.showToast(it.message)
-                CancelRideUiState.Loading -> {}
-                is CancelRideUiState.Success -> {
-                    Log.d("TAG", "initObservers: ${it.cancelCauses}")
-                }
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
 

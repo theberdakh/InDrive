@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        style="@style/Widget.InDrive.BottomSheet.DragHandle"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:padding="0dp"
+        android:paddingBottom="0dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_small"
+        android:text="Sapar biykarlandı"
+        android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Nelikten sapardı biykarlaǵanıńızdı bildirip ótiń."
+        android:textAppearance="@style/TextAppearance.InDrive.Text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_reasons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_cancel"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    <Button
+        android:id="@+id/btn_send"
+        style="@style/Widget.InDrive.Button.Primary"
+        android:text="Jollaw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"/>
+
+</LinearLayout>
