@@ -47,8 +47,8 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         driverId = it.data.driverId,
                         fullName = it.data.fullName,
                         rating = it.data.rating,
-                        color = it.data.color,
-                        vehicleType = it.data.vehicleType,
+                        color = it.data.color.kk,
+                        vehicleType = it.data.vehicleType.kk,
                         plateNumber = it.data.plateNumber,
                         phoneNumber = it.data.phoneNumber
                     ))
@@ -66,8 +66,8 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         driverId = it.data.driverId,
                         fullName = it.data.fullName,
                         rating = it.data.rating,
-                        color = it.data.color,
-                        vehicleType = it.data.vehicleType,
+                        color = it.data.color.kk,
+                        vehicleType = it.data.vehicleType.kk,
                         plateNumber = it.data.plateNumber
                     ))
                 }

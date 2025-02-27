@@ -8,11 +8,17 @@ data class NetworkDriverInfoResponse(
     @SerializedName("full_name")
     val fullName: String,
     val rating: Int,
-    val color: String,
+    val color: NetworkMultiLanguageText,
     @SerializedName("vehicle_type")
-    val vehicleType: String,
+    val vehicleType: NetworkMultiLanguageText,
     @SerializedName("plate_number")
     val plateNumber: String,
     @SerializedName("phone_number")
     val phoneNumber: String
+)
+
+data class NetworkMultiLanguageText(
+    val ru: String,
+    val en: String,
+    val kk: String
 )

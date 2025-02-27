@@ -8,9 +8,9 @@ data class DriverInfoWithVehicleResponse(
     @SerializedName("full_name")
     val fullName: String,
     val rating: Number,
-    val color: String,
+    val color: NetworkMultiLanguageText,
     @SerializedName("vehicle_type")
-    val vehicleType: String,
+    val vehicleType: NetworkMultiLanguageText,
     @SerializedName("plate_number")
     val plateNumber: String
 

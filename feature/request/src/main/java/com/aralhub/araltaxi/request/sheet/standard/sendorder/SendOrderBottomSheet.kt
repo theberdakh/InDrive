@@ -168,7 +168,9 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
             when(it){
                 is SendOrderBottomSheetUiState.Error -> {}
                 SendOrderBottomSheetUiState.Loading -> {}
-                is SendOrderBottomSheetUiState.Success -> { Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show() }
+                is SendOrderBottomSheetUiState.Success -> {
+                    featureRequestNavigation.goToGetOffersFromSendOrderFragment()
+                }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         viewModel.getActivePaymentMethods()
