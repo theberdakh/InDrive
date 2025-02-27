@@ -11,6 +11,8 @@
 
     <dimen name="small_125">10dp</dimen>
 
+    <dimen name="padding_small_25">2dp</dimen>
+    <dimen name="padding_small_50">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large"> 24dp</dimen>

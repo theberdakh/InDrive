@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_small"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/fl_back"
+            android:layout_width="wrap_content"
+            android:foreground="@drawable/ripple_round"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:padding="@dimen/padding_small">
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_material_symbols_arrow_back"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:foreground="@drawable/ripple_text"
+                android:clickable="true"
+                android:padding="@dimen/padding_small_25"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/margin_small"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                android:textColor="@color/color_status_error"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="center"
+                android:layout_gravity="end"
+                android:text="@string/label_delete"/>
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="190dp"
+        android:layout_margin="@dimen/margin_small"
+        app:cardElevation="1dp"
+        app:cardCornerRadius="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <WebView
+                android:id="@+id/wv_map"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:backgroundTint="@android:color/transparent"/>
+
+            <include
+                android:id="@+id/item_address"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                layout="@layout/item_address"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <EditText
+        android:id="@+id/et_place_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        style="@style/Widget.InDrive.EditText.NoSelector"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btn_save"
+            android:text="@string/label_save"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.InDrive.Button.Primary"
+            android:layout_margin="@dimen/margin_small"/>
+
+    </FrameLayout>
+
+
+
+</LinearLayout>

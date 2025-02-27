@@ -1,7 +1,15 @@
 package com.aralhub.network.di
 
+import com.aralhub.network.api.AddressNetworkApi
+import com.aralhub.network.api.CancelCauseNetworkApi
 import com.aralhub.network.api.DriverNetworkApi
+import com.aralhub.network.api.PaymentMethodsNetworkApi
+import com.aralhub.network.api.RideOptionNetworkApi
 import com.aralhub.network.api.UserNetworkApi
+import com.aralhub.network.api.WebSocketClientNetworkApi
+import com.aralhub.network.utils.AuthInterceptor
+import com.aralhub.network.utils.NetworkErrorInterceptor
+import com.aralhub.network.utils.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,8 +33,14 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideMainOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+        networkErrorInterceptor: NetworkErrorInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(networkErrorInterceptor)
+        .addInterceptor(authInterceptor)
+        .authenticator(tokenAuthenticator)
         .build()
 
     @[Provides Singleton]
@@ -45,5 +59,25 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideDriverNetworkApi(retrofit: Retrofit): DriverNetworkApi =
         retrofit.create(DriverNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideWebsocketClientNetworkApi(retrofit: Retrofit): WebSocketClientNetworkApi =
+        retrofit.create(WebSocketClientNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun providePaymentMethodNetworkApi(retrofit: Retrofit): PaymentMethodsNetworkApi =
+        retrofit.create(PaymentMethodsNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideRideOptionNetworkApi(retrofit: Retrofit): RideOptionNetworkApi =
+        retrofit.create(RideOptionNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideCancelCauseNetworkApi(retrofit: Retrofit): CancelCauseNetworkApi =
+        retrofit.create(CancelCauseNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideAddressNetworkApi(retrofit: Retrofit): AddressNetworkApi =
+        retrofit.create(AddressNetworkApi::class.java)
 
 }

@@ -9,6 +9,8 @@
         android:name="com.aralhub.client.clientauth.LogoFragment">
         <action
             android:id="@+id/action_logoFragment_to_addPhoneFragment"
+            app:popUpTo="@id/logoFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addPhoneFragment" />
 
         <action
@@ -22,6 +24,8 @@
 
         <action
             android:id="@+id/action_addPhoneFragment_to_addSmsFragment"
+            app:popUpTo="@id/addPhoneFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addSmsFragment" />
 
     </fragment>
@@ -32,15 +36,20 @@
 
         <action
             android:id="@+id/action_addSmsFragment_to_addNameFragment"
+            app:popUpTo="@id/addSmsFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/addNameFragment" />
 
     </fragment>
 
     <fragment
         android:id="@+id/addNameFragment"
-        android:name="com.aralhub.client.clientauth.AddNameFragment">
+        android:name="com.aralhub.client.clientauth.addname.AddNameFragment">
 
-        <action android:id="@+id/action_addNameFragment_to_requestFragment"
+        <action
+            android:id="@+id/action_addNameFragment_to_requestFragment"
+            app:popUpTo="@id/addNameFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/requestFragment"/>
 
     </fragment>
@@ -59,6 +68,18 @@
 
         <action android:id="@+id/action_requestFragment_to_supportFragment"
             app:destination="@id/supportFragment"/>
+
+        <action android:id="@+id/action_requestFragment_to_historyFragment"
+            app:destination="@id/historyFragment"/>
+
+        <action android:id="@+id/action_requestFragment_to_savedPlacesFragment"
+            app:destination="@id/savedPlacesFragment"/>
+
+        <action
+            android:id="@+id/action_requestFragment_to_logoFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/logoFragment"/>
 
     </fragment>
 
@@ -79,10 +100,36 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.aralhub.araltaxi.profile.client.ProfileFragment"/>
+        android:name="com.aralhub.araltaxi.profile.client.profile.ProfileFragment">
+
+        <action
+            android:id="@+id/action_profileFragment_to_logoFragment"
+            app:destination="@id/logoFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/supportFragment"
         android:name="com.aralhub.araltaxi.profile.client.SupportFragment"/>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.aralhub.araltaxi.history.client.HistoryFragment"/>
+
+    <fragment
+        android:id="@+id/savedPlacesFragment"
+        android:name="com.aralhub.araltaxi.savedplaces.SavedPlacesFragment">
+
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_editSavedPlaceFragment"
+            app:destination="@id/editSavedPlaceFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editSavedPlaceFragment"
+        android:name="com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment"/>
 
 </navigation>

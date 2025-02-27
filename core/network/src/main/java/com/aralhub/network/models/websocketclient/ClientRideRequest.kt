@@ -31,7 +31,7 @@ data class ClientRideRequestRecommendedAmount(
 )
 
 data class ClientRideRequestLocations(
-    val points: ClientRideRequestLocationsItems
+    val points: List<ClientRideRequestLocationsItems>
 )
 
 data class ClientRideRequestLocationsItems(
@@ -78,6 +78,7 @@ data class ClientRideResponseDistance(
     val segments: List<ClientRideResponseDistanceItem>,
     @SerializedName("total_distance")
     val totalDistance: Number,
+    @SerializedName("total_duration")
     val totalDuration: Number)
 
 data class ClientRideResponseDistanceItem(
@@ -85,6 +86,7 @@ data class ClientRideResponseDistanceItem(
     val duration: Number,
     @SerializedName("start_point")
     val startPoint: ClientRideResponseDistanceItemPoint,
+    @SerializedName("end_point")
     val endPoint: ClientRideResponseDistanceItemPoint,
 )
 
@@ -128,7 +130,7 @@ data class ClientRideResponsePassenger(
 )
 
 data class ClientRideResponseLocations(
-    val points: ClientRideResponseLocationsItems
+    val points: List<ClientRideResponseLocationsItems>
 )
 
 data class ClientRideResponseLocationsItems(

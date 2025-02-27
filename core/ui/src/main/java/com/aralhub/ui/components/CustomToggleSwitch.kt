@@ -4,6 +4,7 @@ package com.aralhub.ui.components
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -69,8 +70,14 @@ class CustomToggleSwitch @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
+    private var onCheckedListener: ((Boolean) -> Unit) = {}
+    fun setOnCheckedListener(onChecked: (Boolean) -> Unit) {
+        onCheckedListener = onChecked
+    }
+
     private fun toggle() {
         isChecked = !isChecked
+        onCheckedListener.invoke(isChecked)
         animateThumb()
         invalidate()
     }

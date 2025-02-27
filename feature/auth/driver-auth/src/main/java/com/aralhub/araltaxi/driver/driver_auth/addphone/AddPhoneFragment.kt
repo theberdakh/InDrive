@@ -2,6 +2,7 @@ package com.aralhub.araltaxi.driver.driver_auth.addphone
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class AddPhoneFragment : Fragment(R.layout.fragment_add_phone) {

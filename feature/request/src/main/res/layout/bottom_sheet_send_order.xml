@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:fitsSystemWindows="false"
     android:paddingHorizontal="@dimen/padding_small">
@@ -16,6 +17,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_decrease_500"
             android:layout_width="wrap_content"
             android:gravity="center"
             android:padding="@dimen/padding_small"
@@ -33,7 +35,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:hint="Bahanı kiritiń"
-            android:inputType="numberDecimal"
+            android:focusableInTouchMode="false"
+            android:inputType="none"
             android:ellipsize="end"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
@@ -42,6 +45,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:id="@+id/tv_increase_500"
             android:layout_width="wrap_content"
             android:gravity="center"
             android:padding="@dimen/padding_small"
@@ -54,12 +58,12 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_price"
         android:layout_width="match_parent"
         android:paddingHorizontal="@dimen/padding_small"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:drawableStart="@drawable/ic_info"
-        android:text="Usınıs etilgen baha 12 000 som"
         android:drawablePadding="@dimen/padding_small"/>
 
     <LinearLayout
@@ -82,6 +86,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Nukus"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                 android:layout_height="wrap_content"/>
 
@@ -108,7 +114,9 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Nukus"
+                android:maxLines="1"
+                android:text="Nukus → Xojeli → Xojeli → Xojeli → Xojeli → Xojeli"
+                android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                 android:layout_height="wrap_content"/>
 
@@ -125,33 +133,20 @@
     </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/layout_configure"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/padding_small"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ride_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginVertical="@dimen/margin_small">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/padding_small"
-                    android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                    android:text="Júk bar"
-                    android:layout_height="wrap_content"/>
-
-                <com.aralhub.ui.components.CustomToggleSwitch
-                    android:layout_width="56dp"
-                    android:layout_height="wrap_content"/>
-
-
-            </LinearLayout>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_ride_option"
+                tools:itemCount="3"/>
 
             <LinearLayout
                 android:id="@+id/layout_comment_to_driver"

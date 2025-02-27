@@ -17,6 +17,6 @@ class LogoFragment : Fragment(R.layout.fragment_logo) {
     lateinit var navigator: FeatureClientAuthNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewNextButton.setOnClickListener { navigator.goToRequestFromLogo() }
+        binding.viewNextButton.setOnClickListener { navigator.goToAddPhoneNumber() }
     }
 }

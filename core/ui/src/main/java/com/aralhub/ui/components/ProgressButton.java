@@ -107,7 +107,9 @@ public class ProgressButton extends FrameLayout {
 
     public void stopProgress() {
         if (isProgressStarted) {
-            handleProgressState();
+            isProgressStarted =false;
+            textView.setVisibility(VISIBLE);
+            progressBar.setVisibility(GONE);
         }
     }
 

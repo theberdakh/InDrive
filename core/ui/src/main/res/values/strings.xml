@@ -12,6 +12,7 @@
     <string name="label_continue">Dawam etiw</string>
     <string name="label_save">Saqlaw</string>
     <string name="label_send">Jollaw</string>
+    <string name="label_delete">Óshiriw</string>
     <string name="label_enter">Kiriw</string>
     <string name="label_confirm">Tastıyıqlaw</string>
     <string name="label_confirm_description">Siz kiritken  <b>%1$s</b> telefon nomerine tastıyıqlaw kodı jiberildi</string>
@@ -57,6 +58,8 @@
     <string name="error_network_connection">Internet baylanısı joq</string>
     <string name="success_network_connection">Baylanıs qayta ornatıldı</string>
 
+    <string name="error_field_is_blank">Bos bo</string>
+
     <string name="label_cancel_trip_description">Saparlardı jiyi-jiyi biykarlaw reytingińizdiń túsiwine alıp keliwi múmkin. Ótinish, zárúrli bolǵanda ǵana, bunı ámelge asırıń.</string>
     <string name="label_cancel">Biykarlaw</string>
     <string name="label_back">Artqa</string>
@@ -84,4 +87,12 @@
     <string name="label_total_distance">Ulıwma aralıq</string>
     <string name="label_trip_duration">Sapar dawamlılıǵı</string>
     <string name="label_paid_waiting_time_started">Tólemli kútiw waqtı baslandı</string>
+
+    <string name="label_account_info">Akkaunt maǵlıwmaları</string>
+    <string name="label_delete_account">Akkaunttı óshiriw</string>
+    <string name="label_support">Qollap-quwatlaw</string>
+    <string name="label_telegram_bot">Telegram-bot</string>
+    <string name="label_telegram_bot_description">Sorawlarıńızǵa operativ túrde juwap alıw ushın, Telegramdaǵı chat-botımız arqalı xabarlasıń.</string>
+    <string name="label_go_to_telegram">Telegramǵa ótiw</string>
+    <string name="label_exit_description">Siz akkauntı tárk etip atırsız. Ámeldi tastıyıqlaysız ba?</string>
 </resources>

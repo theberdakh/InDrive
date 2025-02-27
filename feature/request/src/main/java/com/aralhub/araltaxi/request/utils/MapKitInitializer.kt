@@ -15,6 +15,7 @@ object MapKitInitializer {
         MapKitFactory.setApiKey(apiKey)
         MapKitFactory.setLocale("ru_RU")
         MapKitFactory.initialize(context)
+        MapKitFactory.getInstance().onStart()
         isInitialized = true
     }
 }
