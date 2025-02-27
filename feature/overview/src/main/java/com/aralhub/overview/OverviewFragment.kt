@@ -3,6 +3,7 @@ package com.aralhub.overview
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -15,6 +16,9 @@ import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import com.aralhub.overview.sheet.LogoutModalBottomSheet
 import com.aralhub.overview.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -129,6 +133,14 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
             profile.fullName
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
             profile.phoneNumber
+        Glide.with(requireContext())
+            .load("https://araltaxi.aralhub.uz/${profile.photoUrl}")
+            .centerCrop()
+            .placeholder(com.aralhub.ui.R.drawable.ic_user)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .apply(RequestOptions.circleCropTransform())
+            .into(binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar))
+
     }
 
     private fun setUpDrawerLayout() {

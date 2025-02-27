@@ -12,6 +12,9 @@ import com.aralhub.araltaxi.profile.driver.databinding.FragmentProfileBinding
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -67,6 +70,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {
+        Glide.with(requireContext())
+            .load("https://araltaxi.aralhub.uz/${driverProfile.photoUrl}")
+            .centerCrop()
+            .placeholder(com.aralhub.ui.R.drawable.ic_user)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .apply(RequestOptions.circleCropTransform())
+            .into(binding.ivAvatar)
+
         binding.tvName.text = driverProfile.fullName
         binding.tvPhone.text = driverProfile.phoneNumber
     }

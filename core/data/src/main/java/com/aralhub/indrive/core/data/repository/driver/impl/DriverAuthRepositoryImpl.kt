@@ -50,7 +50,8 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         color = it.data.color.kk,
                         vehicleType = it.data.vehicleType.kk,
                         plateNumber = it.data.plateNumber,
-                        phoneNumber = it.data.phoneNumber
+                        phoneNumber = it.data.phoneNumber,
+                        photoUrl = it.data.photoUrl
                     ))
                 }
             }

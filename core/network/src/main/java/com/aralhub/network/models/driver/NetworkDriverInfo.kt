@@ -15,5 +15,7 @@ data class NetworkDriverInfo(
     @SerializedName("plate_number")
     val plateNumber: String,
     @SerializedName("phone_number")
-    val phoneNumber: String
+    val phoneNumber: String,
+    @SerializedName("photo_url")
+    val photoUrl: String
 )

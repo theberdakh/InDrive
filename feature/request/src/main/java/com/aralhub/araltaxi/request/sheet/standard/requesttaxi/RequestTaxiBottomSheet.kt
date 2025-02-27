@@ -30,19 +30,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
     @Inject lateinit var featureRequestNavigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
     private val requestTaxiBottomSheetViewModel by viewModels<RequestTaxiBottomSheetViewModel>()
-
     @Inject lateinit var navigator: FeatureRequestBottomSheetNavigation
-    val mockGeoList =listOf(
-        GeoPoint(
-            latitude = 42.482461,
-            longitude = 59.613237,
-            name = "string"
-        ), GeoPoint(
-            latitude = 42.466078,
-            longitude = 59.611981,
-            name = "string"
-        )
-    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

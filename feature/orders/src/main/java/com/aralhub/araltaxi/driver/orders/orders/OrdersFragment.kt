@@ -3,6 +3,7 @@ package com.aralhub.araltaxi.driver.orders.orders
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
@@ -28,6 +29,9 @@ import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -156,6 +160,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             driverProfile.fullName
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
             driverProfile.phoneNumber
+        Glide.with(requireContext())
+            .load("https://araltaxi.aralhub.uz/${driverProfile.photoUrl}")
+            .centerCrop()
+            .placeholder(com.aralhub.ui.R.drawable.ic_user)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .apply(RequestOptions.circleCropTransform())
+            .into(binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar))
     }
 
     private fun initListeners() {

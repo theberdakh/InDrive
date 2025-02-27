@@ -28,5 +28,4 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
     override suspend fun clientRide(networkClientRideRequest: NetworkClientRideRequest): NetworkResult<NetworkRideSearch> {
         return api.clientRide(networkClientRideRequest).safeRequestServerResponse()
     }
-
 }
