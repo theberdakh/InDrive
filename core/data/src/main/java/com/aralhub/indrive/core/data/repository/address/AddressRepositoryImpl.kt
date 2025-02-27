@@ -5,7 +5,7 @@ import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.AddressNetworkDataSource
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.address.NetworkAddressRequest
+import com.aralhub.network.requests.address.NetworkAddressRequest
 import javax.inject.Inject
 
 class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSource: AddressNetworkDataSource): AddressRepository {

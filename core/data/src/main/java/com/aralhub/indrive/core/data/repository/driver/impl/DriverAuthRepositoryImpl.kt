@@ -7,12 +7,12 @@ import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.driver.NetworkDriverAuthRequest
+import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import javax.inject.Inject
 import com.aralhub.indrive.core.data.result.Result
-import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
-import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
-import com.aralhub.network.utils.LocalStorage
+import com.aralhub.network.requests.logout.NetworkLogoutRequest
+import com.aralhub.network.requests.verify.NetworkVerifyRequest
+import com.aralhub.network.local.LocalStorage
 
 class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val driverNetworkDataSource: DriverNetworkDataSource): DriverAuthRepository {
     override suspend fun driverAddPhone(phone: String): Result<Boolean> {
@@ -25,7 +25,7 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
     }
 
     override suspend fun driverAuthVerify(phone: String, code: String): Result<Boolean> {
-        driverNetworkDataSource.driverVerify(networkDriverVerifyRequest = NetworkDriverVerifyRequest(phoneNumber = phone, code = code)).let {
+        driverNetworkDataSource.driverVerify(networkDriverVerifyRequest = NetworkVerifyRequest(phoneNumber = phone, code = code)).let {
             return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
@@ -66,7 +66,7 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                         driverId = it.data.driverId,
                         fullName = it.data.fullName,
                         rating = it.data.rating,
-                        color = it.data.color.kk,
+                        color = it.data.vehicleColor.kk,
                         vehicleType = it.data.vehicleType.kk,
                         plateNumber = it.data.plateNumber
                     ))
@@ -104,7 +104,7 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
     }
 
     override suspend fun driverLogout(): Result<Boolean> {
-        driverNetworkDataSource.driverLogout(NetworkDriverLogoutRequest(localStorage.refresh)).let {
+        driverNetworkDataSource.driverLogout(NetworkLogoutRequest(localStorage.refresh)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {

@@ -3,31 +3,30 @@ package com.aralhub.network.impl
 import com.aralhub.network.WebSocketClientNetworkDataSource
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.ride.NetworkActiveRideResponse
-import com.aralhub.network.models.ride.NetworkSearchRide
-import com.aralhub.network.models.websocketclient.ClientRideRequest
-import com.aralhub.network.models.websocketclient.ClientRideResponse
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePricePoint
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceRequest
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceResponse
-import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
+import com.aralhub.network.models.location.NetworkLocationPoint
+import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.ride.NetworkRideActive
+import com.aralhub.network.models.ride.NetworkRideSearch
+import com.aralhub.network.requests.price.NetworkRecommendedRidePriceRequest
+import com.aralhub.network.requests.ride.NetworkClientRideRequest
+import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponse
 import javax.inject.Inject
 
 class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: WebSocketClientNetworkApi): WebSocketClientNetworkDataSource {
-    override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse> {
+    override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive> {
         return api.getActiveRideByPassenger(userId).safeRequestServerResponse()
     }
 
-    override suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkSearchRide> {
+    override suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkRideSearch> {
         return api.getSearchRideByPassengerId(userId).safeRequestServerResponse()
     }
 
-    override suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse> {
-        return api.getRidePrice(NetworkGetRecommendedRidePriceRequest(points)).safeRequestServerResponse()
+    override suspend fun getRecommendedPrice(points: List<NetworkLocationPoint>): NetworkResult<NetworkRecommendedPrice> {
+        return api.getRidePrice(NetworkRecommendedRidePriceRequest(points)).safeRequestServerResponse()
     }
 
-    override suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse> {
-        return api.clientRide(clientRideRequest).safeRequestServerResponse()
+    override suspend fun clientRide(networkClientRideRequest: NetworkClientRideRequest): NetworkResult<NetworkRideSearch> {
+        return api.clientRide(networkClientRideRequest).safeRequestServerResponse()
     }
 
 }
