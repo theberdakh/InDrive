@@ -10,11 +10,14 @@ import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 
 interface DriverNetworkApi {
 
@@ -47,5 +50,9 @@ interface DriverNetworkApi {
 
     @POST("/driver/logout/")
     suspend fun driverLogout(@Body networkDriverRequest: NetworkLogoutRequest): Response<ServerResponseEmpty>
+
+    @Multipart
+    @POST("/driver/photo")
+    suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
 
 }

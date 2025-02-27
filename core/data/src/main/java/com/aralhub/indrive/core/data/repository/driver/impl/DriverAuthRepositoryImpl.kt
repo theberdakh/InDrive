@@ -13,6 +13,7 @@ import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
 import com.aralhub.network.local.LocalStorage
+import java.io.File
 
 class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val driverNetworkDataSource: DriverNetworkDataSource): DriverAuthRepository {
     override suspend fun driverAddPhone(phone: String): Result<Boolean> {
@@ -110,6 +111,17 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
                     localStorage.clear()
+                    Result.Success(data = true)
+                }
+            }
+        }
+    }
+
+    override suspend fun driverPhoto(file: File): Result<Boolean> {
+        driverNetworkDataSource.driverPhoto(file).let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> {
                     Result.Success(data = true)
                 }
             }

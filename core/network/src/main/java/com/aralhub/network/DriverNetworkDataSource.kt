@@ -1,6 +1,7 @@
 package com.aralhub.network
 
 import com.aralhub.network.models.NetworkResult
+import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.card.NetworkCard
@@ -9,6 +10,7 @@ import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
+import java.io.File
 
 interface DriverNetworkDataSource {
     suspend fun driverAuth(networkDriverAuthRequest: NetworkDriverAuthRequest): NetworkResult<String>
@@ -20,4 +22,5 @@ interface DriverNetworkDataSource {
     suspend fun getDriverBalance(): NetworkResult<NetworkBalance>
     suspend fun getDriverCard(): NetworkResult<NetworkCard>
     suspend fun driverLogout(networkDriverLogoutRequest: NetworkLogoutRequest): NetworkResult<Boolean>
+    suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty>
 }

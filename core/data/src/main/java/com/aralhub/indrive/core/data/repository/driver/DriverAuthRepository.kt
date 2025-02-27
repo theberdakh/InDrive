@@ -5,6 +5,7 @@ import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.indrive.core.data.result.Result
+import java.io.File
 
 interface DriverAuthRepository {
     suspend fun driverAddPhone(phone: String): Result<Boolean>
@@ -14,4 +15,5 @@ interface DriverAuthRepository {
     suspend fun getDriverCard(): Result<DriverCard>
     suspend fun getDriverBalance(): Result<DriverBalance>
     suspend fun driverLogout(): Result<Boolean>
+    suspend fun driverPhoto(file: File): Result<Boolean>
 }

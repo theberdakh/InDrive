@@ -1,8 +1,13 @@
 package com.aralhub.araltaxi.profile.driver.profile
 
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,11 +23,26 @@ import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding by viewBinding(FragmentProfileBinding::bind)
     private val viewModel by viewModels<ProfileViewModel>()
+    private val pickMedia: ActivityResultLauncher<PickVisualMediaRequest?> = registerForActivityResult<PickVisualMediaRequest, Uri>(
+        PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            val file = getFileFromUri(requireContext(), uri)
+            file?.let {
+                viewModel.uploadImage(it)
+            }
+        } else {
+            Log.i("PhotoPicker", "No media selected")
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -56,6 +76,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.uploadImageUiState.onEach {
+            when(it){
+                is UploadImageUiState.Error -> Log.i("ProfileFragment: uploadImage", "error: $it" )
+                UploadImageUiState.Loading ->  Log.i("ProfileFragment: uploadImage", "loading: $it" )
+                UploadImageUiState.Success -> viewModel.getDriverProfile()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
     }
 
     private fun displayProfileWithVehicle(driverProfileWithVehicle: DriverProfileWithVehicle) {
@@ -86,5 +114,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         binding.tbProfile.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+        binding.ivAvatar.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest.Builder()
+                .setMediaType(PickVisualMedia.ImageOnly)
+                .build())
+        }
+    }
+
+    private fun getFileFromUri(context: Context, uri: Uri): File? {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+        val tempFile = File.createTempFile("upload", ".jpg", context.cacheDir)
+        inputStream?.use { input ->
+            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+        }
+        return tempFile
     }
 }
