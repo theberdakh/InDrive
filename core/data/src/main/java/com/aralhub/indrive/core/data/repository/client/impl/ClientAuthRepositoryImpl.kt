@@ -5,10 +5,10 @@ import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.UserNetworkDataSource
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.user.NetworkUserAuthRequest
-import com.aralhub.network.models.user.NetworkUserProfileRequest
-import com.aralhub.network.models.user.NetworkUserVerifyRequest
-import com.aralhub.network.utils.LocalStorage
+import com.aralhub.network.requests.auth.NetworkUserAuthRequest
+import com.aralhub.network.requests.profile.NetworkUserProfileRequest
+import com.aralhub.network.requests.verify.NetworkVerifyRequest
+import com.aralhub.network.local.LocalStorage
 import java.io.File
 import javax.inject.Inject
 
@@ -25,11 +25,11 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
     }
 
     override suspend fun userVerify(phone: String, code: String): Result<Boolean> {
-        clientNetworkDataSource.userVerify(NetworkUserVerifyRequest(phone, code)).let {
+        clientNetworkDataSource.userVerify(NetworkVerifyRequest(phone, code)).let {
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
-                    localStorage.access = it.data.token
+                    localStorage.access = it.data.accessToken
                     localStorage.refresh = it.data.refreshToken
                     localStorage.isLogin = true
                     Result.Success(data = true)

@@ -1,38 +1,20 @@
 package com.aralhub.network
 
 import com.aralhub.network.models.NetworkResult
-import com.aralhub.network.models.ride.NetworkActiveRideResponse
-import com.aralhub.network.models.ride.NetworkSearchRide
-import com.aralhub.network.models.websocketclient.ClientRideRequest
-import com.aralhub.network.models.websocketclient.ClientRideResponse
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePricePoint
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceRequest
-import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePriceResponse
+import com.aralhub.network.models.location.NetworkLocationPoint
+import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.ride.NetworkRideActive
+import com.aralhub.network.models.ride.NetworkRideSearch
+import com.aralhub.network.requests.ride.NetworkClientRideRequest
 
 interface WebSocketClientNetworkDataSource {
-/*    suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
 
-    suspend fun putClientRideAmount(
-        rideId: String,
-        amount: Number
-    ): NetworkResult<Boolean>
+    suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive>
 
-    suspend fun clientAcceptOffer(offerId: String): NetworkResult<Boolean>
+    suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkRideSearch>
 
-    suspend fun clientRejectOffer(offerId: String): NetworkResult<Boolean>
+    suspend fun getRecommendedPrice(points: List<NetworkLocationPoint>): NetworkResult<NetworkRecommendedPrice>
 
-    suspend fun clientCancelOffer(rideId: String): NetworkResult<Boolean>
-
- */
-
-    //suspend fun getActiveOfferByRideId(rideId: String): NetworkResult<Boolean>
-
-    suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse>
-
-    suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkSearchRide>
-
-    suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse>
-
-    suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse>
+    suspend fun clientRide(networkClientRideRequest: NetworkClientRideRequest): NetworkResult<NetworkRideSearch>
 
 }

@@ -1,17 +1,15 @@
 package com.aralhub.araltaxi
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.NavGraph
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.R
 import com.aralhub.araltaxi.navigation.Navigator
-import com.aralhub.network.utils.LocalStorage
+import com.aralhub.network.local.LocalStorage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

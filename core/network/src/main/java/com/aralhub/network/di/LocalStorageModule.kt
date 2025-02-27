@@ -1,7 +1,7 @@
 package com.aralhub.network.di
 
 import android.content.Context
-import com.aralhub.network.utils.LocalStorage
+import com.aralhub.network.local.LocalStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
