@@ -6,3 +6,9 @@ data class NetworkSendLocationRequest(
     val longitude: Double,
     val distance: Int
 )
+
+data class NetworkSendLocationRequestWithoutType(
+    val latitude: Double,
+    val longitude: Double,
+    val distance: Int
+)

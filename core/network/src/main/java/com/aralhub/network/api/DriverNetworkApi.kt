@@ -2,6 +2,7 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.driver.DriverInfoWithVehicleResponse
 import com.aralhub.network.models.driver.NetworkDriverAuthRequest
 import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
@@ -11,6 +12,9 @@ import com.aralhub.network.models.driver.NetworkDriverInfoResponse
 import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
 import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
+import com.aralhub.network.models.location.NetworkSendLocationRequest
+import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -48,5 +52,8 @@ interface DriverNetworkApi {
 
     @POST("/driver/logout/")
     suspend fun driverLogout(@Body networkDriverRequest: NetworkDriverLogoutRequest): Response<ServerResponseEmpty>
+
+    @POST("/websocket/ride/get-rides")
+    suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
 }

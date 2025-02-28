@@ -33,7 +33,6 @@ import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -126,6 +125,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fetchData()
         initViews()
         initObservers()
         initOrderModalBottomSheet()
@@ -141,6 +141,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewLifecycleOwner,
             true
         ) { showExitLineBottomSheet() }
+    }
+
+    private fun fetchData() {
+        viewModel.getExistingOrders(
+            SendDriverLocationUI(
+                latitude = 42.41268,
+                longitude = 59.688043,
+                distance = 3000
+            )
+        )
     }
 
     private fun initObservers() {
@@ -169,8 +179,8 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.ordersState.collect { result ->
                     when (result) {
                         is GetActiveOrdersUiState.Error -> {
@@ -200,10 +210,34 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             orders.add(result.data)
                             adapter.submitList(orders)
                         }
+
+                        is GetActiveOrdersUiState.GetExistOrder -> {}
                     }
                 }
             }
         }
+        viewModel.existingOrdersState.onEach { result ->
+            when (result) {
+                is GetActiveOrdersUiState.Error -> {
+                    //show error
+                }
+
+                GetActiveOrdersUiState.Loading -> {}
+
+                is GetActiveOrdersUiState.OrderCanceled -> {
+                    orders.removeIf {
+                        it.id == result.rideId
+                    }
+                    adapter.submitList(orders)
+                }
+
+                is GetActiveOrdersUiState.GetNewOrder -> {}
+
+                is GetActiveOrdersUiState.GetExistOrder -> {
+                    adapter.submitList(result.data.toMutableList())
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {

@@ -7,6 +7,7 @@ import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUse
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
+import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.SendDriverLocationUseCase
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
@@ -30,6 +31,7 @@ class OrdersViewModel @Inject constructor(
     private val driverProfileUseCase: DriverProfileUseCase,
     private val driverLogoutUseCase: DriverLogoutUseCase,
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
+    private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val sendDriverLocationUseCase: SendDriverLocationUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase
 ) : ViewModel() {
@@ -63,6 +65,26 @@ class OrdersViewModel @Inject constructor(
 
                 is Result.Error -> {
                     _logoutUiState.emit(LogoutUiState.Error(result.message))
+                }
+            }
+        }
+    }
+
+    private val _existingOrdersState = MutableSharedFlow<GetActiveOrdersUiState>()
+    val existingOrdersState = _existingOrdersState.asSharedFlow()
+    fun getExistingOrders(
+        sendDriverLocationUI: SendDriverLocationUI
+    ) = viewModelScope.launch {
+        _existingOrdersState.emit(GetActiveOrdersUiState.Loading)
+        getExistingOrdersUseCase(sendDriverLocationUI.asDomain()).let { result ->
+            when (result) {
+                is Result.Success -> {
+                    val listOfOrders = result.data.map { it.asUI() }
+                    _existingOrdersState.emit(GetActiveOrdersUiState.GetExistOrder(listOfOrders))
+                }
+
+                is Result.Error -> {
+                    _existingOrdersState.emit(GetActiveOrdersUiState.Error(result.message))
                 }
             }
         }
@@ -119,6 +141,7 @@ sealed interface LogoutUiState {
 sealed interface GetActiveOrdersUiState {
     data object Loading : GetActiveOrdersUiState
     data class GetNewOrder(val data: OrderItem) : GetActiveOrdersUiState
+    data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
