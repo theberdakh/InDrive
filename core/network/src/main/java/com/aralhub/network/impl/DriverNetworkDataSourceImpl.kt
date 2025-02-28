@@ -4,11 +4,14 @@ import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
+import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
@@ -19,9 +22,10 @@ import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponse
 import java.io.File
 import javax.inject.Inject
 
-class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNetworkApi): DriverNetworkDataSource {
+class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNetworkApi) :
+    DriverNetworkDataSource {
     override suspend fun driverAuth(networkDriverAuthRequest: NetworkDriverAuthRequest): NetworkResult<String> {
-        return  api.driverAuth(networkDriverAuthRequest).safeRequestServerResponse()
+        return api.driverAuth(networkDriverAuthRequest).safeRequestServerResponse()
     }
 
     override suspend fun driverVerify(networkDriverVerifyRequest: NetworkVerifyRequest): NetworkResult<NetworkAuthToken> {
@@ -59,5 +63,9 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
 
     override suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty> {
         return api.driverPhoto(MultipartEx.getMultipartFromFile(file)).safeRequest()
+    }
+
+    override suspend fun getActiveRides(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>> {
+        return api.getActiveRides(sendLocationRequest).safeRequestServerResponse()
     }
 }

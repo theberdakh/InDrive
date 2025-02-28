@@ -2,11 +2,14 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
+import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
@@ -54,5 +57,8 @@ interface DriverNetworkApi {
     @Multipart
     @POST("/driver/photo")
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
+
+    @POST("/websocket/ride/get-rides")
+    suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
 }

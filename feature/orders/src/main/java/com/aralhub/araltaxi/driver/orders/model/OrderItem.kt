@@ -1,24 +1,19 @@
 package com.aralhub.araltaxi.driver.orders.model
 
-import androidx.recyclerview.widget.DiffUtil
+import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
 
 data class OrderItem(
-    val id: Int,
+    val id: String,
     val name: String,
-    val pickUp: String,
+    val pickUp: String?,
     val avatar: String,
     val roadPrice: String = "",
     val pickUpDistance: String = "",
     val roadDistance: String = "",
 )
 
-object OrderItemDiffCallback: DiffUtil.ItemCallback<OrderItem>(){
-    override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-        return oldItem == newItem
-    }
-
+fun ActiveOfferResponse.asUI() = with(this) {
+    OrderItem(
+        id, name, pickUp, avatar, roadPrice, pickUpDistance, roadDistance
+    )
 }
