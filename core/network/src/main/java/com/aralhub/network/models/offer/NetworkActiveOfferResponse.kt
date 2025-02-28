@@ -17,6 +17,8 @@ data class NetworkActiveOfferResponse(
     val updatedAmount: Double?,
     @SerializedName("recommended_amount")
     val recommendedAmount: ClientRideRequestRecommendedAmount,
+    @SerializedName("pick_up_address")
+    val clientPickUpAddress: String,
     val locations: Locations,
     val comment: String?,
     val paymentMethod: ClientRideResponsePaymentMethod,

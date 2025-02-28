@@ -40,7 +40,6 @@ class WebSocketDriverNetworkDataSourceImpl(
                 ?.filterIsInstance<Frame.Text>()
                 ?.mapNotNull { frame ->
                     val jsonString = frame.readText()
-                    Log.d("WebSocketLog", "Received: $jsonString")
 
                     try {
                         val baseResponse =
@@ -65,7 +64,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                                             TypeToken<WebSocketServerResponse<NetworkActiveOfferResponse>>() {}.type
                                     )
                                 WebSocketEventNetwork.ActiveOffer(
-                                    offerData.data
+                                    offerData
                                 )
                             }
 

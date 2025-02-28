@@ -1,5 +1,6 @@
 package com.aralhub.indrive.core.data.model.offer
 
+import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 
 data class ActiveOfferResponse(
@@ -12,14 +13,15 @@ data class ActiveOfferResponse(
     val roadDistance: String = "",
 )
 
-fun NetworkActiveOfferResponse.toDomain(): ActiveOfferResponse {
-    return ActiveOfferResponse(
-        id = this.uuid,
-        name = this.passenger.userFullName,
-        pickUp = this.locations.points.getOrNull(0)?.name,
-        avatar = "https://randomuser.me/api/portraits/men/8.jpg",
-        roadPrice = this.baseAmount.toString(),
-        pickUpDistance = this.distance.totalDistance.toString(),
-        roadDistance = this.distance.totalDistance.toString()
-    )
-}
+fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferResponse =
+    with(this) {
+        return ActiveOfferResponse(
+            id = this.data.uuid,
+            name = this.data.passenger.userFullName,
+            pickUp = this.data.clientPickUpAddress,
+            avatar = this.data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
+            roadPrice = this.data.baseAmount.toString(),
+            pickUpDistance = this.distanceToClient.distance.toString(),
+            roadDistance = this.data.distance.totalDistance.toString()
+        )
+    }

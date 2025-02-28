@@ -14,6 +14,6 @@ data class OrderItem(
 
 fun ActiveOfferResponse.asUI() = with(this) {
     OrderItem(
-        id, name, pickUp, avatar, roadDistance, pickUpDistance, roadDistance
+        id, name, pickUp, avatar, roadPrice, pickUpDistance, roadDistance
     )
 }

@@ -1,5 +1,7 @@
 package com.aralhub.network.models
 
+import com.google.gson.annotations.SerializedName
+
 data class ServerResponse<out T>(
     val success: Boolean,
     val message: ServerResponseMessage,
@@ -18,6 +20,13 @@ class ServerResponseEmpty(
 
 data class WebSocketServerResponse<out T>(
     val type: String,
-    val data: T
+    val data: T,
+    @SerializedName("distance")
+    val distanceToClient: DistanceToClient
+)
+
+data class DistanceToClient(
+    val distance: Double,
+    val duration: Double
 )
 

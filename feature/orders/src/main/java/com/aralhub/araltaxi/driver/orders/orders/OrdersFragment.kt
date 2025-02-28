@@ -8,7 +8,9 @@ import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
@@ -31,8 +33,10 @@ import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -165,37 +169,41 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.ordersState.onEach { result ->
-            when (result) {
-                is GetActiveOrdersUiState.Error -> {
-                    //show error
-                }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.ordersState.collect { result ->
+                    when (result) {
+                        is GetActiveOrdersUiState.Error -> {
+                            //show error
+                        }
 
-                GetActiveOrdersUiState.Loading -> {
-                    // show loading
-                    delay(2000)
-                    viewModel.sendLocation(
-                        SendDriverLocationUI(
-                            latitude = 42.44668,
-                            longitude = 59.618043,
-                            distance = 3000
-                        )
-                    )
-                }
+                        GetActiveOrdersUiState.Loading -> {
+                            // show loading
+                            delay(2000)
+                            viewModel.sendLocation(
+                                SendDriverLocationUI(
+                                    latitude = 42.44668,
+                                    longitude = 59.618043,
+                                    distance = 3000
+                                )
+                            )
+                        }
 
-                is GetActiveOrdersUiState.OrderCanceled -> {
-                    orders.removeIf {
-                        it.id == result.rideId
+                        is GetActiveOrdersUiState.OrderCanceled -> {
+                            orders.removeIf {
+                                it.id == result.rideId
+                            }
+                            adapter.submitList(orders)
+                        }
+
+                        is GetActiveOrdersUiState.GetNewOrder -> {
+                            orders.add(result.data)
+                            adapter.submitList(orders)
+                        }
                     }
-                    adapter.submitList(orders)
-                }
-
-                is GetActiveOrdersUiState.GetNewOrder -> {
-                    orders.add(result.data)
-                    adapter.submitList(orders)
                 }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {
