@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.request.sheet.modal.addlocation
 
-import android.support.v4.os.IResultReceiver._Parcel
 import androidx.lifecycle.ViewModel
 import com.aralhub.araltaxi.request.model.SearchResponseItem
 import com.yandex.mapkit.map.VisibleRegion

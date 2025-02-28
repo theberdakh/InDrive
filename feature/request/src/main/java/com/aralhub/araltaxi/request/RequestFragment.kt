@@ -46,15 +46,10 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
+    private val requiredPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     private var selectLocationCameraListener: SelectLocationCameraListener? = null
-    @Inject
-    lateinit var sheetNavigator: SheetNavigator
-    @Inject
-    lateinit var navigation: FeatureRequestNavigation
+    @Inject lateinit var sheetNavigator: SheetNavigator
+    @Inject lateinit var navigation: FeatureRequestNavigation
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->

@@ -7,7 +7,7 @@ import com.aralhub.araltaxi.core.domain.client.ClientCreateRideUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetRecommendedPriceUseCase
 import com.aralhub.araltaxi.core.domain.payment.GetAllPaymentMethodsUseCase
 import com.aralhub.araltaxi.core.domain.rideoption.GetRideOptionsUseCase
-import com.aralhub.araltaxi.request.adapter.rideoption.model.RideOptionItem
+import com.aralhub.ui.model.RideOptionItem
 import com.aralhub.indrive.core.data.model.client.ClientRide
 import com.aralhub.indrive.core.data.model.client.ClientRideRequest
 import com.aralhub.indrive.core.data.model.client.ClientRideRequestLocations
@@ -71,6 +71,7 @@ class SendOrderBottomSheetViewModel @Inject constructor(
     fun createRide() = viewModelScope.launch {
         _sendOrderBottomSheetUiState.emit(SendOrderBottomSheetUiState.Loading)
         useCase.invoke(
+
             ClientRideRequest(
                 passengerId = 39,
                 baseAmount = 3000,
@@ -83,16 +84,16 @@ class SendOrderBottomSheetViewModel @Inject constructor(
                     points = listOf(
                         ClientRideRequestLocationsItems(
                             coordinates = ClientRideRequestLocationsItemsCoordinates(
-                                longitude = 42.482461,
-                                latitude = 59.613237
+                                longitude = 59.615902,
+                                latitude = 42.474078
                             ),
                             name = "Nukus"
                         ), ClientRideRequestLocationsItems(
                             coordinates = ClientRideRequestLocationsItemsCoordinates(
-                                longitude = 42.466078,
-                                latitude = 59.611981
+                                longitude = 59.605034,
+                                latitude = 42.463283
                             ),
-                            name = "Nukus"
+                            name = "Nukus2"
                         )
                     )
                 ),

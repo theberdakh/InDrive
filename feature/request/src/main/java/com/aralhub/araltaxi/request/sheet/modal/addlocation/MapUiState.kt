@@ -1,6 +1,6 @@
 package com.aralhub.araltaxi.request.sheet.modal.addlocation
 
-import com.aralhub.araltaxi.request.adapter.locationitem.model.LocationItem
+import com.aralhub.ui.model.LocationItem
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point

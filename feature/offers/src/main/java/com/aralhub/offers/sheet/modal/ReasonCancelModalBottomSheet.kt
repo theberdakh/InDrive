@@ -1,14 +1,13 @@
 package com.aralhub.offers.sheet.modal
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.offers.R
 import com.aralhub.araltaxi.client.offers.databinding.ModalBottomSheetReasonCancelBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.offers.adapter.CancelItemAdapter
+import com.aralhub.ui.adapter.CancelItemAdapter
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint

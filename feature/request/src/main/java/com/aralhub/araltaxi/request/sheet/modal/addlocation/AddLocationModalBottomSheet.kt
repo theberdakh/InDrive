@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.ModalBottomSheetAddLocationBinding
-import com.aralhub.araltaxi.request.adapter.locationitem.LocationItemDraggableAdapter
+import com.aralhub.ui.adapter.location.LocationItemDraggableAdapter
 import com.aralhub.araltaxi.request.sheet.modal.ChooseLocationModalBottomSheet
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior

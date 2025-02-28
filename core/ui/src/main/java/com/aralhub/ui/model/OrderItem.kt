@@ -1,4 +1,4 @@
-package com.aralhub.araltaxi.driver.orders.model
+package com.aralhub.ui.model
 
 import androidx.recyclerview.widget.DiffUtil
 

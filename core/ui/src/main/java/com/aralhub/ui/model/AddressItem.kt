@@ -1,4 +1,4 @@
-package com.aralhub.araltaxi.savedplaces.adapter
+package com.aralhub.ui.model
 
 import androidx.recyclerview.widget.DiffUtil
 

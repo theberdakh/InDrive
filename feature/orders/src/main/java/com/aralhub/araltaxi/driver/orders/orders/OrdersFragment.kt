@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
-import com.aralhub.araltaxi.driver.orders.model.OrderItem
+import com.aralhub.ui.adapter.OrderItemAdapter
+import com.aralhub.ui.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
@@ -36,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {

@@ -1,14 +1,16 @@
-package com.aralhub.araltaxi.request.adapter.rideoption
+package com.aralhub.ui.adapter.option
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.client.request.databinding.ItemRideOptionBinding
-import com.aralhub.araltaxi.request.adapter.rideoption.model.RideOptionItem
-import com.aralhub.araltaxi.request.adapter.rideoption.model.RideOptionItemDiffCallback
+import com.aralhub.ui.databinding.ItemRideOptionBinding
+import com.aralhub.ui.model.RideOptionItem
+import com.aralhub.ui.model.RideOptionItemDiffCallback
 
-class RideOptionItemAdapter: ListAdapter<RideOptionItem, RideOptionItemAdapter.ViewHolder>(RideOptionItemDiffCallback) {
+class RideOptionItemAdapter: ListAdapter<RideOptionItem, RideOptionItemAdapter.ViewHolder>(
+    RideOptionItemDiffCallback
+) {
 
     inner class ViewHolder(private val binding: ItemRideOptionBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(rideOption: RideOptionItem){

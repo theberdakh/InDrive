@@ -1,10 +1,13 @@
-package com.aralhub.araltaxi.savedplaces.adapter
+package com.aralhub.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.saved_places.databinding.ItemAddressBinding
+import com.aralhub.ui.databinding.ItemAddressBinding
+import com.aralhub.ui.model.AddressCategory
+import com.aralhub.ui.model.AddressItem
+import com.aralhub.ui.model.AddressItemDiffCallback
 
 class AddressItemAdapter: ListAdapter<AddressItem, AddressItemAdapter.AddressItemViewHolder>(AddressItemDiffCallback) {
 

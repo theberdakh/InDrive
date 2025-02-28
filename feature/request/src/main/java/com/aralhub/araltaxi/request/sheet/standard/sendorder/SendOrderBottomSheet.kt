@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.BottomSheetSendOrderBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.araltaxi.request.adapter.rideoption.RideOptionItemAdapter
+import com.aralhub.ui.adapter.option.RideOptionItemAdapter
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
 import com.aralhub.araltaxi.request.sheet.modal.addlocation.AddLocationModalBottomSheet
@@ -127,12 +126,12 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
     private fun initObservers() {
         viewModel.getRecommendedPrice(listOf(
             GeoPoint(
-                latitude = 42.482461,
-                longitude = 59.613237,
+                latitude = 42.474078,
+                longitude = 59.615902,
                 name = "string"
             ), GeoPoint(
-                latitude = 42.466078,
-                longitude = 59.611981,
+                latitude = 42.463283,
+                longitude = 59.605034,
                 name = "string"
             )
         ))

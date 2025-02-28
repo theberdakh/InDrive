@@ -1,25 +1,30 @@
-package com.aralhub.offers.adapter
+package com.aralhub.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.client.offers.databinding.ItemCancelBinding
-import com.aralhub.offers.model.CancelItem
-import com.aralhub.offers.model.CancelItemDiffCallback
+import com.aralhub.ui.databinding.ItemCancelBinding
+import com.aralhub.ui.model.CancelItem
+import com.aralhub.ui.model.CancelItemDiffCallback
 
-class CancelItemAdapter: ListAdapter<CancelItem, CancelItemAdapter.ViewHolder>(CancelItemDiffCallback) {
+class CancelItemAdapter: ListAdapter<CancelItem, CancelItemAdapter.ViewHolder>(
+    CancelItemDiffCallback
+) {
 
     inner class ViewHolder(private val binding: ItemCancelBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(cancelItem: CancelItem) {
             binding.root.text = cancelItem.title
-
-            binding.root.setOnClickListener {
-                binding.root.text = "Clicked"
-            }
-
             binding.root.setOnCheckedChangeListener { _, b ->
-                binding.root.text = "${cancelItem.title}: $b"
+                binding.root.text = cancelItem.title
+                if(b) {
+                    currentList.forEach {
+                        if (it != cancelItem) {
+                            it.isSelected = false
+                        }
+                    }
+                    cancelItem.isSelected = b
+                }
             }
         }
     }

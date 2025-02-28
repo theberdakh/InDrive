@@ -3,18 +3,16 @@ package com.aralhub.araltaxi.request.sheet.standard.requesttaxi
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.BottomSheetRequestTaxiBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.araltaxi.request.adapter.locationitem.LocationItemAdapter
+import com.aralhub.ui.adapter.location.LocationItemAdapter
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
 import com.aralhub.araltaxi.request.sheet.modal.addlocation.MapViewModel
-import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.ui.components.EndTextEditText
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,9 +53,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
             when(it){
                 is SearchRideUiState.Error -> errorHandler.showToast(it.message)
                 SearchRideUiState.Loading -> {}
-                is SearchRideUiState.Success -> {
-                    featureRequestNavigation.goToGetOffersFromSendOrderFragment()
-                }
+                is SearchRideUiState.Success -> { featureRequestNavigation.goToGetOffersFromSendOrderFragment() }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         requestTaxiBottomSheetViewModel.activeRideUiState.onEach {

@@ -1,12 +1,12 @@
-package com.aralhub.offers.adapter
+package com.aralhub.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.araltaxi.client.offers.databinding.ItemOfferBinding
-import com.aralhub.offers.model.OfferItem
-import com.aralhub.offers.model.OfferItemDiffCallback
+import com.aralhub.ui.databinding.ItemOfferBinding
+import com.aralhub.ui.model.OfferItem
+import com.aralhub.ui.model.OfferItemDiffCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 

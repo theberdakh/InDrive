@@ -9,9 +9,9 @@ import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.saved_places.R
 import com.aralhub.araltaxi.saved_places.databinding.FragmentSavedPlacesBinding
-import com.aralhub.araltaxi.savedplaces.adapter.AddressCategory
-import com.aralhub.araltaxi.savedplaces.adapter.AddressItem
-import com.aralhub.araltaxi.savedplaces.adapter.AddressItemAdapter
+import com.aralhub.ui.model.AddressCategory
+import com.aralhub.ui.model.AddressItem
+import com.aralhub.ui.adapter.AddressItemAdapter
 import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import com.aralhub.ui.utils.ViewEx.hide

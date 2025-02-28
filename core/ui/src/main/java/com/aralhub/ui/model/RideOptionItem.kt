@@ -1,4 +1,4 @@
-package com.aralhub.araltaxi.request.adapter.rideoption.model
+package com.aralhub.ui.model
 
 import androidx.recyclerview.widget.DiffUtil
 
