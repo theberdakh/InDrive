@@ -9,10 +9,15 @@ import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.ui.adapter.OrderItemAdapter
 import com.aralhub.ui.model.OrderItem
+import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
+import com.aralhub.araltaxi.driver.orders.model.OrderItem
+import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
@@ -33,8 +38,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -51,10 +58,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
     private val filterModalBottomSheet = FilterModalBottomSheet()
     private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
-    private val exitLineModalBottomSheet = ExitLineModalBottomSheet { findNavController().navigateUp() }
-    private val orders = listOf(
+    private val exitLineModalBottomSheet =
+        ExitLineModalBottomSheet { findNavController().navigateUp() }
+    private val orders = mutableListOf(
         OrderItem(
-            1,
+            "1",
             "John Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/1.jpg",
@@ -63,7 +71,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            2,
+            "2",
             "Jane Doe",
             "Pick location",
             "https://randomuser.me/api/portraits/men/2.jpg",
@@ -72,7 +80,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            3,
+            "3",
             "John Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/3.jpg",
@@ -81,7 +89,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            4,
+            "4",
             "Jane Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/4.jpg",
@@ -90,7 +98,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            5,
+            "5",
             "John Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/5.jpg",
@@ -99,7 +107,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            6,
+            "6",
             "Jane Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/6.jpg",
@@ -108,7 +116,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
         OrderItem(
-            7,
+            "7",
             "John Doe",
             "Pick up location",
             "https://randomuser.me/api/portraits/men/7.jpg",
@@ -117,10 +125,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             "10 km"
         ),
     )
-    @Inject lateinit var navigation: FeatureOrdersNavigation
+
+    @Inject
+    lateinit var navigation: FeatureOrdersNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fetchData()
         initViews()
         initObservers()
         initOrderModalBottomSheet()
@@ -132,24 +143,105 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initReasonCancelModalBottomSheet()
         initListeners()
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            true
+        ) { showExitLineBottomSheet() }
+    }
+
+    private fun fetchData() {
+        viewModel.getExistingOrders(
+            SendDriverLocationUI(
+                latitude = 42.41268,
+                longitude = 59.688043,
+                distance = 500000
+            )
+        )
     }
 
     private fun initObservers() {
         viewModel.getDriverProfile()
         viewModel.profileUiState.onEach {
-            when(it){
-                is ProfileUiState.Error -> Log.d("OrdersFragment", "profileUiState: error ${it.message}")
+            when (it) {
+                is ProfileUiState.Error -> Log.d(
+                    "OrdersFragment",
+                    "profileUiState: error ${it.message}"
+                )
+
                 ProfileUiState.Loading -> Log.d("OrdersFragment", "profileUiState: loading")
                 is ProfileUiState.Success -> displayProfile(it.driverProfile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.logoutUiState.onEach {
-            when(it){
-                is LogoutUiState.Error -> Log.d("OrdersFragment", "logoutUiState: error ${it.message}")
+            when (it) {
+                is LogoutUiState.Error -> Log.d(
+                    "OrdersFragment",
+                    "logoutUiState: error ${it.message}"
+                )
+
                 LogoutUiState.Loading -> Log.d("OrdersFragment", "logoutUiState: loading")
                 LogoutUiState.Success -> navigation.goToLogoFromOrders()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.ordersState.collect { result ->
+                    when (result) {
+                        is GetActiveOrdersUiState.Error -> {
+                            //show error
+                        }
+
+                        GetActiveOrdersUiState.Loading -> {
+                            // show loading
+                            delay(2000)
+                            viewModel.sendLocation(
+                                SendDriverLocationUI(
+                                    latitude = 42.44668,
+                                    longitude = 59.618043,
+                                    distance = 3000
+                                )
+                            )
+                        }
+
+                        is GetActiveOrdersUiState.OrderCanceled -> {
+                            orders.removeIf {
+                                it.id == result.rideId
+                            }
+                            adapter.submitList(orders)
+                        }
+
+                        is GetActiveOrdersUiState.GetNewOrder -> {
+                            orders.add(result.data)
+                            adapter.submitList(orders)
+                        }
+
+                        is GetActiveOrdersUiState.GetExistOrder -> {}
+                    }
+                }
+            }
+        }
+        viewModel.existingOrdersState.onEach { result ->
+            when (result) {
+                is GetActiveOrdersUiState.Error -> {
+                    //show error
+                }
+
+                GetActiveOrdersUiState.Loading -> {}
+
+                is GetActiveOrdersUiState.OrderCanceled -> {
+                    orders.removeIf {
+                        it.id == result.rideId
+                    }
+                    adapter.submitList(orders)
+                }
+
+                is GetActiveOrdersUiState.GetNewOrder -> {}
+
+                is GetActiveOrdersUiState.GetExistOrder -> {
+                    adapter.submitList(result.data.toMutableList())
+                }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -174,12 +266,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             navigation.goToProfileFromOrders()
         }
         binding.navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.action_support -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToSupportFromOrders()
                     true
                 }
+
                 R.id.action_log_out -> {
                     val logoutModalBottomSheet = LogoutModalBottomSheet()
                     logoutModalBottomSheet.show(childFragmentManager, LogoutModalBottomSheet.TAG)
@@ -189,16 +282,19 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     }
                     true
                 }
+
                 R.id.action_my_revenue -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToRevenueFromOrders()
                     true
                 }
+
                 R.id.action_order_history -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     navigation.goToHistoryFromOrders()
                     true
                 }
+
                 else -> false
             }
         }
@@ -207,7 +303,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initReasonCancelModalBottomSheet() {
         reasonCancelModalBottomSheet.setSendReasonListener {
             reasonCancelModalBottomSheet.dismissAllowingStateLoss()
-            tripCanceledModalBottomSheet.show(childFragmentManager, TripCanceledModalBottomSheet.TAG)
+            tripCanceledModalBottomSheet.show(
+                childFragmentManager,
+                TripCanceledModalBottomSheet.TAG
+            )
         }
     }
 
@@ -228,7 +327,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()
-            reasonCancelModalBottomSheet.show(childFragmentManager, ReasonCancelModalBottomSheet.TAG)
+            reasonCancelModalBottomSheet.show(
+                childFragmentManager,
+                ReasonCancelModalBottomSheet.TAG
+            )
         }
         cancelTripModalBottomSheet.setOnBackListener {
             cancelTripModalBottomSheet.dismissAllowingStateLoss()
@@ -238,7 +340,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initRideModalBottomSheet() {
         rideModalBottomSheet.setOnRideFinishedListener {
             rideModalBottomSheet.dismissAllowingStateLoss()
-            rideFinishedModalBottomSheet.show(childFragmentManager, RideFinishedModalBottomSheet.TAG)
+            rideFinishedModalBottomSheet.show(
+                childFragmentManager,
+                RideFinishedModalBottomSheet.TAG
+            )
         }
         rideModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -258,7 +363,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initGoingToPickUpModalBottomSheet() {
         goingToPickUpModalBottomSheet.setOnClientPickedUp {
             goingToPickUpModalBottomSheet.dismissAllowingStateLoss()
-            waitingForClientModalBottomSheet.show(childFragmentManager, WaitingForClientModalBottomSheet.TAG)
+            waitingForClientModalBottomSheet.show(
+                childFragmentManager,
+                WaitingForClientModalBottomSheet.TAG
+            )
         }
         goingToPickUpModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -268,13 +376,23 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initViews() {
         initToolbar()
         initRecyclerView()
-        binding.btnFilter.setOnClickListener { filterModalBottomSheet.show(childFragmentManager, FilterModalBottomSheet.TAG) }
+        binding.btnFilter.setOnClickListener {
+            filterModalBottomSheet.show(
+                childFragmentManager,
+                FilterModalBottomSheet.TAG
+            )
+        }
     }
 
     private fun initRecyclerView() {
         binding.rvOrders.adapter = adapter
         adapter.submitList(orders)
-        adapter.setOnItemClickListener { orderModalBottomSheet.show(childFragmentManager, OrderModalBottomSheet.TAG) }
+        adapter.setOnItemClickListener {
+            orderModalBottomSheet.show(
+                childFragmentManager,
+                OrderModalBottomSheet.TAG
+            )
+        }
     }
 
     private fun initToolbar() {
@@ -296,7 +414,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initOrderModalBottomSheet() {
         orderModalBottomSheet.setOnOrderAccepted {
             orderModalBottomSheet.dismissAllowingStateLoss()
-            goingToPickUpModalBottomSheet.show(childFragmentManager, GoingToPickUpModalBottomSheet.TAG)
+            goingToPickUpModalBottomSheet.show(
+                childFragmentManager,
+                GoingToPickUpModalBottomSheet.TAG
+            )
         }
     }
 
