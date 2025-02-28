@@ -13,5 +13,50 @@
         android:navigationIcon="@drawable/ic_material_symbols_arrow_back"
         android:contentInsetStartWithNavigation="0dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:orientation="vertical">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_content_tertiary"
+            android:textAppearance="@style/TextAppearance.InDrive.TitleGroup"
+            android:text="Búgin"
+            />
+
+        <TextView
+            android:id="@+id/tv_today_revenue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
+            android:text="215 000"/>
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_content_tertiary"
+            android:textAppearance="@style/TextAppearance.InDrive.TitleGroup"
+            android:text="Balans"
+            />
+
+        <TextView
+            android:id="@+id/tv_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
+            android:text="5 000"/>
+
+    </LinearLayout>
 
 </LinearLayout>

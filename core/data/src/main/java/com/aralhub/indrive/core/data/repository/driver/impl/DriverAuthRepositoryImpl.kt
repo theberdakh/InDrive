@@ -1,6 +1,7 @@
 package com.aralhub.indrive.core.data.repository.driver.impl
 
 import com.aralhub.indrive.core.data.model.driver.DriverBalance
+import com.aralhub.indrive.core.data.model.driver.DriverBalanceInfo
 import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
@@ -123,6 +124,24 @@ class DriverAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
                     Result.Success(data = true)
+                }
+            }
+        }
+    }
+
+    override suspend fun getDriverBalanceInfo(): Result<DriverBalanceInfo> {
+        driverNetworkDataSource.getDriverBalanceInfo().let {
+            return when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> {
+                    Result.Success(DriverBalanceInfo(
+                        balance = it.data.balance ?: 0,
+                        dayBalance = it.data.dayBalance ?: 0,
+                        dayBalanceCard = it.data.dayBalanceCard ?: 0,
+                        dayBalanceCash = it.data.dayBalanceCash ?: 0,
+                        lastMonthBalance = it.data.lastMonthBalance ?: 0,
+                        lastWeekBalance = it.data.lastWeekBalance ?: 0
+                    ))
                 }
             }
         }

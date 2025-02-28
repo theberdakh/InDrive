@@ -4,6 +4,7 @@ import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
+import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
@@ -23,4 +24,5 @@ interface DriverNetworkDataSource {
     suspend fun getDriverCard(): NetworkResult<NetworkCard>
     suspend fun driverLogout(networkDriverLogoutRequest: NetworkLogoutRequest): NetworkResult<Boolean>
     suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty>
+    suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo>
 }

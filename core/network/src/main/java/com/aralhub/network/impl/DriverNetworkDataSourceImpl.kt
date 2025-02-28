@@ -6,6 +6,7 @@ import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
+import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
@@ -59,5 +60,9 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
 
     override suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty> {
         return api.driverPhoto(MultipartEx.getMultipartFromFile(file)).safeRequest()
+    }
+
+    override suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo> {
+        return api.getDriverBalanceInfo().safeRequestServerResponse()
     }
 }

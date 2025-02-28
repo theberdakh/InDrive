@@ -4,6 +4,7 @@ import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
+import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
@@ -54,5 +55,8 @@ interface DriverNetworkApi {
     @Multipart
     @POST("/driver/photo")
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
+
+    @GET("/driver/balance_info")
+    suspend fun getDriverBalanceInfo(): Response<ServerResponse<NetworkBalanceInfo>>
 
 }

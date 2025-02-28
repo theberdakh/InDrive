@@ -1,6 +1,7 @@
 package com.aralhub.indrive.core.data.repository.driver
 
 import com.aralhub.indrive.core.data.model.driver.DriverBalance
+import com.aralhub.indrive.core.data.model.driver.DriverBalanceInfo
 import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
@@ -16,4 +17,5 @@ interface DriverAuthRepository {
     suspend fun getDriverBalance(): Result<DriverBalance>
     suspend fun driverLogout(): Result<Boolean>
     suspend fun driverPhoto(file: File): Result<Boolean>
+    suspend fun getDriverBalanceInfo(): Result<DriverBalanceInfo>
 }
