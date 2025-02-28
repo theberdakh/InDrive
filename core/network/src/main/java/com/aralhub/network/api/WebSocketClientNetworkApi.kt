@@ -32,7 +32,7 @@ interface WebSocketClientNetworkApi {
     suspend fun clientRejectOffer(@Path("offer_id") offerId: String): Response<ServerResponseEmpty>
 
     @POST("/websocket/ride/cancel/{ride_id}")
-    suspend fun clientCancelOffer(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
+    suspend fun clientCancelSearchRide(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
     @GET("/websocket/get_active_offer_by_ride_id/{ride_id}")
     suspend fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>

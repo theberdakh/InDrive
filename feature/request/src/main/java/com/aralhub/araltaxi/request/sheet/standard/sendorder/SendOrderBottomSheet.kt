@@ -18,7 +18,9 @@ import com.aralhub.araltaxi.request.sheet.modal.addlocation.AddLocationModalBott
 import com.aralhub.araltaxi.request.sheet.modal.ChangePaymentMethodModalBottomSheet
 import com.aralhub.araltaxi.request.sheet.modal.CommentToDriverModalBottomSheet
 import com.aralhub.indrive.core.data.model.client.GeoPoint
+import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,11 +48,23 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         initObservers()
         initViews()
         initListeners()
-
+        viewModel.getActivePaymentMethods()
+        viewModel.getRecommendedPrice(listOf(
+            GeoPoint(
+                latitude = 42.474078,
+                longitude = 59.615902,
+                name = "string"
+            ), GeoPoint(
+                latitude = 42.463283,
+                longitude = 59.605034,
+                name = "string"
+            )
+        ))
+        viewModel.createRide()
+        viewModel.getRideOptions()
     }
 
-    private fun initArgs() {
-    }
+    private fun initArgs() {}
 
     private fun initViews() {
         binding.rvRideOptions.adapter = rideOptionItemAdapter
@@ -123,72 +137,44 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         }
     }
 
-    private fun initObservers() {
-        viewModel.getRecommendedPrice(listOf(
-            GeoPoint(
-                latitude = 42.474078,
-                longitude = 59.615902,
-                name = "string"
-            ), GeoPoint(
-                latitude = 42.463283,
-                longitude = 59.605034,
-                name = "string"
-            )
-        ))
-        viewModel.recommendedPriceUiState.onEach {
-            when(it){
-                is RecommendedPriceUiState.Error -> {
-                    binding.tvPrice.text = "Usınıs etilgen bahanı esaplawda qa'telik"
-                }
-                RecommendedPriceUiState.Loading -> {
-                    binding.tvPrice.text = "Esaplanıp atır..."
-                }
-                is RecommendedPriceUiState.Success -> {
-                    binding.tvPrice.text = "Usınıs etilgen baha ${it.recommendedPrice.recommendedAmount.toInt()} som"
-                    val editable = Editable.Factory.getInstance().newEditable("${it.recommendedPrice.recommendedAmount.toInt()}")
-                    minimumPrice = it.recommendedPrice.minAmount.toInt()
-                    maximumPrice = it.recommendedPrice.maxAmount.toInt()
-                    binding.etPrice.text = editable
-                }
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-        viewModel.paymentMethod.onEach {
-            when(it){
-                PaymentMethodType.CARD -> {
-                    binding.ivChangePaymentMethod.setImageResource(com.aralhub.ui.R.drawable.ic_credit_card_3d)
-                }
-                PaymentMethodType.CASH -> {
-                    binding.ivChangePaymentMethod.setImageResource(com.aralhub.ui.R.drawable.ic_cash)
-                }
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-        viewModel.createRide()
-        viewModel.sendOrderBottomSheetUiState.onEach {
-            when(it){
-                is SendOrderBottomSheetUiState.Error -> {}
-                SendOrderBottomSheetUiState.Loading -> {}
-                is SendOrderBottomSheetUiState.Success -> {
-                    featureRequestNavigation.goToGetOffersFromSendOrderFragment()
-                }
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-        viewModel.getActivePaymentMethods()
-        viewModel.activePaymentMethodUiState.onEach {
-            when(it){
-                is ActivePaymentMethodUiState.Error -> {}
-                ActivePaymentMethodUiState.Loading -> {}
-                is ActivePaymentMethodUiState.Success -> { Log.i("SendOrderBottomSheet", "ActivePaymentMethod: ${it.paymentMethods}") }
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    private fun displayPaymentMethod(paymentMethod: PaymentMethodType) {
+        when(paymentMethod){
+            PaymentMethodType.CARD -> binding.ivChangePaymentMethod.setImageResource(com.aralhub.ui.R.drawable.ic_credit_card_3d)
+            PaymentMethodType.CASH -> binding.ivChangePaymentMethod.setImageResource(com.aralhub.ui.R.drawable.ic_cash)
+        }
+    }
 
-        viewModel.getRideOptions()
-        viewModel.rideOptionsUiState.onEach {
-            when(it){
-                is RideOptionsUiState.Error -> {}
-                RideOptionsUiState.Loading -> {}
-                is RideOptionsUiState.Success -> { rideOptionItemAdapter.submitList(it.rideOptions) }
+    private fun initObservers() {
+        observeState(viewModel.paymentMethod){ paymentMethod -> displayPaymentMethod(paymentMethod) }
+        observeState(viewModel.recommendedPriceUiState){ recommendedPriceUiState ->
+            when(recommendedPriceUiState){
+                is RecommendedPriceUiState.Error -> errorHandler.showToast(recommendedPriceUiState.message)
+                RecommendedPriceUiState.Loading -> {}
+                is RecommendedPriceUiState.Success -> displayRecommendedPrice(recommendedPriceUiState.recommendedPrice)
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
+        observeState(viewModel.sendOrderBottomSheetUiState){ sendOrderBottomSheetUiState ->
+            when(sendOrderBottomSheetUiState){
+                is SendOrderBottomSheetUiState.Error -> errorHandler.showToast(sendOrderBottomSheetUiState.message)
+                SendOrderBottomSheetUiState.Loading -> {}
+                is SendOrderBottomSheetUiState.Success -> featureRequestNavigation.goToGetOffersFromSendOrderFragment()
+            }
+        }
+        observeState(viewModel.rideOptionsUiState){ rideOptionsUiState ->
+            when(rideOptionsUiState){
+                is RideOptionsUiState.Error -> errorHandler.showToast(rideOptionsUiState.message)
+                RideOptionsUiState.Loading -> {}
+                is RideOptionsUiState.Success -> rideOptionItemAdapter.submitList(rideOptionsUiState.rideOptions)
+            }
+        }
+    }
+
+    private fun displayRecommendedPrice(recommendedPrice: RecommendedPrice) {
+        binding.tvPrice.text = getString(R.string.placeholder_recommended_price, recommendedPrice.recommendedAmount.toInt())
+        val editable = Editable.Factory.getInstance().newEditable("${recommendedPrice.recommendedAmount.toInt()}")
+        minimumPrice = recommendedPrice.minAmount.toInt()
+        maximumPrice = recommendedPrice.maxAmount.toInt()
+        binding.etPrice.text = editable
     }
 
     companion object {

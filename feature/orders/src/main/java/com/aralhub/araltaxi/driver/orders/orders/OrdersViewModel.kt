@@ -9,13 +9,13 @@ import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.SendDriverLocationUseCase
-import com.aralhub.araltaxi.driver.orders.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
+import com.aralhub.ui.model.OrderItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted

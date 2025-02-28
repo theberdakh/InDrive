@@ -1,18 +1,17 @@
 package com.aralhub.offers.sheet.modal
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.offers.R
 import com.aralhub.araltaxi.client.offers.databinding.ModalBottomSheetReasonCancelBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.ui.adapter.CancelItemAdapter
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,10 +20,18 @@ class ReasonCancelModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bot
     private val viewModel by viewModels<ReasonCancelModalBottomSheetViewModel>()
     private val adapter = CancelItemAdapter()
     @Inject lateinit var errorHandler: ErrorHandler
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+        initListeners()
+        viewModel.getCancelCauses()
+    }
+
+    private fun initListeners() {
+        binding.btnSend.setOnClickListener {
+        }
     }
 
     private fun initViews() {
@@ -32,8 +39,7 @@ class ReasonCancelModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bot
     }
 
     private fun initObservers() {
-        viewModel.getCancelCauses()
-        viewModel.cancelRideUiState.onEach {
+        observeState(viewModel.cancelRideUiState){
             when(it){
                 is CancelRideUiState.Error -> errorHandler.showToast(it.message)
                 CancelRideUiState.Loading -> {}
@@ -41,7 +47,7 @@ class ReasonCancelModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bot
                     adapter.submitList(it.cancelCauses)
                 }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     companion object {

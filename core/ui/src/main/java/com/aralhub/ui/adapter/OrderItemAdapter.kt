@@ -5,11 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.aralhub.araltaxi.driver.orders.model.OrderItem
-import com.aralhub.indrive.driver.orders.databinding.OrderItemBinding
 import com.aralhub.ui.databinding.OrderItemBinding
 import com.aralhub.ui.model.OrderItem
-import com.aralhub.ui.model.OrderItemDiffCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 

@@ -13,10 +13,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.aralhub.ui.adapter.OrderItemAdapter
-import com.aralhub.ui.model.OrderItem
-import com.aralhub.araltaxi.driver.orders.adapter.OrderItemAdapter
-import com.aralhub.araltaxi.driver.orders.model.OrderItem
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
@@ -33,6 +29,8 @@ import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
+import com.aralhub.ui.adapter.OrderItemAdapter
+import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions

@@ -276,4 +276,13 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: 
             }
         }
     }
+
+    override suspend fun cancelSearchRide(rideId: String): Result<Boolean> {
+        return dataSource.clientCancelSearchRide(rideId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
 }
