@@ -13,7 +13,8 @@ import com.aralhub.network.models.websocketclient.NetworkGetRecommendedRidePrice
 import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 import javax.inject.Inject
 
-class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: WebSocketClientNetworkApi): WebSocketClientNetworkDataSource {
+class WebSocketClientNetworkDataSourceImpl @Inject constructor(
+    private val api: WebSocketClientNetworkApi) : WebSocketClientNetworkDataSource {
     override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse> {
         return api.getActiveRideByPassenger(userId).safeRequestServerResponse()
     }
@@ -23,7 +24,8 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
     }
 
     override suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse> {
-        return api.getRidePrice(NetworkGetRecommendedRidePriceRequest(points)).safeRequestServerResponse()
+        return api.getRidePrice(NetworkGetRecommendedRidePriceRequest(points))
+            .safeRequestServerResponse()
     }
 
     override suspend fun clientRide(clientRideRequest: ClientRideRequest): NetworkResult<ClientRideResponse> {

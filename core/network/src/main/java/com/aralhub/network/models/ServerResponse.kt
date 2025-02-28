@@ -15,3 +15,9 @@ class ServerResponseEmpty(
     val success: Boolean,
     val message: ServerResponseMessage
 )
+
+data class WebSocketServerResponse<out T>(
+    val type: String,
+    val data: T
+)
+
