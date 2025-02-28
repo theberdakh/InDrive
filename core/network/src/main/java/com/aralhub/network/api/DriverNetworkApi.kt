@@ -11,6 +11,19 @@ import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
 import com.aralhub.network.requests.verify.NetworkVerifyRequest
 import okhttp3.MultipartBody
+import com.aralhub.network.models.WebSocketServerResponse
+import com.aralhub.network.models.driver.DriverInfoWithVehicleResponse
+import com.aralhub.network.models.driver.NetworkDriverAuthRequest
+import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
+import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverCardResponse
+import com.aralhub.network.models.driver.NetworkDriverInfoResponse
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
+import com.aralhub.network.models.location.NetworkSendLocationRequest
+import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -54,5 +67,8 @@ interface DriverNetworkApi {
     @Multipart
     @POST("/driver/photo")
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
+
+    @POST("/websocket/ride/get-rides")
+    suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
 }

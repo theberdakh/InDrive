@@ -2,16 +2,22 @@ package com.aralhub.araltaxi.driver.orders.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.aralhub.araltaxi.driver.orders.model.OrderItem
-import com.aralhub.araltaxi.driver.orders.model.OrderItemDiffCallback
 import com.aralhub.indrive.driver.orders.databinding.OrderItemBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 class OrderItemAdapter :
-    ListAdapter<OrderItem, OrderItemAdapter.ViewHolder>(OrderItemDiffCallback) {
+    Adapter<OrderItemAdapter.ViewHolder>() {
+
+    private var listOfOrders = mutableListOf<OrderItem>()
+        set(value) {
+            notifyDataSetChanged()
+            field = value
+        }
 
     private var onItemClickListener: ((OrderItem) -> Unit)? = null
     fun setOnItemClickListener(listener: (OrderItem) -> Unit) {
@@ -45,6 +51,23 @@ class OrderItemAdapter :
         return ViewHolder(binding)
     }
 
+    override fun getItemCount() = listOfOrders.size
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(getItem(position))
+        holder.bind(listOfOrders[position])
+
+    fun submitList(list: MutableList<OrderItem>) {
+        this.listOfOrders = list
+    }
+
+    object OrderItemDiffCallback : DiffUtil.ItemCallback<OrderItem>() {
+        override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
+            return oldItem == newItem
+        }
+
+    }
 }

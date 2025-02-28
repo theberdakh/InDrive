@@ -14,6 +14,9 @@ import javax.inject.Inject
 
 class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: WebSocketClientNetworkApi): WebSocketClientNetworkDataSource {
     override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive> {
+class WebSocketClientNetworkDataSourceImpl @Inject constructor(
+    private val api: WebSocketClientNetworkApi) : WebSocketClientNetworkDataSource {
+    override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkActiveRideResponse> {
         return api.getActiveRideByPassenger(userId).safeRequestServerResponse()
     }
 
@@ -23,6 +26,9 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
 
     override suspend fun getRecommendedPrice(points: List<NetworkLocationPoint>): NetworkResult<NetworkRecommendedPrice> {
         return api.getRidePrice(NetworkRecommendedRidePriceRequest(points)).safeRequestServerResponse()
+    override suspend fun getRecommendedPrice(points: List<NetworkGetRecommendedRidePricePoint>): NetworkResult<NetworkGetRecommendedRidePriceResponse> {
+        return api.getRidePrice(NetworkGetRecommendedRidePriceRequest(points))
+            .safeRequestServerResponse()
     }
 
     override suspend fun clientRide(networkClientRideRequest: NetworkClientRideRequest): NetworkResult<NetworkRideSearch> {

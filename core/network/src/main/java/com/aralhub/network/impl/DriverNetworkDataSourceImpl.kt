@@ -17,6 +17,22 @@ import com.aralhub.network.utils.ex.NetworkEx.safeRequest
 import com.aralhub.network.utils.ex.NetworkEx.safeRequestEmpty
 import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponse
 import java.io.File
+import com.aralhub.network.models.WebSocketServerResponse
+import com.aralhub.network.models.driver.DriverInfoWithVehicleResponse
+import com.aralhub.network.models.driver.NetworkDriverAuthRequest
+import com.aralhub.network.models.driver.NetworkDriverBalanceResponse
+import com.aralhub.network.models.driver.NetworkDriverCardRequest
+import com.aralhub.network.models.driver.NetworkDriverCardResponse
+import com.aralhub.network.models.driver.NetworkDriverInfoResponse
+import com.aralhub.network.models.driver.NetworkDriverLogoutRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyRequest
+import com.aralhub.network.models.driver.NetworkDriverVerifyResponse
+import com.aralhub.network.models.location.NetworkSendLocationRequest
+import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.NetworkActiveOfferResponse
+import com.aralhub.network.utils.NetworkEx.safeRequest
+import com.aralhub.network.utils.NetworkEx.safeRequestEmpty
+import com.aralhub.network.utils.NetworkEx.safeRequestServerResponse
 import javax.inject.Inject
 
 class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNetworkApi): DriverNetworkDataSource {
@@ -59,5 +75,9 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
 
     override suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty> {
         return api.driverPhoto(MultipartEx.getMultipartFromFile(file)).safeRequest()
+    }
+
+    override suspend fun getActiveRides(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>> {
+        return api.getActiveRides(sendLocationRequest).safeRequestServerResponse()
     }
 }
