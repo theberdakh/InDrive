@@ -152,7 +152,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             SendDriverLocationUI(
                 latitude = 42.41268,
                 longitude = 59.688043,
-                distance = 3000
+                distance = 500000
             )
         )
     }

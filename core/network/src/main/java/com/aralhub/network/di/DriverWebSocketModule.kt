@@ -2,7 +2,7 @@ package com.aralhub.network.di
 
 import com.aralhub.network.WebSocketDriverNetworkDataSource
 import com.aralhub.network.impl.WebSocketDriverNetworkDataSourceImpl
-import com.aralhub.network.utils.LocalStorage
+import com.aralhub.network.local.LocalStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
