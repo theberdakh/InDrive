@@ -50,15 +50,8 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         initListeners()
         viewModel.getActivePaymentMethods()
         viewModel.getRecommendedPrice(listOf(
-            GeoPoint(
-                latitude = 42.474078,
-                longitude = 59.615902,
-                name = "string"
-            ), GeoPoint(
-                latitude = 42.463283,
-                longitude = 59.605034,
-                name = "string"
-            )
+            GeoPoint(latitude = 42.474078, longitude = 59.615902, name = "string"),
+            GeoPoint(latitude = 42.463283, longitude = 59.605034, name = "string")
         ))
         viewModel.createRide()
         viewModel.getRideOptions()
@@ -79,7 +72,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
 
         binding.btnSendOffer.setOnClickListener {
           //  featureRequestNavigation.goToGetOffersFromSendOrderFragment()
-            Log.i("SendOrderBottomSheet", "btnSendOffer: ${rideOptionItemAdapter.currentList}")
             val enabledOptionIds = rideOptionItemAdapter.currentList.filter { it.isEnabled }.map { it.id }
         }
 
@@ -101,7 +93,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         commentToDriverModalBottomSheet.setOnSaveCommentToDriver {
             comment = it
             commentToDriverModalBottomSheet.dismissAllowingStateLoss()
-            Log.i("SendOrderBottomSheet", "Comment: $comment")
         }
     }
 
@@ -118,7 +109,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
 
         binding.tvDecrease500.setOnClickListener {
             val price = Integer.parseInt(binding.etPrice.text.toString().replace(" ", ""))
-            Log.i("price", "price: $price")
             if (price - 500 >= minimumPrice) {
                 val editable = Editable.Factory.getInstance().newEditable("${price - 500}")
                 binding.etPrice.text = editable

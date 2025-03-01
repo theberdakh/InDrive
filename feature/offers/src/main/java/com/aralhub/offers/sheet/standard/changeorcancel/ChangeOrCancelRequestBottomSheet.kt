@@ -2,6 +2,7 @@ package com.aralhub.offers.sheet.standard.changeorcancel
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.client.offers.R
@@ -35,15 +36,21 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
             when(cancelSearchRideUiState){
                 is CancelSearchRideUiState.Error -> errorHandler.showToast(cancelSearchRideUiState.message)
                 CancelSearchRideUiState.Loading -> {}
-                CancelSearchRideUiState.Success -> {}
+                CancelSearchRideUiState.Success -> {
+                    errorHandler.showToast("Offer canceled")
+                    navigation.goBackToRequestFragmentFromOffersFragment()
+                }
             }
         }
     }
 
     private fun initListeners() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
+            viewModel.cancelSearchRide(39)
+        }
+
         binding.btnCancel.setOnClickListener {
             viewModel.cancelSearchRide(39)
-            //    reasonCancelModalBottomSheet.show(childFragmentManager, ReasonCancelModalBottomSheet.TAG)
         }
 
         binding.btnChange.setOnClickListener {
