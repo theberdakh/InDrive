@@ -1,15 +1,21 @@
 package com.aralhub.ui.utils
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 object LifecycleOwnerEx {
 
     fun <T> LifecycleOwner.observeState(stateFlow: SharedFlow<T>, action: (T) -> Unit) {
-        stateFlow.onEach(action).launchIn(lifecycleScope)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                stateFlow.collect {
+                    action(it)
+                }
+            }
+        }
     }
 }

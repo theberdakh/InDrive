@@ -21,6 +21,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
     private val binding by viewBinding(BottomSheetChangeOrCancelRequestBinding::bind)
     @Inject lateinit var featureOffersBottomSheetNavigation: FeatureOffersBottomSheetNavigation
     @Inject lateinit var errorHandler: ErrorHandler
+    private var searchRideId = SEARCH_ID_DEFAULT
     @Inject lateinit var navigation: FeatureOffersNavigation
     private val reasonCancelModalBottomSheet by lazy { ReasonCancelModalBottomSheet() }
     private val viewModel by viewModels<ChangeOrCancelRequestViewModel>()
@@ -28,7 +29,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         initObservers()
-
+        viewModel.getSearchRide(39)
     }
 
     private fun initObservers() {
@@ -40,6 +41,13 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
                     errorHandler.showToast("Offer canceled")
                     navigation.goBackToRequestFragmentFromOffersFragment()
                 }
+            }
+        }
+        observeState(viewModel.searchRideUiState){ searchRideUiState ->
+            when(searchRideUiState){
+                is SearchRideUiState.Error -> errorHandler.showToast(searchRideUiState.message)
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> { searchRideId = searchRideUiState.searchRide.uuid }
             }
         }
     }
@@ -54,7 +62,15 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
         }
 
         binding.btnChange.setOnClickListener {
-            featureOffersBottomSheetNavigation.goToChangePriceFragment()
+            if (searchRideId != SEARCH_ID_DEFAULT) {
+                featureOffersBottomSheetNavigation.goToChangePriceFragment(searchRideId)
+            } else {
+                errorHandler.showToast("Ride is not available")
+            }
         }
+    }
+
+    companion object {
+        private const val SEARCH_ID_DEFAULT = "searchId"
     }
 }

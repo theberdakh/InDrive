@@ -285,4 +285,13 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: 
             }
         }
     }
+
+    override suspend fun updateSearchRideAmount(rideId: String, amount: Number): Result<Boolean> {
+        return dataSource.updateSearchRideAmount(rideId, amount).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
 }

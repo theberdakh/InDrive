@@ -20,7 +20,7 @@ interface WebSocketClientNetworkApi {
     suspend fun clientRide(@Body networkClientRideRequest: NetworkClientRideRequest): Response<ServerResponse<NetworkRideSearch>>
 
     @PUT("/websocket/ride/update_amount/{ride_id}")
-    suspend fun putClientRideAmount(
+    suspend fun updateSearchRideAmount(
         @Path("ride_id") rideId: String,
         @Query("amount") amount: Number
     ): Response<ServerResponseEmpty>
