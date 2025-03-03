@@ -23,13 +23,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setPadding()
-
         if (localStorage.isLogin){
             setStartDestination(R.id.requestFragment)
         } else {
             setStartDestination(R.id.logoFragment)
         }
-
     }
 
     private fun setStartDestination(fragment: Int) {
