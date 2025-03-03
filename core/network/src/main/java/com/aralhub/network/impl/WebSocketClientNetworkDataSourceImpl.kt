@@ -26,6 +26,13 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
         return api.getSearchRideByPassengerId(userId).safeRequestServerResponse()
     }
 
+    override suspend fun updateSearchRideAmount(
+        rideId: String,
+        amount: Number
+    ): NetworkResult<ServerResponseEmpty> {
+        return api.updateSearchRideAmount(rideId, amount).safeRequest()
+    }
+
     override suspend fun getRecommendedPrice(points: List<NetworkLocationPoint>): NetworkResult<NetworkRecommendedPrice> {
         return api.getRidePrice(NetworkRecommendedRidePriceRequest(points))
             .safeRequestServerResponse()

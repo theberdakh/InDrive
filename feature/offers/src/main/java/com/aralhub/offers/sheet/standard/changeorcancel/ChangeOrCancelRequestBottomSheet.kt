@@ -2,6 +2,7 @@ package com.aralhub.offers.sheet.standard.changeorcancel
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.client.offers.R
@@ -20,6 +21,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
     private val binding by viewBinding(BottomSheetChangeOrCancelRequestBinding::bind)
     @Inject lateinit var featureOffersBottomSheetNavigation: FeatureOffersBottomSheetNavigation
     @Inject lateinit var errorHandler: ErrorHandler
+    private var searchRideId = SEARCH_ID_DEFAULT
     @Inject lateinit var navigation: FeatureOffersNavigation
     private val reasonCancelModalBottomSheet by lazy { ReasonCancelModalBottomSheet() }
     private val viewModel by viewModels<ChangeOrCancelRequestViewModel>()
@@ -27,7 +29,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         initObservers()
-
+        viewModel.getSearchRide(39)
     }
 
     private fun initObservers() {
@@ -35,19 +37,40 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
             when(cancelSearchRideUiState){
                 is CancelSearchRideUiState.Error -> errorHandler.showToast(cancelSearchRideUiState.message)
                 CancelSearchRideUiState.Loading -> {}
-                CancelSearchRideUiState.Success -> {}
+                CancelSearchRideUiState.Success -> {
+                    errorHandler.showToast("Offer canceled")
+                    navigation.goBackToRequestFragmentFromOffersFragment()
+                }
+            }
+        }
+        observeState(viewModel.searchRideUiState){ searchRideUiState ->
+            when(searchRideUiState){
+                is SearchRideUiState.Error -> errorHandler.showToast(searchRideUiState.message)
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> { searchRideId = searchRideUiState.searchRide.uuid }
             }
         }
     }
 
     private fun initListeners() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
+            viewModel.cancelSearchRide(39)
+        }
+
         binding.btnCancel.setOnClickListener {
             viewModel.cancelSearchRide(39)
-            //    reasonCancelModalBottomSheet.show(childFragmentManager, ReasonCancelModalBottomSheet.TAG)
         }
 
         binding.btnChange.setOnClickListener {
-            featureOffersBottomSheetNavigation.goToChangePriceFragment()
+            if (searchRideId != SEARCH_ID_DEFAULT) {
+                featureOffersBottomSheetNavigation.goToChangePriceFragment(searchRideId)
+            } else {
+                errorHandler.showToast("Ride is not available")
+            }
         }
+    }
+
+    companion object {
+        private const val SEARCH_ID_DEFAULT = "searchId"
     }
 }

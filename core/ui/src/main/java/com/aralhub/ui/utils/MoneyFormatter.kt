@@ -74,4 +74,12 @@ class MoneyFormatter(
         }
         return result
     }
+
+    fun getUnformattedText(): String {
+        return editText.text.toString().replace(suffix, "").replace(" ", "").trim()
+    }
+
+    fun unformattedText(editText: EditText): String {
+        return editText.text.toString().replace(suffix, "").replace(" ", "").trim()
+    }
 }

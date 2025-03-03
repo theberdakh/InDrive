@@ -59,7 +59,7 @@
         android:name="com.aralhub.araltaxi.request.RequestFragment">
 
         <action
-            android:id="@+id/action_homeFragment_to_offersFragment"
+            android:id="@+id/action_requestFragment_to_offersFragment"
             app:destination="@id/offersFragment"/>
 
         <action
@@ -91,6 +91,14 @@
             app:popUpTo="@id/offersFragment"
             app:popUpToInclusive="true"
             app:destination="@id/rideFragment" />
+
+        <action
+            android:id="@+id/action_offersFragment_to_requestFragment"
+            app:destination="@id/requestFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="false"/>
+
+
 
     </fragment>
 
@@ -131,5 +139,7 @@
     <fragment
         android:id="@+id/editSavedPlaceFragment"
         android:name="com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment"/>
+
+
 
 </navigation>

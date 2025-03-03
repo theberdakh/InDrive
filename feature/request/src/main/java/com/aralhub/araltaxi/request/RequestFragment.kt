@@ -63,6 +63,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+
         MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
     }
 
@@ -106,6 +108,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 "Requesting Location Updates",
                 Toast.LENGTH_SHORT
             ).show()
+
 
             val map = binding.mapView.mapWindow.map
             val point = Point(it.latitude, it.longitude)

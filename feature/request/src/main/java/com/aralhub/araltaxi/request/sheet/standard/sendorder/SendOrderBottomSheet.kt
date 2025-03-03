@@ -2,30 +2,26 @@ package com.aralhub.araltaxi.request.sheet.standard.sendorder
 
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.BottomSheetSendOrderBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.ui.adapter.option.RideOptionItemAdapter
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.FeatureRequestBottomSheetNavigation
-import com.aralhub.araltaxi.request.sheet.modal.addlocation.AddLocationModalBottomSheet
 import com.aralhub.araltaxi.request.sheet.modal.ChangePaymentMethodModalBottomSheet
 import com.aralhub.araltaxi.request.sheet.modal.CommentToDriverModalBottomSheet
+import com.aralhub.araltaxi.request.sheet.modal.addlocation.AddLocationModalBottomSheet
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
+import com.aralhub.ui.adapter.option.RideOptionItemAdapter
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,17 +45,7 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         initViews()
         initListeners()
         viewModel.getActivePaymentMethods()
-        viewModel.getRecommendedPrice(listOf(
-            GeoPoint(
-                latitude = 42.474078,
-                longitude = 59.615902,
-                name = "string"
-            ), GeoPoint(
-                latitude = 42.463283,
-                longitude = 59.605034,
-                name = "string"
-            )
-        ))
+        viewModel.getRecommendedPrice(listOf(GeoPoint(latitude = 42.474078, longitude = 59.615902, name = "string"), GeoPoint(latitude = 42.463283, longitude = 59.605034, name = "string")))
         viewModel.createRide()
         viewModel.getRideOptions()
     }
@@ -79,7 +65,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
 
         binding.btnSendOffer.setOnClickListener {
           //  featureRequestNavigation.goToGetOffersFromSendOrderFragment()
-            Log.i("SendOrderBottomSheet", "btnSendOffer: ${rideOptionItemAdapter.currentList}")
             val enabledOptionIds = rideOptionItemAdapter.currentList.filter { it.isEnabled }.map { it.id }
         }
 
@@ -101,7 +86,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
         commentToDriverModalBottomSheet.setOnSaveCommentToDriver {
             comment = it
             commentToDriverModalBottomSheet.dismissAllowingStateLoss()
-            Log.i("SendOrderBottomSheet", "Comment: $comment")
         }
     }
 
@@ -118,7 +102,6 @@ class SendOrderBottomSheet : Fragment(R.layout.bottom_sheet_send_order) {
 
         binding.tvDecrease500.setOnClickListener {
             val price = Integer.parseInt(binding.etPrice.text.toString().replace(" ", ""))
-            Log.i("price", "price: $price")
             if (price - 500 >= minimumPrice) {
                 val editable = Editable.Factory.getInstance().newEditable("${price - 500}")
                 binding.etPrice.text = editable

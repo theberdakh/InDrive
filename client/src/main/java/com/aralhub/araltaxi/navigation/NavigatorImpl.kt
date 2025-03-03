@@ -46,7 +46,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
     }
 
     override fun goToGetOffersFromSendOrderFragment() {
-        navController?.navigate(R.id.action_homeFragment_to_offersFragment)
+        navController?.navigate(R.id.action_requestFragment_to_offersFragment)
     }
 
     override fun goToProfileFromRequestFragment() {
@@ -71,6 +71,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun goToRideFragment() {
         navController?.navigate(R.id.action_offersFragment_to_rideFragment)
+    }
+
+    override fun goBackToRequestFragmentFromOffersFragment() {
+        navController?.navigate(R.id.action_offersFragment_to_requestFragment)
     }
 
     override fun goToLogoFragmentFromProfileFragment() {

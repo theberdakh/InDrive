@@ -60,7 +60,8 @@
         android:drawablePadding="@dimen/padding_small"/>
 
     <Button
-        style="@style/TextAppearance.InDrive.PrimaryButton"
+        android:id="@+id/btn_change"
+        style="@style/Widget.InDrive.Button.Primary"
         android:layout_width="match_parent"
         android:text="Bahanı kóteriw"
         android:layout_margin="@dimen/margin_small"

@@ -7,13 +7,14 @@ import com.aralhub.network.models.price.NetworkRecommendedPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
 import com.aralhub.network.requests.ride.NetworkClientRideRequest
-import retrofit2.Response
 
 interface WebSocketClientNetworkDataSource {
 
     suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive>
 
     suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkRideSearch>
+
+    suspend fun updateSearchRideAmount(rideId: String, amount: Number): NetworkResult<ServerResponseEmpty>
 
     suspend fun getRecommendedPrice(points: List<NetworkLocationPoint>): NetworkResult<NetworkRecommendedPrice>
 
