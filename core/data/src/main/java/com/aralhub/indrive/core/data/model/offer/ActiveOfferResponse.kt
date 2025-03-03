@@ -11,17 +11,23 @@ data class ActiveOfferResponse(
     val roadPrice: String = "",
     val pickUpDistance: String = "",
     val roadDistance: String = "",
+    val paymentType: Int,
+    val pickUpAddress: String,
+    val destinationAddress: String? = null
 )
 
 fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferResponse =
     with(this) {
         return ActiveOfferResponse(
-            id = this.data.uuid,
-            name = this.data.passenger.userFullName,
-            pickUp = this.data.clientPickUpAddress,
-            avatar = this.data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
-            roadPrice = this.data.baseAmount.toString(),
-            pickUpDistance = this.distanceToClient.distance.toString(),
-            roadDistance = this.data.distance.totalDistance.toString()
+            id = data.uuid,
+            name = data.passenger.userFullName,
+            pickUp = data.clientPickUpAddress,
+            avatar = data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
+            roadPrice = data.baseAmount.toString(),
+            pickUpDistance = distanceToClient.distance.toString(),
+            roadDistance = data.distance.totalDistance.toString(),
+            paymentType = data.paymentMethod.id,
+            pickUpAddress = data.clientPickUpAddress,
+            destinationAddress = data.locations.points.getOrNull(1)?.name
         )
     }

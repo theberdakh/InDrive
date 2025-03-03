@@ -104,6 +104,7 @@
             tools:text="4 min" />
 
         <TextView
+            android:id="@+id/tv_price"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
@@ -201,7 +202,7 @@
         style="@style/Widget.InDrive.Button.GreenGradient"
         android:layout_width="match_parent"
         android:layout_margin="@dimen/margin_small"
-        android:text="10 000 somǵa qabıllaw"
+        android:text="Qabıllaw"
         android:layout_height="wrap_content"
         />
 

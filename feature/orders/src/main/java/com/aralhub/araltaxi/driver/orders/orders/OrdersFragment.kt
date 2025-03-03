@@ -1,13 +1,18 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
@@ -29,18 +34,25 @@ import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.adapter.OrderItemAdapter
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.invisible
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
-    @Inject lateinit var errorHandler: ErrorHandler
+
+    @Inject
+    lateinit var errorHandler: ErrorHandler
     private val viewModel by viewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
@@ -51,73 +63,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
     private val filterModalBottomSheet = FilterModalBottomSheet()
     private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
-    private val exitLineModalBottomSheet = ExitLineModalBottomSheet { findNavController().navigateUp() }
-    private val orders = mutableListOf(
-        OrderItem(
-            "1",
-            "John Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/1.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "2",
-            "Jane Doe",
-            "Pick location",
-            "https://randomuser.me/api/portraits/men/2.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "3",
-            "John Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/3.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "4",
-            "Jane Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/4.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "5",
-            "John Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/5.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "6",
-            "Jane Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/6.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-        OrderItem(
-            "7",
-            "John Doe",
-            "Pick up location",
-            "https://randomuser.me/api/portraits/men/7.jpg",
-            "1000 som",
-            "5 km",
-            "10 km"
-        ),
-    )
-    @Inject lateinit var navigation: FeatureOrdersNavigation
+    private val exitLineModalBottomSheet =
+        ExitLineModalBottomSheet { findNavController().navigateUp() }
+    private val orders = mutableListOf<OrderItem>()
+
+    @Inject
+    lateinit var navigation: FeatureOrdersNavigation
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -133,7 +84,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initReasonCancelModalBottomSheet()
         initListeners()
 
-   }
+    }
 
     private fun fetchData() {
         viewModel.getExistingOrders(
@@ -147,7 +98,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun initObservers() {
-        observeState(viewModel.profileUiState){ profileUiState ->
+        observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
                 is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
                 ProfileUiState.Loading -> {}
@@ -155,50 +106,55 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             }
         }
 
-        observeState(viewModel.logoutUiState){ logoutUiState ->
-                when (logoutUiState) {
-                    is LogoutUiState.Error -> errorHandler.showToast(logoutUiState.message)
-                    LogoutUiState.Loading -> {}
-                    LogoutUiState.Success -> navigation.goToLogoFromOrders()
-                }
-        }
-
-        observeState(viewModel.ordersState) { getActiveOrdersUiState ->
-            when (getActiveOrdersUiState) {
-                is GetActiveOrdersUiState.Error -> errorHandler.showToast(getActiveOrdersUiState.message)
-                GetActiveOrdersUiState.Loading -> {
-                    // show loading
-                    viewModel.sendLocation(
-                        SendDriverLocationUI(
-                            latitude = 42.44668,
-                            longitude = 59.618043,
-                            distance = 3000
-                        )
-                    )
-                }
-                is GetActiveOrdersUiState.OrderCanceled -> {
-                    orders.removeIf { it.id == getActiveOrdersUiState.rideId }
-                    adapter.submitList(orders)
-                }
-                is GetActiveOrdersUiState.GetNewOrder -> {
-                    orders.add(getActiveOrdersUiState.data)
-                    adapter.submitList(orders)
-                }
-                is GetActiveOrdersUiState.GetExistOrder -> {}
+        observeState(viewModel.logoutUiState) { logoutUiState ->
+            when (logoutUiState) {
+                is LogoutUiState.Error -> errorHandler.showToast(logoutUiState.message)
+                LogoutUiState.Loading -> {}
+                LogoutUiState.Success -> navigation.goToLogoFromOrders()
             }
         }
 
-        observeState(viewModel.existingOrdersState){ getActiveOrdersUiState ->
-            when (getActiveOrdersUiState) {
-                is GetActiveOrdersUiState.Error -> errorHandler.showToast(getActiveOrdersUiState.message)
-                GetActiveOrdersUiState.Loading -> {}
-                is GetActiveOrdersUiState.OrderCanceled -> {
-                    orders.removeIf { it.id == getActiveOrdersUiState.rideId }
-                    adapter.submitList(orders)
-                }
-                is GetActiveOrdersUiState.GetNewOrder -> {}
-                is GetActiveOrdersUiState.GetExistOrder -> {
-                    adapter.submitList(getActiveOrdersUiState.data.toMutableList())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
+                    Log.d("OrdersFragment", "$getActiveOrdersUiState")
+                    when (getActiveOrdersUiState) {
+                        is GetActiveOrdersUiState.Error -> errorHandler.showToast(
+                            getActiveOrdersUiState.message
+                        )
+
+                        GetActiveOrdersUiState.Loading -> {}
+
+                        is GetActiveOrdersUiState.OrderCanceled -> {
+                            orders.removeIf { it.id == getActiveOrdersUiState.rideId }
+                            adapter.submitList(orders)
+                            binding.tvOrdersNotFound.isVisible = orders.isEmpty()
+                        }
+
+                        is GetActiveOrdersUiState.GetNewOrder -> {
+                            orders.add(getActiveOrdersUiState.data)
+                            adapter.submitList(orders)
+                            binding.tvOrdersNotFound.invisible()
+                        }
+
+                        is GetActiveOrdersUiState.GetExistOrder -> {
+                            if (getActiveOrdersUiState.data.isNotEmpty()) {
+                                binding.tvOrdersNotFound.invisible()
+                                adapter.submitList(getActiveOrdersUiState.data)
+                            } else {
+                                binding.tvOrdersNotFound.show()
+                            }
+                            delay(2000)
+                            viewModel.sendLocation(
+                                SendDriverLocationUI(
+                                    latitude = 42.44668,
+                                    longitude = 59.618043,
+                                    distance = 300000
+                                )
+                            )
+
+                        }
+                    }
                 }
             }
         }
@@ -219,7 +175,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun initListeners() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) { showExitLineBottomSheet() }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            true
+        ) { showExitLineBottomSheet() }
         binding.navigationView.getHeaderView(0).setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navigation.goToProfileFromOrders()
@@ -345,8 +304,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initRecyclerView() {
         binding.rvOrders.adapter = adapter
-        adapter.submitList(orders)
-        adapter.setOnItemClickListener {
+        adapter.setOnItemClickListener { order ->
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                order
+            )
+            orderModalBottomSheet.arguments = bundle
             orderModalBottomSheet.show(
                 childFragmentManager,
                 OrderModalBottomSheet.TAG
@@ -364,6 +328,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     showExitLineBottomSheet()
                     true
                 }
+
                 else -> false
             }
         }
