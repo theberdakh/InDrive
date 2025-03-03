@@ -1,23 +1,17 @@
 package com.aralhub.araltaxi.request
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
@@ -33,39 +27,25 @@ import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.Map.CameraCallback
-import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private val requiredPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     private var selectLocationCameraListener: SelectLocationCameraListener? = null
     @Inject lateinit var sheetNavigator: SheetNavigator
     @Inject lateinit var navigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
-    private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions -> permissions.forEach { permission ->
-                Log.i("RequestTaxiFragment", "Permission: ${permission.key} is granted: ${permission.value}")
-            }
-        }
-    private val viewModel by viewModels<RequestViewModel>()
+     private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
-    private var gpsEnabled: Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -86,28 +66,19 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listenToLocationUpdates()
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         initViews()
         initListeners()
         initObservers()
         viewModel.getProfile()
-    }
+        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
+            onProviderEnabledListener = {
+                viewModel.updateLocationEnabled(true)
+            },
+            onProviderDisabledListener = {
+                viewModel.updateLocationEnabled(false)
+            }))
 
-
-    @SuppressLint("MissingPermission")
-    private fun listenToLocationUpdates() {
-        launchPermissions()
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        try {
-            val isProviderEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            gpsEnabled = isProviderEnabled == true
-            viewModel.updateLocationEnabled(gpsEnabled)
-        } catch (_: Exception) {
-            gpsEnabled = false
-            viewModel.updateLocationEnabled(gpsEnabled)
-        }
-
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map))
     }
 
     private fun initObservers() {
@@ -139,10 +110,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
         val imageView = binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar)
         displayAvatar(profile.profilePhoto, imageView)
-    }
-
-    private fun launchPermissions() {
-        locationPermissionLauncher.launch(requiredPermissions)
     }
 
     private fun initViews() {
