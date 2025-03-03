@@ -25,7 +25,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
     private val binding by viewBinding(BottomSheetRequestTaxiBinding::bind)
     private val locationItemAdapter = LocationItemAdapter()
     private val viewModel by viewModels<MapViewModel>()
-    @Inject lateinit var featureRequestNavigation: FeatureRequestNavigation
+    @Inject lateinit var navigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
     private val requestTaxiBottomSheetViewModel by viewModels<RequestTaxiBottomSheetViewModel>()
     @Inject lateinit var navigator: FeatureRequestBottomSheetNavigation
@@ -39,7 +39,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
             viewModel.startSearch(searchText = it)
         }
         binding.etFromLocation.setEndTextClickListener {
-            navigator.goToSelectLocationFromRequestTaxi()
+            navigation.goToSelectLocationFromRequestFragment()
         }
         binding.etToLocation.setEndTextClickListener {
             navigator.goToSendOrderFromRequestTaxi()
@@ -53,7 +53,7 @@ internal class RequestTaxiBottomSheet : Fragment(R.layout.bottom_sheet_request_t
             when(it){
                 is SearchRideUiState.Error -> errorHandler.showToast(it.message)
                 SearchRideUiState.Loading -> {}
-                is SearchRideUiState.Success -> { featureRequestNavigation.goToGetOffersFromSendOrderFragment() }
+                is SearchRideUiState.Success -> { navigation.goToGetOffersFromSendOrderFragment() }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         requestTaxiBottomSheetViewModel.activeRideUiState.onEach {

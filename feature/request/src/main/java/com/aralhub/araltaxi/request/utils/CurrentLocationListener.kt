@@ -3,20 +3,18 @@ package com.aralhub.araltaxi.request.utils
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
-import android.os.Bundle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
-import java.io.Flushable
 
 class CurrentLocationListener(private val context: Context, private val map: Map, private val onProviderDisabledListener: () -> Unit, private val onProviderEnabledListener: () -> Unit) :
     LocationListener {
     private var _placeMarkObject: PlacemarkMapObject? = null
     private val placeMarkObject = _placeMarkObject.takeIf { it != null }
     override fun onLocationChanged(location: Location) {
-        setPlaceMarkToPosition(location)
+       // setPlaceMarkToPosition(location)
     }
 
     override fun onProviderDisabled(provider: String) {

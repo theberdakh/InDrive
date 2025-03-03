@@ -40,7 +40,6 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private var selectLocationCameraListener: SelectLocationCameraListener? = null
     @Inject lateinit var sheetNavigator: SheetNavigator
     @Inject lateinit var navigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
@@ -67,18 +66,22 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager?.let { observeLocationUpdates(it) }
         initViews()
         initListeners()
         initObservers()
         viewModel.getProfile()
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun observeLocationUpdates(locationManager: LocationManager) {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
             onProviderEnabledListener = {
                 viewModel.updateLocationEnabled(true)
             },
             onProviderDisabledListener = {
                 viewModel.updateLocationEnabled(false)
             }))
-
     }
 
     private fun initObservers() {
@@ -167,35 +170,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
     }
 
-    private fun setUpSelectLocation() {
-        selectLocationCameraListener?.let {
-            binding.mapView.mapWindow.map.addCameraListener(selectLocationCameraListener!!)
-            it.setOnLocationChangedListener {
-                Log.i("RequestFragment", "onLocationChanged: $it")
-            }
-        }
-
-    }
-
-    private fun setUpMapView(latitude: Double, longitude: Double) {
-        val point = Point(latitude, longitude)
-        val imageProvider =
-            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-        binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
-            geometry = point
-            setIcon(imageProvider)
-        }
-        val cameraCallback = CameraCallback {}
-        binding.mapView.mapWindow.map.move(
-            CameraPosition(
-                point,/* zoom = */
-                17.0f,/* azimuth = */
-                150.0f,/* tilt = */
-                30.0f
-            ), Animation(Animation.Type.LINEAR, 1f), cameraCallback
-        )
-    }
-
     private fun setUpBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -203,8 +177,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initBottomNavController() {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let { sheetNavigator.bind(navController) }
     }

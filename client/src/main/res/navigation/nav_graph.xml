@@ -55,6 +55,9 @@
     </fragment>
 
     <fragment
+        android:id="@+id/selectLocationFragment"
+        android:name="com.aralhub.araltaxi.select_location.SelectLocationFragment"/>
+    <fragment
         android:id="@+id/requestFragment"
         android:name="com.aralhub.araltaxi.request.RequestFragment">
 
@@ -65,6 +68,9 @@
         <action
             android:id="@+id/action_requestFragment_to_profileFragment"
             app:destination="@id/profileFragment"/>
+
+        <action android:id="@+id/action_requestFragment_to_selectLocationFragment"
+            app:destination="@id/selectLocationFragment"/>
 
         <action android:id="@+id/action_requestFragment_to_supportFragment"
             app:destination="@id/supportFragment"/>
