@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.isActive
 
 class WebSocketDriverNetworkDataSourceImpl(
     private val client: HttpClient
@@ -34,13 +35,16 @@ class WebSocketDriverNetworkDataSourceImpl(
             session = client.webSocketSession {
                 url("ws://araltaxi.aralhub.uz/websocket/wb/driver")
             }
+            if (session?.isActive == true) {
+                Log.d("WebSocketLog", "Connected")
+            }
             val messageStates = session
                 ?.incoming
                 ?.consumeAsFlow()
                 ?.filterIsInstance<Frame.Text>()
                 ?.mapNotNull { frame ->
                     val jsonString = frame.readText()
-
+                    Log.d("WebSocketLog", jsonString)
                     try {
                         val baseResponse =
                             Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
@@ -87,6 +91,7 @@ class WebSocketDriverNetworkDataSourceImpl(
         session?.outgoing?.send(
             Frame.Text(Gson().toJson(data))
         )
+        Log.d("WebSocketLog", "location sent")
     }
 
     override suspend fun close() {
