@@ -18,10 +18,12 @@ import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -70,27 +72,27 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private val _existingOrdersState = MutableSharedFlow<GetActiveOrdersUiState>()
-    val existingOrdersState = _existingOrdersState.asSharedFlow()
+    private val existingOrdersState =
+        MutableStateFlow<GetActiveOrdersUiState>(GetActiveOrdersUiState.Loading)
     fun getExistingOrders(
         sendDriverLocationUI: SendDriverLocationUI
     ) = viewModelScope.launch {
-        _existingOrdersState.emit(GetActiveOrdersUiState.Loading)
         getExistingOrdersUseCase(sendDriverLocationUI.asDomain()).let { result ->
             when (result) {
                 is Result.Success -> {
                     val listOfOrders = result.data.map { it.asUI() }
-                    _existingOrdersState.emit(GetActiveOrdersUiState.GetExistOrder(listOfOrders))
+                    existingOrdersState.value =
+                        (GetActiveOrdersUiState.GetExistOrder(listOfOrders))
                 }
 
                 is Result.Error -> {
-                    _existingOrdersState.emit(GetActiveOrdersUiState.Error(result.message))
+                    existingOrdersState.value = (GetActiveOrdersUiState.Error(result.message))
                 }
             }
         }
     }
 
-    val ordersState = getActiveOrdersUseCase
+    private val ordersState = getActiveOrdersUseCase
         .invoke()
         .map {
             when (it) {
@@ -109,12 +111,38 @@ class OrdersViewModel @Inject constructor(
         }
         .catch { t ->
             GetActiveOrdersUiState.Error(t.localizedMessage ?: "WebSocket Error")
-        }
-        .stateIn(
+        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             GetActiveOrdersUiState.Loading
         )
+
+    val combinedOrdersState = merge(
+        existingOrdersState,
+        ordersState
+    ).map { result ->
+        when (result) {
+            is GetActiveOrdersUiState.GetExistOrder -> {
+                GetActiveOrdersUiState.GetExistOrder(result.data)
+            }
+
+            is GetActiveOrdersUiState.GetNewOrder -> {
+                GetActiveOrdersUiState.GetNewOrder(result.data)
+            }
+
+            is GetActiveOrdersUiState.OrderCanceled -> {
+                GetActiveOrdersUiState.OrderCanceled(result.rideId)
+            }
+
+            else -> {
+                GetActiveOrdersUiState.Loading
+            }
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        GetActiveOrdersUiState.Loading
+    )
 
     fun sendLocation(data: SendDriverLocationUI) {
         viewModelScope.launch {

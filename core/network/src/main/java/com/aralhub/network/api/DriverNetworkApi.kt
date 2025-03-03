@@ -59,7 +59,7 @@ interface DriverNetworkApi {
     @POST("/driver/photo")
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
 
-    @POST("/websocket/ride/get-rides")
+    @POST("/websocket/ride/get_rides")
     suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
     @GET("/driver/balance_info")

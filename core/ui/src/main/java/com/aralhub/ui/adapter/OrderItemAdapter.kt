@@ -2,7 +2,6 @@ package com.aralhub.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.aralhub.ui.databinding.OrderItemBinding
@@ -13,7 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 class OrderItemAdapter :
     Adapter<OrderItemAdapter.ViewHolder>() {
 
-    private var listOfOrders = mutableListOf<OrderItem>()
+    private var listOfOrders = listOf<OrderItem>()
         set(value) {
             notifyDataSetChanged()
             field = value
@@ -56,18 +55,8 @@ class OrderItemAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         holder.bind(listOfOrders[position])
 
-    fun submitList(list: MutableList<OrderItem>) {
+    fun submitList(list: List<OrderItem>) {
         this.listOfOrders = list
     }
 
-    object OrderItemDiffCallback : DiffUtil.ItemCallback<OrderItem>() {
-        override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-            return oldItem == newItem
-        }
-
-    }
 }

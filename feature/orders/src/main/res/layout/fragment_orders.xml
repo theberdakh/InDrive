@@ -27,30 +27,43 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     app:menu="@menu/menu_orders"
-                    app:navigationIcon="@drawable/ic_mdi_hamburger_menu"
-                    />
+                    app:navigationIcon="@drawable/ic_mdi_hamburger_menu" />
+
 
             </com.google.android.material.appbar.AppBarLayout>
 
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_orders"
-                android:paddingBottom="@dimen/padding_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_small"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/order_item" />
 
 
+            <TextView
+                android:id="@+id/tv_orders_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_marginHorizontal="32dp"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Zakazlar tabılmadı"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
+
             <View
                 android:id="@+id/btn_filter"
                 android:layout_width="56dp"
-                android:elevation="4dp"
                 android:layout_height="56dp"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/margin_medium"
                 android:background="@drawable/bg_fab_filter"
+                android:elevation="4dp"
                 android:foreground="@drawable/ripple_round" />
 
 
@@ -59,11 +72,11 @@
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
-            app:menu="@menu/menu_drawer"
-            app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            app:headerLayout="@layout/layout_drawer_header"
             android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            android:layout_gravity="start"
+            app:headerLayout="@layout/layout_drawer_header"
+            app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
+            app:menu="@menu/menu_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
