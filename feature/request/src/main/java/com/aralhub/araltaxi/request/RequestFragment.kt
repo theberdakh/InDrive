@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
 import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
@@ -25,6 +26,7 @@ import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
 import com.aralhub.indrive.core.data.model.client.ClientProfile
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -41,6 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.math.log
 
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
@@ -50,6 +53,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private var selectLocationCameraListener: SelectLocationCameraListener? = null
     @Inject lateinit var sheetNavigator: SheetNavigator
     @Inject lateinit var navigation: FeatureRequestNavigation
+    @Inject lateinit var errorHandler: ErrorHandler
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.forEach { permission ->
@@ -63,8 +67,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-
         MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
     }
 
@@ -86,6 +88,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         initViews()
         initListeners()
         initObservers()
+        viewModel.getProfile()
     }
 
 
@@ -153,33 +156,27 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initObservers() {
-        viewModel.locationEnabled.onEach { isEnabled ->
+        observeState(viewModel.locationEnabled) { isEnabled ->
             if (isEnabled) {
-                Toast.makeText(requireContext(), "Location is enabled", Toast.LENGTH_SHORT).show()
+               errorHandler.showToast("Location is enabled")
             } else {
-                Toast.makeText(requireContext(), "Location is disabled", Toast.LENGTH_SHORT).show()
+                errorHandler.showToast("Location is disabled")
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.getProfile()
-        viewModel.profileUiState.onEach {
-            when (it) {
-                is ProfileUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "profileUiState: error ${it.message}"
-                )
-
-                ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
-                is ProfileUiState.Success -> displayProfile(it.profile)
+        }
+        observeState(viewModel.profileUiState) { profileUiState ->
+            when (profileUiState) {
+                is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
+                ProfileUiState.Loading -> {}
+                is ProfileUiState.Success -> displayProfile(profileUiState.profile)
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-        viewModel.logOutUiState.onEach {
-            when (it) {
-                is LogOutUiState.Error -> Log.i("RequestFragment", "logOutUiState: error ${it.message}")
-                LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
+        }
+        observeState(viewModel.logOutUiState){ logOutUiState ->
+            when (logOutUiState) {
+                is LogOutUiState.Error -> errorHandler.showToast(logOutUiState.message)
+                LogOutUiState.Loading -> {}
                 LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun displayProfile(profile: ClientProfile) {

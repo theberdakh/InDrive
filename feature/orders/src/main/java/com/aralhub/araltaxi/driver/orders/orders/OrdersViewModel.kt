@@ -157,7 +157,6 @@ class OrdersViewModel @Inject constructor(
             closeDriverWebSocketConnectionUseCase.close()
         }
     }
-
 }
 
 sealed interface LogoutUiState {
