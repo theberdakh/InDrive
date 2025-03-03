@@ -36,7 +36,7 @@ class RequestViewModel @Inject constructor(
         _profileUiState.emit(clientProfileUseCase().let {
             when (it) {
                 is Result.Error -> ProfileUiState.Error(it.message)
-                is Result.Success -> ProfileUiState.Success(it.data)
+                is Result.Success -> ProfileUiState.Success(it.data.copy(profilePhoto = "https://araltaxi.aralhub.uz/${it.data.profilePhoto}"))
             }
         })
     }

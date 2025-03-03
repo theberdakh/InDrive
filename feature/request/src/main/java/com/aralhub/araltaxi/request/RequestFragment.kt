@@ -3,10 +3,13 @@ package com.aralhub.araltaxi.request
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,9 +26,11 @@ import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
 import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
+import com.aralhub.araltaxi.request.utils.CurrentLocationListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
 import com.aralhub.indrive.core.data.model.client.ClientProfile
+import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
@@ -54,14 +59,11 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @Inject lateinit var sheetNavigator: SheetNavigator
     @Inject lateinit var navigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.forEach { permission ->
+    private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions -> permissions.forEach { permission ->
                 Log.i("RequestTaxiFragment", "Permission: ${permission.key} is granted: ${permission.value}")
             }
         }
     private val viewModel by viewModels<RequestViewModel>()
-    private var placeMarkObject: PlacemarkMapObject? = null
     private var locationManager: LocationManager? = null
     private var gpsEnabled: Boolean = false
 
@@ -103,56 +105,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         } catch (_: Exception) {
             gpsEnabled = false
             viewModel.updateLocationEnabled(gpsEnabled)
-            Toast.makeText(requireContext(), "Location is off", Toast.LENGTH_SHORT).show()
         }
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f) {
-            Toast.makeText(
-                requireContext(),
-                "Requesting Location Updates",
-                Toast.LENGTH_SHORT
-            ).show()
 
-
-            val map = binding.mapView.mapWindow.map
-            val point = Point(it.latitude, it.longitude)
-            val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-            map.move(cameraPosition)
-            val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-            setPlaceMarkToPosition(
-                cameraPosition,
-                binding.mapView.mapWindow.map,
-                point,
-                imageProvider
-            ) { placeMarkPoint ->
-                Toast.makeText(
-                    requireContext(),
-                    "Tapped. lat: ${placeMarkPoint.latitude}, ${placeMarkPoint.longitude}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    private fun setPlaceMarkToPosition(
-        position: CameraPosition,
-        map: Map,
-        point: Point,
-        imageProvider: ImageProvider,
-        onPlaceMarkTap: (point: Point) -> Unit
-    ) {
-        map.move(position)
-        if (placeMarkObject == null) {
-            placeMarkObject = map.mapObjects.addPlacemark().apply {
-                geometry = point
-                setIcon(imageProvider)
-            }
-            placeMarkObject!!.addTapListener { _, placeMarkPoint ->
-                onPlaceMarkTap(placeMarkPoint)
-                true
-            }
-        } else {
-            placeMarkObject!!.geometry = point
-        }
+        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map))
     }
 
     private fun initObservers() {
@@ -180,15 +135,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
-            profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
-            profile.phone
-        Glide.with(this)
-            .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
-            .apply(RequestOptions.circleCropTransform())
-            .signature(ObjectKey(System.currentTimeMillis()))
-            .into(binding.navigationView.getHeaderView(0).findViewById(R.id.iv_avatar))
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
+        val imageView = binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar)
+        displayAvatar(profile.profilePhoto, imageView)
     }
 
     private fun launchPermissions() {
