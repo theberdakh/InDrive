@@ -1,6 +1,7 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBinding
+import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -37,11 +39,31 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         MoneyFormatter(binding.etPrice)
         setWebView()
+        setupUI()
+        setupListeners()
+
+    }
+
+    private fun setupUI() = binding.apply {
+        val order = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("OrderDetail", OrderItem::class.java)
+        } else {
+            arguments?.getParcelable("OrderDetail")
+        }
+        tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
+        tvClientName.text = order?.name
+        tvDistance.text = order?.roadDistance
+        tvFromLocation.text = order?.pickUpAddress
+        tvToLocation.text = order?.destinationAddress
+    }
+
+    private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
             orderLoadingModalBottomSheet.show(parentFragmentManager, OrderLoadingModalBottomSheet.TAG)
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 delay(3000)
                 orderLoadingModalBottomSheet.dismissAllowingStateLoss()
                 onOrderAccepted?.invoke()

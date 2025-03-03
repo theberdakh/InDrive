@@ -304,7 +304,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initRecyclerView() {
         binding.rvOrders.adapter = adapter
-        adapter.setOnItemClickListener {
+        adapter.setOnItemClickListener { order ->
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                order
+            )
+            orderModalBottomSheet.arguments = bundle
             orderModalBottomSheet.show(
                 childFragmentManager,
                 OrderModalBottomSheet.TAG
