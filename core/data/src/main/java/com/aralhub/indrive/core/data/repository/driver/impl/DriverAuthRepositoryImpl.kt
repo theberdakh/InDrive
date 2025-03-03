@@ -44,20 +44,13 @@ class DriverAuthRepositoryImpl @Inject constructor(
                 code = code
             )
         ).let {
-            driverNetworkDataSource.driverVerify(
-                networkDriverVerifyRequest = NetworkVerifyRequest(
-                    phoneNumber = phone,
-                    code = code
-                )
-            ).let {
-                return when (it) {
-                    is NetworkResult.Error -> Result.Error(it.message)
-                    is NetworkResult.Success -> {
-                        localStorage.access = it.data.accessToken
-                        localStorage.refresh = it.data.refreshToken
-                        localStorage.isLogin = true
-                        Result.Success(data = true)
-                    }
+            return when (it) {
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> {
+                    localStorage.access = it.data.accessToken
+                    localStorage.refresh = it.data.refreshToken
+                    localStorage.isLogin = true
+                    Result.Success(data = true)
                 }
             }
         }
@@ -80,18 +73,6 @@ class DriverAuthRepositoryImpl @Inject constructor(
                             photoUrl = it.data.photoUrl
                         )
                     )
-                    Result.Success(
-                        DriverProfile(
-                            driverId = it.data.driverId,
-                            fullName = it.data.fullName,
-                            rating = it.data.rating,
-                            color = it.data.color.kk,
-                            vehicleType = it.data.vehicleType.kk,
-                            plateNumber = it.data.plateNumber,
-                            phoneNumber = it.data.phoneNumber,
-                            photoUrl = it.data.photoUrl
-                        )
-                    )
                 }
             }
         }
@@ -102,16 +83,6 @@ class DriverAuthRepositoryImpl @Inject constructor(
             return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
-                    Result.Success(
-                        DriverProfileWithVehicle(
-                            driverId = it.data.driverId,
-                            fullName = it.data.fullName,
-                            rating = it.data.rating,
-                            color = it.data.vehicleColor.kk,
-                            vehicleType = it.data.vehicleType.kk,
-                            plateNumber = it.data.plateNumber
-                        )
-                    )
                     Result.Success(
                         DriverProfileWithVehicle(
                             driverId = it.data.driverId,
@@ -194,19 +165,22 @@ class DriverAuthRepositoryImpl @Inject constructor(
             }
         }
     }
+
     override suspend fun getDriverBalanceInfo(): Result<DriverBalanceInfo> {
         driverNetworkDataSource.getDriverBalanceInfo().let {
-            return when(it){
+            return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
-                    Result.Success(DriverBalanceInfo(
-                        balance = it.data.balance ?: 0,
-                        dayBalance = it.data.dayBalance ?: 0,
-                        dayBalanceCard = it.data.dayBalanceCard ?: 0,
-                        dayBalanceCash = it.data.dayBalanceCash ?: 0,
-                        lastMonthBalance = it.data.lastMonthBalance ?: 0,
-                        lastWeekBalance = it.data.lastWeekBalance ?: 0
-                    ))
+                    Result.Success(
+                        DriverBalanceInfo(
+                            balance = it.data.balance ?: 0,
+                            dayBalance = it.data.dayBalance ?: 0,
+                            dayBalanceCard = it.data.dayBalanceCard ?: 0,
+                            dayBalanceCash = it.data.dayBalanceCash ?: 0,
+                            lastMonthBalance = it.data.lastMonthBalance ?: 0,
+                            lastWeekBalance = it.data.lastWeekBalance ?: 0
+                        )
+                    )
                 }
             }
         }
