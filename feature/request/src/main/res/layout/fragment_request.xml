@@ -17,16 +17,7 @@
             <com.yandex.mapkit.mapview.MapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-            <View
-                android:layout_width="50dp"
-                android:layout_height="100dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/ic_center_people"/>
+                android:layout_height="match_parent" />
 
             <ImageButton
                 android:id="@+id/btn_menu"
@@ -49,9 +40,9 @@
             android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="start"
             app:headerLayout="@layout/layout_drawer_header"
             app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            android:layout_gravity="start"
             app:menu="@menu/menu_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
@@ -60,15 +51,15 @@
         android:id="@+id/layout_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingTop="0dp"
         android:background="@drawable/bg_bottom_sheet"
+        android:clickable="true"
+        android:fitsSystemWindows="false"
+        android:focusable="true"
         android:orientation="vertical"
-        app:paddingTopSystemWindowInsets="false"
+        android:paddingTop="0dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         app:paddingBottomSystemWindowInsets="true"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:paddingTopSystemWindowInsets="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,16 +73,51 @@
                 android:padding="0dp"
                 android:paddingBottom="0dp" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/bottom_sheet_nav_host"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/request_nav" />
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="false"
+                android:orientation="vertical"
+                android:theme="@style/Theme.InDrive">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    app:elevation="0dp">
+
+                    <com.aralhub.ui.components.EndTextEditText
+                        android:id="@+id/et_from_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_medium"
+                        android:hint="@string/hint_from_location"
+                        app:endText="Karta"
+                        app:hintTextColor="@color/color_tertiary" />
+
+                    <com.aralhub.ui.components.EndTextEditText
+                        android:id="@+id/et_to_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_medium"
+                        android:hint="@string/hint_to_location"
+                        app:endText="Karta"
+                        app:hintTextColor="@color/color_tertiary" />
+                </com.google.android.material.appbar.AppBarLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_locations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="0"
+                    tools:listitem="@layout/item_location" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
-
 
 
     </androidx.core.widget.NestedScrollView>

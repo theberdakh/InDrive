@@ -2,9 +2,9 @@ package com.aralhub.araltaxi.request
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,27 +12,20 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
-import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
+import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.CurrentLocationListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
-import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
 import com.aralhub.indrive.core.data.model.client.ClientProfile
+import com.aralhub.ui.adapter.location.LocationItemAdapter
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.Map.CameraCallback
-import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,9 +33,9 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    @Inject lateinit var sheetNavigator: SheetNavigator
     @Inject lateinit var navigation: FeatureRequestNavigation
     @Inject lateinit var errorHandler: ErrorHandler
+    private val adapter = LocationItemAdapter()
      private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
 
@@ -75,7 +68,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
+        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(LocationManager.GPS_PROVIDER).apply {
+            latitude = 42.4651
+            longitude = 59.6136
+        }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
+            initialLocation = lastKnownLocation,
             onProviderEnabledListener = {
                 viewModel.updateLocationEnabled(true)
             },
@@ -85,6 +83,18 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initObservers() {
+
+        observeState(viewModel.suggestionsUiState) { suggestionsUiState ->
+            when (suggestionsUiState) {
+                is SuggestionsUiState.Error -> errorHandler.showToast(suggestionsUiState.message)
+                SuggestionsUiState.Loading -> {}
+                is SuggestionsUiState.Success -> {
+                    adapter.submitList(null)
+                    adapter.submitList(suggestionsUiState.suggestions)
+                }
+            }
+        }
+
         observeState(viewModel.locationEnabled) { isEnabled ->
             if (isEnabled) {
                errorHandler.showToast("Location is enabled")
@@ -116,11 +126,35 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initViews() {
+        binding.rvLocations.adapter = adapter
         setUpBottomSheet()
-        initBottomNavController()
     }
 
     private fun initListeners() {
+
+        binding.etFromLocation.setOnTextChangedListener {
+            viewModel.suggestLocation(it)
+        }
+
+        binding.etToLocation.setOnTextChangedListener {
+            viewModel.suggestLocation(it)
+        }
+
+        binding.etFromLocation.setOnActivatedListener { isActivated ->
+            binding.etFromLocation.setEndTextVisible(isActivated)
+        }
+
+        binding.etToLocation.setOnActivatedListener { isActivated ->
+            binding.etToLocation.setEndTextVisible(isActivated)
+        }
+
+        binding.etFromLocation.setEndTextClickListener {
+           navigation.goToSelectLocationFromRequestFragment()
+        }
+        binding.etToLocation.setEndTextClickListener {
+            navigation.goToCreateOrderFromRequestFragment()
+        }
+
         binding.btnMenu.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -163,9 +197,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
         if (bottomSheetBehavior != null) {
             binding.drawerLayout.addDrawerListener(
-                BottomSheetBehaviorDrawerListener(
-                    bottomSheetBehavior!!
-                )
+                BottomSheetBehaviorDrawerListener(bottomSheetBehavior!!)
             )
         }
     }
@@ -176,14 +208,4 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         binding.layoutBottomSheet.isVisible = true
     }
 
-    private fun initBottomNavController() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.let { sheetNavigator.bind(navController) }
-    }
-
-    override fun onDestroy() {
-        sheetNavigator.unbind()
-        super.onDestroy()
-    }
 }

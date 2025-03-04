@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.aralhub.ui.databinding.LocationItemDraggableBinding
+import com.aralhub.ui.databinding.ItemLocationDraggableBinding
 import com.aralhub.ui.model.LocationItem
 import com.aralhub.ui.model.LocationItemDiffCallback
 
 class LocationItemDraggableAdapter :
     ListAdapter<LocationItem, LocationItemDraggableAdapter.ViewHolder>(LocationItemDiffCallback) {
 
-    inner class ViewHolder(private val binding: LocationItemDraggableBinding) :
+    inner class ViewHolder(private val binding: ItemLocationDraggableBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LocationItem) {
             binding.name.text = item.title
@@ -25,7 +25,7 @@ class LocationItemDraggableAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LocationItemDraggableBinding.inflate(
+            ItemLocationDraggableBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

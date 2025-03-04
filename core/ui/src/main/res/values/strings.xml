@@ -97,4 +97,5 @@
     <string name="label_exit_description">Siz akkauntı tárk etip atırsız. Ámeldi tastıyıqlaysız ba?</string>
 
     <string name="standard_uzs_price">%s som</string>
+    <string name="placeholder_recommended_price">Usınıs etilgen baha %1$d som</string>
 </resources>

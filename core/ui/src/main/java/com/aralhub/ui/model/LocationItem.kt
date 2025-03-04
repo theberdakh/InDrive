@@ -1,5 +1,6 @@
 package com.aralhub.ui.model
 
+import android.text.SpannableString
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.DiffUtil
 

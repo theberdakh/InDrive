@@ -13,7 +13,7 @@
 
     <include
         android:id="@+id/item_select_location"
-        layout="@layout/location_item"
+        layout="@layout/item_location"
         />
     
     <Button

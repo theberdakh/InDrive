@@ -49,6 +49,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
         navController?.navigate(R.id.action_requestFragment_to_selectLocationFragment)
     }
 
+    override fun goToCreateOrderFromRequestFragment() {
+        navController?.navigate(R.id.action_requestFragment_to_createOrderFragment)
+    }
+
     override fun goToGetOffersFromSendOrderFragment() {
         navController?.navigate(R.id.action_requestFragment_to_offersFragment)
     }

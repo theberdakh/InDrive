@@ -10,9 +10,7 @@ import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.ScreenPoint
-import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraBounds
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.Map
@@ -24,7 +22,6 @@ import com.yandex.mapkit.search.SearchManagerType
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session.SearchListener
-import com.yandex.mapkit.search.Snippet
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 
@@ -33,7 +30,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private lateinit var mapWindow: MapWindow
     private lateinit var map: Map
     private lateinit var placemarkMapObject: PlacemarkMapObject
-    val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val searchOptions = SearchOptions().apply {
         searchTypes = SearchType.GEO.value
         resultPageSize = 1

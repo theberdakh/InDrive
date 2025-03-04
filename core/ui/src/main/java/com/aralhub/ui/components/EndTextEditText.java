@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 
 import com.aralhub.ui.R;
 
+import java.util.Objects;
+
 public class EndTextEditText extends LinearLayout {
     private OnClickListener endTextClickListener;
 
@@ -104,6 +106,11 @@ public class EndTextEditText extends LinearLayout {
     public EndTextEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
+    }
+
+    public String getText() {
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(0);
+        return Objects.requireNonNull(editText.getText()).toString();
     }
 
     private int dpToPx(float dp) {

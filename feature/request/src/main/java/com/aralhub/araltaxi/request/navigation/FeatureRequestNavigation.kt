@@ -2,6 +2,7 @@ package com.aralhub.araltaxi.request.navigation
 
 interface FeatureRequestNavigation {
     fun goToSelectLocationFromRequestFragment()
+    fun goToCreateOrderFromRequestFragment()
     fun goToGetOffersFromSendOrderFragment()
     fun goToProfileFromRequestFragment()
     fun goToSupportFromRequestFragment()
