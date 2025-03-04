@@ -22,6 +22,8 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DriverNetworkApi {
 
@@ -64,5 +66,11 @@ interface DriverNetworkApi {
 
     @GET("/driver/balance_info")
     suspend fun getDriverBalanceInfo(): Response<ServerResponse<NetworkBalanceInfo>>
+
+    @POST("/websocket/ride/{ride_uuid}/offer")
+    suspend fun createOffer(
+        @Path("ride_uuid") rideUUID: String,
+        @Query("amount") amount: Int
+    ): Response<ServerResponse<NetworkActiveOfferResponse>>
 
 }

@@ -10,7 +10,10 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.aralhub.araltaxi.driver.orders.orders.CreateOfferUiState
+import com.aralhub.araltaxi.driver.orders.orders.OfferViewModel
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.ui.model.OrderItem
@@ -18,12 +21,21 @@ import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
     private val binding by viewBinding(ModalBottomSheetOrderBinding::bind)
     private val orderLoadingModalBottomSheet = OrderLoadingModalBottomSheet()
+
+    private val viewModel by viewModels<OfferViewModel>()
+
+    private var order: OrderItem? = null
+    private var offerAmount = 0
 
     private var onOrderAccepted: (() -> Unit)? = null
     fun setOnOrderAccepted(onOrderAccepted: () -> Unit) {
@@ -44,11 +56,12 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         setWebView()
         setupUI()
         setupListeners()
+        initObservers()
 
     }
 
     private fun setupUI() = binding.apply {
-        val order = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        order = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable("OrderDetail", OrderItem::class.java)
         } else {
             arguments?.getParcelable("OrderDetail")
@@ -62,11 +75,12 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
-            orderLoadingModalBottomSheet.show(parentFragmentManager, OrderLoadingModalBottomSheet.TAG)
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(3000)
-                orderLoadingModalBottomSheet.dismissAllowingStateLoss()
-                onOrderAccepted?.invoke()
+            offerAmount = binding.tvPrice.text.filter { it.isDigit() }.toString().toInt()
+            if (order != null) {
+                viewModel.createOffer(
+                    order!!.id,
+                    offerAmount
+                )
             }
         }
     }
@@ -114,6 +128,33 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             val endLong = 59.612868
             loadUrl("https://unique-banoffee-29f6df.netlify.app/?z=15&loc=$startLat%2C$startLong&loc=$endLat%2C$endLong&hl=ru&alt=0")
         }
+    }
+
+    private fun initObservers() {
+        viewModel.createOfferUiState.onEach { result ->
+            when (result) {
+                is CreateOfferUiState.Error -> {
+                    //show error
+                }
+
+                CreateOfferUiState.Loading -> {}
+                is CreateOfferUiState.Success -> {
+                    val bundle = Bundle()
+                    val offerAmount = binding.etPrice.text.toString()
+                    bundle.putString("OfferAmount", offerAmount)
+                    orderLoadingModalBottomSheet.arguments = bundle
+                    orderLoadingModalBottomSheet.show(
+                        parentFragmentManager,
+                        OrderLoadingModalBottomSheet.TAG
+                    )
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(10000)
+                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                        onOrderAccepted?.invoke()
+                    }
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     companion object {

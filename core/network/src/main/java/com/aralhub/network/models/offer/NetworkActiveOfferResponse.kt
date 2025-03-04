@@ -12,7 +12,7 @@ data class NetworkActiveOfferResponse(
     val uuid: String,
     val passenger: ClientRideResponsePassenger,
     @SerializedName("base_amount")
-    val baseAmount: Double,
+    val baseAmount: Int,
     @SerializedName("updated_amount")
     val updatedAmount: Double?,
     @SerializedName("recommended_amount")

@@ -29,4 +29,8 @@ interface DriverNetworkDataSource {
     suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty>
     suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo>
     suspend fun getActiveRides(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>
+    suspend fun createOffer(
+        rideUUID: String,
+        amount: Int
+    ): NetworkResult<NetworkActiveOfferResponse>
 }
