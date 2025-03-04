@@ -15,6 +15,7 @@
             android:layout_height="match_parent" />
 
         <View
+            android:id="@+id/icon_center"
             android:layout_width="50dp"
             android:layout_height="100dp"
             android:background="@drawable/ic_center_people"
