@@ -9,6 +9,7 @@ import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
+import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
@@ -66,8 +67,8 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return api.driverPhoto(MultipartEx.getMultipartFromFile(file)).safeRequest()
     }
 
-    override suspend fun getActiveRides(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>> {
-        return api.getActiveRides(sendLocationRequest).safeRequestServerResponse()
+    override suspend fun getActiveOrders(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>> {
+        return api.getActiveOrders(sendLocationRequest).safeRequestServerResponse()
     }
 
     override suspend fun createOffer(
@@ -75,6 +76,14 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         amount: Int
     ): NetworkResult<NetworkActiveOfferResponse> {
         return api.createOffer(rideUUID, amount).safeRequestServerResponse()
+    }
+
+    override suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse> {
+        return api.getActiveRideByDriver().safeRequestServerResponse()
+    }
+
+    override suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<Boolean> {
+        return api.cancelRide(rideId, cancelCauseId).safeRequestEmpty()
     }
 
     override suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo> {

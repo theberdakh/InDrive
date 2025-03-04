@@ -1,6 +1,5 @@
 package com.aralhub.indrive.core.data.model.offer
 
-import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 

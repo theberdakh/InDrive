@@ -56,6 +56,18 @@
                 android:text="Zakazlar tabılmadı"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
+            <TextView
+                android:id="@+id/tv_uuid"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin_small"
+                android:textColor="@color/color_content_secondary"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="20dp"
+                android:text="uuid"
+                android:drawablePadding="@dimen/padding_small"
+                app:drawableStartCompat="@drawable/ic_info" />
+
             <View
                 android:id="@+id/btn_filter"
                 android:layout_width="56dp"

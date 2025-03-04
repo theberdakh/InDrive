@@ -7,6 +7,7 @@ import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
+import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
@@ -62,7 +63,7 @@ interface DriverNetworkApi {
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
 
     @POST("/websocket/ride/get_rides")
-    suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
+    suspend fun getActiveOrders(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
     @GET("/driver/balance_info")
     suspend fun getDriverBalanceInfo(): Response<ServerResponse<NetworkBalanceInfo>>
@@ -72,5 +73,14 @@ interface DriverNetworkApi {
         @Path("ride_uuid") rideUUID: String,
         @Query("amount") amount: Int
     ): Response<ServerResponse<NetworkActiveOfferResponse>>
+
+    @GET("/websocket/get_active_ride_by_driver")
+    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse>>
+
+    @PUT("/ride/{rideId}/cancel_ride_by_driver")
+    suspend fun cancelRide(
+        @Path("rideId") rideId: Int,
+        @Query("cancel_cause_id") cancelCauseId: Int
+    ): Response<ServerResponseEmpty>
 
 }

@@ -43,6 +43,8 @@ import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,6 +52,8 @@ import javax.inject.Inject
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
+
+    private var rideId: Int = 0
 
     @Inject
     lateinit var errorHandler: ErrorHandler
@@ -98,6 +102,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun initObservers() {
+        binding.tvUuid.setOnClickListener {
+            viewModel.cancelRide(
+                rideId = rideId,
+                cancelCauseId = 2
+            )
+        }
+        viewModel.activeOrdersUiState.onEach { rideId ->
+            binding.tvUuid.text = rideId.toString()
+            this.rideId = rideId
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
                 is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
@@ -244,7 +258,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
-            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+//            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+            viewModel.cancelRide(
+                rideId,
+                2
+            )
             reasonCancelModalBottomSheet.show(
                 childFragmentManager,
                 ReasonCancelModalBottomSheet.TAG

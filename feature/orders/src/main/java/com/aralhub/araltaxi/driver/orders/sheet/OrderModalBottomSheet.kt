@@ -36,6 +36,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private var order: OrderItem? = null
     private var offerAmount = 0
+    private var baseAmount = 0
 
     private var onOrderAccepted: (() -> Unit)? = null
     fun setOnOrderAccepted(onOrderAccepted: () -> Unit) {
@@ -71,6 +72,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         tvDistance.text = order?.roadDistance
         tvFromLocation.text = order?.pickUpAddress
         tvToLocation.text = order?.destinationAddress
+        baseAmount = order?.roadPrice?.toInt() ?: 0
     }
 
     private fun setupListeners() {
@@ -80,6 +82,14 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 viewModel.createOffer(
                     order!!.id,
                     offerAmount
+                )
+            }
+        }
+        binding.btnAcceptOffer.setOnClickListener {
+            if (order != null) {
+                viewModel.createOffer(
+                    order!!.id,
+                    baseAmount
                 )
             }
         }
