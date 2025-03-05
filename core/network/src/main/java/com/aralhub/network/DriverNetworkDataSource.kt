@@ -11,6 +11,7 @@ import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
@@ -33,7 +34,7 @@ interface DriverNetworkDataSource {
     suspend fun createOffer(
         rideUUID: String,
         amount: Int
-    ): NetworkResult<NetworkActiveOfferResponse>
+    ): NetworkResult<CreateOfferByDriverResponse?>
 
     suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse>
     suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<Boolean>

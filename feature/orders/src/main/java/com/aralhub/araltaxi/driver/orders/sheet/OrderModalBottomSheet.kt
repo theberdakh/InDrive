@@ -22,17 +22,15 @@ import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
     private val binding by viewBinding(ModalBottomSheetOrderBinding::bind)
     private val orderLoadingModalBottomSheet = OrderLoadingModalBottomSheet()
 
-    private val viewModel by viewModels<OfferViewModel>()
+    private val offerViewModel by viewModels<OfferViewModel>()
 
     private var order: OrderItem? = null
     private var offerAmount = 0
@@ -79,7 +77,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         binding.btnSendOffer.setOnClickListener {
             offerAmount = binding.tvPrice.text.filter { it.isDigit() }.toString().toInt()
             if (order != null) {
-                viewModel.createOffer(
+                offerViewModel.createOffer(
                     order!!.id,
                     offerAmount
                 )
@@ -87,7 +85,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         }
         binding.btnAcceptOffer.setOnClickListener {
             if (order != null) {
-                viewModel.createOffer(
+                Log.d("TAG", "setupListeners: $order")
+                offerViewModel.createOffer(
                     order!!.id,
                     baseAmount
                 )
@@ -141,7 +140,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     }
 
     private fun initObservers() {
-        viewModel.createOfferUiState.onEach { result ->
+        offerViewModel.createOfferUiState.onEach { result ->
+            Log.i(TAG, "initObservers: $result")
             when (result) {
                 is CreateOfferUiState.Error -> {
                     //show error
@@ -157,11 +157,10 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        delay(10000)
-                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
-                        onOrderAccepted?.invoke()
-                    }
+//                    viewLifecycleOwner.lifecycleScope.launch {
+//                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+//                        onOrderAccepted?.invoke()
+//                    }
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

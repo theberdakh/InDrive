@@ -202,10 +202,9 @@
         android:id="@+id/btn_accept_offer"
         style="@style/Widget.InDrive.Button.GreenGradient"
         android:layout_width="match_parent"
-        android:layout_margin="@dimen/margin_small"
-        android:text="Usınıstı qabıllaw"
         android:layout_height="wrap_content"
-        />
+        android:layout_margin="@dimen/margin_small"
+        android:text="Usınıstı qabıllaw" />
 
     <LinearLayout
         android:layout_width="match_parent"

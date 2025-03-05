@@ -11,6 +11,7 @@ import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
@@ -72,7 +73,7 @@ interface DriverNetworkApi {
     suspend fun createOffer(
         @Path("ride_uuid") rideUUID: String,
         @Query("amount") amount: Int
-    ): Response<ServerResponse<NetworkActiveOfferResponse>>
+    ): Response<ServerResponse<CreateOfferByDriverResponse?>>
 
     @GET("/websocket/get_active_ride_by_driver")
     suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse>>

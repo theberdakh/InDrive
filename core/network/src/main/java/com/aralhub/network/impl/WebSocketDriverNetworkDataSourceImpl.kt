@@ -6,6 +6,7 @@ import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.location.NetworkSendLocationRequest
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.models.offer.NetworkOfferCancelResponse
+import com.aralhub.network.models.offer.NetworkOfferRejectedResponse
 import com.aralhub.network.utils.WebSocketEventNetwork
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -58,6 +59,16 @@ class WebSocketDriverNetworkDataSourceImpl(
                                             TypeToken<WebSocketServerResponse<NetworkOfferCancelResponse>>() {}.type
                                     )
                                 WebSocketEventNetwork.RideCancel(rideCancelData.data.rideId)
+                            }
+
+                            "offer_rejected" -> {
+                                val rideCancelData =
+                                    Gson().fromJson<WebSocketServerResponse<NetworkOfferRejectedResponse>>(
+                                        jsonString,
+                                        object :
+                                            TypeToken<WebSocketServerResponse<NetworkOfferRejectedResponse>>() {}.type
+                                    )
+                                WebSocketEventNetwork.OfferReject(rideCancelData.data.rideUUID)
                             }
 
                             "new_ride_request" -> {

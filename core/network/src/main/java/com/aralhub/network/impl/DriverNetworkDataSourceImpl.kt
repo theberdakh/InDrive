@@ -13,6 +13,7 @@ import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
@@ -74,7 +75,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
     override suspend fun createOffer(
         rideUUID: String,
         amount: Int
-    ): NetworkResult<NetworkActiveOfferResponse> {
+    ): NetworkResult<CreateOfferByDriverResponse?> {
         return api.createOffer(rideUUID, amount).safeRequestServerResponse()
     }
 

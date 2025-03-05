@@ -9,6 +9,7 @@ import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -57,7 +58,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     @Inject
     lateinit var errorHandler: ErrorHandler
-    private val viewModel by viewModels<OrdersViewModel>()
+    private val viewModel by activityViewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
@@ -143,6 +144,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             orders.removeIf { it.id == getActiveOrdersUiState.rideId }
                             adapter.submitList(orders)
                             binding.tvOrdersNotFound.isVisible = orders.isEmpty()
+                        }
+
+                        is GetActiveOrdersUiState.OfferRejected -> {
+
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {

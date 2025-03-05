@@ -19,6 +19,10 @@ class DriverWebSocketRepositoryImpl @Inject constructor(
                 WebSocketEvent.ActiveOffer(it.offer.toDomain())
             }
 
+            is WebSocketEventNetwork.OfferReject -> {
+                WebSocketEvent.OfferReject(it.rideUUID)
+            }
+
             is WebSocketEventNetwork.RideCancel -> {
                 WebSocketEvent.RideCancel(it.rideId)
             }
