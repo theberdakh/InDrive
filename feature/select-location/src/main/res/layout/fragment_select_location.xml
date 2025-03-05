@@ -26,6 +26,7 @@
 
         <ImageButton
             android:id="@+id/btn_menu"
+            android:visibility="gone"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="@dimen/margin_small"
@@ -81,6 +82,7 @@
                 />
 
             <Button
+                android:id="@+id/btn_select_location"
                 style="@style/Widget.InDrive.Button.Primary"
                 android:layout_margin="@dimen/margin_medium"
                 android:layout_width="match_parent"

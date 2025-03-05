@@ -1,15 +1,20 @@
 package com.aralhub.ui.model
 
-import android.text.SpannableString
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.DiffUtil
+
+enum class LocationItemClickOwner {
+    FROM, TO
+}
 
 data class LocationItem(
     val id: Int,
     val title: String,
-    @DrawableRes val icon: Int = com.aralhub.ui.R.drawable.ic_carbon_location_current,
+    @DrawableRes val icon: Int = com.aralhub.ui.R.drawable.ic_ic_round_pin_drop,
     val subtitle: String,
-    val onClick: () -> Unit
+    val longitude: Double = 0.0,
+    val latitude: Double = 0.0,
+    val clickOwner: LocationItemClickOwner
 )
 
 object LocationItemDiffCallback : DiffUtil.ItemCallback<LocationItem>() {

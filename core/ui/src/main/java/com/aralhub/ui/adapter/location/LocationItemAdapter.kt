@@ -11,6 +11,12 @@ import com.aralhub.ui.model.LocationItemDiffCallback
 class LocationItemAdapter: ListAdapter<LocationItem, LocationItemAdapter.ViewHolder>(
     LocationItemDiffCallback
 ) {
+
+    private var onItemClickListener: ((LocationItem) -> Unit) = {}
+    fun setOnItemClickListener(listener: (LocationItem) -> Unit) {
+        onItemClickListener = listener
+    }
+
     inner class ViewHolder(private val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(locationItem: LocationItem) {
@@ -18,7 +24,7 @@ class LocationItemAdapter: ListAdapter<LocationItem, LocationItemAdapter.ViewHol
                 tvTitle.text = locationItem.title
                 tvSubtitle.text = locationItem.subtitle
                 ivIcon.setImageResource(locationItem.icon)
-                root.setOnClickListener { locationItem.onClick() }
+                root.setOnClickListener { onItemClickListener(locationItem)}
             }
         }
     }

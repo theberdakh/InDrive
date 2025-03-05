@@ -16,12 +16,15 @@ import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.ui.sheets.LogoutModalBottomSheet
+import com.aralhub.araltaxi.request.navigation.models.LocationType
+import com.aralhub.araltaxi.request.navigation.models.SelectedLocation
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.CurrentLocationListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.adapter.location.LocationItemAdapter
+import com.aralhub.ui.model.LocationItemClickOwner
+import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
@@ -29,14 +32,17 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    @Inject lateinit var navigation: FeatureRequestNavigation
-    @Inject lateinit var errorHandler: ErrorHandler
+    @Inject
+    lateinit var navigation: FeatureRequestNavigation
+    @Inject
+    lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
-     private val viewModel by viewModels<RequestViewModel>()
+    private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
 
     override fun onAttach(context: Context) {
@@ -47,6 +53,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        initObservers()
     }
 
     override fun onStop() {
@@ -58,31 +65,45 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager?.let { observeLocationUpdates(it) }
         initViews()
         initListeners()
-        initObservers()
         viewModel.getProfile()
     }
 
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(LocationManager.GPS_PROVIDER).apply {
-            latitude = 42.4651
-            longitude = 59.6136
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
-            initialLocation = lastKnownLocation,
-            onProviderEnabledListener = {
-                viewModel.updateLocationEnabled(true)
-            },
-            onProviderDisabledListener = {
-                viewModel.updateLocationEnabled(false)
-            }))
+        val lastKnownLocation =
+            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(
+                LocationManager.GPS_PROVIDER
+            ).apply {
+                latitude = 42.4651
+                longitude = 59.6136
+            }
+        locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            0,
+            0f,
+            CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
+                initialLocation = lastKnownLocation,
+                onProviderEnabledListener = {
+                    viewModel.updateLocationEnabled(true)
+                },
+                onProviderDisabledListener = {
+                    viewModel.updateLocationEnabled(false)
+                })
+        )
     }
 
     private fun initObservers() {
+
+        observeState(viewModel.selectedLocations) { selectedLocations ->
+            if(selectedLocations != null){
+                navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+            }
+        }
 
         observeState(viewModel.suggestionsUiState) { suggestionsUiState ->
             when (suggestionsUiState) {
@@ -97,9 +118,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
         observeState(viewModel.locationEnabled) { isEnabled ->
             if (isEnabled) {
-               errorHandler.showToast("Location is enabled")
+                // Location GPS is enabled
             } else {
-                errorHandler.showToast("Location is disabled")
+                // Location GPS is disabled
             }
         }
         observeState(viewModel.profileUiState) { profileUiState ->
@@ -109,7 +130,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is ProfileUiState.Success -> displayProfile(profileUiState.profile)
             }
         }
-        observeState(viewModel.logOutUiState){ logOutUiState ->
+        observeState(viewModel.logOutUiState) { logOutUiState ->
             when (logOutUiState) {
                 is LogOutUiState.Error -> errorHandler.showToast(logOutUiState.message)
                 LogOutUiState.Loading -> {}
@@ -119,9 +140,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text = profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text = profile.phone
-        val imageView = binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar)
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            profile.phone
+        val imageView =
+            binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar)
         displayAvatar(profile.profilePhoto, imageView)
     }
 
@@ -132,12 +156,85 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun initListeners() {
 
+        parentFragmentManager.setFragmentResultListener(
+            "location_key",
+            viewLifecycleOwner
+        ) { requestKey, bundle ->
+            val latitude = bundle.getDouble("latitude")
+            val longitude = bundle.getDouble("longitude")
+            val locationName = bundle.getString("locationName") ?: "null name"
+            val locationOwner = bundle.getInt("owner")
+            when (locationOwner) {
+                0 -> {
+                    binding.etFromLocation.setText(locationName)
+                    viewModel.updateLocation(
+                        SelectedLocation(
+                            name = locationName,
+                            longitude = longitude,
+                            latitude = latitude,
+                            locationType = LocationType.FROM
+                        )
+                    )
+                }
+
+                1 -> {
+                    binding.etToLocation.setText(locationName)
+                    viewModel.updateLocation(
+                        SelectedLocation(
+                            name = locationName,
+                            longitude = longitude,
+                            latitude = latitude,
+                            locationType = LocationType.TO
+                        )
+                    )
+                }
+            }
+            errorHandler.showToast("Selected location: $locationOwner $locationName: $latitude, $longitude")
+        }
+
+
+        adapter.setOnItemClickListener {
+            when (it.clickOwner) {
+                LocationItemClickOwner.FROM -> {
+                    binding.etFromLocation.text = it.title
+                    viewModel.updateLocation(
+                        SelectedLocation(
+                            name = it.title,
+                            longitude = it.longitude,
+                            latitude = it.latitude,
+                            locationType = LocationType.FROM
+                        )
+                    )
+                    adapter.submitList(null)
+                }
+
+                LocationItemClickOwner.TO -> {
+                    binding.etToLocation.text = it.title
+                    viewModel.updateLocation(
+                        SelectedLocation(
+                            name = it.title,
+                            longitude = it.longitude,
+                            latitude = it.latitude,
+                            locationType = LocationType.TO
+                        )
+                    )
+                    adapter.submitList(null)
+                }
+            }
+        }
+
         binding.etFromLocation.setOnTextChangedListener {
-            viewModel.suggestLocation(it)
+            if (it.isEmpty()) {
+                adapter.submitList(null)
+            }
+            viewModel.suggestLocation(it, LocationItemClickOwner.FROM)
         }
 
         binding.etToLocation.setOnTextChangedListener {
-            viewModel.suggestLocation(it)
+            if (it.isEmpty()) {
+                adapter.submitList(null)
+            }
+            viewModel.suggestLocation(it, LocationItemClickOwner.TO)
         }
 
         binding.etFromLocation.setOnActivatedListener { isActivated ->
@@ -149,10 +246,11 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
 
         binding.etFromLocation.setEndTextClickListener {
-           navigation.goToSelectLocationFromRequestFragment()
+            navigation.goToSelectFromLocationFromRequestFragment()
         }
         binding.etToLocation.setEndTextClickListener {
-            navigation.goToCreateOrderFromRequestFragment()
+           // navigation.goToCreateOrderFromRequestFragment()
+            navigation.goToSelectToLocationFromRequestFragment()
         }
 
         binding.btnMenu.setOnClickListener {
