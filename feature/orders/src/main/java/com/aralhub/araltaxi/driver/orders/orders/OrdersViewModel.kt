@@ -13,6 +13,7 @@ import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
@@ -35,8 +36,16 @@ class OrdersViewModel @Inject constructor(
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val sendDriverLocationUseCase: SendDriverLocationUseCase,
-    private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase
+    private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
+    private val repository: DriverRepository
 ) : ViewModel() {
+
+    init {
+//        getActiveRide()
+    }
+
+    private var _rejectOfferState = MutableSharedFlow<String>()
+    val rejectOfferState = _rejectOfferState.asSharedFlow()
 
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -74,6 +83,7 @@ class OrdersViewModel @Inject constructor(
 
     private val existingOrdersState =
         MutableStateFlow<GetActiveOrdersUiState>(GetActiveOrdersUiState.Loading)
+
     fun getExistingOrders(
         sendDriverLocationUI: SendDriverLocationUI
     ) = viewModelScope.launch {
@@ -95,13 +105,21 @@ class OrdersViewModel @Inject constructor(
     private val ordersState = getActiveOrdersUseCase
         .invoke()
         .map {
+            Log.e("WebSocketLog", "$it")
             when (it) {
                 is WebSocketEvent.ActiveOffer -> {
+                    GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
+                }
+                is WebSocketEvent.OfferAccepted -> {
                     GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
                 }
 
                 is WebSocketEvent.RideCancel -> {
                     GetActiveOrdersUiState.OrderCanceled(it.rideId)
+                }
+
+                is WebSocketEvent.OfferReject -> {
+                    GetActiveOrdersUiState.OfferRejected(it.rideUUID)
                 }
 
                 is WebSocketEvent.Unknown -> {
@@ -130,8 +148,17 @@ class OrdersViewModel @Inject constructor(
                 GetActiveOrdersUiState.GetNewOrder(result.data)
             }
 
+            is GetActiveOrdersUiState.OfferAccepted -> {
+                GetActiveOrdersUiState.OfferAccepted(result.data)
+            }
+
             is GetActiveOrdersUiState.OrderCanceled -> {
                 GetActiveOrdersUiState.OrderCanceled(result.rideId)
+            }
+
+            is GetActiveOrdersUiState.OfferRejected -> {
+                _rejectOfferState.emit(result.rideUUID)
+                GetActiveOrdersUiState.OfferRejected(result.rideUUID)
             }
 
             else -> {
@@ -150,11 +177,35 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun disconnect() {
         viewModelScope.launch {
-            Log.d("OrderViewModel", "cleared")
             closeDriverWebSocketConnectionUseCase.close()
+        }
+    }
+
+    private var _activeOrdersUiState = MutableSharedFlow<Int>()
+    val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
+    private fun getActiveRide() {
+        viewModelScope.launch {
+            repository.getActiveRide().let { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    is Result.Success -> _activeOrdersUiState.emit((result.data))
+                }
+            }
+        }
+    }
+
+    fun cancelRide(rideId: Int, cancelCauseId: Int) {
+        viewModelScope.launch {
+            repository.cancelRide(rideId, cancelCauseId).let { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    is Result.Success -> {
+                        _activeOrdersUiState.emit(0)
+                    }
+                }
+            }
         }
     }
 }
@@ -170,6 +221,8 @@ sealed interface GetActiveOrdersUiState {
     data class GetNewOrder(val data: OrderItem) : GetActiveOrdersUiState
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
+    data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
+    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 

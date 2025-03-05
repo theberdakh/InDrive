@@ -155,7 +155,7 @@ class DriverAuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getActiveOrders(sendLocationRequest: SendLocationRequest): Result<List<ActiveOfferResponse>> {
-        driverNetworkDataSource.getActiveRides(sendLocationRequest.toDTO2()).let {
+        driverNetworkDataSource.getActiveOrders(sendLocationRequest.toDTO2()).let {
             return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {

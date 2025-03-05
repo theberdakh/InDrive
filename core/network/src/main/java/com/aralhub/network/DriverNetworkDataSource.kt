@@ -7,9 +7,11 @@ import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
+import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
@@ -28,5 +30,12 @@ interface DriverNetworkDataSource {
     suspend fun driverLogout(networkDriverLogoutRequest: NetworkLogoutRequest): NetworkResult<Boolean>
     suspend fun driverPhoto(file: File): NetworkResult<ServerResponseEmpty>
     suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo>
-    suspend fun getActiveRides(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>
+    suspend fun getActiveOrders(sendLocationRequest: NetworkSendLocationRequestWithoutType): NetworkResult<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>
+    suspend fun createOffer(
+        rideUUID: String,
+        amount: Int
+    ): NetworkResult<CreateOfferByDriverResponse?>
+
+    suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse>
+    suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<Boolean>
 }

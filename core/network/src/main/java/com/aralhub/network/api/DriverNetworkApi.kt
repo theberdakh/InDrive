@@ -7,9 +7,11 @@ import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.balance.NetworkBalanceInfo
 import com.aralhub.network.models.card.NetworkCard
+import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
+import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.requests.auth.NetworkDriverAuthRequest
 import com.aralhub.network.requests.logout.NetworkLogoutRequest
@@ -22,6 +24,8 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DriverNetworkApi {
 
@@ -60,9 +64,24 @@ interface DriverNetworkApi {
     suspend fun driverPhoto(@Part photo: MultipartBody.Part): Response<ServerResponseEmpty>
 
     @POST("/websocket/ride/get_rides")
-    suspend fun getActiveRides(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
+    suspend fun getActiveOrders(@Body sendLocationRequest: NetworkSendLocationRequestWithoutType): Response<ServerResponse<List<WebSocketServerResponse<NetworkActiveOfferResponse>>>>
 
     @GET("/driver/balance_info")
     suspend fun getDriverBalanceInfo(): Response<ServerResponse<NetworkBalanceInfo>>
+
+    @POST("/websocket/ride/{ride_uuid}/offer")
+    suspend fun createOffer(
+        @Path("ride_uuid") rideUUID: String,
+        @Query("amount") amount: Int
+    ): Response<ServerResponse<CreateOfferByDriverResponse?>>
+
+    @GET("/websocket/get_active_ride_by_driver")
+    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse>>
+
+    @PUT("/ride/{rideId}/cancel_ride_by_driver")
+    suspend fun cancelRide(
+        @Path("rideId") rideId: Int,
+        @Query("cancel_cause_id") cancelCauseId: Int
+    ): Response<ServerResponseEmpty>
 
 }

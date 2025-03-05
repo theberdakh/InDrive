@@ -9,8 +9,8 @@ data class ActiveOfferResponse(
     val pickUp: String?,
     val avatar: String,
     val roadPrice: String = "",
-    val pickUpDistance: String = "",
-    val roadDistance: String = "",
+    val pickUpDistance: Double,
+    val roadDistance: Double,
     val paymentType: Int,
     val pickUpAddress: String,
     val destinationAddress: String? = null
@@ -24,8 +24,8 @@ fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferR
             pickUp = data.clientPickUpAddress,
             avatar = data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
             roadPrice = data.baseAmount.toString(),
-            pickUpDistance = distanceToClient.distance.toString(),
-            roadDistance = data.distance.totalDistance.toString(),
+            pickUpDistance = 1.1,
+            roadDistance = data.distance.totalDistance.toDouble(),
             paymentType = data.paymentMethod.id,
             pickUpAddress = data.clientPickUpAddress,
             destinationAddress = data.locations.points.getOrNull(1)?.name

@@ -9,7 +9,7 @@ import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -43,6 +43,8 @@ import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,9 +53,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
 
+    private var rideId: Int = 0
+
     @Inject
     lateinit var errorHandler: ErrorHandler
-    private val viewModel by viewModels<OrdersViewModel>()
+    private val viewModel by activityViewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
@@ -95,9 +99,29 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             )
         )
         viewModel.getDriverProfile()
+        lifecycleScope.launch {
+            delay(3000)
+            viewModel.sendLocation(
+                SendDriverLocationUI(
+                    latitude = 42.44668,
+                    longitude = 59.618043,
+                    distance = 300000
+                )
+            )
+        }
     }
 
     private fun initObservers() {
+        binding.tvUuid.setOnClickListener {
+            viewModel.cancelRide(
+                rideId = rideId,
+                cancelCauseId = 2
+            )
+        }
+        viewModel.activeOrdersUiState.onEach { rideId ->
+            binding.tvUuid.text = rideId.toString()
+            this.rideId = rideId
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
                 is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
@@ -123,12 +147,25 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             getActiveOrdersUiState.message
                         )
 
-                        GetActiveOrdersUiState.Loading -> {}
+                        GetActiveOrdersUiState.Loading -> {
+                        }
 
                         is GetActiveOrdersUiState.OrderCanceled -> {
                             orders.removeIf { it.id == getActiveOrdersUiState.rideId }
                             adapter.submitList(orders)
                             binding.tvOrdersNotFound.isVisible = orders.isEmpty()
+                        }
+
+                        is GetActiveOrdersUiState.OfferRejected -> {
+
+                        }
+
+                        is GetActiveOrdersUiState.OfferAccepted -> {
+                            orderModalBottomSheet.dismissAllowingStateLoss()
+                            goingToPickUpModalBottomSheet.show(
+                                childFragmentManager,
+                                GoingToPickUpModalBottomSheet.TAG
+                            )
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
@@ -144,15 +181,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             } else {
                                 binding.tvOrdersNotFound.show()
                             }
-                            delay(2000)
-                            viewModel.sendLocation(
-                                SendDriverLocationUI(
-                                    latitude = 42.44668,
-                                    longitude = 59.618043,
-                                    distance = 300000
-                                )
-                            )
-
                         }
                     }
                 }
@@ -244,7 +272,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
-            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+//            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+            viewModel.cancelRide(
+                rideId,
+                2
+            )
             reasonCancelModalBottomSheet.show(
                 childFragmentManager,
                 ReasonCancelModalBottomSheet.TAG
@@ -346,5 +378,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun showExitLineBottomSheet() {
         exitLineModalBottomSheet.show(childFragmentManager, ExitLineModalBottomSheet.TAG)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.disconnect()
     }
 }
