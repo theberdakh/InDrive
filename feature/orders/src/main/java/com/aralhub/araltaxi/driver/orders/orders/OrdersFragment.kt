@@ -13,7 +13,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
@@ -42,7 +41,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -101,6 +99,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             )
         )
         viewModel.getDriverProfile()
+        lifecycleScope.launch {
+            delay(3000)
+            viewModel.sendLocation(
+                SendDriverLocationUI(
+                    latitude = 42.44668,
+                    longitude = 59.618043,
+                    distance = 300000
+                )
+            )
+        }
     }
 
     private fun initObservers() {
@@ -139,7 +147,8 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             getActiveOrdersUiState.message
                         )
 
-                        GetActiveOrdersUiState.Loading -> {}
+                        GetActiveOrdersUiState.Loading -> {
+                        }
 
                         is GetActiveOrdersUiState.OrderCanceled -> {
                             orders.removeIf { it.id == getActiveOrdersUiState.rideId }
@@ -149,6 +158,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                         is GetActiveOrdersUiState.OfferRejected -> {
 
+                        }
+
+                        is GetActiveOrdersUiState.OfferAccepted -> {
+                            orderModalBottomSheet.dismissAllowingStateLoss()
+                            goingToPickUpModalBottomSheet.show(
+                                childFragmentManager,
+                                GoingToPickUpModalBottomSheet.TAG
+                            )
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
@@ -164,15 +181,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             } else {
                                 binding.tvOrdersNotFound.show()
                             }
-                            delay(2000)
-                            viewModel.sendLocation(
-                                SendDriverLocationUI(
-                                    latitude = 42.44668,
-                                    longitude = 59.618043,
-                                    distance = 300000
-                                )
-                            )
-
                         }
                     }
                 }

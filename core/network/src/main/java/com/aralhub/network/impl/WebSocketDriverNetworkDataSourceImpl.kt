@@ -84,7 +84,16 @@ class WebSocketDriverNetworkDataSourceImpl(
                             }
 
                             OFFER_ACCEPTED -> {
-                                WebSocketEventNetwork.Unknown(jsonString)
+                                Log.d("WebSocketLog", "@@@@ $jsonString")
+                                val offerData =
+                                    Gson().fromJson<WebSocketServerResponse<NetworkActiveOfferResponse>>(
+                                        jsonString,
+                                        object :
+                                            TypeToken<WebSocketServerResponse<NetworkActiveOfferResponse>>() {}.type
+                                    )
+                                WebSocketEventNetwork.OfferAccepted(
+                                    offerData
+                                )
                             }
 
                             else -> {

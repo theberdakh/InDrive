@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
@@ -104,8 +105,12 @@ class OrdersViewModel @Inject constructor(
     private val ordersState = getActiveOrdersUseCase
         .invoke()
         .map {
+            Log.e("WebSocketLog", "$it")
             when (it) {
                 is WebSocketEvent.ActiveOffer -> {
+                    GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
+                }
+                is WebSocketEvent.OfferAccepted -> {
                     GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
                 }
 
@@ -141,6 +146,10 @@ class OrdersViewModel @Inject constructor(
 
             is GetActiveOrdersUiState.GetNewOrder -> {
                 GetActiveOrdersUiState.GetNewOrder(result.data)
+            }
+
+            is GetActiveOrdersUiState.OfferAccepted -> {
+                GetActiveOrdersUiState.OfferAccepted(result.data)
             }
 
             is GetActiveOrdersUiState.OrderCanceled -> {
@@ -213,6 +222,7 @@ sealed interface GetActiveOrdersUiState {
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
+    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 

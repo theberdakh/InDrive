@@ -6,5 +6,6 @@ sealed class WebSocketEvent {
     data class RideCancel(val rideId: String) : WebSocketEvent()
     data class OfferReject(val rideUUID: String) : WebSocketEvent()
     data class ActiveOffer(val order: ActiveOfferResponse) : WebSocketEvent()
+    data class OfferAccepted(val order: ActiveOfferResponse) : WebSocketEvent()
     data class Unknown(val error: String) : WebSocketEvent()
 }

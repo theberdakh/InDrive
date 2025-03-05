@@ -2,18 +2,21 @@ package com.aralhub.araltaxi.driver.orders.model
 
 import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
 import com.aralhub.ui.model.OrderItem
-import com.aralhub.ui.model.PaymentMethod
+import com.aralhub.ui.model.PaymentType
 
 fun ActiveOfferResponse.asUI() = with(this) {
+    val paymentType = if (paymentType == 1) PaymentType.CASH else PaymentType.CARD
+    val pickUpDistanceValue = if (pickUpDistance < 1000) "${pickUpDistance.toInt()} m" else "${pickUpDistance.toInt() / 1000} km"
+    val roadDistanceValue = if (roadDistance < 1000) "${roadDistance.toInt()} m" else "${roadDistance.toInt() / 1000} km"
     OrderItem(
         id = id,
         name = name,
         pickUp = pickUp,
         avatar = avatar,
         roadPrice = roadPrice,
-        pickUpDistance = pickUpDistance,
-        roadDistance = roadDistance,
-        paymentType = if (paymentType == 1) PaymentMethod.CASH else PaymentMethod.CARD,
+        pickUpDistance = pickUpDistanceValue,
+        roadDistance = roadDistanceValue,
+        paymentType = paymentType,
         pickUpAddress = pickUpAddress,
         destinationAddress = destinationAddress
     )

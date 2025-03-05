@@ -19,6 +19,8 @@ import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBindin
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,9 +70,17 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
         tvClientName.text = order?.name
         tvDistance.text = order?.roadDistance
+        tvDistanceToClient.text = order?.pickUpDistance
         tvFromLocation.text = order?.pickUpAddress
         tvToLocation.text = order?.destinationAddress
         baseAmount = order?.roadPrice?.toInt() ?: 0
+        order?.paymentType?.resId?.let { ivPaymentMethod.setImageResource(it) }
+        Glide.with(binding.ivAvatar.context)
+            .load(order?.avatar)
+            .centerCrop()
+            .placeholder(com.aralhub.ui.R.drawable.ic_user)
+            .apply(RequestOptions.circleCropTransform())
+            .into(binding.ivAvatar)
     }
 
     private fun setupListeners() {
@@ -160,6 +170,11 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
     }
 
     companion object {
