@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.aralhub.ui.R
-import com.aralhub.ui.databinding.OrderItemBinding
+import com.aralhub.ui.databinding.ItemOrderBinding
 import com.aralhub.ui.model.OrderItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -24,7 +24,7 @@ class OrderItemAdapter :
         onItemClickListener = listener
     }
 
-    inner class ViewHolder(private val binding: OrderItemBinding) :
+    inner class ViewHolder(private val binding: ItemOrderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(orderItem: OrderItem) {
             val context = binding.root.context
@@ -49,7 +49,7 @@ class OrderItemAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = OrderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
