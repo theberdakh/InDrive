@@ -51,7 +51,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                             Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
 
                         when (baseResponse.type) {
-                            "ride_cancel" -> {
+                            RIDE_CANCELED -> {
                                 val rideCancelData =
                                     Gson().fromJson<WebSocketServerResponse<NetworkOfferCancelResponse>>(
                                         jsonString,
@@ -61,7 +61,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                                 WebSocketEventNetwork.RideCancel(rideCancelData.data.rideId)
                             }
 
-                            "offer_rejected" -> {
+                            OFFER_REJECTED -> {
                                 val rideCancelData =
                                     Gson().fromJson<WebSocketServerResponse<NetworkOfferRejectedResponse>>(
                                         jsonString,
@@ -71,7 +71,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                                 WebSocketEventNetwork.OfferReject(rideCancelData.data.rideUUID)
                             }
 
-                            "new_ride_request" -> {
+                            NEW_RIDE_REQUEST -> {
                                 val offerData =
                                     Gson().fromJson<WebSocketServerResponse<NetworkActiveOfferResponse>>(
                                         jsonString,
@@ -81,6 +81,10 @@ class WebSocketDriverNetworkDataSourceImpl(
                                 WebSocketEventNetwork.ActiveOffer(
                                     offerData
                                 )
+                            }
+
+                            OFFER_ACCEPTED -> {
+                                WebSocketEventNetwork.Unknown(jsonString)
                             }
 
                             else -> {
@@ -108,5 +112,20 @@ class WebSocketDriverNetworkDataSourceImpl(
     override suspend fun close() {
         session?.close()
         session = null
+        Log.d("WebSocketLog", "Session Closed")
+    }
+
+    companion object {
+        const val NEW_RIDE_REQUEST = "new_ride_request"
+        const val DRIVER_OFFER = "driver_offer"
+        const val OFFER_ACCEPTED = "offer_accepted"
+        const val OFFER_REJECTED = "offer_rejected"
+        const val RIDE_STATUS_UPDATE = "ride_status_update"
+        const val LOCATION_UPDATE = "location_update"
+        const val RIDE_ACCEPTED = "ride_accepted"
+        const val RIDE_CANCELED = "ride_cancel"
+        const val RIDE_DELETED = "ride_deleted"
+        const val RIDE_AMOUNT_UPDATED = "ride_amount_updated"
+        const val ERROR = "error"
     }
 }

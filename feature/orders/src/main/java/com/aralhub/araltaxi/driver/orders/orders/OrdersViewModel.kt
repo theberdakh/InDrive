@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
@@ -169,10 +168,8 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun disconnect() {
         viewModelScope.launch {
-            Log.d("OrderViewModel", "cleared")
             closeDriverWebSocketConnectionUseCase.close()
         }
     }

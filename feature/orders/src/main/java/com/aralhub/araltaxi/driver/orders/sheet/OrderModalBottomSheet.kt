@@ -157,10 +157,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
-//                    viewLifecycleOwner.lifecycleScope.launch {
-//                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
-//                        onOrderAccepted?.invoke()
-//                    }
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

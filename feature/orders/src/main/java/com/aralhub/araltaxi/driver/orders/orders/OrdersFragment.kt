@@ -10,10 +10,10 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
@@ -42,6 +42,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -369,5 +370,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun showExitLineBottomSheet() {
         exitLineModalBottomSheet.show(childFragmentManager, ExitLineModalBottomSheet.TAG)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.disconnect()
     }
 }
