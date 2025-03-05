@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.aralhub.ui.databinding.ItemOrderBinding
+import com.aralhub.ui.R
+import com.aralhub.ui.databinding.OrderItemBinding
 import com.aralhub.ui.model.OrderItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -23,14 +24,16 @@ class OrderItemAdapter :
         onItemClickListener = listener
     }
 
-    inner class ViewHolder(private val binding: ItemOrderBinding) :
+    inner class ViewHolder(private val binding: OrderItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(orderItem: OrderItem) {
+            val context = binding.root.context
             binding.tvClientName.text = orderItem.name
             binding.tvPickUpLocation.text = orderItem.pickUp
             binding.tvDistance.text = orderItem.pickUpDistance
             binding.tvDistanceRoad.text = orderItem.roadDistance
-            binding.tvPrice.text = orderItem.roadPrice
+            binding.tvPrice.text = context.getString(R.string.standard_uzs_price, orderItem.roadPrice)
+            binding.ivPaymentMethod.setImageResource(orderItem.paymentType.resId)
 
             binding.root.setOnClickListener {
                 onItemClickListener?.invoke(orderItem)
@@ -46,7 +49,7 @@ class OrderItemAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = OrderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
