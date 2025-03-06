@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.create_order.databinding.FragmentCreateOrderBinding
-import com.aralhub.araltaxi.create_order.models.SelectedLocations
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
 import com.aralhub.ui.adapter.option.RideOptionItemAdapter
+import com.aralhub.ui.model.args.SelectedLocations
 import com.aralhub.ui.sheets.ChangePaymentMethodModalBottomSheet
 import com.aralhub.ui.sheets.CommentToDriverModalBottomSheet
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -25,9 +25,7 @@ import javax.inject.Inject
 class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val binding by viewBinding(FragmentCreateOrderBinding::bind)
     private var isConfiguring: Boolean = false
-
-    @Inject
-    lateinit var errorHandler: ErrorHandler
+    @Inject lateinit var errorHandler: ErrorHandler
     private val changePaymentMethodModalBottomSheet by lazy { ChangePaymentMethodModalBottomSheet() }
     private val commentToDriverModalBottomSheet by lazy { CommentToDriverModalBottomSheet() }
     private var minimumPrice = 0
@@ -48,7 +46,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     }
 
     private fun initArgs() {
-       /* val selectedLocations =
+        val selectedLocations =
             requireArguments().getSerializable("selectedLocations") as SelectedLocations
         viewModel.getRecommendedPrice(
             listOf(
@@ -63,7 +61,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                     name = selectedLocations.to.name
                 )
             )
-        )*/
+        )
 
     }
 

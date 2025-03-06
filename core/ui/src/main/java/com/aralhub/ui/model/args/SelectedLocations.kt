@@ -1,7 +1,6 @@
-package com.aralhub.araltaxi.create_order.models
+package com.aralhub.ui.model.args
 
 import java.io.Serializable
-
 
 data class SelectedLocations(
     val from: SelectedLocation,

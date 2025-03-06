@@ -6,15 +6,15 @@ import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientLogOutUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientProfileUseCase
-import com.aralhub.araltaxi.request.navigation.models.LocationType
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocation
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocations
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.ui.model.LocationItem
 import com.aralhub.ui.model.LocationItemClickOwner
+import com.aralhub.ui.model.args.LocationType
+import com.aralhub.ui.model.args.SelectedLocation
+import com.aralhub.ui.model.args.SelectedLocations
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.SearchFactory
@@ -89,9 +89,11 @@ class RequestViewModel @Inject constructor(
     private val _fromLocation = MutableStateFlow<SelectedLocation?>(null)
     private val _toLocation = MutableStateFlow<SelectedLocation?>(null)
 
-    fun updateLocation(location: SelectedLocation) {
+    fun updateLocation(location: SelectedLocation) = viewModelScope.launch {
         when (location.locationType) {
-            LocationType.FROM -> _fromLocation.value = location
+            LocationType.FROM -> {
+                _fromLocation.value = location
+            }
             LocationType.TO -> _toLocation.value = location
         }
 

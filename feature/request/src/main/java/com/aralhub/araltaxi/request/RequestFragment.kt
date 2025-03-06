@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,14 +17,14 @@ import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.araltaxi.request.navigation.models.LocationType
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocation
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.CurrentLocationListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.adapter.location.LocationItemAdapter
 import com.aralhub.ui.model.LocationItemClickOwner
+import com.aralhub.ui.model.args.LocationType
+import com.aralhub.ui.model.args.SelectedLocation
 import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -37,6 +38,7 @@ import javax.inject.Inject
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
+    private var areBothLocationsSelected = false
     @Inject
     lateinit var navigation: FeatureRequestNavigation
     @Inject
@@ -53,7 +55,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
-        initObservers()
     }
 
     override fun onStop() {
@@ -65,9 +66,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager?.let { observeLocationUpdates(it) }
+        initObservers()
         initViews()
         initListeners()
         viewModel.getProfile()
@@ -98,10 +99,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initObservers() {
-
         observeState(viewModel.selectedLocations) { selectedLocations ->
-            if(selectedLocations != null){
-                navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+            selectedLocations?.let {
+                if (!areBothLocationsSelected){
+                    areBothLocationsSelected = true
+                    navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+                }
+
+
             }
         }
 
@@ -156,10 +161,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun initListeners() {
 
+        parentFragmentManager.clearFragmentResultListener("location_key")
         parentFragmentManager.setFragmentResultListener(
             "location_key",
             viewLifecycleOwner
         ) { requestKey, bundle ->
+            Log.i("locations", "called")
             val latitude = bundle.getDouble("latitude")
             val longitude = bundle.getDouble("longitude")
             val locationName = bundle.getString("locationName") ?: "null name"
@@ -189,7 +196,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     )
                 }
             }
-            errorHandler.showToast("Selected location: $locationOwner $locationName: $latitude, $longitude")
         }
 
 

@@ -7,11 +7,11 @@ import com.aralhub.araltaxi.profile.client.navigation.FeatureProfileNavigation
 import com.aralhub.client.clientauth.addsms.AddSMSFragment
 import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocations
 import com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment
 import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
 import com.aralhub.araltaxi.select_location.SelectLocationFragment
 import com.aralhub.offers.navigation.FeatureOffersNavigation
+import com.aralhub.ui.model.args.SelectedLocations
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,21 +57,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
     }
 
     override fun goToCreateOrderFromRequestFragment(selectedLocations: SelectedLocations) {
-        navController?.navigate(R.id.action_requestFragment_to_createOrderFragment, CreateOrderFragment.args(
-            com.aralhub.araltaxi.create_order.models.SelectedLocations(
-                com.aralhub.araltaxi.create_order.models.SelectedLocation(
-                    selectedLocations.from.name,
-                    selectedLocations.from.longitude,
-                    selectedLocations.from.latitude,
-                    com.aralhub.araltaxi.create_order.models.LocationType.FROM
-                ),
-                com.aralhub.araltaxi.create_order.models.SelectedLocation(
-                    selectedLocations.to.name,
-                    selectedLocations.to.longitude,
-                    selectedLocations.to.latitude,
-                    com.aralhub.araltaxi.create_order.models.LocationType.TO
-            )
-        )))
+        navController?.navigate(R.id.action_requestFragment_to_createOrderFragment, CreateOrderFragment.args(selectedLocations))
     }
 
     override fun goToGetOffersFromSendOrderFragment() {

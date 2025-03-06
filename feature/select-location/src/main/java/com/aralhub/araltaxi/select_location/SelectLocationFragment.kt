@@ -137,7 +137,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             }
             // Set the result and navigate back
             parentFragmentManager.setFragmentResult("location_key", result)
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
     }
 
@@ -170,6 +170,15 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             onProviderEnabledListener = {},
             onProviderDisabledListener = {})
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        locationManager = null
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     companion object {

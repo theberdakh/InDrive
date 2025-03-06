@@ -112,8 +112,6 @@
             app:popUpTo="@id/requestFragment"
             app:popUpToInclusive="false"/>
 
-
-
     </fragment>
 
     <fragment

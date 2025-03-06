@@ -1,6 +1,7 @@
 package com.aralhub.araltaxi.request.navigation
 
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocations
+import com.aralhub.ui.model.args.SelectedLocations
+
 
 interface FeatureRequestNavigation {
     fun goToSelectFromLocationFromRequestFragment()
