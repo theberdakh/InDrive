@@ -1,5 +1,6 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
+import android.util.Log
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
 import com.aralhub.indrive.core.data.result.Result
@@ -61,6 +62,7 @@ class ClientAuthRepositoryImpl @Inject constructor(private val localStorage: Loc
             return when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
+                    localStorage.userId = it.data.id
                     Result.Success(
                         ClientProfile(
                             id = it.data.id,

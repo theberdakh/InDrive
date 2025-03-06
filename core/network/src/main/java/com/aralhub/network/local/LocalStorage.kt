@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 
 class LocalStorage(preference: SharedPreferences) {
 
+    var userId by IntPreference(preference)
+
     var access by StringPreference(preference)
 
     var refresh by StringPreference(preference)

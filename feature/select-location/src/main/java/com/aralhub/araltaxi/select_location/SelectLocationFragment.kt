@@ -41,7 +41,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     }
     private lateinit var floatLandAnimation: FloatLandAnimation
     private val movementHandler = Handler(Looper.getMainLooper())
-    private val MOVEMENT_DELAY = 500L
+    private val movementDelay = 500L
     private var isMapMoving = false
     private var selectedLatitude = 0.0
     private var selectedLongitude = 0.0
@@ -85,15 +85,10 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                     val centerPoint = cameraPosition.target
                     updatePlacemarkAndSearchLocation(centerPoint)
                 }
-            }, MOVEMENT_DELAY)
+            }, movementDelay)
         }
 
     private fun updatePlacemarkAndSearchLocation(point: Point) {
-
-        if (view != null){
-            binding.itemSelectLocation.tvTitle.text = "${point.latitude}, ${point.longitude}"
-            binding.itemSelectLocation.tvSubtitle.text = ""
-        }
 
         searchManager.submit(point, 17, searchOptions, object : SearchListener {
             override fun onSearchResponse(response: Response) {
@@ -122,10 +117,14 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
         super.onViewCreated(view, savedInstanceState)
         MapKitFactory.initialize(requireContext())
         mapWindow = binding.mapView.mapWindow
-        map = mapWindow.map
+        if (mapWindow.isValid){
+            map = mapWindow.map
+            map.addCameraListener(cameraListener)
+        }
+
         binding.itemSelectLocation.ivIcon.setImageResource(com.aralhub.ui.R.drawable.ic_ic_round_pin_drop)
         floatLandAnimation  = FloatLandAnimation(binding.iconCenter)
-        map.addCameraListener(cameraListener)
+
         initArgs()
 
         binding.btnSelectLocation.setOnClickListener {
@@ -137,7 +136,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             }
             // Set the result and navigate back
             parentFragmentManager.setFragmentResult("location_key", result)
-            findNavController().popBackStack()
+            findNavController().navigateUp()
         }
     }
 
@@ -177,9 +176,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
         locationManager = null
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
 
     companion object {
         private const val ZOOM = 17f

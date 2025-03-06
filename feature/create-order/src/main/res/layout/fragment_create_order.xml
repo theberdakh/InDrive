@@ -23,6 +23,7 @@
             <View
                 android:layout_width="50dp"
                 android:layout_height="100dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +34,7 @@
                 android:id="@+id/btn_menu"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:visibility="gone"
                 android:layout_margin="@dimen/margin_small"
                 android:background="@drawable/shape_circle_icon"
                 android:contentDescription="@string/cd_menu"

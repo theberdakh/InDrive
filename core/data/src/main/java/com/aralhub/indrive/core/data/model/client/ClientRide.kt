@@ -3,7 +3,6 @@ package com.aralhub.indrive.core.data.model.client
 
 
 data class ClientRideRequest(
-    val passengerId: Int,
     val baseAmount: Number,
     val recommendedAmount: ClientRideRequestRecommendedAmount,
     val locations: ClientRideRequestLocations,

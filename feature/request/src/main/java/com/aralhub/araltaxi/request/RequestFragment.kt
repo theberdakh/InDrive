@@ -102,6 +102,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         observeState(viewModel.selectedLocations) { selectedLocations ->
             selectedLocations?.let {
                 if (!areBothLocationsSelected){
+                    errorHandler.showToast("Selected")
                     areBothLocationsSelected = true
                     navigation.goToCreateOrderFromRequestFragment(selectedLocations)
                 }

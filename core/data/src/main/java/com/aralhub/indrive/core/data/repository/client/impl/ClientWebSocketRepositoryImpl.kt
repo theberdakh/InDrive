@@ -30,6 +30,7 @@ import com.aralhub.indrive.core.data.model.ride.SearchRideLocations
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.WebSocketClientNetworkDataSource
+import com.aralhub.network.local.LocalStorage
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.location.NetworkLocationPoint
 import com.aralhub.network.models.location.NetworkLocationPointCoordinates
@@ -38,7 +39,7 @@ import com.aralhub.network.models.price.NetworkRecommendedPrice
 import com.aralhub.network.requests.ride.NetworkClientRideRequest
 import javax.inject.Inject
 
-class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: WebSocketClientNetworkDataSource) :
+class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage: LocalStorage, private val dataSource: WebSocketClientNetworkDataSource) :
     ClientWebSocketRepository {
     override suspend fun getRecommendedPrice(points: List<GeoPoint>): Result<RecommendedPrice> {
        return dataSource.getRecommendedPrice(points.map { NetworkLocationPoint(
@@ -58,7 +59,7 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val dataSource: 
 
     override suspend fun createRide(clientRideRequest: ClientRideRequest): Result<ClientRide> {
         return dataSource.clientRide(NetworkClientRideRequest(
-            passengerId = clientRideRequest.passengerId,
+            passengerId = localStorage.userId,
             baseAmount = clientRideRequest.baseAmount,
             recommendedAmount = NetworkRecommendedPrice(
                 minAmount = clientRideRequest.recommendedAmount.minAmount,

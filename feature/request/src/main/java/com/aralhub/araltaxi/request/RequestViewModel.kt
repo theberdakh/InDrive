@@ -19,10 +19,12 @@ import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SuggestItem
 import com.yandex.mapkit.search.SuggestOptions
 import com.yandex.mapkit.search.SuggestResponse
 import com.yandex.mapkit.search.SuggestSession
 import com.yandex.mapkit.search.SuggestType
+import com.yandex.mapkit.transport.masstransit.Toponym
 import com.yandex.runtime.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,41 +43,60 @@ class RequestViewModel @Inject constructor(
     private val clientGetSearchRideUseCase: ClientGetSearchRideUseCase
 ) : ViewModel() {
 
-    private val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private val searchManager =
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val suggestSession: SuggestSession = searchManager.createSuggestSession()
     private val suggestOptions = SuggestOptions().setSuggestTypes(
-        SuggestType.GEO.value
-                or SuggestType.BIZ.value
-                or SuggestType.TRANSIT.value
-    )
-    private val KarakalpakstanBoundingBox = BoundingBox(
-        Point(42.7, 58.4),
-        Point( 45.8, 62.2)
+                SuggestType.BIZ.value
     )
 
-    private val _suggestionsUiState = MutableStateFlow<SuggestionsUiState>(SuggestionsUiState.Loading)
+    private companion object {
+        const val MIN_LAT = 41.0
+        const val MAX_LAT = 44.0
+        const val MIN_LON = 56.0
+        const val MAX_LON = 61.0
+    }
+
+    private val KarakalpakstanBoundingBox = BoundingBox(
+        Point(MIN_LAT, MIN_LON),
+        Point(MAX_LAT, MAX_LON)
+    )
+
+    private val _suggestionsUiState =
+        MutableStateFlow<SuggestionsUiState>(SuggestionsUiState.Loading)
     val suggestionsUiState = _suggestionsUiState.asStateFlow()
 
-    fun suggestLocation(query: String, locationItemClickOwner: LocationItemClickOwner) = viewModelScope.launch {
-        suggestSession.suggest(query, KarakalpakstanBoundingBox, suggestOptions, object: SuggestSession.SuggestListener {
-            override fun onResponse(suggestResponse: SuggestResponse) {
-                _suggestionsUiState.value = SuggestionsUiState.Success(suggestResponse.items.map {
-                    LocationItem(
-                        id = 1,
-                        title = it?.title?.text?: "",
-                        subtitle = it?.subtitle?.text?: "",
-                        longitude = it?.center?.longitude ?: 0.0,
-                        latitude = it?.center?.latitude ?: 0.0,
-                        clickOwner = locationItemClickOwner
-                    )
-                })
-            }
+    fun suggestLocation(query: String, locationItemClickOwner: LocationItemClickOwner) =
+        viewModelScope.launch {
+            suggestSession.suggest(
+                query,
+                KarakalpakstanBoundingBox,
+                suggestOptions,
+                object : SuggestSession.SuggestListener {
+                    override fun onResponse(suggestResponse: SuggestResponse) {
+                        _suggestionsUiState.value =
+                            SuggestionsUiState.Success(suggestResponse.items.filter { suggestItem ->
+                                suggestItem.center?.let {
+                                    it.latitude < MAX_LAT  || it.longitude < MAX_LON
+                                }?: false
+                            }.map {
+                                LocationItem(
+                                    id = 1,
+                                    title = it?.title?.text ?: "",
+                                    subtitle = it?.subtitle?.text ?: "",
+                                    longitude = it?.center?.longitude ?: 0.0,
+                                    latitude = it?.center?.latitude ?: 0.0,
+                                    clickOwner = locationItemClickOwner
+                                )
+                            })
+                    }
 
-            override fun onError(error: Error) {
-                _suggestionsUiState.value = SuggestionsUiState.Error(error.isValid.toString())
-            }
-        })
-    }
+                    override fun onError(error: Error) {
+                        _suggestionsUiState.value =
+                            SuggestionsUiState.Error(error.isValid.toString())
+                    }
+                })
+        }
 
     private var _locationEnabled = MutableStateFlow(false)
     val locationEnabled = _locationEnabled.asStateFlow()
@@ -94,6 +115,7 @@ class RequestViewModel @Inject constructor(
             LocationType.FROM -> {
                 _fromLocation.value = location
             }
+
             LocationType.TO -> _toLocation.value = location
         }
 
@@ -103,6 +125,7 @@ class RequestViewModel @Inject constructor(
             _selectedLocations.value = SelectedLocations(from, to)
         }
     }
+
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
 
