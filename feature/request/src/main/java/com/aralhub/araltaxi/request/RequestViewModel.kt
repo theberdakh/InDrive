@@ -6,16 +6,19 @@ import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientLogOutUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientProfileUseCase
+import com.aralhub.araltaxi.request.navigation.models.LocationType
+import com.aralhub.araltaxi.request.navigation.models.SelectedLocation
+import com.aralhub.araltaxi.request.navigation.models.SelectedLocations
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.ui.model.LocationItem
+import com.aralhub.ui.model.LocationItemClickOwner
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
-import com.yandex.mapkit.search.SuggestItem
 import com.yandex.mapkit.search.SuggestOptions
 import com.yandex.mapkit.search.SuggestResponse
 import com.yandex.mapkit.search.SuggestSession
@@ -24,6 +27,7 @@ import com.yandex.runtime.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -52,16 +56,18 @@ class RequestViewModel @Inject constructor(
     private val _suggestionsUiState = MutableStateFlow<SuggestionsUiState>(SuggestionsUiState.Loading)
     val suggestionsUiState = _suggestionsUiState.asStateFlow()
 
-    fun suggestLocation(query: String) = viewModelScope.launch {
+    fun suggestLocation(query: String, locationItemClickOwner: LocationItemClickOwner) = viewModelScope.launch {
         suggestSession.suggest(query, KarakalpakstanBoundingBox, suggestOptions, object: SuggestSession.SuggestListener {
             override fun onResponse(suggestResponse: SuggestResponse) {
-
                 _suggestionsUiState.value = SuggestionsUiState.Success(suggestResponse.items.map {
                     LocationItem(
                         id = 1,
                         title = it?.title?.text?: "",
-                        subtitle = it?.subtitle?.text?: ""
-                    ) {}
+                        subtitle = it?.subtitle?.text?: "",
+                        longitude = it?.center?.longitude ?: 0.0,
+                        latitude = it?.center?.latitude ?: 0.0,
+                        clickOwner = locationItemClickOwner
+                    )
                 })
             }
 
@@ -71,12 +77,30 @@ class RequestViewModel @Inject constructor(
         })
     }
 
-    private var _locationEnabled = MutableStateFlow<Boolean>(false)
+    private var _locationEnabled = MutableStateFlow(false)
     val locationEnabled = _locationEnabled.asStateFlow()
     fun updateLocationEnabled(value: Boolean) {
         _locationEnabled.value = value
     }
 
+    private val _selectedLocations = MutableStateFlow<SelectedLocations?>(null)
+    val selectedLocations: StateFlow<SelectedLocations?> = _selectedLocations.asStateFlow()
+
+    private val _fromLocation = MutableStateFlow<SelectedLocation?>(null)
+    private val _toLocation = MutableStateFlow<SelectedLocation?>(null)
+
+    fun updateLocation(location: SelectedLocation) {
+        when (location.locationType) {
+            LocationType.FROM -> _fromLocation.value = location
+            LocationType.TO -> _toLocation.value = location
+        }
+
+        val from = _fromLocation.value
+        val to = _toLocation.value
+        if (from != null && to != null) {
+            _selectedLocations.value = SelectedLocations(from, to)
+        }
+    }
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
 
@@ -110,7 +134,6 @@ class RequestViewModel @Inject constructor(
         })
     }
 
-
     fun getSearchRide(userId: Int) = viewModelScope.launch {
         _searchRideUiState.emit(SearchRideUiState.Loading)
         _searchRideUiState.emit(clientGetSearchRideUseCase(userId).let {
@@ -131,7 +154,6 @@ class RequestViewModel @Inject constructor(
             }
         })
     }
-
 }
 
 sealed interface ProfileUiState {
@@ -152,7 +174,6 @@ sealed interface SearchRideUiState {
     data object Loading : SearchRideUiState
 }
 
-
 sealed interface ActiveRideUiState {
     data class Success(val activeRide: ActiveRide) : ActiveRideUiState
     data class Error(val message: String) : ActiveRideUiState
@@ -164,3 +185,4 @@ sealed interface SuggestionsUiState {
     data class Error(val message: String) : SuggestionsUiState
     data object Loading : SuggestionsUiState
 }
+

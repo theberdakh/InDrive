@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.create_order.databinding.FragmentCreateOrderBinding
+import com.aralhub.araltaxi.create_order.models.SelectedLocations
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val binding by viewBinding(FragmentCreateOrderBinding::bind)
     private var isConfiguring: Boolean = false
+
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val changePaymentMethodModalBottomSheet by lazy { ChangePaymentMethodModalBottomSheet() }
@@ -39,10 +41,30 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         initObservers()
         initViews()
         initListeners()
+        initArgs()
         viewModel.getActivePaymentMethods()
-        viewModel.getRecommendedPrice(listOf(GeoPoint(latitude = 42.474078, longitude = 59.615902, name = "string"), GeoPoint(latitude = 42.463283, longitude = 59.605034, name = "string")))
         viewModel.createRide()
         viewModel.getRideOptions()
+    }
+
+    private fun initArgs() {
+       /* val selectedLocations =
+            requireArguments().getSerializable("selectedLocations") as SelectedLocations
+        viewModel.getRecommendedPrice(
+            listOf(
+                GeoPoint(
+                    latitude = selectedLocations.from.latitude,
+                    longitude = selectedLocations.from.longitude,
+                    name = selectedLocations.from.name
+                ),
+                GeoPoint(
+                    latitude = selectedLocations.to.latitude,
+                    longitude = selectedLocations.to.longitude,
+                    name = selectedLocations.to.name
+                )
+            )
+        )*/
+
     }
 
     private fun initViews() {
@@ -166,5 +188,11 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         minimumPrice = recommendedPrice.minAmount.toInt()
         maximumPrice = recommendedPrice.maxAmount.toInt()
         binding.etPrice.text = editable
+    }
+
+    companion object {
+        fun args(selectedLocations: SelectedLocations) = Bundle().apply {
+            putSerializable("selectedLocations", selectedLocations)
+        }
     }
 }
