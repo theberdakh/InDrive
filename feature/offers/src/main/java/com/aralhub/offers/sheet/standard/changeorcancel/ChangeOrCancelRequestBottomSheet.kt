@@ -19,22 +19,24 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_or_cancel_request) {
     private val binding by viewBinding(BottomSheetChangeOrCancelRequestBinding::bind)
-    @Inject lateinit var featureOffersBottomSheetNavigation: FeatureOffersBottomSheetNavigation
-    @Inject lateinit var errorHandler: ErrorHandler
+    @Inject
+    lateinit var featureOffersBottomSheetNavigation: FeatureOffersBottomSheetNavigation
+    @Inject
+    lateinit var errorHandler: ErrorHandler
     private var searchRideId = SEARCH_ID_DEFAULT
-    @Inject lateinit var navigation: FeatureOffersNavigation
+    @Inject
+    lateinit var navigation: FeatureOffersNavigation
     private val reasonCancelModalBottomSheet by lazy { ReasonCancelModalBottomSheet() }
     private val viewModel by viewModels<ChangeOrCancelRequestViewModel>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         initObservers()
-        viewModel.getSearchRide(39)
     }
 
     private fun initObservers() {
-        observeState(viewModel.cancelSearchRideUiState){ cancelSearchRideUiState ->
-            when(cancelSearchRideUiState){
+        observeState(viewModel.cancelSearchRideUiState) { cancelSearchRideUiState ->
+            when (cancelSearchRideUiState) {
                 is CancelSearchRideUiState.Error -> errorHandler.showToast(cancelSearchRideUiState.message)
                 CancelSearchRideUiState.Loading -> {}
                 CancelSearchRideUiState.Success -> {
@@ -43,22 +45,24 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
                 }
             }
         }
-        observeState(viewModel.searchRideUiState){ searchRideUiState ->
-            when(searchRideUiState){
+        observeState(viewModel.searchRideUiState) { searchRideUiState ->
+            when (searchRideUiState) {
                 is SearchRideUiState.Error -> errorHandler.showToast(searchRideUiState.message)
                 SearchRideUiState.Loading -> {}
-                is SearchRideUiState.Success -> { searchRideId = searchRideUiState.searchRide.uuid }
+                is SearchRideUiState.Success -> {
+                    searchRideId = searchRideUiState.searchRide.uuid
+                }
             }
         }
     }
 
     private fun initListeners() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
-            viewModel.cancelSearchRide(39)
+            viewModel.cancelSearchRide()
         }
 
         binding.btnCancel.setOnClickListener {
-            viewModel.cancelSearchRide(39)
+            viewModel.cancelSearchRide()
         }
 
         binding.btnChange.setOnClickListener {

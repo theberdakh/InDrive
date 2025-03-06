@@ -159,8 +159,8 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
         }
     }
 
-    override suspend fun getActiveRideByPassenger(userId: Int): Result<ActiveRide> {
-        return dataSource.getActiveRideByPassenger(userId).let {
+    override suspend fun getActiveRideByPassenger(): Result<ActiveRide> {
+        return dataSource.getActiveRideByPassenger(localStorage.userId).let {
             when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(ActiveRide(
@@ -205,8 +205,8 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
         }
     }
 
-    override suspend fun getSearchRideByPassengerId(userId: Int): Result<SearchRide> {
-        return dataSource.getSearchRideByPassengerId(userId).let {
+    override suspend fun getSearchRideByPassengerId(): Result<SearchRide> {
+        return dataSource.getSearchRideByPassengerId(localStorage.userId).let {
             when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(

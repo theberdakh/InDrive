@@ -3,6 +3,7 @@ package com.aralhub.araltaxi.navigation
 import androidx.navigation.NavController
 import com.aralhub.araltaxi.client.R
 import com.aralhub.araltaxi.create_order.CreateOrderFragment
+import com.aralhub.araltaxi.create_order.navigation.FeatureCreateOrderNavigation
 import com.aralhub.araltaxi.profile.client.navigation.FeatureProfileNavigation
 import com.aralhub.client.clientauth.addsms.AddSMSFragment
 import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
@@ -16,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation, FeatureSavedPlaceNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation, FeatureSavedPlaceNavigation, FeatureCreateOrderNavigation{
 
     private var navController: NavController? = null
 
@@ -60,7 +61,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
         navController?.navigate(R.id.action_requestFragment_to_createOrderFragment, CreateOrderFragment.args(selectedLocations))
     }
 
-    override fun goToGetOffersFromSendOrderFragment() {
+    override fun goToGetOffersFromRequestFragment() {
         navController?.navigate(R.id.action_requestFragment_to_offersFragment)
     }
 
@@ -98,5 +99,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun navigateToEditSavedPlace(savedPlaceId: Int) {
         navController?.navigate(R.id.action_savedPlacesFragment_to_editSavedPlaceFragment, EditSavedPlaceFragment.args(savedPlaceId))
+    }
+
+    override fun goToOffersFromCreateOrderFragment() {
+        navController?.navigate(R.id.action_createOrderFragment_to_offersFragment)
     }
 }

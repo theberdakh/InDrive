@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.di
 
+import com.aralhub.araltaxi.create_order.navigation.FeatureCreateOrderNavigation
 import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.navigation.Navigator
 import com.aralhub.araltaxi.navigation.NavigatorImpl
@@ -30,6 +31,9 @@ abstract class NavigationModule {
 
     @Binds
     abstract fun bindFeatureSavedPlaceNavigation(navigatorImpl: NavigatorImpl): FeatureSavedPlaceNavigation
+
+    @Binds
+    abstract fun bindFeatureCreateOrderNavigation(navigatorImpl: NavigatorImpl): FeatureCreateOrderNavigation
 
     @Binds
     abstract fun bindNavigator(navigatorImpl: NavigatorImpl): Navigator

@@ -7,7 +7,7 @@ interface FeatureRequestNavigation {
     fun goToSelectFromLocationFromRequestFragment()
     fun goToSelectToLocationFromRequestFragment()
     fun goToCreateOrderFromRequestFragment(selectedLocations: SelectedLocations)
-    fun goToGetOffersFromSendOrderFragment()
+    fun goToGetOffersFromRequestFragment()
     fun goToProfileFromRequestFragment()
     fun goToSupportFromRequestFragment()
     fun goToSavedPlacesFromRequestFragment()

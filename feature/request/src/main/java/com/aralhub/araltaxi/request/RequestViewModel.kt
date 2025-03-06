@@ -19,12 +19,10 @@ import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
-import com.yandex.mapkit.search.SuggestItem
 import com.yandex.mapkit.search.SuggestOptions
 import com.yandex.mapkit.search.SuggestResponse
 import com.yandex.mapkit.search.SuggestSession
 import com.yandex.mapkit.search.SuggestType
-import com.yandex.mapkit.transport.masstransit.Toponym
 import com.yandex.runtime.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -159,9 +157,9 @@ class RequestViewModel @Inject constructor(
         })
     }
 
-    fun getSearchRide(userId: Int) = viewModelScope.launch {
+    fun getSearchRide() = viewModelScope.launch {
         _searchRideUiState.emit(SearchRideUiState.Loading)
-        _searchRideUiState.emit(clientGetSearchRideUseCase(userId).let {
+        _searchRideUiState.emit(clientGetSearchRideUseCase().let {
             when (it) {
                 is Result.Error -> SearchRideUiState.Error(it.message)
                 is Result.Success -> SearchRideUiState.Success(it.data)
@@ -170,9 +168,9 @@ class RequestViewModel @Inject constructor(
     }
 
 
-    fun getActiveRide(userId: Int) = viewModelScope.launch {
+    fun getActiveRide() = viewModelScope.launch {
         _activeRideUiState.emit(ActiveRideUiState.Loading)
-        _activeRideUiState.emit(clientGetActiveRideUseCase(userId).let {
+        _activeRideUiState.emit(clientGetActiveRideUseCase().let {
             when (it) {
                 is Result.Error -> ActiveRideUiState.Error(it.message)
                 is Result.Success -> ActiveRideUiState.Success(it.data)

@@ -95,7 +95,12 @@
 
     <fragment
         android:id="@+id/createOrderFragment"
-        android:name="com.aralhub.araltaxi.create_order.CreateOrderFragment"/>
+        android:name="com.aralhub.araltaxi.create_order.CreateOrderFragment">
+
+        <action android:id="@+id/action_createOrderFragment_to_offersFragment"
+            app:destination="@id/offersFragment"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/offersFragment"

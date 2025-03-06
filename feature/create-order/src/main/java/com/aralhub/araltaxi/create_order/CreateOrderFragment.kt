@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.create_order.databinding.FragmentCreateOrderBinding
+import com.aralhub.araltaxi.create_order.navigation.FeatureCreateOrderNavigation
 import com.aralhub.araltaxi.create_order.utils.CurrentLocationListener
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
@@ -45,6 +46,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val viewModel by viewModels<CreateOrderViewModel>()
     private var selectedLocations: SelectedLocations? = null
     private var locationManager: LocationManager? = null
+    @Inject lateinit var navigation: FeatureCreateOrderNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -236,7 +238,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
                 SendOrderBottomSheetUiState.Loading -> {}
                 is SendOrderBottomSheetUiState.Success -> {
-                    errorHandler.showToast("Success")
+                   navigation.goToOffersFromCreateOrderFragment()
                 }
             }
         }

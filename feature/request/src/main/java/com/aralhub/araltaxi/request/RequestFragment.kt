@@ -72,6 +72,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         initViews()
         initListeners()
         viewModel.getProfile()
+        viewModel.getSearchRide()
     }
 
     @SuppressLint("MissingPermission")
@@ -102,7 +103,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         observeState(viewModel.selectedLocations) { selectedLocations ->
             selectedLocations?.let {
                 if (!areBothLocationsSelected){
-                    errorHandler.showToast("Selected")
                     areBothLocationsSelected = true
                     navigation.goToCreateOrderFromRequestFragment(selectedLocations)
                 }
@@ -119,6 +119,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     adapter.submitList(null)
                     adapter.submitList(suggestionsUiState.suggestions)
                 }
+            }
+        }
+
+        observeState(viewModel.searchRideUiState){ searchRideUiState ->
+            when(searchRideUiState){
+                is SearchRideUiState.Error -> {}
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> navigation.goToGetOffersFromRequestFragment()
             }
         }
 
