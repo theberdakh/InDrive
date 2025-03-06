@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.create_order
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
@@ -25,14 +26,18 @@ import javax.inject.Inject
 class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val binding by viewBinding(FragmentCreateOrderBinding::bind)
     private var isConfiguring: Boolean = false
-    @Inject lateinit var errorHandler: ErrorHandler
+
+    @Inject
+    lateinit var errorHandler: ErrorHandler
     private val changePaymentMethodModalBottomSheet by lazy { ChangePaymentMethodModalBottomSheet() }
     private val commentToDriverModalBottomSheet by lazy { CommentToDriverModalBottomSheet() }
     private var minimumPrice = 0
     private var maximumPrice = 0
     private var comment = ""
     private val rideOptionItemAdapter by lazy { RideOptionItemAdapter() }
+    private var enabledOptionsIds: MutableList<Int> = mutableListOf()
     private val viewModel by viewModels<CreateOrderViewModel>()
+    private var selectedLocations: SelectedLocations? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -46,22 +51,34 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     }
 
     private fun initArgs() {
-        val selectedLocations =
-            requireArguments().getSerializable("selectedLocations") as SelectedLocations
-        viewModel.getRecommendedPrice(
-            listOf(
-                GeoPoint(
-                    latitude = selectedLocations.from.latitude,
-                    longitude = selectedLocations.from.longitude,
-                    name = selectedLocations.from.name
-                ),
-                GeoPoint(
-                    latitude = selectedLocations.to.latitude,
-                    longitude = selectedLocations.to.longitude,
-                    name = selectedLocations.to.name
+        selectedLocations = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireArguments().getParcelable<SelectedLocations>(
+                "selectedLocations",
+                SelectedLocations::class.java
+            )
+        } else {
+            requireArguments().getParcelable("selectedLocations")
+        }
+        selectedLocations?.let {
+            viewModel.getRecommendedPrice(
+                listOf(
+                    GeoPoint(
+                        latitude = it.from.latitude,
+                        longitude = it.from.longitude,
+                        name = it.from.name
+                    ),
+                    GeoPoint(
+                        latitude = it.to.latitude,
+                        longitude = it.to.longitude,
+                        name = it.to.name
+                    )
                 )
             )
-        )
+
+            binding.tvFromLocationName.text = it.from.name
+            binding.tvToLocationName.text = it.to.name
+        }
+
 
     }
 
@@ -71,27 +88,24 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun initListeners() {
         MoneyFormatter(binding.etPrice)
+        initChangePaymentMethodListener()
+        initCommentToDriverListener()
+
         binding.ivConfigure.setOnClickListener {
             isConfiguring = !isConfiguring
             binding.layoutConfigure.isVisible = isConfiguring
         }
 
         binding.btnSendOffer.setOnClickListener {
-            //  featureRequestNavigation.goToGetOffersFromSendOrderFragment()
-            val enabledOptionIds =
-                rideOptionItemAdapter.currentList.filter { it.isEnabled }.map { it.id }
+            enabledOptionsIds.addAll(rideOptionItemAdapter.currentList.filter { it.isEnabled }
+                .map { it.id })
         }
 
-        initChangePaymentMethodListener()
-        initCommentToDriverListener()
         binding.ivChangePaymentMethod.setOnClickListener {
             changePaymentMethodModalBottomSheet.show(
                 requireActivity().supportFragmentManager,
                 ChangePaymentMethodModalBottomSheet.TAG
             )
-        }
-        binding.iconAdd.setOnClickListener {
-            // AddLocationModalBottomSheet().show(requireActivity().supportFragmentManager, "")
         }
 
         binding.layoutCommentToDriver.setOnClickListener {
@@ -190,7 +204,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     companion object {
         fun args(selectedLocations: SelectedLocations) = Bundle().apply {
-            putSerializable("selectedLocations", selectedLocations)
+            putParcelable("selectedLocations", selectedLocations)
         }
     }
 }

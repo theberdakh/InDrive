@@ -39,7 +39,10 @@ class CurrentLocationListener(
 
     private fun updateMapPosition(point: Point) {
         val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-        map.move(cameraPosition)
+        if (map.isValid){
+            map.move(cameraPosition)
+        }
+
     }
 
 }
