@@ -1,10 +1,12 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.aralhub.araltaxi.driver.orders.model.offerAccepted
 import com.aralhub.araltaxi.driver.orders.orders.OrdersViewModel
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderLoadingBinding
@@ -30,6 +32,7 @@ class OrderLoadingModalBottomSheet :
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.isDraggable = false
         behavior.isHideable = false
+        isCancelable = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,10 +41,17 @@ class OrderLoadingModalBottomSheet :
         initUI()
         initObservers()
 
+        binding.tvOfferAmount.setOnClickListener {
+            lifecycleScope.launchWhenResumed {
+                offerAccepted.emit(Unit)
+            }
+        }
+
     }
 
     private fun initUI() {
         val offerAmount = arguments?.getString("OfferAmount")
+        Log.d(TAG, offerAmount.toString())
         binding.tvOfferAmount.text = getString(R.string.driver_offer_loading, offerAmount)
     }
 

@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
+import com.aralhub.araltaxi.driver.orders.model.offerAccepted
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
@@ -79,7 +80,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         fetchData()
         initViews()
         initObservers()
-        initOrderModalBottomSheet()
         initGoingToPickUpModalBottomSheet()
         initWaitingForClientModalBottomSheet()
         initRideModalBottomSheet()
@@ -162,6 +162,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                         is GetActiveOrdersUiState.OfferAccepted -> {
                             orderModalBottomSheet.dismissAllowingStateLoss()
+                            val bundle = Bundle()
+                            bundle.putParcelable(
+                                "OrderDetail",
+                                getActiveOrdersUiState.data
+                            )
+                            orderModalBottomSheet.arguments = bundle
                             goingToPickUpModalBottomSheet.show(
                                 childFragmentManager,
                                 GoingToPickUpModalBottomSheet.TAG
@@ -186,6 +192,19 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 }
             }
         }
+        offerAccepted.onEach {
+            orderModalBottomSheet.dismissAllowingStateLoss()
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                orders.getOrNull(0)
+            )
+            goingToPickUpModalBottomSheet.arguments = bundle
+            goingToPickUpModalBottomSheet.show(
+                childFragmentManager,
+                GoingToPickUpModalBottomSheet.TAG
+            )
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {
@@ -272,7 +291,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
-//            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+            cancelTripModalBottomSheet.dismissAllowingStateLoss()
             viewModel.cancelRide(
                 rideId,
                 2
@@ -303,6 +322,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initWaitingForClientModalBottomSheet() {
         waitingForClientModalBottomSheet.setOnGoingToRideListener {
             waitingForClientModalBottomSheet.dismissAllowingStateLoss()
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                orders.getOrNull(0)
+            )
+            rideModalBottomSheet.arguments = bundle
             rideModalBottomSheet.show(childFragmentManager, RideModalBottomSheet.TAG)
         }
         waitingForClientModalBottomSheet.setOnRideCanceledListener {
@@ -313,6 +338,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initGoingToPickUpModalBottomSheet() {
         goingToPickUpModalBottomSheet.setOnClientPickedUp {
             goingToPickUpModalBottomSheet.dismissAllowingStateLoss()
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                orders.getOrNull(0)
+            )
+            waitingForClientModalBottomSheet.arguments = bundle
             waitingForClientModalBottomSheet.show(
                 childFragmentManager,
                 WaitingForClientModalBottomSheet.TAG
@@ -363,16 +394,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                 else -> false
             }
-        }
-    }
-
-    private fun initOrderModalBottomSheet() {
-        orderModalBottomSheet.setOnOrderAccepted {
-            orderModalBottomSheet.dismissAllowingStateLoss()
-            goingToPickUpModalBottomSheet.show(
-                childFragmentManager,
-                GoingToPickUpModalBottomSheet.TAG
-            )
         }
     }
 

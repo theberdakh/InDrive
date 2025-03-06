@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/padding_small"
+        android:paddingHorizontal="@dimen/padding_medium"
         android:paddingBottom="@dimen/padding_small">
 
         <ImageView
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:paddingHorizontal="@dimen/padding_small"
+                android:paddingHorizontal="12dp"
                 android:maxEms="10"
                 android:maxLines="1"
                 android:text="Babur"
@@ -51,13 +51,11 @@
 
 
             <TextView
-                android:id="@+id/tv_distance"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="600 m"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-                tools:text="600 m" />
+                android:text="Jolawshı"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
     </LinearLayout>
@@ -67,6 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
+        android:paddingHorizontal="8dp"
         android:orientation="horizontal">
 
         <View
@@ -84,6 +83,8 @@
                 android:id="@+id/tv_from_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                 tools:text="Uy" />
@@ -106,6 +107,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:layout_height="wrap_content"
         android:gravity="top"
+        android:paddingHorizontal="8dp"
         android:orientation="horizontal">
 
         <View
@@ -124,6 +126,8 @@
                 android:id="@+id/tv_to_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                 tools:text="Uy" />
@@ -142,7 +146,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small"
+        android:layout_margin="@dimen/margin_medium"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -157,10 +161,11 @@
             tools:text="4 min" />
 
         <TextView
+            android:id="@+id/tvPrice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/label_payment_method_online"
+            tools:text="10 000 som"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
     </LinearLayout>
@@ -229,7 +234,7 @@
     <Button
         style="@style/Widget.InDrive.Button.Primary"
         android:text="@string/label_navigator"
-        android:layout_margin="@dimen/margin_small"
+        android:layout_margin="@dimen/margin_medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
@@ -244,6 +249,6 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:SlideButtonText="@string/label_finish"
-        android:layout_margin="@dimen/margin_small"/>
+        android:layout_margin="@dimen/margin_medium"/>
 
 </LinearLayout>

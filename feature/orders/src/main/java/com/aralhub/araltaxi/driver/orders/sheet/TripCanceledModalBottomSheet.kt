@@ -21,6 +21,7 @@ class TripCanceledModalBottomSheet :
         binding.btnClose.setOnClickListener {
             onCloseListener.invoke()
         }
+        isCancelable = false
     }
     companion object {
         const val TAG = "TripCanceledModalBottomSheet"
