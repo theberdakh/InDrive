@@ -30,3 +30,8 @@ data class DistanceToClient(
     val duration: Double
 )
 
+data class ClientWebSocketServerResponse<T>(
+    val type: String,
+    val data: T
+)
+
