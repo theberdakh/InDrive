@@ -1,6 +1,5 @@
 package com.aralhub.indrive.core.data.repository.driver.impl
 
-import android.util.Log
 import com.aralhub.indrive.core.data.model.location.SendLocationRequest
 import com.aralhub.indrive.core.data.model.location.toDTO
 import com.aralhub.indrive.core.data.model.offer.toDomain
@@ -15,7 +14,6 @@ class DriverWebSocketRepositoryImpl @Inject constructor(
     private val driverNetworkDataSource: WebSocketDriverNetworkDataSource
 ) : DriverWebSocketRepository {
     override fun getActiveRides() = driverNetworkDataSource.getActiveOrders().map {
-        Log.e("WebSocketLog", "$it")
         when (it) {
             is WebSocketEventNetwork.ActiveOffer -> {
                 WebSocketEvent.ActiveOffer(it.offer.toDomain())

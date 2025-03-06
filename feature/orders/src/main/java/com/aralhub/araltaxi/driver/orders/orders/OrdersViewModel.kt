@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
@@ -105,13 +104,13 @@ class OrdersViewModel @Inject constructor(
     private val ordersState = getActiveOrdersUseCase
         .invoke()
         .map {
-            Log.e("WebSocketLog", "$it")
             when (it) {
                 is WebSocketEvent.ActiveOffer -> {
                     GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
                 }
+
                 is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
+                    GetActiveOrdersUiState.OfferAccepted(it.order.asUI())
                 }
 
                 is WebSocketEvent.RideCancel -> {

@@ -84,7 +84,6 @@ class WebSocketDriverNetworkDataSourceImpl(
                             }
 
                             OFFER_ACCEPTED -> {
-                                Log.d("WebSocketLog", "@@@@ $jsonString")
                                 val offerData =
                                     Gson().fromJson<WebSocketServerResponse<NetworkActiveOfferResponse>>(
                                         jsonString,
