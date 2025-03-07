@@ -19,6 +19,7 @@ class OrderRejectedByClientModalBottomSheet :
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.isDraggable = false
         behavior.isHideable = false
+        isCancelable = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

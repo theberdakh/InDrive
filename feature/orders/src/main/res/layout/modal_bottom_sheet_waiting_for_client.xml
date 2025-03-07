@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
 
@@ -15,9 +15,9 @@
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
         android:text="Jolawshı kútilip atır…"
         android:textAppearance="@style/TextAppearance.InDrive.Title.SubSection" />
 
@@ -25,13 +25,13 @@
         android:id="@+id/layout_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/padding_small"
-        android:layout_marginVertical="@dimen/margin_small"
         android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginVertical="@dimen/margin_small"
         android:clickable="true"
         android:focusable="true"
         android:gravity="top"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding_small">
 
         <View
             android:layout_width="20dp"
@@ -49,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
-                android:text="0:25" />
+                android:text="0:25"
+                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -69,8 +69,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="@dimen/margin_small"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="@dimen/padding_small">
@@ -93,9 +93,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:paddingHorizontal="@dimen/padding_small"
                 android:maxEms="10"
                 android:maxLines="1"
+                android:paddingHorizontal="@dimen/padding_small"
                 android:text="Babur"
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold"
                 android:textSize="14sp"
@@ -103,13 +103,11 @@
 
 
             <TextView
-                android:id="@+id/tv_distance"
-                android:paddingHorizontal="@dimen/padding_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="600 m"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-                tools:text="600 m" />
+                android:paddingHorizontal="@dimen/padding_small"
+                android:text="Jolawshı"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
     </LinearLayout>
@@ -119,8 +117,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_small"
-        android:gravity="top"
         android:layout_marginTop="@dimen/margin_small"
+        android:gravity="top"
         android:orientation="horizontal">
 
         <View
@@ -157,17 +155,17 @@
     <LinearLayout
         android:id="@+id/layout_to_location"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginHorizontal="@dimen/margin_small"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
         android:gravity="top"
         android:orientation="horizontal">
 
         <View
             android:id="@+id/layout_to_location_icon"
             android:layout_width="24dp"
-            android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_height="24dp"
+            android:layout_marginHorizontal="@dimen/margin_small"
             android:background="@drawable/ic_material_symbols_radio_button_checked" />
 
         <LinearLayout
@@ -196,12 +194,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/margin_small"
-        android:paddingHorizontal="@dimen/padding_small"
-        android:layout_marginHorizontal="@dimen/margin_small"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding_small">
 
 
         <ImageView
@@ -214,29 +212,32 @@
             tools:text="4 min" />
 
         <TextView
+            android:id="@+id/tv_price"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
             android:layout_height="wrap_content"
-            android:text="10 000 som"/>
+            android:layout_weight="1"
+            android:text="10 000 som"
+            android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
         <TextView
+            android:id="@+id/tv_distance"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:textColor="@color/color_content_secondary"
+            android:text="7 km"
+            android:layout_marginEnd="8dp"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-            android:layout_height="wrap_content"
-            android:text="7 km"/>
+            android:textColor="@color/color_content_secondary" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_medium"
         android:baselineAligned="false"
-        android:layout_marginHorizontal="@dimen/margin_small"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -293,18 +294,16 @@
     </LinearLayout>
 
 
-
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp" />
 
     <Button
         android:id="@+id/btn_go_to_ride"
         style="@style/Widget.InDrive.Button.Primary"
-        android:text="Jolǵa shıǵıw"
-        android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        />
+        android:layout_margin="@dimen/margin_small"
+        android:text="Jolǵa shıǵıw" />
 
 </LinearLayout>

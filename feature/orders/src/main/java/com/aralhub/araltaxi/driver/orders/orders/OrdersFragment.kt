@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.driver.orders.model.RideStatus
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
@@ -79,7 +80,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         fetchData()
         initViews()
         initObservers()
-        initOrderModalBottomSheet()
         initGoingToPickUpModalBottomSheet()
         initWaitingForClientModalBottomSheet()
         initRideModalBottomSheet()
@@ -118,9 +118,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 cancelCauseId = 2
             )
         }
+        binding.tvFetch.setOnClickListener {
+            viewModel.getActiveRide()
+        }
         viewModel.activeOrdersUiState.onEach { rideId ->
             binding.tvUuid.text = rideId.toString()
-            this.rideId = rideId
+            this.rideId = rideId ?: -1
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
@@ -141,7 +144,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
-                    Log.d("OrdersFragment", "$getActiveOrdersUiState")
+                    Log.d("OrdersFragment", "ordersList: $orders \n$getActiveOrdersUiState")
                     when (getActiveOrdersUiState) {
                         is GetActiveOrdersUiState.Error -> errorHandler.showToast(
                             getActiveOrdersUiState.message
@@ -161,11 +164,24 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         }
 
                         is GetActiveOrdersUiState.OfferAccepted -> {
-                            orderModalBottomSheet.dismissAllowingStateLoss()
+                            Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
+                            rideId = getActiveOrdersUiState.rideId
+                            val bundle = Bundle()
+                            bundle.putParcelable(
+                                "OrderDetail",
+                                orders.getOrNull(0)
+                            )
+                            Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
+                            goingToPickUpModalBottomSheet.arguments = bundle
                             goingToPickUpModalBottomSheet.show(
                                 childFragmentManager,
                                 GoingToPickUpModalBottomSheet.TAG
                             )
+                            viewModel.updateRideStatus(
+                                rideId,
+                                RideStatus.DRIVER_ON_THE_WAY.status
+                            )
+                            orderModalBottomSheet.dismissAllowingStateLoss()
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
@@ -177,6 +193,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         is GetActiveOrdersUiState.GetExistOrder -> {
                             if (getActiveOrdersUiState.data.isNotEmpty()) {
                                 binding.tvOrdersNotFound.invisible()
+                                orders.addAll(getActiveOrdersUiState.data)
                                 adapter.submitList(getActiveOrdersUiState.data)
                             } else {
                                 binding.tvOrdersNotFound.show()
@@ -272,7 +289,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initCancelTripModalBottomSheet() {
         cancelTripModalBottomSheet.setOnCancelTripListener {
-//            cancelTripModalBottomSheet.dismissAllowingStateLoss()
+            cancelTripModalBottomSheet.dismissAllowingStateLoss()
             viewModel.cancelRide(
                 rideId,
                 2
@@ -294,6 +311,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 childFragmentManager,
                 RideFinishedModalBottomSheet.TAG
             )
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.RIDE_COMPLETED.status
+            )
         }
         rideModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -303,7 +324,17 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initWaitingForClientModalBottomSheet() {
         waitingForClientModalBottomSheet.setOnGoingToRideListener {
             waitingForClientModalBottomSheet.dismissAllowingStateLoss()
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                orders.getOrNull(0)
+            )
+            rideModalBottomSheet.arguments = bundle
             rideModalBottomSheet.show(childFragmentManager, RideModalBottomSheet.TAG)
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.RIDE_STARTED.status
+            )
         }
         waitingForClientModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -313,9 +344,19 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initGoingToPickUpModalBottomSheet() {
         goingToPickUpModalBottomSheet.setOnClientPickedUp {
             goingToPickUpModalBottomSheet.dismissAllowingStateLoss()
+            val bundle = Bundle()
+            bundle.putParcelable(
+                "OrderDetail",
+                orders.getOrNull(0)
+            )
+            waitingForClientModalBottomSheet.arguments = bundle
             waitingForClientModalBottomSheet.show(
                 childFragmentManager,
                 WaitingForClientModalBottomSheet.TAG
+            )
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.DRIVER_WAITING_CLIENT.status
             )
         }
         goingToPickUpModalBottomSheet.setOnRideCanceledListener {
@@ -363,16 +404,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                 else -> false
             }
-        }
-    }
-
-    private fun initOrderModalBottomSheet() {
-        orderModalBottomSheet.setOnOrderAccepted {
-            orderModalBottomSheet.dismissAllowingStateLoss()
-            goingToPickUpModalBottomSheet.show(
-                childFragmentManager,
-                GoingToPickUpModalBottomSheet.TAG
-            )
         }
     }
 

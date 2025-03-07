@@ -9,7 +9,7 @@ import javax.inject.Inject
 class DriverRepositoryImpl @Inject constructor(
     private val driverNetworkDataSource: DriverNetworkDataSource
 ) : DriverRepository {
-    override suspend fun getActiveRide(): Result<Int> {
+    override suspend fun getActiveRide(): Result<Int?> {
         driverNetworkDataSource.getActiveRide().let {
             return when (it) {
                 is NetworkResult.Error -> {
@@ -17,13 +17,27 @@ class DriverRepositoryImpl @Inject constructor(
                 }
 
                 is NetworkResult.Success -> {
-                    Result.Success(it.data.id)
+                    Result.Success(it.data?.id)
                 }
             }
         }
     }
     override suspend fun cancelRide(rideId: Int, cancelCauseId: Int): Result<Boolean> {
         driverNetworkDataSource.cancelRide(rideId, cancelCauseId).let {
+            return when (it) {
+                is NetworkResult.Error -> {
+                    Result.Error(it.message)
+                }
+
+                is NetworkResult.Success -> {
+                    Result.Success(it.data)
+                }
+            }
+        }
+    }
+
+    override suspend fun updateRideStatus(rideId: Int, status: String): Result<Boolean> {
+        driverNetworkDataSource.updateRideStatus(rideId, status).let {
             return when (it) {
                 is NetworkResult.Error -> {
                     Result.Error(it.message)

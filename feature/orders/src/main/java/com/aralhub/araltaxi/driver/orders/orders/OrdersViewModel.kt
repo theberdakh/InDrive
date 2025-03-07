@@ -41,7 +41,7 @@ class OrdersViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
-//        getActiveRide()
+        getActiveRide()
     }
 
     private var _rejectOfferState = MutableSharedFlow<String>()
@@ -105,13 +105,13 @@ class OrdersViewModel @Inject constructor(
     private val ordersState = getActiveOrdersUseCase
         .invoke()
         .map {
-            Log.e("WebSocketLog", "$it")
             when (it) {
                 is WebSocketEvent.ActiveOffer -> {
                     GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
                 }
+
                 is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
+                    GetActiveOrdersUiState.OfferAccepted(it.rideId)
                 }
 
                 is WebSocketEvent.RideCancel -> {
@@ -149,7 +149,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferAccepted -> {
-                GetActiveOrdersUiState.OfferAccepted(result.data)
+                GetActiveOrdersUiState.OfferAccepted(result.rideId)
             }
 
             is GetActiveOrdersUiState.OrderCanceled -> {
@@ -183,9 +183,9 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private var _activeOrdersUiState = MutableSharedFlow<Int>()
+    private var _activeOrdersUiState = MutableSharedFlow<Int?>()
     val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
-    private fun getActiveRide() {
+    fun getActiveRide() {
         viewModelScope.launch {
             repository.getActiveRide().let { result ->
                 when (result) {
@@ -208,6 +208,21 @@ class OrdersViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateRideStatus(rideId: Int, status: String) {
+        viewModelScope.launch {
+            repository.updateRideStatus(rideId, status).let { result ->
+                when (result) {
+                    is Result.Error -> {
+                        Log.d("OrdersViewModel", "error")
+                    }
+                    is Result.Success -> {
+                        Log.d("OrdersViewModel", "success")
+                    }
+                }
+            }
+        }
+    }
 }
 
 sealed interface LogoutUiState {
@@ -222,7 +237,7 @@ sealed interface GetActiveOrdersUiState {
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
-    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
+    data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 

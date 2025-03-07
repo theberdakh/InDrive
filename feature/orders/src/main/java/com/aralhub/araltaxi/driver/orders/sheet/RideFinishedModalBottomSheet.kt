@@ -15,6 +15,7 @@ class RideFinishedModalBottomSheet: BottomSheetDialogFragment(R.layout.modal_bot
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.isDraggable = false
+        isCancelable = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

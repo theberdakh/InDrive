@@ -14,9 +14,23 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.PermissionChecker
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LocationService : Service() {
+
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
+    @Inject
+    lateinit var notification: LocationNotification
+
     private var locationManager: LocationManager? = null
     private var notificationManager: NotificationManager? = null
     private val locationListener =  LocationListener { location ->
@@ -52,23 +66,31 @@ class LocationService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
-    }
 
+        startForeground()
+        return super.onStartCommand(intent, flags, startId)
+
+    }
     private fun startForeground() {
         val locationPermission = PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (locationPermission != PermissionChecker.PERMISSION_GRANTED) {
             stopSelf()
             return
         }
-        notificationManager?.createNotificationChannel(NotificationChannel(CHANNEL_ID, "Location Service", NotificationManager.IMPORTANCE_HIGH))
-        val notification = buildNotification("Waiting for location...")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
-        } else {
-            startForeground(ID, notification)
-        }
+        notification.createChannel()
+
+        ServiceCompat.startForeground(
+            /* service = */ this,
+            /* id = */ ID, // Cannot be 0
+            /* notification = */ notification.createNotification(),
+            /* foregroundServiceType = */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            } else {
+                0
+            }
+        )
     }
 
     override fun onDestroy() {

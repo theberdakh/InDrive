@@ -16,6 +16,7 @@ class ReasonCancelModalBottomSheet :
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isCancelable = false
         binding.btnSend.setOnClickListener {
             sendListener.invoke()
         }

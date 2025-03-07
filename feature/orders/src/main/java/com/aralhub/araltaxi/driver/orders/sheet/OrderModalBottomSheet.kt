@@ -38,11 +38,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private var offerAmount = 0
     private var baseAmount = 0
 
-    private var onOrderAccepted: (() -> Unit)? = null
-    fun setOnOrderAccepted(onOrderAccepted: () -> Unit) {
-        this.onOrderAccepted = onOrderAccepted
-    }
-
     override fun onStart() {
         super.onStart()
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
@@ -85,7 +80,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
-            offerAmount = binding.tvPrice.text.filter { it.isDigit() }.toString().toInt()
+            offerAmount = binding.etPrice.text?.filter { it.isDigit() }.toString().toInt()
             if (order != null) {
                 offerViewModel.createOffer(
                     order!!.id,
@@ -94,8 +89,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             }
         }
         binding.btnAcceptOffer.setOnClickListener {
+            binding.etPrice.text?.clear()
             if (order != null) {
-                Log.d("TAG", "setupListeners: $order")
                 offerViewModel.createOffer(
                     order!!.id,
                     baseAmount
@@ -160,7 +155,12 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 CreateOfferUiState.Loading -> {}
                 is CreateOfferUiState.Success -> {
                     val bundle = Bundle()
-                    val offerAmount = binding.etPrice.text.toString()
+                    val customOfferAmount = binding.etPrice.text.toString()
+                    val offerAmount = customOfferAmount.ifEmpty {
+                        getString(
+                            com.aralhub.ui.R.string.standard_uzs_price, "$baseAmount"
+                        )
+                    }
                     bundle.putString("OfferAmount", offerAmount)
                     orderLoadingModalBottomSheet.arguments = bundle
                     orderLoadingModalBottomSheet.show(
@@ -174,7 +174,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     override fun onDestroyView() {
         super.onDestroyView()
-        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+        if (orderLoadingModalBottomSheet.isAdded)
+            orderLoadingModalBottomSheet.dismissAllowingStateLoss()
     }
 
     companion object {

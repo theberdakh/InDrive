@@ -76,12 +76,18 @@ interface DriverNetworkApi {
     ): Response<ServerResponse<CreateOfferByDriverResponse?>>
 
     @GET("/websocket/get_active_ride_by_driver")
-    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse>>
+    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse?>>
 
     @PUT("/ride/{rideId}/cancel_ride_by_driver")
     suspend fun cancelRide(
         @Path("rideId") rideId: Int,
         @Query("cancel_cause_id") cancelCauseId: Int
+    ): Response<ServerResponseEmpty>
+
+    @PUT("/ride/{rideId}/update_ride")
+    suspend fun updateRideStatus(
+        @Path("rideId") rideId: Int,
+        @Query("status") status: String
     ): Response<ServerResponseEmpty>
 
 }
