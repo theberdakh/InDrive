@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.request
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
@@ -17,8 +18,12 @@ import com.aralhub.ui.model.args.SelectedLocation
 import com.aralhub.ui.model.args.SelectedLocations
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session.SearchListener
 import com.yandex.mapkit.search.SuggestOptions
 import com.yandex.mapkit.search.SuggestResponse
 import com.yandex.mapkit.search.SuggestSession
@@ -43,6 +48,11 @@ class RequestViewModel @Inject constructor(
 
     private val searchManager =
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private val searchOptions = SearchOptions().apply {
+        searchTypes = SearchType.GEO.value
+        resultPageSize = 1
+    }
+
     private val suggestSession: SuggestSession = searchManager.createSuggestSession()
     private val suggestOptions = SuggestOptions().setSuggestTypes(
                 SuggestType.BIZ.value
@@ -100,6 +110,51 @@ class RequestViewModel @Inject constructor(
     val locationEnabled = _locationEnabled.asStateFlow()
     fun updateLocationEnabled(value: Boolean) {
         _locationEnabled.value = value
+    }
+
+    private val _fromLocationUiState = MutableSharedFlow<FromLocationUiState>()
+    val fromLocationUiState = _fromLocationUiState.asSharedFlow()
+    private var lastLocation = Point(0.0, 0.0)
+
+    fun getFromLocation(latitude: Double, longitude: Double ) = viewModelScope.launch {
+        if (lastLocation.latitude == latitude && lastLocation.longitude == longitude) {
+            return@launch
+        } else {
+            lastLocation = Point(latitude, longitude)
+            searchName(lastLocation.latitude, lastLocation.longitude)
+        }
+    }
+
+    private fun searchName(latitude: Double, longitude: Double) {
+        searchManager.submit(Point(latitude, longitude), 17, searchOptions, object : SearchListener {
+            override fun onSearchResponse(response: Response) {
+                val geoObjects = response.collection.children.mapNotNull { it.obj }
+                val names = geoObjects.filter { it.name != null }.map { it.name }
+                if (names.isNotEmpty()) {
+                    Log.i("Log", "Names: $names")
+                    viewModelScope.launch {
+                        _fromLocationUiState.emit(
+                            FromLocationUiState.Success(
+                                SelectedLocation(locationType = LocationType.FROM,
+                                    name = names[0] ?: "Anıqlap bolmadı",
+                                    latitude = latitude,
+                                    longitude = longitude)
+                            )
+                        )
+                    }
+                } else {
+                    viewModelScope.launch {
+                        _fromLocationUiState.emit(FromLocationUiState.Error("Unknown Location"))
+                    }
+                }
+            }
+
+            override fun onSearchError(error: Error) {
+                viewModelScope.launch {
+                    _fromLocationUiState.emit(FromLocationUiState.Error("Error to find location name"))
+                }
+            }
+        })
     }
 
     private val _selectedLocations = MutableStateFlow<SelectedLocations?>(null)
@@ -209,3 +264,8 @@ sealed interface SuggestionsUiState {
     data object Loading : SuggestionsUiState
 }
 
+sealed interface FromLocationUiState {
+    data class Success(val location: SelectedLocation) : FromLocationUiState
+    data class Error(val message: String) : FromLocationUiState
+    data object Loading : FromLocationUiState
+}

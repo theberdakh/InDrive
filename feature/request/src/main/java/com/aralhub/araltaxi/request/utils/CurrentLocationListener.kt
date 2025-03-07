@@ -14,24 +14,26 @@ class CurrentLocationListener(
     private val map: Map,
     initialLocation: Location,
     private val onProviderDisabledListener: () -> Unit,
-    private val onProviderEnabledListener: () -> Unit
+    private val onProviderEnabledListener: () -> Unit,
+    private val onLocationChangedListener: (Location) -> Unit
 ) :
     LocationListener {
     private var placeMarkObject: PlacemarkMapObject
-
     private val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+    private var point = Point(initialLocation.latitude, initialLocation.longitude)
 
     init {
-        val initialPoint = Point(initialLocation.latitude, initialLocation.longitude)
         placeMarkObject = map.mapObjects.addPlacemark().apply {
-            geometry = initialPoint
+            geometry = point
             setIcon(imageProvider)
         }
-        updateMapPosition(initialPoint)
+        onLocationChangedListener(initialLocation)
+        updateMapPosition(point)
     }
 
     override fun onLocationChanged(location: Location) {
-        val point = Point(location.latitude, location.longitude)
+        point = Point(location.latitude, location.longitude)
+        onLocationChangedListener(location)
         placeMarkObject.geometry = point
         updateMapPosition(point)
     }

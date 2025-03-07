@@ -1,16 +1,17 @@
 package com.aralhub.offers
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.offers.R
 import com.aralhub.araltaxi.client.offers.databinding.FragmentOffersBinding
-import com.aralhub.ui.adapter.OfferItemAdapter
-import com.aralhub.ui.model.OfferItem
-import com.aralhub.ui.model.OfferItemDriver
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.offers.navigation.sheet.SheetNavigator
+import com.aralhub.ui.adapter.OfferItemAdapter
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -20,86 +21,35 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OffersFragment : Fragment(R.layout.fragment_offers) {
     private val binding by viewBinding(FragmentOffersBinding::bind)
-    @Inject
-    lateinit var navigator: SheetNavigator
-    @Inject
-    lateinit var featureOffersNavigation: FeatureOffersNavigation
+    @Inject lateinit var navigator: SheetNavigator
+    @Inject lateinit var featureOffersNavigation: FeatureOffersNavigation
     private val offerItemAdapter by lazy { OfferItemAdapter() }
-    private val offers = listOf(
-        OfferItem(
-            id = 1,
-            driver = OfferItemDriver(
-                id = 1,
-                name = "John Doe",
-                carName = "Toyota Camry",
-                rating = 4.5f,
-                avatar = "https://randomuser.me/api/portraits/men/1.jpg"
-            ),
-            offeredPrice = "10000",
-            timeToArrive = "5 min"
-        ),
-        OfferItem(
-            id = 1,
-            driver = OfferItemDriver(
-                id = 1,
-                name = "John Doe",
-                carName = "Toyota Camry",
-                rating = 4.5f,
-                avatar = "https://randomuser.me/api/portraits/men/3.jpg"
-            ),
-            offeredPrice = "10000",
-            timeToArrive = "5 min"
-        ),
-        OfferItem(
-            id = 1,
-            driver = OfferItemDriver(
-                id = 1,
-                name = "John Doe",
-                carName = "Toyota Camry",
-                rating = 4.5f,
-                avatar = "https://randomuser.me/api/portraits/men/4.jpg"
-            ),
-            offeredPrice = "10000",
-            timeToArrive = "5 min"
-        ),
-        OfferItem(
-            id = 1,
-            driver = OfferItemDriver(
-                id = 1,
-                name = "John Doe",
-                carName = "Toyota Camry",
-                rating = 4.5f,
-                avatar = "https://randomuser.me/api/portraits/women/3.jpg"
-            ),
-            offeredPrice = "10000",
-            timeToArrive = "5 min"
-        ),
-        OfferItem(
-            id = 1,
-            driver = OfferItemDriver(
-                id = 1,
-                name = "John Doe",
-                carName = "Last",
-                rating = 4.5f,
-                avatar = "https://randomuser.me/api/portraits/women/4.jpg"
-            ),
-            offeredPrice = "10000",
-            timeToArrive = "5 min"
-        ),
-
-
-        )
+    private val viewModel by viewModels<OffersViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpMapView()
         setUpRecyclerView()
         initBottomNavController()
+        viewModel.getOffers()
+        initObservers()
+    }
+
+    private fun initObservers() {
+       observeState(viewModel.offersUiState){ offersUiState ->
+           when(offersUiState){
+               is OffersUiState.Error -> Log.e("OffersFragment", "Error: ${offersUiState.message}")
+               OffersUiState.Loading -> {}
+               is OffersUiState.Success -> {
+                   offerItemAdapter.submitList(offersUiState.offers)
+               }
+
+           }
+       }
     }
 
     private fun setUpRecyclerView() {
         binding.rvOffers.adapter = offerItemAdapter
-        offerItemAdapter.submitList(offers)
         offerItemAdapter.setOnItemAcceptClickListener {
             featureOffersNavigation.goToRideFragment()
         }

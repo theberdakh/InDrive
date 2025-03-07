@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.isActive
+import javax.inject.Inject
 
 class WebSocketDriverNetworkDataSourceImpl(
     private val client: HttpClient

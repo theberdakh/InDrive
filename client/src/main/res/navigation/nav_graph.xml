@@ -63,27 +63,55 @@
 
         <action
             android:id="@+id/action_requestFragment_to_offersFragment"
-            app:destination="@id/offersFragment"/>
+            app:destination="@id/offersFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action
             android:id="@+id/action_requestFragment_to_profileFragment"
-            app:destination="@id/profileFragment"/>
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action android:id="@+id/action_requestFragment_to_selectLocationFragment"
-            app:destination="@id/selectLocationFragment"/>
+            app:destination="@id/selectLocationFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"/>
 
         <action android:id="@+id/action_requestFragment_to_supportFragment"
-            app:destination="@id/supportFragment"/>
+            app:destination="@id/supportFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action android:id="@+id/action_requestFragment_to_historyFragment"
-            app:destination="@id/historyFragment"/>
+            app:destination="@id/historyFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action android:id="@+id/action_requestFragment_to_savedPlacesFragment"
-            app:destination="@id/savedPlacesFragment"/>
+            app:destination="@id/savedPlacesFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action
             android:id="@+id/action_requestFragment_to_createOrderFragment"
-            app:destination="@id/createOrderFragment"/>
+            app:destination="@id/createOrderFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action
             android:id="@+id/action_requestFragment_to_logoFragment"

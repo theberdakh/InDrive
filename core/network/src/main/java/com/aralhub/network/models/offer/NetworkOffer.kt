@@ -1,6 +1,6 @@
 package com.aralhub.network.models.offer
 
-import com.aralhub.network.models.driver.NetworkDriverActive
+import com.aralhub.network.models.driver.NetworkDriverOffer
 import com.google.gson.annotations.SerializedName
 
 data class NetworkOffer(
@@ -8,7 +8,7 @@ data class NetworkOffer(
     val offerId: String,
     @SerializedName("ride_uuid")
     val rideUuid: String,
-    val driver: NetworkDriverActive,
+    val driver: NetworkDriverOffer,
     val amount: Int,
     @SerializedName("created_at")
     val createdAt: String,

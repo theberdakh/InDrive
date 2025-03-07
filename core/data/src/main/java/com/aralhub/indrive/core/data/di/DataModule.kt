@@ -5,8 +5,10 @@ import com.aralhub.indrive.core.data.repository.address.AddressRepositoryImpl
 import com.aralhub.indrive.core.data.repository.cancel.CancelRepository
 import com.aralhub.indrive.core.data.repository.cancel.impl.CancelRepositoryImpl
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
+import com.aralhub.indrive.core.data.repository.client.ClientOffersRepository
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.repository.client.impl.ClientAuthRepositoryImpl
+import com.aralhub.indrive.core.data.repository.client.impl.ClientOffersRepositoryImpl
 import com.aralhub.indrive.core.data.repository.client.impl.ClientWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.repository.driver.DriverOfferRepository
@@ -78,4 +80,9 @@ abstract class DataModule {
     internal abstract fun bindsDriverRepository(
         repo: DriverRepositoryImpl,
     ): DriverRepository
+
+    @Binds
+    internal abstract fun bindsOffersRepository(
+        repo: ClientOffersRepositoryImpl,
+    ): ClientOffersRepository
 }

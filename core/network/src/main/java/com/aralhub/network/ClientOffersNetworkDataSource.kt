@@ -1,8 +1,10 @@
 package com.aralhub.network
 
-import com.aralhub.network.utils.ClientWebSocketEvent
+import com.aralhub.network.utils.ClientWebSocketEventNetwork
 import kotlinx.coroutines.flow.Flow
 
 interface ClientOffersNetworkDataSource {
-    fun getOffers(): Flow<ClientWebSocketEvent>
+    suspend fun getOffers(): Flow<ClientWebSocketEventNetwork>
+
+    suspend fun close()
 }

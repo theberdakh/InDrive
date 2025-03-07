@@ -39,8 +39,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var areBothLocationsSelected = false
+
     @Inject
     lateinit var navigation: FeatureRequestNavigation
+
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
@@ -66,7 +68,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager?.let { observeLocationUpdates(it) }
         initObservers()
         initViews()
@@ -95,6 +98,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 },
                 onProviderDisabledListener = {
                     viewModel.updateLocationEnabled(false)
+                },
+                onLocationChangedListener = { location ->
+                   // viewModel.getFromLocation(location.latitude, location.longitude)
                 })
         )
     }
@@ -102,13 +108,23 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private fun initObservers() {
         observeState(viewModel.selectedLocations) { selectedLocations ->
             selectedLocations?.let {
-                if (!areBothLocationsSelected){
+                if (!areBothLocationsSelected) {
                     areBothLocationsSelected = true
                     navigation.goToCreateOrderFromRequestFragment(selectedLocations)
                 }
-
-
             }
+        }
+
+        observeState(viewModel.fromLocationUiState) { fromLocationUiState ->
+            when (fromLocationUiState) {
+                is FromLocationUiState.Error -> errorHandler.showToast(fromLocationUiState.message)
+                FromLocationUiState.Loading -> binding.etFromLocation.text = "Loading..."
+                is FromLocationUiState.Success -> {
+                    binding.etFromLocation.text = fromLocationUiState.location.name
+                    viewModel.updateLocation(fromLocationUiState.location)
+                }
+            }
+
         }
 
         observeState(viewModel.suggestionsUiState) { suggestionsUiState ->
@@ -122,8 +138,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
-        observeState(viewModel.searchRideUiState){ searchRideUiState ->
-            when(searchRideUiState){
+        observeState(viewModel.searchRideUiState) { searchRideUiState ->
+            when (searchRideUiState) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> navigation.goToGetOffersFromRequestFragment()
@@ -264,7 +280,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             navigation.goToSelectFromLocationFromRequestFragment()
         }
         binding.etToLocation.setEndTextClickListener {
-           // navigation.goToCreateOrderFromRequestFragment()
+            // navigation.goToCreateOrderFromRequestFragment()
             navigation.goToSelectToLocationFromRequestFragment()
         }
 
