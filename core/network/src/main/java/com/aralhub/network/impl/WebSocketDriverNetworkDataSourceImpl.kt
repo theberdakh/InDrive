@@ -3,6 +3,7 @@ package com.aralhub.network.impl
 import android.util.Log
 import com.aralhub.network.WebSocketDriverNetworkDataSource
 import com.aralhub.network.models.WebSocketServerResponse
+import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.location.NetworkSendLocationRequest
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.models.offer.NetworkOfferCancelResponse
@@ -85,13 +86,13 @@ class WebSocketDriverNetworkDataSourceImpl(
 
                             OFFER_ACCEPTED -> {
                                 val offerData =
-                                    Gson().fromJson<WebSocketServerResponse<NetworkActiveOfferResponse>>(
+                                    Gson().fromJson<WebSocketServerResponse<NetworkActiveRideByDriverResponse>>(
                                         jsonString,
                                         object :
-                                            TypeToken<WebSocketServerResponse<NetworkActiveOfferResponse>>() {}.type
+                                            TypeToken<WebSocketServerResponse<NetworkActiveRideByDriverResponse>>() {}.type
                                     )
                                 WebSocketEventNetwork.OfferAccepted(
-                                    offerData
+                                    offerData.data.id
                                 )
                             }
 

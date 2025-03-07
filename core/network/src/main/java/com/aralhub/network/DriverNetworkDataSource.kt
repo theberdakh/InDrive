@@ -36,6 +36,6 @@ interface DriverNetworkDataSource {
         amount: Int
     ): NetworkResult<CreateOfferByDriverResponse?>
 
-    suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse>
+    suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse?>
     suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<Boolean>
 }

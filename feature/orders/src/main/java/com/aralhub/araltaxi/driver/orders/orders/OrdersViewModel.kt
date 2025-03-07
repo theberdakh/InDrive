@@ -40,7 +40,7 @@ class OrdersViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
-//        getActiveRide()
+        getActiveRide()
     }
 
     private var _rejectOfferState = MutableSharedFlow<String>()
@@ -110,7 +110,7 @@ class OrdersViewModel @Inject constructor(
                 }
 
                 is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.OfferAccepted(it.order.asUI())
+                    GetActiveOrdersUiState.OfferAccepted(it.rideId)
                 }
 
                 is WebSocketEvent.RideCancel -> {
@@ -148,7 +148,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferAccepted -> {
-                GetActiveOrdersUiState.OfferAccepted(result.data)
+                GetActiveOrdersUiState.OfferAccepted(result.rideId)
             }
 
             is GetActiveOrdersUiState.OrderCanceled -> {
@@ -182,9 +182,9 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private var _activeOrdersUiState = MutableSharedFlow<Int>()
+    private var _activeOrdersUiState = MutableSharedFlow<Int?>()
     val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
-    private fun getActiveRide() {
+    fun getActiveRide() {
         viewModelScope.launch {
             repository.getActiveRide().let { result ->
                 when (result) {
@@ -221,7 +221,7 @@ sealed interface GetActiveOrdersUiState {
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
-    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
+    data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 

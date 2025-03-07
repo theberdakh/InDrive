@@ -16,7 +16,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
-import com.aralhub.araltaxi.driver.orders.model.offerAccepted
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ExitLineModalBottomSheet
@@ -34,6 +33,7 @@ import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.adapter.OrderItemAdapter
 import com.aralhub.ui.model.OrderItem
+import com.aralhub.ui.model.PaymentType
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.ViewEx.invisible
 import com.aralhub.ui.utils.ViewEx.show
@@ -118,9 +118,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 cancelCauseId = 2
             )
         }
+        binding.tvFetch.setOnClickListener {
+            viewModel.getActiveRide()
+        }
         viewModel.activeOrdersUiState.onEach { rideId ->
             binding.tvUuid.text = rideId.toString()
-            this.rideId = rideId
+            this.rideId = rideId ?: -1
         }.launchIn(viewLifecycleOwner.lifecycleScope)
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
@@ -141,7 +144,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
-                    Log.d("OrdersFragment", "$getActiveOrdersUiState")
+                    Log.d("OrdersFragment", "ordersList: $orders \n$getActiveOrdersUiState")
                     when (getActiveOrdersUiState) {
                         is GetActiveOrdersUiState.Error -> errorHandler.showToast(
                             getActiveOrdersUiState.message
@@ -161,17 +164,20 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         }
 
                         is GetActiveOrdersUiState.OfferAccepted -> {
-                            orderModalBottomSheet.dismissAllowingStateLoss()
+                            Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
+                            rideId = getActiveOrdersUiState.rideId
                             val bundle = Bundle()
                             bundle.putParcelable(
                                 "OrderDetail",
-                                getActiveOrdersUiState.data
+                               orders.getOrNull(0)
                             )
-                            orderModalBottomSheet.arguments = bundle
+                            Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
+                            goingToPickUpModalBottomSheet.arguments = bundle
                             goingToPickUpModalBottomSheet.show(
                                 childFragmentManager,
                                 GoingToPickUpModalBottomSheet.TAG
                             )
+                            orderModalBottomSheet.dismissAllowingStateLoss()
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
@@ -183,6 +189,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         is GetActiveOrdersUiState.GetExistOrder -> {
                             if (getActiveOrdersUiState.data.isNotEmpty()) {
                                 binding.tvOrdersNotFound.invisible()
+                                orders.addAll(getActiveOrdersUiState.data)
                                 adapter.submitList(getActiveOrdersUiState.data)
                             } else {
                                 binding.tvOrdersNotFound.show()
@@ -192,19 +199,19 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 }
             }
         }
-        offerAccepted.onEach {
-            orderModalBottomSheet.dismissAllowingStateLoss()
-            val bundle = Bundle()
-            bundle.putParcelable(
-                "OrderDetail",
-                orders.getOrNull(0)
-            )
-            goingToPickUpModalBottomSheet.arguments = bundle
-            goingToPickUpModalBottomSheet.show(
-                childFragmentManager,
-                GoingToPickUpModalBottomSheet.TAG
-            )
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+//        offerAccepted.onEach {
+//            orderModalBottomSheet.dismissAllowingStateLoss()
+//            val bundle = Bundle()
+//            bundle.putParcelable(
+//                "OrderDetail",
+//                orders.getOrNull(0)
+//            )
+//            goingToPickUpModalBottomSheet.arguments = bundle
+//            goingToPickUpModalBottomSheet.show(
+//                childFragmentManager,
+//                GoingToPickUpModalBottomSheet.TAG
+//            )
+//        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {

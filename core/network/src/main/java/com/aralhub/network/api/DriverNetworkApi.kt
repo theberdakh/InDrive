@@ -76,7 +76,7 @@ interface DriverNetworkApi {
     ): Response<ServerResponse<CreateOfferByDriverResponse?>>
 
     @GET("/websocket/get_active_ride_by_driver")
-    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse>>
+    suspend fun getActiveRideByDriver(): Response<ServerResponse<NetworkActiveRideByDriverResponse?>>
 
     @PUT("/ride/{rideId}/cancel_ride_by_driver")
     suspend fun cancelRide(

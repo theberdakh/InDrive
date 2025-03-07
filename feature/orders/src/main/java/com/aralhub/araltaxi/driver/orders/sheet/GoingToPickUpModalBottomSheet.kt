@@ -2,6 +2,7 @@ package com.aralhub.araltaxi.driver.orders.sheet
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetGoingToPickUpBinding
@@ -61,6 +62,7 @@ class GoingToPickUpModalBottomSheet :
         } else {
             arguments?.getParcelable("OrderDetail")
         }
+        Log.i(TAG, "setupUI: $order")
         tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
         tvClientName.text = order?.name
         tvDistance.text = order?.roadDistance

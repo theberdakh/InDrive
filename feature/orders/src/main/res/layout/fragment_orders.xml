@@ -68,6 +68,18 @@
                 android:drawablePadding="@dimen/padding_small"
                 app:drawableStartCompat="@drawable/ic_info" />
 
+            <TextView
+                android:id="@+id/tv_fetch"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin_small"
+                android:textColor="@color/color_content_secondary"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="40dp"
+                android:text="uuid"
+                android:drawablePadding="@dimen/padding_small"
+                app:drawableStartCompat="@drawable/ic_info" />
+
             <View
                 android:id="@+id/btn_filter"
                 android:layout_width="56dp"
