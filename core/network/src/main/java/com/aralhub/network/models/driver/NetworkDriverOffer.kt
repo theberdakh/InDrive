@@ -9,10 +9,11 @@ data class NetworkDriverOffer(
     @SerializedName("full_name")
     val fullName: String,
     val rating: Float,
+    @SerializedName("photo_url")
+    val photoUrl: String,
     val color: NetworkMultiLanguageText,
     @SerializedName("vehicle_type")
     val vehicleType: NetworkMultiLanguageText,
     @SerializedName("plate_number")
     val plateNumber: String,
-
 )

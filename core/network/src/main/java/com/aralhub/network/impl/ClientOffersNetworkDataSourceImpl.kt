@@ -16,10 +16,9 @@ import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 
 class ClientOffersNetworkDataSourceImpl(private val client: HttpClient) :
@@ -33,36 +32,58 @@ class ClientOffersNetworkDataSourceImpl(private val client: HttpClient) :
 
         return session?.let { webSocketSession ->
             Log.i("WebSocketLog", "Session is not null")
-            val clientWebSocketEvent = webSocketSession.incoming.consumeAsFlow().filterIsInstance<Frame.Text>()
-                    .map { frameText ->
-                        Log.i("WebSocketLog", "Frame: ${frameText.readText()}")
-                        try {
-                            val data = Gson().fromJson(frameText.readText(),
-                                ClientWebSocketServerResponse::class.java
-                            )
-                            when (data.type) {
-                                DRIVER_OFFER -> {
-                                    val driverOffer =
-                                        Gson().fromJson<ClientWebSocketServerResponse<NetworkOffer>>(
-                                            frameText.readText(),
-                                            object :
-                                                TypeToken<ClientWebSocketServerResponse<NetworkOffer>>() {}.type
-                                        )
-                                    ClientWebSocketEventNetwork.DriverOffer(driverOffer.data)
-                                }
 
-                                else -> ClientWebSocketEventNetwork.Unknown("Unknown")
+            // Add debugging to confirm the flow is being processed
+            webSocketSession.incoming
+                .consumeAsFlow()
+                .onEach { frame ->
+                    Log.i("WebSocketLog", "Received a frame of type: ${frame::class.java.simpleName}")
+                }
+                .filterIsInstance<Frame.Text>()
+                .onEach { frame ->
+                    Log.i("WebSocketLog", "Processing Text frame")
+                }
+                .let { textFramesFlow ->
+                    flow {
+                        try {
+                            textFramesFlow.collect { frameText ->
+                                val text = frameText.readText()
+                                Log.i("WebSocketLog", "Received raw frame: $text")
+
+                                // Rest of your processing logic
+                                try {
+                                    val data = Gson().fromJson(text, ClientWebSocketServerResponse::class.java)
+                                    Log.i("WebSocketLog", "Parsed type: ${data.type}")
+
+                                    val event = when (data.type) {
+                                        DRIVER_OFFER -> {
+                                            val driverOffer = Gson().fromJson<ClientWebSocketServerResponse<NetworkOffer>>(
+                                                text,
+                                                object : TypeToken<ClientWebSocketServerResponse<NetworkOffer>>() {}.type
+                                            )
+                                            ClientWebSocketEventNetwork.DriverOffer(driverOffer.data)
+                                        }
+                                        else -> ClientWebSocketEventNetwork.Unknown("Unknown type: ${data.type}")
+                                    }
+
+                                    emit(event)
+                                } catch (e: Exception) {
+                                    Log.e("WebSocketLog", "Error parsing frame: ${e.message}", e)
+                                    emit(ClientWebSocketEventNetwork.Unknown("Parsing error: ${e.message}"))
+                                }
                             }
                         } catch (e: Exception) {
-                            Log.e("WebSocketLog", "Error: ${e.message}")
-                            ClientWebSocketEventNetwork.Unknown("Unknown")
+                            Log.e("WebSocketLog", "WebSocket error: ${e.message}", e)
+                            emit(ClientWebSocketEventNetwork.Unknown("WebSocket error: ${e.message}"))
                         }
                     }
-            flow { emitAll(clientWebSocketEvent) }
+                }
         } ?: flow {
             Log.i("WebSocketLog", "Session is null")
-            emit(ClientWebSocketEventNetwork.Unknown("Unknown")) }
+            emit(ClientWebSocketEventNetwork.Unknown("Session initialization failed"))
+        }
     }
+
 
     override suspend fun close() {
         session?.close()

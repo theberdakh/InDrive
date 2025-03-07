@@ -6,7 +6,7 @@ data class Offer(
     val offerId: String,
     val rideUuid: String,
     val driver: NetworkDriverOffer,
-    val amount: Int,
+    val amount: Double,
     val createdAt: String,
     val expiresAt: String
 )

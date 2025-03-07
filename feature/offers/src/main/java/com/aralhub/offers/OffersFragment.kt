@@ -41,9 +41,9 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                is OffersUiState.Error -> Log.e("OffersFragment", "Error: ${offersUiState.message}")
                OffersUiState.Loading -> {}
                is OffersUiState.Success -> {
+                   Log.i("OffersFragment", "Success: ${offersUiState.offers}")
                    offerItemAdapter.submitList(offersUiState.offers)
                }
-
            }
        }
     }

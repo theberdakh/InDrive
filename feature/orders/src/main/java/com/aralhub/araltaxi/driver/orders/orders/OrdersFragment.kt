@@ -98,7 +98,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 distance = 500000
             )
         )
-        viewModel.getDriverProfile()
+       // viewModel.getDriverProfile()
         lifecycleScope.launch {
             delay(3000)
             viewModel.sendLocation(

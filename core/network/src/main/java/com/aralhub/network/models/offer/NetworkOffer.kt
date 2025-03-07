@@ -9,7 +9,7 @@ data class NetworkOffer(
     @SerializedName("ride_uuid")
     val rideUuid: String,
     val driver: NetworkDriverOffer,
-    val amount: Int,
+    val amount: Double,
     @SerializedName("created_at")
     val createdAt: String,
     @SerializedName("expires_at")

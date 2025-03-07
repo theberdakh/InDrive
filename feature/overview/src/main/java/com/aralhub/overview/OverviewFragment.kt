@@ -38,10 +38,11 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
         initObservers()
         initViews()
         initListeners()
+        //viewModel.getProfile()
+        viewModel.getBalance()
     }
 
     private fun initObservers() {
-        viewModel.getProfile()
         viewModel.profileUiState.onEach {
             when (it) {
                 is ProfileUiState.Error -> Log.i(
@@ -54,7 +55,7 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.getBalance()
+
         viewModel.balanceUiState.onEach {
             when(it){
                 is DriverBalanceUiState.Error -> Log.i("RequestFragment", "balanceUiState: error ${it.message}")
