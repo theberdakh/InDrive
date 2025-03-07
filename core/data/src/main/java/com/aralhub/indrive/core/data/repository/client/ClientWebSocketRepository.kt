@@ -16,4 +16,5 @@ interface ClientWebSocketRepository {
     suspend fun getSearchRideByPassengerId(): Result<SearchRide>
     suspend fun cancelSearchRide(rideId: String): Result<Boolean>
     suspend fun updateSearchRideAmount(rideId: String, amount: Number): Result<Boolean>
+    suspend fun updateAutoTake(rideId: String, autoTake: Boolean): Result<Boolean>
 }

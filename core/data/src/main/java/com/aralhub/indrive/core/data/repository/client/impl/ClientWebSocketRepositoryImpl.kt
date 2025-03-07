@@ -295,4 +295,13 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
             }
         }
     }
+
+    override suspend fun updateAutoTake(rideId: String, autoTake: Boolean): Result<Boolean> {
+        return dataSource.updateAutoTake(rideId, autoTake).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
 }

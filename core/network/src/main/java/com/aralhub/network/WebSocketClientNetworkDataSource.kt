@@ -22,4 +22,6 @@ interface WebSocketClientNetworkDataSource {
 
     suspend fun clientCancelSearchRide(rideId: String): NetworkResult<ServerResponseEmpty>
 
+    suspend fun updateAutoTake(rideId: String, autoTake: Boolean): NetworkResult<ServerResponseEmpty>
+
 }

@@ -1,6 +1,7 @@
 package com.aralhub.offers.sheet.standard.changeorcancel
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
@@ -32,6 +33,11 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         initObservers()
+        viewModel.getSearchRide()
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     private fun initObservers() {
@@ -45,13 +51,34 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
                 }
             }
         }
+
         observeState(viewModel.searchRideUiState) { searchRideUiState ->
             when (searchRideUiState) {
                 is SearchRideUiState.Error -> errorHandler.showToast(searchRideUiState.message)
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
                     searchRideId = searchRideUiState.searchRide.uuid
+                    Log.i("SearchRide", "${searchRideUiState.searchRide}")
+                    val amount = if (searchRideUiState.searchRide.updatedAmount == 0) {
+                        searchRideUiState.searchRide.baseAmount
+                    } else {
+                        searchRideUiState.searchRide.updatedAmount
+                    }
+                    binding.tvAutoTakeDescription.text = "Eń jaqın aydawshınıń $amount somǵa shekemgi bolǵan usınısın avtomat túrde qabıllaw"
+
                 }
+            }
+        }
+
+        observeState(viewModel.updateAutoTakeUiState) { updateAutoTakeUiState ->
+            when (updateAutoTakeUiState) {
+                is UpdateAutoTakeUiState.Error -> {
+                    errorHandler.showToast(updateAutoTakeUiState.message)
+                    binding.autoTakeToggle.setChecked(false)
+                }
+
+                UpdateAutoTakeUiState.Loading -> {}
+                UpdateAutoTakeUiState.Success -> {}
             }
         }
     }
@@ -59,6 +86,14 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
     private fun initListeners() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
             viewModel.cancelSearchRide()
+        }
+
+        binding.autoTakeToggle.setOnCheckedListener { isChecked ->
+            if (searchRideId != SEARCH_ID_DEFAULT) {
+                viewModel.updateAutoTake(searchRideId, isChecked)
+            } else {
+                errorHandler.showToast("Ride is not available")
+            }
         }
 
         binding.btnCancel.setOnClickListener {

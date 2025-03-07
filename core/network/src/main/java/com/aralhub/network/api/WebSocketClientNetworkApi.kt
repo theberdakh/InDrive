@@ -37,6 +37,9 @@ interface WebSocketClientNetworkApi {
     @GET("/websocket/get_active_offer_by_ride_id/{ride_id}")
     suspend fun getActiveOfferByRideId(@Path("ride_id") rideId: String): Response<ServerResponseEmpty>
 
+    @PUT("/websocket/ride/update_auto_take/{ride_id}")
+    suspend fun updateAutoTake(@Path("ride_id") rideId: String, @Query("auto_take") autoTake: Boolean): Response<ServerResponseEmpty>
+
     @GET("/websocket/get_active_ride_by_passenger")
     suspend fun getActiveRideByPassenger(@Query("user_id") userId: Int): Response<ServerResponse<NetworkRideActive>>
 
