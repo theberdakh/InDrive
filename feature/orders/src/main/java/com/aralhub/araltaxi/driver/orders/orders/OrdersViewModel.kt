@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
@@ -202,6 +203,21 @@ class OrdersViewModel @Inject constructor(
                     is Result.Error -> {}
                     is Result.Success -> {
                         _activeOrdersUiState.emit(0)
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateRideStatus(rideId: Int, status: String) {
+        viewModelScope.launch {
+            repository.updateRideStatus(rideId, status).let { result ->
+                when (result) {
+                    is Result.Error -> {
+                        Log.d("OrdersViewModel", "error")
+                    }
+                    is Result.Success -> {
+                        Log.d("OrdersViewModel", "success")
                     }
                 }
             }

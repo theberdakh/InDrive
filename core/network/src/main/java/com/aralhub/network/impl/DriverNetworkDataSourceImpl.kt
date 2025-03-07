@@ -87,6 +87,10 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return api.cancelRide(rideId, cancelCauseId).safeRequestEmpty()
     }
 
+    override suspend fun updateRideStatus(rideId: Int, status: String): NetworkResult<Boolean> {
+        return api.updateRideStatus(rideId, status).safeRequestEmpty()
+    }
+
     override suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo> {
         return api.getDriverBalanceInfo().safeRequestServerResponse()
     }

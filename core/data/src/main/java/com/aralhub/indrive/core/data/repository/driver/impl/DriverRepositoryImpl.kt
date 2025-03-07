@@ -35,4 +35,18 @@ class DriverRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun updateRideStatus(rideId: Int, status: String): Result<Boolean> {
+        driverNetworkDataSource.updateRideStatus(rideId, status).let {
+            return when (it) {
+                is NetworkResult.Error -> {
+                    Result.Error(it.message)
+                }
+
+                is NetworkResult.Success -> {
+                    Result.Success(it.data)
+                }
+            }
+        }
+    }
 }

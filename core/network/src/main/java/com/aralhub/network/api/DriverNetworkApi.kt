@@ -84,4 +84,10 @@ interface DriverNetworkApi {
         @Query("cancel_cause_id") cancelCauseId: Int
     ): Response<ServerResponseEmpty>
 
+    @PUT("/ride/{rideId}/update_ride")
+    suspend fun updateRideStatus(
+        @Path("rideId") rideId: Int,
+        @Query("status") status: String
+    ): Response<ServerResponseEmpty>
+
 }

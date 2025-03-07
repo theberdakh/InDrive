@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.araltaxi.driver.orders.model.offerAccepted
 import com.aralhub.araltaxi.driver.orders.orders.OrdersViewModel
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderLoadingBinding
@@ -40,12 +38,6 @@ class OrderLoadingModalBottomSheet :
 
         initUI()
         initObservers()
-
-        binding.tvOfferAmount.setOnClickListener {
-            lifecycleScope.launchWhenResumed {
-                offerAccepted.emit(Unit)
-            }
-        }
 
     }
 

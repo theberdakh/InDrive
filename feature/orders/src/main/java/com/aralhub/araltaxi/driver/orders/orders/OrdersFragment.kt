@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.driver.orders.model.RideStatus
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
 import com.aralhub.araltaxi.driver.orders.sheet.CancelTripModalBottomSheet
@@ -33,7 +34,6 @@ import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.adapter.OrderItemAdapter
 import com.aralhub.ui.model.OrderItem
-import com.aralhub.ui.model.PaymentType
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.ViewEx.invisible
 import com.aralhub.ui.utils.ViewEx.show
@@ -169,13 +169,17 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             val bundle = Bundle()
                             bundle.putParcelable(
                                 "OrderDetail",
-                               orders.getOrNull(0)
+                                orders.getOrNull(0)
                             )
                             Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
                             goingToPickUpModalBottomSheet.arguments = bundle
                             goingToPickUpModalBottomSheet.show(
                                 childFragmentManager,
                                 GoingToPickUpModalBottomSheet.TAG
+                            )
+                            viewModel.updateRideStatus(
+                                rideId,
+                                RideStatus.DRIVER_ON_THE_WAY.status
                             )
                             orderModalBottomSheet.dismissAllowingStateLoss()
                         }
@@ -199,19 +203,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 }
             }
         }
-//        offerAccepted.onEach {
-//            orderModalBottomSheet.dismissAllowingStateLoss()
-//            val bundle = Bundle()
-//            bundle.putParcelable(
-//                "OrderDetail",
-//                orders.getOrNull(0)
-//            )
-//            goingToPickUpModalBottomSheet.arguments = bundle
-//            goingToPickUpModalBottomSheet.show(
-//                childFragmentManager,
-//                GoingToPickUpModalBottomSheet.TAG
-//            )
-//        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun displayProfile(driverProfile: DriverProfile) {
@@ -320,6 +311,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 childFragmentManager,
                 RideFinishedModalBottomSheet.TAG
             )
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.RIDE_COMPLETED.status
+            )
         }
         rideModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -336,6 +331,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             )
             rideModalBottomSheet.arguments = bundle
             rideModalBottomSheet.show(childFragmentManager, RideModalBottomSheet.TAG)
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.RIDE_STARTED.status
+            )
         }
         waitingForClientModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
@@ -354,6 +353,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             waitingForClientModalBottomSheet.show(
                 childFragmentManager,
                 WaitingForClientModalBottomSheet.TAG
+            )
+            viewModel.updateRideStatus(
+                rideId,
+                RideStatus.DRIVER_WAITING_CLIENT.status
             )
         }
         goingToPickUpModalBottomSheet.setOnRideCanceledListener {
