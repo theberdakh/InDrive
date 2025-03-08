@@ -7,5 +7,5 @@ import javax.inject.Inject
 class SendDriverLocationUseCase @Inject constructor(
     private val repository: DriverWebSocketRepository
 ) {
-    suspend operator fun invoke(data: SendLocationRequest) = repository.sendLocation(data)
+    suspend operator fun invoke(latitude: Double, longitude: Double, distance: Int) = repository.sendLocation(SendLocationRequest(latitude = latitude, longitude = longitude, distance = distance))
 }

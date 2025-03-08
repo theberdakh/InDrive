@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -31,6 +32,7 @@ import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
+import com.aralhub.araltaxi.services.LocationService
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
@@ -79,6 +81,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        startService()
         fetchData()
         initViews()
         initObservers()
@@ -101,16 +104,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             )
         )
 //        viewModel.getDriverProfile()
-        lifecycleScope.launch {
-            delay(2000)
-            viewModel.sendLocation(
-                SendDriverLocationUI(
-                    latitude = 42.44668,
-                    longitude = 59.618043,
-                    distance = 300000
-                )
-            )
-        }
+    }
+
+    private fun startService() {
+        val intent = Intent(requireContext(), LocationService::class.java)
+        requireActivity().startService(intent)
     }
 
     private fun initObservers() {

@@ -3,7 +3,6 @@ package com.aralhub.araltaxi.services
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -13,13 +12,17 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.PermissionChecker
+import com.aralhub.araltaxi.core.common.sharedpreference.DriverSharedPreference
+import com.aralhub.araltaxi.core.domain.driver.SendDriverLocationUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,12 +34,25 @@ class LocationService : Service() {
     @Inject
     lateinit var notification: LocationNotification
 
+    @Inject
+    lateinit var sendDriverLocationUseCase: SendDriverLocationUseCase
+
+    @Inject
+    lateinit var driverSharedPreference: DriverSharedPreference
+
     private var locationManager: LocationManager? = null
     private var notificationManager: NotificationManager? = null
-    private val locationListener =  LocationListener { location ->
+    private val locationListener = LocationListener { location ->
         val latitude = location.latitude
         val longitude = location.longitude
         updateNotification(latitude, longitude)
+        scope.launch {
+            sendDriverLocationUseCase.invoke(
+                latitude = latitude,
+                longitude = longitude,
+                driverSharedPreference.distance
+            )
+        }
     }
 
     override fun onBind(p0: Intent?): IBinder? = null
@@ -47,8 +63,14 @@ class LocationService : Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         startForeground()
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL, SMALLEST_DISTANCE, locationListener)
+        locationManager?.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            INTERVAL,
+            SMALLEST_DISTANCE,
+            locationListener
+        )
     }
+
     private fun updateNotification(latitude: Double, longitude: Double) {
         val newNotification = buildNotification("Location: $latitude, $longitude")
         notificationManager?.notify(ID, newNotification)
@@ -71,8 +93,11 @@ class LocationService : Service() {
         return super.onStartCommand(intent, flags, startId)
 
     }
+
     private fun startForeground() {
-        val locationPermission = PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        Log.d("LocationService", "startForeground")
+        val locationPermission =
+            PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (locationPermission != PermissionChecker.PERMISSION_GRANTED) {
             stopSelf()
             return

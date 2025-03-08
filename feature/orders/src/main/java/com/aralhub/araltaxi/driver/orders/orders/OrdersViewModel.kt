@@ -8,7 +8,6 @@ import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
-import com.aralhub.araltaxi.core.domain.driver.SendDriverLocationUseCase
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
@@ -37,7 +36,6 @@ class OrdersViewModel @Inject constructor(
     private val driverLogoutUseCase: DriverLogoutUseCase,
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
-    private val sendDriverLocationUseCase: SendDriverLocationUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val repository: DriverRepository
 ) : ViewModel() {
@@ -172,12 +170,6 @@ class OrdersViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(5000),
         GetActiveOrdersUiState.Loading
     )
-
-    fun sendLocation(data: SendDriverLocationUI) {
-        viewModelScope.launch {
-            sendDriverLocationUseCase(data.asDomain())
-        }
-    }
 
     private fun disconnect() {
         CoroutineScope(Dispatchers.IO).launch {

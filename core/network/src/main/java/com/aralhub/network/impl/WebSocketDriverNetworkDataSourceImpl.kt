@@ -116,7 +116,7 @@ class WebSocketDriverNetworkDataSourceImpl(
         session?.outgoing?.send(
             Frame.Text(Gson().toJson(data))
         )
-        Log.d("WebSocketLog", "location sent")
+        Log.d("WebSocketLog", "location sent=${data.distance}")
     }
 
     override suspend fun close() {
