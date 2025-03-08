@@ -7,15 +7,17 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
 
 class CurrentLocationListener(
-    private val map: Map,
-    initialLocation: Location,
+    private val onUpdateMapPosition: (listener: Point) -> Unit,
     private val onProviderDisabledListener: () -> Unit,
     private val onProviderEnabledListener: () -> Unit
 ) :
     LocationListener {
+
+    private val initialLocation = Point(42.4651,59.6136)
+    private val initialPoint = Point(initialLocation.latitude, initialLocation.longitude)
+
     init {
-        val initialPoint = Point(initialLocation.latitude, initialLocation.longitude)
-        updateMapPosition(initialPoint)
+        onUpdateMapPosition(initialPoint)
     }
 
     private var isUpdated = false
@@ -38,11 +40,7 @@ class CurrentLocationListener(
     }
 
     private fun updateMapPosition(point: Point) {
-        val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-        if (map.isValid){
-            map.move(cameraPosition)
-        }
-
+        onUpdateMapPosition(point)
     }
 
 }
