@@ -41,7 +41,7 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
     }
 
     private fun initObservers() {
-        viewModel.getProfile()
+//        viewModel.getProfile()
         viewModel.profileUiState.onEach {
             when (it) {
                 is ProfileUiState.Error -> Log.i(

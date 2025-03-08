@@ -18,6 +18,8 @@ import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -177,8 +179,8 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    fun disconnect() {
-        viewModelScope.launch {
+    private fun disconnect() {
+        CoroutineScope(Dispatchers.IO).launch {
             closeDriverWebSocketConnectionUseCase.close()
         }
     }
@@ -216,12 +218,18 @@ class OrdersViewModel @Inject constructor(
                     is Result.Error -> {
                         Log.d("OrdersViewModel", "error")
                     }
+
                     is Result.Success -> {
                         Log.d("OrdersViewModel", "success")
                     }
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disconnect()
     }
 }
 

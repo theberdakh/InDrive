@@ -10,7 +10,9 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -58,7 +60,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     @Inject
     lateinit var errorHandler: ErrorHandler
-    private val viewModel by activityViewModels<OrdersViewModel>()
+    private val viewModel by viewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
@@ -98,9 +100,9 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 distance = 500000
             )
         )
-        viewModel.getDriverProfile()
+//        viewModel.getDriverProfile()
         lifecycleScope.launch {
-            delay(3000)
+            delay(2000)
             viewModel.sendLocation(
                 SendDriverLocationUI(
                     latitude = 42.44668,
@@ -117,9 +119,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 rideId = rideId,
                 cancelCauseId = 2
             )
-        }
-        binding.tvFetch.setOnClickListener {
-            viewModel.getActiveRide()
         }
         viewModel.activeOrdersUiState.onEach { rideId ->
             binding.tvUuid.text = rideId.toString()
@@ -409,10 +408,5 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun showExitLineBottomSheet() {
         exitLineModalBottomSheet.show(childFragmentManager, ExitLineModalBottomSheet.TAG)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        viewModel.disconnect()
     }
 }
