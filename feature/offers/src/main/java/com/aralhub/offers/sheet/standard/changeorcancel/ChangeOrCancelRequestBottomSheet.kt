@@ -64,7 +64,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
                     } else {
                         searchRideUiState.searchRide.updatedAmount
                     }
-                    binding.tvAutoTakeDescription.text = "Eń jaqın aydawshınıń $amount somǵa shekemgi bolǵan usınısın avtomat túrde qabıllaw"
+                    binding.tvAutoTakeDescription.text = "Eń jaqın aydawshınıń ${amount.toInt()} somǵa shekemgi bolǵan usınısın avtomat túrde qabıllaw"
 
                 }
             }
