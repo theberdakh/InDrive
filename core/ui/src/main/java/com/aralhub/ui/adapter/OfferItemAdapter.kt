@@ -13,16 +13,25 @@ import com.bumptech.glide.request.RequestOptions
 class OfferItemAdapter :
     ListAdapter<OfferItem, OfferItemAdapter.ViewHolder>(OfferItemDiffCallback) {
 
-    private var onItemAcceptClickListener: ((OfferItem) -> Unit)? = null
+    private var onItemAcceptClickListener: ((OfferItem) -> Unit) = {}
     fun setOnItemAcceptClickListener(listener: (OfferItem) -> Unit) {
         onItemAcceptClickListener = listener
+    }
+
+    private var onItemDeclineClickListener: (OfferItem, Int) -> Unit = { offerItem, position -> }
+    fun setOnItemDeclineClickListener(listener: (OfferItem, Int) -> Unit = { offerItem, position -> }) {
+        onItemDeclineClickListener = listener
     }
 
     inner class ViewHolder(private val itemOfferBinding: ItemOfferBinding) :
         RecyclerView.ViewHolder(itemOfferBinding.root) {
         fun bind(offerItem: OfferItem) {
             itemOfferBinding.btnAccept.setOnClickListener {
-                onItemAcceptClickListener?.invoke(offerItem)
+                onItemAcceptClickListener.invoke(offerItem)
+            }
+
+            itemOfferBinding.btnDecline.setOnClickListener {
+                onItemDeclineClickListener.invoke(offerItem, adapterPosition)
             }
             itemOfferBinding.apply {
                 tvDriverName.text = offerItem.driver.name
@@ -38,6 +47,21 @@ class OfferItemAdapter :
                     .apply(RequestOptions.circleCropTransform())
                     .into(itemOfferBinding.ivAvatar)
             }
+        }
+    }
+
+    fun removeItem(position: Int){
+        val currentList = currentList.toMutableList()
+        currentList.removeAt(position)
+        submitList(currentList)
+    }
+
+    fun removeItem(offerItem: OfferItem) {
+        val currentList = currentList.toMutableList()
+        val position = currentList.indexOfFirst { it.id == offerItem.id }
+        if (position != -1) {
+            currentList.removeAt(position)
+            submitList(currentList)
         }
     }
 

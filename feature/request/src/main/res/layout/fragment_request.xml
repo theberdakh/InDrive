@@ -57,7 +57,6 @@
         android:fitsSystemWindows="false"
         android:focusable="true"
         android:orientation="vertical"
-        app:behavior_peekHeight="400dp"
         app:behavior_draggable="false"
         android:paddingTop="0dp"
         app:layout_behavior="@string/bottom_sheet_behavior"
@@ -96,6 +95,9 @@
                 tools:listitem="@layout/item_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
+                android:clipToPadding="true"
+                android:paddingBottom="25dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </LinearLayout>

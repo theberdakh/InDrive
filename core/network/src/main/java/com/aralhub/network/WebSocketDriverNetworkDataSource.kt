@@ -8,9 +8,7 @@ interface WebSocketDriverNetworkDataSource {
 
     fun getActiveOrders(): Flow<WebSocketEventNetwork>
 
-    suspend fun sendLocation(
-        data: NetworkSendLocationRequest
-    )
+    suspend fun sendLocation(data: NetworkSendLocationRequest)
 
     suspend fun close()
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,14 +17,14 @@ import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.araltaxi.request.navigation.models.LocationType
-import com.aralhub.araltaxi.request.navigation.models.SelectedLocation
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.CurrentLocationListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
 import com.aralhub.indrive.core.data.model.client.ClientProfile
 import com.aralhub.ui.adapter.location.LocationItemAdapter
 import com.aralhub.ui.model.LocationItemClickOwner
+import com.aralhub.ui.model.args.LocationType
+import com.aralhub.ui.model.args.SelectedLocation
 import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -32,15 +33,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    @Inject
-    lateinit var navigation: FeatureRequestNavigation
-    @Inject
-    lateinit var errorHandler: ErrorHandler
+    private var areBothLocationsSelected = false
+    @Inject lateinit var navigation: FeatureRequestNavigation
+    @Inject lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
     private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
@@ -50,10 +49,21 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager?.let { observeLocationUpdates(it) }
+        initObservers()
+        initViews()
+        initListeners()
+        viewModel.getProfile()
+        viewModel.getSearchRide()
+    }
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
-        initObservers()
     }
 
     override fun onStop() {
@@ -63,25 +73,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager?.let { observeLocationUpdates(it) }
-        initViews()
-        initListeners()
-        viewModel.getProfile()
-    }
-
-    @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        val lastKnownLocation =
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(
-                LocationManager.GPS_PROVIDER
-            ).apply {
+        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(LocationManager.GPS_PROVIDER).apply {
                 latitude = 42.4651
                 longitude = 59.6136
             }
+
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
@@ -93,16 +90,34 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 },
                 onProviderDisabledListener = {
                     viewModel.updateLocationEnabled(false)
+                },
+                onLocationChangedListener = { location ->
+                   // viewModel.getFromLocation(location.latitude, location.longitude)
                 })
         )
     }
 
     private fun initObservers() {
-
         observeState(viewModel.selectedLocations) { selectedLocations ->
-            if(selectedLocations != null){
-                navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+            Log.i("RequestFragment", "Selected locations: $selectedLocations")
+            selectedLocations?.let {
+                if (!areBothLocationsSelected) {
+                    areBothLocationsSelected = true
+                    navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+                }
             }
+        }
+
+        observeState(viewModel.fromLocationUiState) { fromLocationUiState ->
+            when (fromLocationUiState) {
+                is FromLocationUiState.Error -> errorHandler.showToast(fromLocationUiState.message)
+                FromLocationUiState.Loading -> binding.etFromLocation.text = "Loading..."
+                is FromLocationUiState.Success -> {
+                    binding.etFromLocation.text = fromLocationUiState.location.name
+                    viewModel.updateLocation(fromLocationUiState.location)
+                }
+            }
+
         }
 
         observeState(viewModel.suggestionsUiState) { suggestionsUiState ->
@@ -113,6 +128,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     adapter.submitList(null)
                     adapter.submitList(suggestionsUiState.suggestions)
                 }
+            }
+        }
+
+        observeState(viewModel.searchRideUiState) { searchRideUiState ->
+            when (searchRideUiState) {
+                is SearchRideUiState.Error -> {}
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> navigation.goToGetOffersFromRequestFragment()
             }
         }
 
@@ -155,11 +178,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initListeners() {
-
-        parentFragmentManager.setFragmentResultListener(
-            "location_key",
-            viewLifecycleOwner
-        ) { requestKey, bundle ->
+        parentFragmentManager.clearFragmentResultListener("location_key")
+        parentFragmentManager.setFragmentResultListener("location_key", viewLifecycleOwner) { requestKey, bundle ->
             val latitude = bundle.getDouble("latitude")
             val longitude = bundle.getDouble("longitude")
             val locationName = bundle.getString("locationName") ?: "null name"
@@ -176,7 +196,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                         )
                     )
                 }
-
                 1 -> {
                     binding.etToLocation.setText(locationName)
                     viewModel.updateLocation(
@@ -189,10 +208,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     )
                 }
             }
-            errorHandler.showToast("Selected location: $locationOwner $locationName: $latitude, $longitude")
         }
 
-
+        parentFragmentManager.setFragmentResultListener("cancel", viewLifecycleOwner) {
+            requestKey, bundle ->
+            Log.i("RequestFragment", "Cancel result received: ${bundle.getBoolean("cancel")}")
+            val isCanceled = bundle.getBoolean("cancel")
+            viewModel.clearToLocation()
+        }
         adapter.setOnItemClickListener {
             when (it.clickOwner) {
                 LocationItemClickOwner.FROM -> {
@@ -249,7 +272,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             navigation.goToSelectFromLocationFromRequestFragment()
         }
         binding.etToLocation.setEndTextClickListener {
-           // navigation.goToCreateOrderFromRequestFragment()
+            // navigation.goToCreateOrderFromRequestFragment()
             navigation.goToSelectToLocationFromRequestFragment()
         }
 

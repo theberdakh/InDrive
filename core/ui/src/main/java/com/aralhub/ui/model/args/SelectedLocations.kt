@@ -1,19 +1,21 @@
-package com.aralhub.araltaxi.create_order.models
+package com.aralhub.ui.model.args
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-
+@Parcelize
 data class SelectedLocations(
     val from: SelectedLocation,
     val to: SelectedLocation
-): Serializable
+) : Parcelable
 
+@Parcelize
 data class SelectedLocation(
     val name: String,
     val longitude: Double,
     val latitude: Double,
     val locationType: LocationType
-)
+) : Parcelable
 
 enum class LocationType {
     FROM, TO

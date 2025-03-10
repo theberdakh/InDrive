@@ -36,14 +36,14 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
 
     private fun setUpMapView() {
         binding.mapView.onStart()
-        binding.mapView.mapWindow.map.move(
+      /*  binding.mapView.mapWindow.map.move(
             CameraPosition(
                 Point(42.4619, 59.6166),
-                /* zoom = */ 17.0f,
-                /* azimuth = */ 150.0f,
-                /* tilt = */ 30.0f
+                *//* zoom = *//* 17.0f,
+                *//* azimuth = *//* 150.0f,
+                *//* tilt = *//* 30.0f
             )
-        )
+        )*/
     }
 
     override fun onDestroyView() {

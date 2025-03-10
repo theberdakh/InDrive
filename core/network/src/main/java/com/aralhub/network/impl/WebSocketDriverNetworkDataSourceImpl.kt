@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.isActive
+import javax.inject.Inject
 
 class WebSocketDriverNetworkDataSourceImpl(
     private val client: HttpClient
@@ -49,8 +50,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                     val jsonString = frame.readText()
                     Log.d("WebSocketLog", jsonString)
                     try {
-                        val baseResponse =
-                            Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
+                        val baseResponse = Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
 
                         when (baseResponse.type) {
                             RIDE_CANCELED -> {

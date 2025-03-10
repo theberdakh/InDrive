@@ -17,8 +17,10 @@ import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethod
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
+import com.aralhub.indrive.core.data.model.ride.RecommendedAmount
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.ui.model.RideOptionItem
+import com.aralhub.ui.model.args.SelectedLocations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,10 +43,10 @@ class CreateOrderViewModel @Inject constructor(
         _paymentMethod.value = paymentMethodType
     }
 
-
     private var _recommendedPriceUiState = MutableSharedFlow<RecommendedPriceUiState>()
     val recommendedPriceUiState = _recommendedPriceUiState.asSharedFlow()
     fun getRecommendedPrice(geopoints: List<GeoPoint>) = viewModelScope.launch {
+        Log.i("CreateOrderViewModel", "getRecommendedPrice $geopoints")
         getRecommendedPriceUseCase.invoke(geopoints).let {
             _recommendedPriceUiState.emit(RecommendedPriceUiState.Loading)
             when (it) {
@@ -63,39 +65,37 @@ class CreateOrderViewModel @Inject constructor(
     private var _sendOrderBottomSheetUiState = MutableSharedFlow<SendOrderBottomSheetUiState>()
     val sendOrderBottomSheetUiState = _sendOrderBottomSheetUiState.asSharedFlow()
 
-    fun createRide() = viewModelScope.launch {
+    fun createRide(baseAmount: Number, recommendedAmount: RecommendedAmount, selectedLocations: SelectedLocations, comment: String, paymentId: Int, options: List<Int>) = viewModelScope.launch {
         _sendOrderBottomSheetUiState.emit(SendOrderBottomSheetUiState.Loading)
         useCase.invoke(
-
             ClientRideRequest(
-                passengerId = 39,
-                baseAmount = 3000,
+                baseAmount = baseAmount,
                 recommendedAmount = ClientRideRequestRecommendedAmount(
-                    minAmount = 2000,
-                    maxAmount = 4000,
-                    recommendedAmount = 3000
+                    minAmount = recommendedAmount.minAmount,
+                    maxAmount = recommendedAmount.maxAmount,
+                    recommendedAmount = recommendedAmount.recommendedAmount
                 ),
                 locations = ClientRideRequestLocations(
                     points = listOf(
                         ClientRideRequestLocationsItems(
                             coordinates = ClientRideRequestLocationsItemsCoordinates(
-                                longitude = 59.615902,
-                                latitude = 42.474078
+                                longitude = selectedLocations.from.longitude,
+                                latitude = selectedLocations.from.latitude
                             ),
-                            name = "Nukus"
+                            name = selectedLocations.from.name
                         ), ClientRideRequestLocationsItems(
                             coordinates = ClientRideRequestLocationsItemsCoordinates(
-                                longitude = 59.605034,
-                                latitude = 42.463283
+                                longitude = selectedLocations.to.longitude,
+                                latitude = selectedLocations.to.latitude
                             ),
-                            name = "Nukus2"
+                            name = selectedLocations.to.name
                         )
                     )
                 ),
-                comment = "",
+                comment = comment,
                 autoTake = false,
-                paymentId = 2,
-                optionIds = listOf(1),
+                paymentId = paymentId,
+                optionIds = options,
                 cancelCauseId = null
             )
         ).let {

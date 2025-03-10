@@ -3,7 +3,7 @@ package com.aralhub.ui.model
 import androidx.recyclerview.widget.DiffUtil
 
 data class OfferItem(
-    val id: Int,
+    val id: String,
     val driver: OfferItemDriver,
     val offeredPrice: String,
     val timeToArrive: String,

@@ -23,6 +23,7 @@
             <View
                 android:layout_width="50dp"
                 android:layout_height="100dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +34,7 @@
                 android:id="@+id/btn_menu"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:visibility="gone"
                 android:layout_margin="@dimen/margin_small"
                 android:background="@drawable/shape_circle_icon"
                 android:contentDescription="@string/cd_menu"
@@ -165,9 +167,9 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_from_location_name"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:text="Nukus"
                             android:maxLines="1"
                             android:ellipsize="end"
                             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
@@ -194,10 +196,10 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_to_location_name"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:maxLines="1"
-                            android:text="Nukus → Xojeli → Xojeli → Xojeli → Xojeli → Xojeli"
                             android:ellipsize="end"
                             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                             android:layout_height="wrap_content"/>
@@ -206,6 +208,7 @@
                         <View
                             android:id="@+id/icon_add"
                             android:layout_width="24dp"
+                            android:visibility="invisible"
                             android:layout_height="24dp"
                             android:clickable="true"
                             android:foreground="@drawable/ripple_round"
