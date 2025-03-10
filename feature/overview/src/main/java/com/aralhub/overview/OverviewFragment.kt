@@ -24,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment(R.layout.fragment_overview) {
@@ -43,6 +42,7 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
     }
 
     private fun initObservers() {
+//        viewModel.getProfile()
         viewModel.profileUiState.onEach {
             when (it) {
                 is ProfileUiState.Error -> Log.i(
@@ -57,19 +57,27 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
 
 
         viewModel.balanceUiState.onEach {
-            when(it){
-                is DriverBalanceUiState.Error -> Log.i("RequestFragment", "balanceUiState: error ${it.message}")
+            when (it) {
+                is DriverBalanceUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "balanceUiState: error ${it.message}"
+                )
+
                 DriverBalanceUiState.Loading -> Log.i("RequestFragment", "balanceUiState: loading")
                 is DriverBalanceUiState.Success -> {
-                    binding.tvBalance.text= it.balance.toString()
+                    binding.tvBalance.text = it.balance.toString()
                     binding.tvDailyIncome.text = it.dayBalance.toString()
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.logoutUiState.onEach {
-            when(it){
-                is LogoutUiState.Error -> Log.i("RequestFragment", "logoutUiState: error ${it.message}")
+            when (it) {
+                is LogoutUiState.Error -> Log.i(
+                    "RequestFragment",
+                    "logoutUiState: error ${it.message}"
+                )
+
                 LogoutUiState.Loading -> Log.i("RequestFragment", "logoutUiState: loading")
                 LogoutUiState.Success -> navigation.goToLogoFromOverview()
             }

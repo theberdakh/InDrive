@@ -3,12 +3,12 @@ package com.aralhub.araltaxi.driver.orders.orders
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
-import com.aralhub.araltaxi.core.domain.driver.SendDriverLocationUseCase
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
@@ -18,6 +18,8 @@ import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +37,6 @@ class OrdersViewModel @Inject constructor(
     private val driverLogoutUseCase: DriverLogoutUseCase,
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
-    private val sendDriverLocationUseCase: SendDriverLocationUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val repository: DriverRepository
 ) : ViewModel() {
@@ -43,9 +44,6 @@ class OrdersViewModel @Inject constructor(
     init {
         getActiveRide()
     }
-
-    private var _rejectOfferState = MutableSharedFlow<String>()
-    val rejectOfferState = _rejectOfferState.asSharedFlow()
 
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -157,7 +155,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferRejected -> {
-                _rejectOfferState.emit(result.rideUUID)
+                rejectOfferState.emit(result.rideUUID)
                 GetActiveOrdersUiState.OfferRejected(result.rideUUID)
             }
 
@@ -171,14 +169,8 @@ class OrdersViewModel @Inject constructor(
         GetActiveOrdersUiState.Loading
     )
 
-    fun sendLocation(data: SendDriverLocationUI) {
-        viewModelScope.launch {
-            sendDriverLocationUseCase(data.asDomain())
-        }
-    }
-
-    fun disconnect() {
-        viewModelScope.launch {
+    private fun disconnect() {
+        CoroutineScope(Dispatchers.IO).launch {
             closeDriverWebSocketConnectionUseCase.close()
         }
     }
@@ -216,12 +208,18 @@ class OrdersViewModel @Inject constructor(
                     is Result.Error -> {
                         Log.d("OrdersViewModel", "error")
                     }
+
                     is Result.Success -> {
                         Log.d("OrdersViewModel", "success")
                     }
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disconnect()
     }
 }
 

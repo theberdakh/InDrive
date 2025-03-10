@@ -27,8 +27,9 @@ object DriverWebSocketModule {
     fun provideHttpClient(localStorage: LocalStorage): HttpClient {
         return HttpClient(CIO) {
             install(Logging)
-            install(WebSockets)
-            Log.i("DriverWebSocketModule", "provideHttpClient: ${localStorage.access}")
+            install(WebSockets) {
+                pingInterval = 20_000
+            }
             defaultRequest {
                 header(
                     "Authorization",

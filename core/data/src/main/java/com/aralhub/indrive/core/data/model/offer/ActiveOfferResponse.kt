@@ -24,7 +24,7 @@ fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferR
             pickUp = data.clientPickUpAddress,
             avatar = data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
             roadPrice = data.baseAmount.toString(),
-            pickUpDistance = 200.0,
+            pickUpDistance = distanceToClient.distance,
             roadDistance = data.distance.totalDistance.toDouble(),
             paymentType = data.paymentMethod.id,
             pickUpAddress = data.clientPickUpAddress,

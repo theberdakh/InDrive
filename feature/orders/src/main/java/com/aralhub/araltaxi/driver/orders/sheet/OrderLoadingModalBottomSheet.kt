@@ -3,9 +3,8 @@ package com.aralhub.araltaxi.driver.orders.sheet
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.aralhub.araltaxi.driver.orders.orders.OrdersViewModel
+import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderLoadingBinding
 import com.aralhub.ui.utils.viewBinding
@@ -20,7 +19,6 @@ class OrderLoadingModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order_loading) {
 
     private val binding by viewBinding(ModalBottomSheetOrderLoadingBinding::bind)
-    private val orderViewModel by activityViewModels<OrdersViewModel>()
 
     private val orderRejectedByClientModalBottomSheet = OrderRejectedByClientModalBottomSheet()
 
@@ -48,7 +46,7 @@ class OrderLoadingModalBottomSheet :
     }
 
     private fun initObservers() {
-        orderViewModel.rejectOfferState.onEach {
+        rejectOfferState.onEach {
             orderRejectedByClientModalBottomSheet.arguments = arguments
             orderRejectedByClientModalBottomSheet.show(
                 parentFragmentManager,

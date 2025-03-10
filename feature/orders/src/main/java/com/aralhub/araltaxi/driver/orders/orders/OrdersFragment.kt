@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,7 +11,9 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -29,6 +32,7 @@ import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
+import com.aralhub.araltaxi.services.LocationService
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.driver.orders.R
 import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
@@ -58,7 +62,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     @Inject
     lateinit var errorHandler: ErrorHandler
-    private val viewModel by activityViewModels<OrdersViewModel>()
+    private val viewModel by viewModels<OrdersViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
@@ -77,6 +81,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        startService()
         fetchData()
         initViews()
         initObservers()
@@ -98,17 +103,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 distance = 500000
             )
         )
-       // viewModel.getDriverProfile()
-        lifecycleScope.launch {
-            delay(3000)
-            viewModel.sendLocation(
-                SendDriverLocationUI(
-                    latitude = 42.44668,
-                    longitude = 59.618043,
-                    distance = 300000
-                )
-            )
-        }
+//        viewModel.getDriverProfile()
+    }
+
+    private fun startService() {
+        val intent = Intent(requireContext(), LocationService::class.java)
+        requireActivity().startService(intent)
     }
 
     private fun initObservers() {
@@ -117,9 +117,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 rideId = rideId,
                 cancelCauseId = 2
             )
-        }
-        binding.tvFetch.setOnClickListener {
-            viewModel.getActiveRide()
         }
         viewModel.activeOrdersUiState.onEach { rideId ->
             binding.tvUuid.text = rideId.toString()
@@ -409,10 +406,5 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun showExitLineBottomSheet() {
         exitLineModalBottomSheet.show(childFragmentManager, ExitLineModalBottomSheet.TAG)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        viewModel.disconnect()
     }
 }

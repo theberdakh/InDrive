@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.request.url
+import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
 import io.ktor.websocket.close
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.isActive
-import javax.inject.Inject
 
 class WebSocketDriverNetworkDataSourceImpl(
     private val client: HttpClient
@@ -49,7 +49,8 @@ class WebSocketDriverNetworkDataSourceImpl(
                     val jsonString = frame.readText()
                     Log.d("WebSocketLog", jsonString)
                     try {
-                        val baseResponse = Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
+                        val baseResponse =
+                            Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
 
                         when (baseResponse.type) {
                             RIDE_CANCELED -> {
@@ -119,7 +120,11 @@ class WebSocketDriverNetworkDataSourceImpl(
     }
 
     override suspend fun close() {
-        session?.close()
+        session?.close(
+            CloseReason(
+                CloseReason.Codes.NORMAL, "Closing Session"
+            )
+        )
         session = null
         Log.d("WebSocketLog", "Session Closed")
     }
