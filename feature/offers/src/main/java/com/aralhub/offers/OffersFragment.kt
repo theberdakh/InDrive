@@ -52,6 +52,7 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                 is AcceptOfferUiState.Error -> errorHandler.showToast(acceptOfferUiState.message)
                 AcceptOfferUiState.Loading -> {}
                 AcceptOfferUiState.Success -> {
+                    featureOffersNavigation.goToRideFragment()
                     errorHandler.showToast("Offer accepted")
                 }
             }

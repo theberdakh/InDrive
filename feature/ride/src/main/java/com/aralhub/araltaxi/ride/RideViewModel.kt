@@ -2,6 +2,8 @@ package com.aralhub.araltaxi.ride
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
+import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,10 +13,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.aralhub.indrive.core.data.result.Result
 
 @HiltViewModel
-class RideViewModel @Inject constructor() : ViewModel() {
+class RideViewModel @Inject constructor(
+    private val getActiveRideUseCase: ClientGetActiveRideUseCase
+) : ViewModel() {
     val rideState = getRideState().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
@@ -25,12 +31,28 @@ class RideViewModel @Inject constructor() : ViewModel() {
         MutableStateFlow<RideBottomSheetUiState>(RideBottomSheetUiState.Loading)
     val rideState2 = _rideState.asStateFlow()
 
+    private var _activeRideState =
+        MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
+    val activeRideState = _activeRideState.asStateFlow()
+
+    fun getActiveRide() = viewModelScope.launch {
+        getActiveRideUseCase().let {
+            when(it){
+                is Result.Error -> {_activeRideState.emit(ActiveRideUiState.Error(it.message))}
+                is Result.Success -> { _activeRideState.emit(ActiveRideUiState.Success(it.data))}
+            }
+        }
+    }
+
+
     init {
-        getRideState().onEach {
+
+      /*  getRideState().onEach {
             _rideState.emit(it)
-        }.launchIn(viewModelScope)
+        }.launchIn(viewModelScope)*/
     }
 }
+
 
 fun getRideState() = flow {
     emit(RideBottomSheetUiState.Success(RideState.WAITING_FOR_DRIVER, cardRideData))
@@ -112,3 +134,9 @@ val cardRideData = Ride(
     driverWaitTime = "2 minutes",
     waitForDriverTime = "5 minutes"
 )
+
+sealed interface ActiveRideUiState {
+    data object Loading : ActiveRideUiState
+    data class Success(val activeRide: ActiveRide) : ActiveRideUiState
+    data class Error(val message: String) : ActiveRideUiState
+}

@@ -1,5 +1,6 @@
 package com.aralhub.offers
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientAcceptOfferUseCase
@@ -73,6 +74,11 @@ class OffersViewModel @Inject constructor(
                 }
                 is ClientWebSocketEvent.Unknown -> {
                     _offersUiState.emit(OffersUiState.Error(it.error))
+                }
+
+                is ClientWebSocketEvent.OfferAccepted -> {
+                    _offersUiState.emit(OffersUiState.Success(offers.map { offer -> offer.asOfferItem() }))
+                    Log.i("OffersViewModel", "Offer accepted: ${it.ride}")
                 }
             }
         }

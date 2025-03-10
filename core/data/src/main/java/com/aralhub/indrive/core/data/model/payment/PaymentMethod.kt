@@ -1,5 +1,13 @@
 package com.aralhub.indrive.core.data.model.payment
 
+import com.aralhub.network.models.payment.NetworkPaymentMethod
+
+fun NetworkPaymentMethod.toDomain() = PaymentMethod(
+    id = id,
+    name = name,
+    isActive = isActive
+)
+
 data class PaymentMethod(
     val id: Int,
     val name: String,
