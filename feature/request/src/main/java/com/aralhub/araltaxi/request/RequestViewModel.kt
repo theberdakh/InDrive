@@ -180,7 +180,6 @@ class RequestViewModel @Inject constructor(
 
     fun clearToLocation() {
         _toLocation.value = null
-        _selectedLocations.value = null
     }
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()

@@ -16,6 +16,7 @@ import com.aralhub.araltaxi.select_location.databinding.FragmentSelectLocationBi
 import com.aralhub.araltaxi.select_location.utils.CurrentLocationListener
 import com.aralhub.ui.utils.FloatLandAnimation
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.disable
 import com.aralhub.ui.utils.ViewEx.enable
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.MapKitFactory
@@ -53,6 +54,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private val cameraListener = CameraListener { map, cameraPosition, cameraUpdateReason, finished ->
             if (!finished && !isMapMoving) {
                 isMapMoving = true
+                binding.btnSelectLocation.disable()
                 floatLandAnimation.startFloating()
             } else if (finished) {
                 isMapMoving = false
@@ -61,6 +63,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
 
             // Handle map movement start
             if (!isMapMoving) {
+                binding.btnSelectLocation.disable()
                 isMapMoving = true
             }
 
