@@ -67,7 +67,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                 isMapMoving = true
             }
 
-            // Debounce to determine when map movement has stopped
+            // Debounce to determine when map movement has stoppedte
             movementHandler.removeCallbacksAndMessages(null)
             movementHandler.postDelayed({
                 if (finished) {

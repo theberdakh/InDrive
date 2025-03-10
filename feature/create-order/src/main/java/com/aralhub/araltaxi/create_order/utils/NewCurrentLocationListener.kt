@@ -7,7 +7,7 @@ import com.yandex.mapkit.geometry.Point
 class NewCurrentLocationListener(
     private val onInitMapPosition: (listener: Point) -> Unit,
     private val onUpdateMapPosition: (listener: Point) -> Unit,
-    private val onProviderDisabledListener: () -> Unit,
+    private val onProviderDisabledListener: (point: Point) -> Unit,
     private val onProviderEnabledListener: () -> Unit
 ) : LocationListener {
 
@@ -29,7 +29,7 @@ class NewCurrentLocationListener(
 
     override fun onProviderDisabled(provider: String) {
         super.onProviderDisabled(provider)
-        onProviderDisabledListener()
+        onProviderDisabledListener(initialPoint)
     }
 
     override fun onProviderEnabled(provider: String) {
