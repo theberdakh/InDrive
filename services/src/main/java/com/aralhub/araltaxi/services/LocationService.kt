@@ -62,7 +62,6 @@ class LocationService : Service() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        startForeground()
         locationManager?.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             INTERVAL,
@@ -125,7 +124,7 @@ class LocationService : Service() {
 
     companion object {
         const val INTERVAL: Long = 1 * 1000
-        const val SMALLEST_DISTANCE: Float = 1f
+        const val SMALLEST_DISTANCE: Float = 5f
         const val CHANNEL_ID = "location_channel"
         const val ID = 100
     }

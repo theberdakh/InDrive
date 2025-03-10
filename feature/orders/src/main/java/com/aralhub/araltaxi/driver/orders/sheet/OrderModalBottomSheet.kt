@@ -1,17 +1,13 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.View
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.orders.CreateOfferUiState
 import com.aralhub.araltaxi.driver.orders.orders.OfferViewModel
 import com.aralhub.indrive.driver.orders.R
@@ -26,6 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
@@ -38,6 +35,12 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private var offerAmount = 0
     private var baseAmount = 0
 
+    private var minimumPrice = 1000
+    private var maximumPrice = 1000000
+
+    @Inject
+    lateinit var errorHandler: ErrorHandler
+
     override fun onStart() {
         super.onStart()
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
@@ -49,7 +52,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         super.onViewCreated(view, savedInstanceState)
 
         MoneyFormatter(binding.etPrice)
-        setWebView()
         setupUI()
         setupListeners()
         initObservers()
@@ -63,6 +65,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             arguments?.getParcelable("OrderDetail")
         }
         tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
+        etPrice.setText(getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice))
         tvClientName.text = order?.name
         tvDistance.text = order?.roadDistance
         tvDistanceToClient.text = order?.pickUpDistance
@@ -88,59 +91,23 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 )
             }
         }
-        binding.btnAcceptOffer.setOnClickListener {
-            binding.etPrice.text?.clear()
-            if (order != null) {
-                offerViewModel.createOffer(
-                    order!!.id,
-                    baseAmount
-                )
+        binding.tvDecrease500.setOnClickListener {
+            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }.replace(" ", ""))
+            if (price - 500 >= minimumPrice) {
+                val editable = Editable.Factory.getInstance().newEditable("${price - 500}")
+                binding.etPrice.text = editable
+            } else {
+                errorHandler.showToast("Minimum price: $minimumPrice")
             }
         }
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun setWebView() {
-        binding.wvMap.apply {
-            setBackgroundColor(0)
-            // Enable JavaScript
-            settings.javaScriptEnabled = true
-
-            // Configure WebView settings
-            settings.apply {
-                domStorageEnabled = true
-                loadsImagesAutomatically = true
-                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                useWideViewPort = true
-                loadWithOverviewMode = true
+        binding.tvIncrease500.setOnClickListener {
+            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }.replace(" ", ""))
+            if (price + 500 <= maximumPrice) {
+                val editable = Editable.Factory.getInstance().newEditable("${price + 500}")
+                binding.etPrice.text = editable
+            } else {
+                errorHandler.showToast("Maximum price: $maximumPrice")
             }
-
-            // Set WebViewClient with override for error handling
-            webViewClient = object : WebViewClient() {
-                override fun onReceivedError(
-                    view: WebView?,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?
-                ) {
-                    super.onReceivedError(view, request, error)
-                    Log.e(TAG, "WebView error: ${error?.description}")
-                }
-
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    view?.loadUrl(request?.url.toString())
-                    return true
-                }
-            }
-            // Load the URL
-            val startLat = 42.473810
-            val startLong = 59.615314
-
-            val endLat = 42.465140
-            val endLong = 59.612868
-            loadUrl("https://unique-banoffee-29f6df.netlify.app/?z=15&loc=$startLat%2C$startLong&loc=$endLat%2C$endLong&hl=ru&alt=0")
         }
     }
 
