@@ -96,7 +96,7 @@ private fun Offer.asOfferItem(): OfferItem {
             id = driver.driverId,
             name = driver.fullName,
             carName = driver.vehicleType.kk,
-            rating = driver.rating.toFloat(),
+            rating = driver.rating,
             avatar = ""
         ),
         offeredPrice = amount.toString(),
