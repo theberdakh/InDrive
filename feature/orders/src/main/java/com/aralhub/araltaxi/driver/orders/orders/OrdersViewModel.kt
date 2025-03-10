@@ -3,6 +3,7 @@ package com.aralhub.araltaxi.driver.orders.orders
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
@@ -43,9 +44,6 @@ class OrdersViewModel @Inject constructor(
     init {
         getActiveRide()
     }
-
-    private var _rejectOfferState = MutableSharedFlow<String>()
-    val rejectOfferState = _rejectOfferState.asSharedFlow()
 
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -157,7 +155,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferRejected -> {
-                _rejectOfferState.emit(result.rideUUID)
+                rejectOfferState.emit(result.rideUUID)
                 GetActiveOrdersUiState.OfferRejected(result.rideUUID)
             }
 
