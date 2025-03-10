@@ -105,6 +105,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     areBothLocationsSelected = true
                     navigation.goToCreateOrderFromRequestFragment(selectedLocations)
                 }
+            } ?: run {
+                areBothLocationsSelected = false
+                binding.etFromLocation.text = ""
+                binding.etToLocation.text = ""
             }
         }
 

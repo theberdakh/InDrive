@@ -1,7 +1,6 @@
 package com.aralhub.araltaxi.select_location
 
 import android.annotation.SuppressLint
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -25,17 +24,9 @@ import com.yandex.mapkit.ScreenRect
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.map.SizeChangedListener
-import com.yandex.mapkit.search.Response
-import com.yandex.mapkit.search.SearchFactory
-import com.yandex.mapkit.search.SearchManagerType
-import com.yandex.mapkit.search.SearchOptions
-import com.yandex.mapkit.search.SearchType
-import com.yandex.mapkit.search.Session.SearchListener
-import com.yandex.runtime.Error
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -87,7 +78,9 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
         onProviderDisabledListener = {
             initialPoint -> updateMapPosition(initialPoint)
             displayGpsStatus(false) },
-        onProviderEnabledListener = { displayGpsStatus(true)}
+        onProviderEnabledListener = { point ->
+            updateMapPosition(point)
+            displayGpsStatus(true)}
     )
 
     private var locationManager: LocationManager? = null
