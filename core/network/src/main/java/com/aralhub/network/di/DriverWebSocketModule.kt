@@ -1,9 +1,9 @@
 package com.aralhub.network.di
 
 import android.util.Log
-import com.aralhub.network.ClientOffersNetworkDataSource
+import com.aralhub.network.WebSocketClientOffersNetworkDataSource
 import com.aralhub.network.WebSocketDriverNetworkDataSource
-import com.aralhub.network.impl.ClientOffersNetworkDataSourceImpl
+import com.aralhub.network.impl.WebSocketClientOffersNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketDriverNetworkDataSourceImpl
 import com.aralhub.network.local.LocalStorage
 import dagger.Module
@@ -47,7 +47,7 @@ object DriverWebSocketModule {
 
     @Singleton
     @Provides
-    fun provideClientOffersNetworkDataSource(httpClient: HttpClient): ClientOffersNetworkDataSource {
-        return ClientOffersNetworkDataSourceImpl(httpClient)
+    fun provideClientOffersNetworkDataSource(httpClient: HttpClient): WebSocketClientOffersNetworkDataSource {
+        return WebSocketClientOffersNetworkDataSourceImpl(httpClient)
     }
 }

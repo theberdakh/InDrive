@@ -35,8 +35,10 @@ import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session.SearchListener
 import com.yandex.runtime.Error
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private lateinit var mapWindow: MapWindow
     private lateinit var map: Map
@@ -79,7 +81,9 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     }
     private val currentLocationListener = CurrentLocationListener(
         onUpdateMapPosition = ::updateMapPosition,
-        onProviderDisabledListener = {displayGpsStatus(false)},
+        onProviderDisabledListener = {
+            initialPoint -> updateMapPosition(initialPoint)
+            displayGpsStatus(false) },
         onProviderEnabledListener = { displayGpsStatus(true)}
     )
 
@@ -93,9 +97,9 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i("SelectLocationFragment", "onViewCreated")
         locationManager = requireActivity().getSystemService(LocationManager::class.java)
         initMap()
-        updateFocusInfo()
         initObservers()
         initArgs()
         initViews()
@@ -109,9 +113,13 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private fun initMap() {
         mapWindow = binding.mapView.mapWindow
         map = mapWindow.map
-        viewModel.setVisibleRegion(map.visibleRegion)
-        mapWindow.addSizeChangedListener(sizeChangedListener)
-        map.addCameraListener(cameraListener)
+        if (map.isValid){
+            viewModel.setVisibleRegion(map.visibleRegion)
+            mapWindow.addSizeChangedListener(sizeChangedListener)
+            map.addCameraListener(cameraListener)
+            updateFocusInfo()
+        }
+
     }
 
     private fun initListeners() {
@@ -124,7 +132,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             }
 
             parentFragmentManager.setFragmentResult("location_key", result)
-            if (mapWindow.isValid) {
+            if (map.isValid) {
                 map.removeCameraListener(cameraListener)
                 findNavController().navigateUp()
             }
@@ -249,7 +257,9 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private fun updateMapPosition(point: Point) {
         val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
         if (this::map.isInitialized) {
-            map.move(cameraPosition)
+            if(map.isValid){
+                map.move(cameraPosition)
+            }
         }
     }
 

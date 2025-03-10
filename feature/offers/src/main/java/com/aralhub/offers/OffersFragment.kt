@@ -1,13 +1,13 @@
 package com.aralhub.offers
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.offers.R
 import com.aralhub.araltaxi.client.offers.databinding.FragmentOffersBinding
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.offers.navigation.sheet.SheetNavigator
 import com.aralhub.ui.adapter.OfferItemAdapter
@@ -22,6 +22,7 @@ import javax.inject.Inject
 class OffersFragment : Fragment(R.layout.fragment_offers) {
     private val binding by viewBinding(FragmentOffersBinding::bind)
     @Inject lateinit var navigator: SheetNavigator
+    @Inject lateinit var errorHandler: ErrorHandler
     @Inject lateinit var featureOffersNavigation: FeatureOffersNavigation
     private val offerItemAdapter by lazy { OfferItemAdapter() }
     private val viewModel by viewModels<OffersViewModel>()
@@ -38,22 +39,45 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
     private fun initObservers() {
        observeState(viewModel.offersUiState){ offersUiState ->
            when(offersUiState){
-               is OffersUiState.Error -> Log.e("OffersFragment", "Error: ${offersUiState.message}")
+               is OffersUiState.Error -> errorHandler.showToast(offersUiState.message)
                OffersUiState.Loading -> {}
                is OffersUiState.Success -> {
-                   Log.i("OffersFragment", "Success: ${offersUiState.offers}")
                    offerItemAdapter.submitList(offersUiState.offers)
                }
            }
        }
+
+        observeState(viewModel.acceptOfferUiState){ acceptOfferUiState ->
+            when(acceptOfferUiState){
+                is AcceptOfferUiState.Error -> errorHandler.showToast(acceptOfferUiState.message)
+                AcceptOfferUiState.Loading -> {}
+                AcceptOfferUiState.Success -> {
+                    errorHandler.showToast("Offer accepted")
+                }
+            }
+        }
+
+        observeState(viewModel.declineOfferUiState){ declineOfferUiState ->
+            when(declineOfferUiState){
+                is DeclineOfferUiState.Error -> errorHandler.showToast(declineOfferUiState.message)
+                DeclineOfferUiState.Loading -> {}
+                is DeclineOfferUiState.Success -> {
+                  //  offerItemAdapter.removeItem(declineOfferUiState.position)
+                    errorHandler.showToast("Offer declined")
+                }
+            }
+        }
     }
 
     private fun setUpRecyclerView() {
         binding.rvOffers.adapter = offerItemAdapter
-        offerItemAdapter.setOnItemAcceptClickListener {
-            featureOffersNavigation.goToRideFragment()
+        offerItemAdapter.setOnItemAcceptClickListener { it ->
+            viewModel.acceptOffer(it.id)
         }
 
+        offerItemAdapter.setOnItemDeclineClickListener { offerItem, position ->
+            viewModel.declineOffer(offerItem.id, position)
+        }
     }
 
     private fun initBottomNavController() {

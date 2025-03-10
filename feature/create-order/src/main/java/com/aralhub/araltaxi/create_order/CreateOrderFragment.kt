@@ -2,19 +2,20 @@ package com.aralhub.araltaxi.create_order
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.create_order.databinding.FragmentCreateOrderBinding
 import com.aralhub.araltaxi.create_order.navigation.FeatureCreateOrderNavigation
-import com.aralhub.araltaxi.create_order.utils.CurrentLocationListener
+import com.aralhub.araltaxi.create_order.utils.NewCurrentLocationListener
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
 import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
@@ -26,6 +27,13 @@ import com.aralhub.ui.sheets.CommentToDriverModalBottomSheet
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapWindow
+import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,13 +54,27 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val viewModel by viewModels<CreateOrderViewModel>()
     private var selectedLocations: SelectedLocations? = null
     private var locationManager: LocationManager? = null
-    @Inject lateinit var navigation: FeatureCreateOrderNavigation
+    private lateinit var mapWindow: MapWindow
+    private var map: Map? = null
+
+    @Inject
+    lateinit var navigation: FeatureCreateOrderNavigation
+    private val newCurrentLocationListener = NewCurrentLocationListener(
+        onInitMapPosition = { point -> createPlaceMarkObject(point) },
+        onUpdateMapPosition = { point -> updateMapPosition(point) },
+        onProviderDisabledListener = { },
+        onProviderEnabledListener = { }
+    )
+    private var placeMarkObject: PlacemarkMapObject? = null
+    private var imageProvider: ImageProvider ? = null
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager?.let { observeLocationUpdates(it) }
-
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        initMap()
         initObservers()
         initViews()
         initListeners()
@@ -62,27 +84,42 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         viewModel.getRideOptions()
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.mapView.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        binding.mapView.onStop()
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
+    }
+
+    private fun initMap() {
+        mapWindow = binding.mapView.mapWindow
+        map = mapWindow.map
+        imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+   }
+
+    override fun onResume() {
+        super.onResume()
+        locationManager?.let { observeLocationUpdates(it) }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationManager?.removeUpdates(newCurrentLocationListener)
+    }
+
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        val lastKnownLocation =
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(
-                LocationManager.GPS_PROVIDER
-            ).apply {
-                latitude = 42.4651
-                longitude = 59.6136
-            }
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
             0f,
-            CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
-                initialLocation = lastKnownLocation,
-                onProviderEnabledListener = {
-                    //enabled
-                },
-                onProviderDisabledListener = {
-                    //disabled
-                }))
+            newCurrentLocationListener
+        )
     }
 
     private fun initArgs() {
@@ -122,6 +159,19 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     }
 
     private fun initListeners() {
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            true
+        ) {
+            val result = Bundle().apply {
+                putBoolean("cancel", true)
+            }
+            parentFragmentManager.setFragmentResult("cancel", result)
+            findNavController().navigateUp()
+        }
+
+
         MoneyFormatter(binding.etPrice)
         initChangePaymentMethodListener()
         initCommentToDriverListener()
@@ -132,7 +182,6 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
 
         binding.btnSendOffer.setOnClickListener {
-
             enabledOptionsIds.addAll(rideOptionItemAdapter.currentList.filter { it.isEnabled }
                 .map { it.id })
             recommendedPrice?.let {
@@ -149,7 +198,6 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                     options = enabledOptionsIds
                 )
             }
-
         }
 
         binding.ivChangePaymentMethod.setOnClickListener {
@@ -222,6 +270,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                 RecommendedPriceUiState.Loading -> {
                     binding.etPrice.setText("Esaplanıp atır...")
                 }
+
                 is RecommendedPriceUiState.Success -> {
                     displayRecommendedPrice(
                         recommendedPriceUiState.recommendedPrice
@@ -238,7 +287,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
                 SendOrderBottomSheetUiState.Loading -> {}
                 is SendOrderBottomSheetUiState.Success -> {
-                   navigation.goToOffersFromCreateOrderFragment()
+                    navigation.goToOffersFromCreateOrderFragment()
                 }
             }
         }
@@ -251,12 +300,38 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
     }
 
+    private fun createPlaceMarkObject(point: Point) {
+        map?.let {
+            if (it.isValid){
+                placeMarkObject = it.mapObjects.addPlacemark().apply {
+                    geometry = point
+                    imageProvider?.let { imageProvider ->  setIcon(imageProvider) }
+                }
+                it.move(CameraPosition(point, 17.0f, 150.0f, 30.0f))
+            }
+        }
+
+    }
+
+    private fun updateMapPosition(point: Point) {
+        val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
+        placeMarkObject?.geometry = point
+        map?.let {
+            if (it.isValid) {
+                it.move(cameraPosition)
+            }
+        }
+    }
+
+
+
     private fun displayRecommendedPrice(recommendedPrice: RecommendedPrice) {
         binding.tvPrice.text = getString(
             com.aralhub.ui.R.string.placeholder_recommended_price,
             recommendedPrice.recommendedAmount.toInt()
         )
-        val editable = Editable.Factory.getInstance().newEditable("${recommendedPrice.recommendedAmount.toInt()}")
+        val editable = Editable.Factory.getInstance()
+            .newEditable("${recommendedPrice.recommendedAmount.toInt()}")
         minimumPrice = recommendedPrice.minAmount.toInt()
         maximumPrice = recommendedPrice.maxAmount.toInt()
         binding.etPrice.text = editable

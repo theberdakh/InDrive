@@ -33,18 +33,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var areBothLocationsSelected = false
-
-    @Inject
-    lateinit var navigation: FeatureRequestNavigation
-
-    @Inject
-    lateinit var errorHandler: ErrorHandler
+    @Inject lateinit var navigation: FeatureRequestNavigation
+    @Inject lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
     private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
@@ -52,6 +47,18 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager?.let { observeLocationUpdates(it) }
+        initObservers()
+        initViews()
+        initListeners()
+        viewModel.getProfile()
+        viewModel.getSearchRide()
     }
 
     override fun onStart() {
@@ -66,27 +73,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager?.let { observeLocationUpdates(it) }
-        initObservers()
-        initViews()
-        initListeners()
-        viewModel.getProfile()
-        viewModel.getSearchRide()
-    }
-
-    @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        val lastKnownLocation =
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(
-                LocationManager.GPS_PROVIDER
-            ).apply {
+        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(LocationManager.GPS_PROVIDER).apply {
                 latitude = 42.4651
                 longitude = 59.6136
             }
+
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
@@ -107,6 +99,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun initObservers() {
         observeState(viewModel.selectedLocations) { selectedLocations ->
+            Log.i("RequestFragment", "Selected locations: $selectedLocations")
             selectedLocations?.let {
                 if (!areBothLocationsSelected) {
                     areBothLocationsSelected = true
@@ -185,13 +178,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun initListeners() {
-
         parentFragmentManager.clearFragmentResultListener("location_key")
-        parentFragmentManager.setFragmentResultListener(
-            "location_key",
-            viewLifecycleOwner
-        ) { requestKey, bundle ->
-            Log.i("locations", "called")
+        parentFragmentManager.setFragmentResultListener("location_key", viewLifecycleOwner) { requestKey, bundle ->
             val latitude = bundle.getDouble("latitude")
             val longitude = bundle.getDouble("longitude")
             val locationName = bundle.getString("locationName") ?: "null name"
@@ -208,7 +196,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                         )
                     )
                 }
-
                 1 -> {
                     binding.etToLocation.setText(locationName)
                     viewModel.updateLocation(
@@ -223,7 +210,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
-
+        parentFragmentManager.setFragmentResultListener("cancel", viewLifecycleOwner) {
+            requestKey, bundle ->
+            Log.i("RequestFragment", "Cancel result received: ${bundle.getBoolean("cancel")}")
+            val isCanceled = bundle.getBoolean("cancel")
+            viewModel.clearToLocation()
+        }
         adapter.setOnItemClickListener {
             when (it.clickOwner) {
                 LocationItemClickOwner.FROM -> {

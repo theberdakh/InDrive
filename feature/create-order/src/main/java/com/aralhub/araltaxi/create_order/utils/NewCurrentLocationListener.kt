@@ -1,46 +1,40 @@
-package com.aralhub.araltaxi.select_location.utils
+package com.aralhub.araltaxi.create_order.utils
 
 import android.location.Location
 import android.location.LocationListener
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.Map
 
-class CurrentLocationListener(
+class NewCurrentLocationListener(
+    private val onInitMapPosition: (listener: Point) -> Unit,
     private val onUpdateMapPosition: (listener: Point) -> Unit,
-    private val onProviderDisabledListener: (initialPoint: Point) -> Unit,
+    private val onProviderDisabledListener: () -> Unit,
     private val onProviderEnabledListener: () -> Unit
-) :
-    LocationListener {
+) : LocationListener {
 
-    private val initialLocation = Point(42.4651,59.6136)
+    private val initialLocation = Point(42.4651, 59.6136)
     private val initialPoint = Point(initialLocation.latitude, initialLocation.longitude)
 
     init {
-        onUpdateMapPosition(initialPoint)
+        onInitMapPosition(initialPoint)
     }
 
     private var isUpdated = false
     override fun onLocationChanged(location: Location) {
         if (!isUpdated) {
             val point = Point(location.latitude, location.longitude)
-            updateMapPosition(point)
+            onInitMapPosition(point)
             isUpdated = true
         }
     }
 
     override fun onProviderDisabled(provider: String) {
         super.onProviderDisabled(provider)
-        onProviderDisabledListener(initialPoint)
+        onProviderDisabledListener()
     }
 
     override fun onProviderEnabled(provider: String) {
         super.onProviderEnabled(provider)
         onProviderEnabledListener()
-    }
-
-    private fun updateMapPosition(point: Point) {
-        onUpdateMapPosition(point)
     }
 
 }

@@ -162,21 +162,25 @@ class RequestViewModel @Inject constructor(
 
     private val _fromLocation = MutableStateFlow<SelectedLocation?>(null)
     private val _toLocation = MutableStateFlow<SelectedLocation?>(null)
-
     fun updateLocation(location: SelectedLocation) = viewModelScope.launch {
         when (location.locationType) {
             LocationType.FROM -> {
                 _fromLocation.value = location
             }
-
-            LocationType.TO -> _toLocation.value = location
+            LocationType.TO -> {
+                _toLocation.value = location
+            }
         }
-
         val from = _fromLocation.value
         val to = _toLocation.value
         if (from != null && to != null) {
             _selectedLocations.value = SelectedLocations(from, to)
         }
+    }
+
+    fun clearToLocation() {
+        _toLocation.value = null
+        _selectedLocations.value = null
     }
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
@@ -232,6 +236,11 @@ class RequestViewModel @Inject constructor(
             }
         })
     }
+}
+
+sealed interface SelectedLocationsUiState {
+    data class Success(val selectedLocations: SelectedLocations) : SelectedLocationsUiState
+    data object Error : SelectedLocationsUiState
 }
 
 sealed interface ProfileUiState {

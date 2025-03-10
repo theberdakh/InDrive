@@ -63,4 +63,7 @@ abstract class NetworkDataSourceModule {
     @[Binds Singleton]
     abstract fun bindAddressNetworkDataSource(addressNetworkDataSourceImpl: AddressNetworkDataSourceImpl): AddressNetworkDataSource
 
+    @[Binds Singleton]
+    abstract fun bindOffersNetworkDataSource(offersNetworkDataSourceImpl: ClientOffersNetworkDataSourceImpl): ClientOffersNetworkDataSource
+
 }
