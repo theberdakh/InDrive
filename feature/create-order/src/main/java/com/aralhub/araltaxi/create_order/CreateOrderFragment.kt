@@ -41,6 +41,7 @@ import javax.inject.Inject
 class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val binding by viewBinding(FragmentCreateOrderBinding::bind)
     private var isConfiguring: Boolean = false
+
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val changePaymentMethodModalBottomSheet by lazy { ChangePaymentMethodModalBottomSheet() }
@@ -66,7 +67,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         onProviderEnabledListener = { }
     )
     private var placeMarkObject: PlacemarkMapObject? = null
-    private var imageProvider: ImageProvider ? = null
+    private var imageProvider: ImageProvider? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,8 +100,9 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private fun initMap() {
         mapWindow = binding.mapView.mapWindow
         map = mapWindow.map
-        imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-   }
+        imageProvider =
+            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -155,7 +157,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun initViews() {
         binding.rvRideOptions.adapter = rideOptionItemAdapter
-
+       // MoneyFormatter(binding.etPrice)
     }
 
     private fun initListeners() {
@@ -172,7 +174,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
 
 
-        MoneyFormatter(binding.etPrice)
+
         initChangePaymentMethodListener()
         initCommentToDriverListener()
 
@@ -268,7 +270,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
             when (recommendedPriceUiState) {
                 is RecommendedPriceUiState.Error -> errorHandler.showToast(recommendedPriceUiState.message)
                 RecommendedPriceUiState.Loading -> {
-                    binding.etPrice.setText("Esaplanıp atır...")
+                    binding.etPrice.hint = "Esaplanıp atır..."
                 }
 
                 is RecommendedPriceUiState.Success -> {
@@ -302,10 +304,10 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun createPlaceMarkObject(point: Point) {
         map?.let {
-            if (it.isValid){
+            if (it.isValid) {
                 placeMarkObject = it.mapObjects.addPlacemark().apply {
                     geometry = point
-                    imageProvider?.let { imageProvider ->  setIcon(imageProvider) }
+                    imageProvider?.let { imageProvider -> setIcon(imageProvider) }
                 }
                 it.move(CameraPosition(point, 17.0f, 150.0f, 30.0f))
             }
@@ -322,7 +324,6 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
             }
         }
     }
-
 
 
     private fun displayRecommendedPrice(recommendedPrice: RecommendedPrice) {

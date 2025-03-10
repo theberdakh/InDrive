@@ -6,16 +6,17 @@ import com.aralhub.araltaxi.core.domain.client.ClientAcceptOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientDeclineOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetOffersUseCase
 import com.aralhub.indrive.core.data.model.offer.Offer
+import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.ClientWebSocketEvent
 import com.aralhub.ui.model.OfferItem
 import com.aralhub.ui.model.OfferItemDriver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.aralhub.indrive.core.data.result.Result
 
 @HiltViewModel
 class OffersViewModel @Inject constructor(
@@ -26,6 +27,34 @@ class OffersViewModel @Inject constructor(
     private var _offersUiState = MutableStateFlow<OffersUiState>(OffersUiState.Loading)
     val offersUiState = _offersUiState.asSharedFlow()
 
+    init {
+        startExpirationChecker()
+    }
+
+    private fun startExpirationChecker() = viewModelScope.launch {
+        while (true) {
+            delay(1000L) // Check every second, adjust as needed
+            val currentTime = System.currentTimeMillis()
+            val hasExpiredOffers = offers.removeIf { offer ->
+                val expiresAtMillis = convertIsoToMillis(offer.expiresAt)
+                expiresAtMillis <= currentTime
+            }
+            if (hasExpiredOffers) {
+                _offersUiState.emit(OffersUiState.Success(offers.map { offer -> offer.asOfferItem() }))
+            }
+        }
+    }
+
+    private fun convertIsoToMillis(isoTime: String): Long {
+        return try {
+            val formatter = java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+            val instant = java.time.Instant.from(formatter.parse(isoTime))
+            instant.toEpochMilli()
+        } catch (e: Exception) {
+            System.currentTimeMillis() // Return current time if parsing fails
+        }
+    }
+
     private var offers = mutableListOf<Offer>()
     private val declinedOfferIds = mutableListOf<String>()
     fun getOffers() = viewModelScope.launch {
@@ -34,25 +63,24 @@ class OffersViewModel @Inject constructor(
             when (it) {
                 is ClientWebSocketEvent.DriverOffer -> {
                     val newOffer = it.offer
-
-                    // If it's a declined offer, don't add it
-                    if (declinedOfferIds.contains(newOffer.offerId)) {
+                    if (declinedOfferIds.contains(newOffer.offerId) || isOfferExpired(newOffer)) {
                         return@collect
                     } else if (!offers.any { offer -> offer.offerId == newOffer.offerId }) {
-                        // Only add if it's not already in the list
                         offers.add(newOffer)
                     }
-                    // Clean up any offers that might be in the declined list
-                    offers.removeIf { offer -> declinedOfferIds.contains(offer.offerId) }
-                    // Emit current state
+                    offers.removeIf { offer -> declinedOfferIds.contains(offer.offerId) || isOfferExpired(offer) }
                     _offersUiState.emit(OffersUiState.Success(offers.map { offer -> offer.asOfferItem() }))
                 }
-
                 is ClientWebSocketEvent.Unknown -> {
                     _offersUiState.emit(OffersUiState.Error(it.error))
                 }
             }
         }
+    }
+
+    private fun isOfferExpired(offer: Offer): Boolean {
+        val expiresAtMillis = convertIsoToMillis(offer.expiresAt)
+        return expiresAtMillis <= System.currentTimeMillis()
     }
 
     private var _acceptOfferUiState = MutableSharedFlow<AcceptOfferUiState>()
@@ -63,6 +91,7 @@ class OffersViewModel @Inject constructor(
                 is Result.Success -> {
                     _acceptOfferUiState.emit(AcceptOfferUiState.Success)
                 }
+
                 is Result.Error -> {
                     _acceptOfferUiState.emit(AcceptOfferUiState.Error(it.message))
                 }
@@ -81,6 +110,7 @@ class OffersViewModel @Inject constructor(
                     _offersUiState.emit(OffersUiState.Success(offers.map { offer -> offer.asOfferItem() }))
                     _declineOfferUiState.emit(DeclineOfferUiState.Success(position))
                 }
+
                 is Result.Error -> {
                     _declineOfferUiState.emit(DeclineOfferUiState.Error(it.message))
                 }
@@ -97,10 +127,11 @@ private fun Offer.asOfferItem(): OfferItem {
             name = driver.fullName,
             carName = driver.vehicleType.kk,
             rating = driver.rating,
-            avatar = ""
+            avatar = "https://araltaxi.aralhub.uz/${driver.photoUrl}"
         ),
-        offeredPrice = amount.toString(),
-        timeToArrive = "0"
+        offeredPrice = amount.toInt().toString(),
+        timeToArrive = "0",
+        expiresAt = expiresAt
     )
 }
 
