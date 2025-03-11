@@ -59,6 +59,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         initListeners()
         viewModel.getProfile()
         viewModel.getSearchRide()
+        viewModel.getActiveRide()
     }
 
     override fun onStart() {
@@ -140,6 +141,17 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> navigation.goToGetOffersFromRequestFragment()
+            }
+        }
+
+        observeState(viewModel.activeRideUiState){ activeRideUiState ->
+            when(activeRideUiState){
+                is ActiveRideUiState.Error -> Log.e("RequestFragment", "Active ride error: ${activeRideUiState.message}")
+                ActiveRideUiState.Loading -> {}
+                is ActiveRideUiState.Success -> {
+                    Log.i("RequestFragment", "Active ride: ${activeRideUiState.activeRide}")
+                    navigation.goToRideFragmentFromRequestFragment()
+                }
             }
         }
 

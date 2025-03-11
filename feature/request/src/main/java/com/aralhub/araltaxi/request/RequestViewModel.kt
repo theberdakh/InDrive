@@ -116,15 +116,6 @@ class RequestViewModel @Inject constructor(
     val fromLocationUiState = _fromLocationUiState.asSharedFlow()
     private var lastLocation = Point(0.0, 0.0)
 
-    fun getFromLocation(latitude: Double, longitude: Double ) = viewModelScope.launch {
-        if (lastLocation.latitude == latitude && lastLocation.longitude == longitude) {
-            return@launch
-        } else {
-            lastLocation = Point(latitude, longitude)
-            searchName(lastLocation.latitude, lastLocation.longitude)
-        }
-    }
-
     private fun searchName(latitude: Double, longitude: Double) {
         searchManager.submit(Point(latitude, longitude), 17, searchOptions, object : SearchListener {
             override fun onSearchResponse(response: Response) {
