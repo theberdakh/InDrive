@@ -14,6 +14,9 @@ class CancelItemAdapter: ListAdapter<CancelItem, CancelItemAdapter.ViewHolder>(
     private var selectedPosition = RecyclerView.NO_POSITION
 
     private var onItemSelected: ((CancelItem) -> Unit) = {}
+    fun setOnItemSelected(onItemSelected: (CancelItem) -> Unit) {
+        this.onItemSelected = onItemSelected
+    }
 
     inner class ViewHolder(private val binding: ItemCancelBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(cancelItem: CancelItem, position: Int) {

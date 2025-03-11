@@ -17,9 +17,6 @@ import com.aralhub.indrive.core.data.model.payment.toDomain
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.ActiveRideDriver
 import com.aralhub.indrive.core.data.model.ride.ActiveRideOptions
-import com.aralhub.indrive.core.data.model.ride.ActiveRidePaymentMethod
-import com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleColor
-import com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleType
 import com.aralhub.indrive.core.data.model.ride.Distance
 import com.aralhub.indrive.core.data.model.ride.DistanceSegment
 import com.aralhub.indrive.core.data.model.ride.LocationPoint
@@ -289,6 +286,24 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
 
     override suspend fun updateAutoTake(rideId: String, autoTake: Boolean): Result<Boolean> {
         return dataSource.updateAutoTake(rideId, autoTake).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
+
+    override suspend fun cancelRide(rideId: Int, cancelCauseId: Int): Result<Boolean> {
+        return dataSource.cancelRide(rideId, cancelCauseId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
+
+    override suspend fun cancelRideByPassenger(rideId: Int): Result<Boolean> {
+        return dataSource.cancelRideByPassenger(rideId).let {
             when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(true)

@@ -2,24 +2,26 @@ package com.aralhub.araltaxi.ride
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
+import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.aralhub.indrive.core.data.result.Result
 
 @HiltViewModel
 class RideViewModel @Inject constructor(
-    private val getActiveRideUseCase: ClientGetActiveRideUseCase
+    private val getActiveRideUseCase: ClientGetActiveRideUseCase,
+    private val cancelRideWithoutReasonUseCase: ClientCancelRideWithoutReasonUseCase,
+    private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase
 ) : ViewModel() {
     val rideState = getRideState().stateIn(
         scope = viewModelScope,
@@ -27,29 +29,58 @@ class RideViewModel @Inject constructor(
         initialValue = RideBottomSheetUiState.Loading
     )
 
-    private var _rideState =
-        MutableStateFlow<RideBottomSheetUiState>(RideBottomSheetUiState.Loading)
+    private var _rideState = MutableStateFlow<RideBottomSheetUiState>(RideBottomSheetUiState.Loading)
     val rideState2 = _rideState.asStateFlow()
 
-    private var _activeRideState =
-        MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
+    private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
     val activeRideState = _activeRideState.asStateFlow()
-
     fun getActiveRide() = viewModelScope.launch {
         getActiveRideUseCase().let {
-            when(it){
-                is Result.Error -> {_activeRideState.emit(ActiveRideUiState.Error(it.message))}
-                is Result.Success -> { _activeRideState.emit(ActiveRideUiState.Success(it.data))}
+            when (it) {
+                is Result.Error -> {
+                    _activeRideState.emit(ActiveRideUiState.Error(it.message))
+                }
+
+                is Result.Success -> {
+                    _activeRideState.emit(ActiveRideUiState.Success(it.data))
+                }
             }
         }
     }
 
+    private val _cancelRideState = MutableStateFlow<CancelRideUiState>(CancelRideUiState.Loading)
+    val cancelRideState = _cancelRideState.asStateFlow()
+    fun cancelRide(rideId: Int) = viewModelScope.launch {
+        cancelRideWithoutReasonUseCase(rideId).let {
+            when (it) {
+                is Result.Error -> {
+                    _cancelRideState.emit(CancelRideUiState.Error(it.message))
+                }
+                is Result.Success -> {
+                    _cancelRideState.emit(CancelRideUiState.Success)
+                }
+            }
+        }
+    }
+
+    fun cancelRideWithReason(rideId: Int, reasonId: Int) = viewModelScope.launch {
+        cancelRideWithReasonUseCase(rideId, reasonId).let {
+            when (it) {
+                is Result.Error -> {
+                    _cancelRideState.emit(CancelRideUiState.Error(it.message))
+                }
+                is Result.Success -> {
+                    _cancelRideState.emit(CancelRideUiState.Success)
+                }
+            }
+        }
+    }
 
     init {
 
-      /*  getRideState().onEach {
-            _rideState.emit(it)
-        }.launchIn(viewModelScope)*/
+        /*  getRideState().onEach {
+              _rideState.emit(it)
+          }.launchIn(viewModelScope)*/
     }
 }
 
@@ -139,4 +170,10 @@ sealed interface ActiveRideUiState {
     data object Loading : ActiveRideUiState
     data class Success(val activeRide: ActiveRide) : ActiveRideUiState
     data class Error(val message: String) : ActiveRideUiState
+}
+
+sealed interface CancelRideUiState {
+    data object Loading : CancelRideUiState
+    data object Success : CancelRideUiState
+    data class Error(val message: String) : CancelRideUiState
 }

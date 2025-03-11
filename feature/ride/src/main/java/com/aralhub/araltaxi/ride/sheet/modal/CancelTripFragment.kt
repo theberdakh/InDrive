@@ -1,9 +1,11 @@
 package com.aralhub.araltaxi.ride.sheet.modal
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.FragmentCancelTripBinding
+import com.aralhub.araltaxi.ride.sheet.modal.cause.ReasonCancelFragment
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -11,8 +13,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CancelTripFragment: BottomSheetDialogFragment(R.layout.fragment_cancel_trip) {
     private val binding by viewBinding(FragmentCancelTripBinding::bind)
-    companion object {
-        const val TAG = "CancelTripFragment"
+    private val reasonCancelFragment = ReasonCancelFragment()
+    private var onCancelClickListener: (() -> Unit) = {}
+    fun setOnCancelClickListener(listener: () -> Unit) {
+        onCancelClickListener = listener
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -21,12 +25,17 @@ class CancelTripFragment: BottomSheetDialogFragment(R.layout.fragment_cancel_tri
             dismissAllowingStateLoss()
         }
         binding.btnCancel.setOnClickListener {
-            showReasonCancelFragment()
+            reasonCancelFragment.show(parentFragmentManager, ReasonCancelFragment.TAG)
+            Log.i(TAG, "onViewCreated: Cancel button clicked")
+            onCancelClickListener()
         }
+
     }
 
-    private fun showReasonCancelFragment() {
-        dismissAllowingStateLoss()
-        ReasonCancelFragment().show(parentFragmentManager, ReasonCancelFragment.TAG)
+
+
+
+    companion object {
+        const val TAG = "CancelTripFragment"
     }
 }

@@ -16,6 +16,18 @@ import javax.inject.Inject
 
 class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: WebSocketClientNetworkApi) :
     WebSocketClientNetworkDataSource {
+
+    override suspend fun cancelRide(
+        rideId: Int,
+        cancelCauseId: Int
+    ): NetworkResult<ServerResponseEmpty> {
+        return api.cancelRide(rideId, cancelCauseId).safeRequest()
+    }
+
+    override suspend fun cancelRideByPassenger(rideId: Int): NetworkResult<ServerResponseEmpty> {
+        return api.cancelRideByPassenger(rideId).safeRequest()
+    }
+
     override suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive> {
         return api.getActiveRideByPassenger(userId).safeRequestServerResponse()
     }
