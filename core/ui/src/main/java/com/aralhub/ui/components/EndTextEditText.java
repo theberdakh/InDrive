@@ -118,6 +118,11 @@ public class EndTextEditText extends LinearLayout {
         editText.setText(text);
     }
 
+    public void setHint(String hint) {
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(0);
+        editText.setHint(hint);
+    }
+
     private int dpToPx(float dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }

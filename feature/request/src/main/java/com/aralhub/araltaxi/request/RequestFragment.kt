@@ -139,8 +139,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     errorHandler.showToast(fromLocationUiState.message)
                 }
                 FromLocationUiState.Loading -> {
-                    Log.i("FromLocation", "Loading...")
-                    binding.etFromLocation.text = "Loading..."
+                    binding.etFromLocation.setHint("Anıqlanıp atır..")
                 }
                 is FromLocationUiState.Success -> {
                     Log.i("FromLocation", "Success ${fromLocationUiState.location.name}")
