@@ -47,6 +47,7 @@ class ChangeOrCancelRequestBottomSheet : Fragment(R.layout.bottom_sheet_change_o
                 CancelSearchRideUiState.Loading -> {}
                 CancelSearchRideUiState.Success -> {
                     errorHandler.showToast("Offer canceled")
+                    Log.i("CancelRequests", "Request Canceled")
                     navigation.goBackToRequestFragmentFromOffersFragment()
                 }
             }

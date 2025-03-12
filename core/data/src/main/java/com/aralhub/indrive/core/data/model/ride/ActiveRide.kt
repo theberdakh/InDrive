@@ -24,6 +24,8 @@ fun NetworkRideActive.toDomain() = ActiveRide(
         vehicleColor = this.driver.vehicleColor.toDomain(),
         vehicleType = this.driver.vehicleType.toDomain(),
         vehicleNumber = this.driver.plateNumber,
+        phoneNumber = this.driver.phoneNumber ?: "",
+        photoUrl = this.driver.photoUrl
     ),
     locations = SearchRideLocations(
         points = this.locations.points.map { point ->
@@ -34,6 +36,7 @@ fun NetworkRideActive.toDomain() = ActiveRide(
         option.toDomain()
     },
 )
+
 data class ActiveRide(
     val id: Int,
     val uuid: String,
@@ -55,7 +58,9 @@ data class ActiveRideDriver(
     val rating: String,
     val vehicleColor: MultiLanguageText,
     val vehicleType: MultiLanguageText,
-    val vehicleNumber: String
+    val vehicleNumber: String,
+    val phoneNumber: String,
+    val photoUrl: String
 )
 
 data class ActiveRideVehicleColor(

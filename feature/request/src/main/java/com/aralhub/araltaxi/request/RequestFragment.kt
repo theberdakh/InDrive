@@ -38,8 +38,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var areBothLocationsSelected = false
-    @Inject lateinit var navigation: FeatureRequestNavigation
-    @Inject lateinit var errorHandler: ErrorHandler
+
+    @Inject
+    lateinit var navigation: FeatureRequestNavigation
+
+    @Inject
+    lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
     private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
@@ -52,7 +56,8 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager?.let { observeLocationUpdates(it) }
         initObservers()
         initViews()
@@ -75,7 +80,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(LocationManager.GPS_PROVIDER).apply {
+        val lastKnownLocation =
+            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: Location(
+                LocationManager.GPS_PROVIDER
+            ).apply {
                 latitude = 42.4651
                 longitude = 59.6136
             }
@@ -83,17 +91,28 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
-            0f,
+            5f,
             CurrentLocationListener(requireContext(), binding.mapView.mapWindow.map,
                 initialLocation = lastKnownLocation,
                 onProviderEnabledListener = {
                     viewModel.updateLocationEnabled(true)
+                    viewModel.setFromLocation(
+                        lastKnownLocation.latitude,
+                        lastKnownLocation.longitude
+                    )
                 },
                 onProviderDisabledListener = {
                     viewModel.updateLocationEnabled(false)
+                    viewModel.setFromLocation(
+                        lastKnownLocation.latitude,
+                        lastKnownLocation.longitude
+                    )
                 },
                 onLocationChangedListener = { location ->
-                   // viewModel.getFromLocation(location.latitude, location.longitude)
+                    viewModel.setFromLocation(
+                        location.latitude,
+                        location.longitude
+                    )
                 })
         )
     }
@@ -115,9 +134,16 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
         observeState(viewModel.fromLocationUiState) { fromLocationUiState ->
             when (fromLocationUiState) {
-                is FromLocationUiState.Error -> errorHandler.showToast(fromLocationUiState.message)
-                FromLocationUiState.Loading -> binding.etFromLocation.text = "Loading..."
+                is FromLocationUiState.Error -> {
+                    Log.i("FromLocation", "Error: ${fromLocationUiState.message}")
+                    errorHandler.showToast(fromLocationUiState.message)
+                }
+                FromLocationUiState.Loading -> {
+                    Log.i("FromLocation", "Loading...")
+                    binding.etFromLocation.text = "Loading..."
+                }
                 is FromLocationUiState.Success -> {
+                    Log.i("FromLocation", "Success ${fromLocationUiState.location.name}")
                     binding.etFromLocation.text = fromLocationUiState.location.name
                     viewModel.updateLocation(fromLocationUiState.location)
                 }
@@ -144,13 +170,17 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
-        observeState(viewModel.activeRideUiState){ activeRideUiState ->
-            when(activeRideUiState){
-                is ActiveRideUiState.Error -> Log.e("RequestFragment", "Active ride error: ${activeRideUiState.message}")
+        observeState(viewModel.activeRideUiState) { activeRideUiState ->
+            when (activeRideUiState) {
+                is ActiveRideUiState.Error -> Log.e(
+                    "RequestFragment",
+                    "Active ride error: ${activeRideUiState.message}"
+                )
+
                 ActiveRideUiState.Loading -> {}
                 is ActiveRideUiState.Success -> {
                     Log.i("RequestFragment", "Active ride: ${activeRideUiState.activeRide}")
-                    navigation.goToRideFragmentFromRequestFragment()
+                    //   navigation.goToRideFragmentFromRequestFragment()
                 }
             }
         }
@@ -195,7 +225,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun initListeners() {
         parentFragmentManager.clearFragmentResultListener("location_key")
-        parentFragmentManager.setFragmentResultListener("location_key", viewLifecycleOwner) { requestKey, bundle ->
+        parentFragmentManager.setFragmentResultListener(
+            "location_key",
+            viewLifecycleOwner
+        ) { requestKey, bundle ->
             val latitude = bundle.getDouble("latitude")
             val longitude = bundle.getDouble("longitude")
             val locationName = bundle.getString("locationName") ?: "null name"
@@ -212,6 +245,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                         )
                     )
                 }
+
                 1 -> {
                     binding.etToLocation.setText(locationName)
                     viewModel.updateLocation(
@@ -226,8 +260,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
-        parentFragmentManager.setFragmentResultListener("cancel", viewLifecycleOwner) {
-            requestKey, bundle ->
+        parentFragmentManager.setFragmentResultListener(
+            "cancel",
+            viewLifecycleOwner
+        ) { requestKey, bundle ->
             Log.i("RequestFragment", "Cancel result received: ${bundle.getBoolean("cancel")}")
             val isCanceled = bundle.getBoolean("cancel")
             viewModel.clearToLocation()

@@ -179,7 +179,9 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
                         rating = it.data.driver.rating.toString(),
                         vehicleColor = it.data.driver.vehicleColor.toDomain(),
                         vehicleType = it.data.driver.vehicleType.toDomain(),
-                        vehicleNumber = it.data.driver.vehicleType.ru
+                        vehicleNumber = it.data.driver.vehicleType.ru,
+                        phoneNumber = it.data.driver.phoneNumber ?: "",
+                        photoUrl = it.data.driver.photoUrl
                     ),
                     paymentMethod = it.data.paymentMethod.toDomain(),
                     options = it.data.options.map { option ->

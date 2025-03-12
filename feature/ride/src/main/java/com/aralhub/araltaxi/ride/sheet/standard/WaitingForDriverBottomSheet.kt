@@ -22,6 +22,7 @@ import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
@@ -118,6 +119,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
         binding.tvTitle.text = "Aydawshı ~${activeRide.waitAmount} minut ishinde jetip keledi"
         binding.btnCall.setOnClickListener {}
         binding.tvDriverName.text = activeRide.driver.fullName
+        displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)
         binding.tvCarInfo.text = StringUtils.getBoldSpanString(
             fullText = "${activeRide.driver.vehicleType}, ${activeRide.driver.vehicleNumber}",
             boldText = activeRide.driver.vehicleNumber
@@ -125,14 +127,8 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
         binding.tvFromLocation.text = activeRide.locations.points[0].name
         binding.tvToLocation.text = activeRide.locations.points[activeRide.locations.points.size -1].name
         binding.tvDriverRating.text =  getString(com.aralhub.ui.R.string.label_driver_rating, activeRide.driver.rating)
-    }
-
-    private fun initRideData(rideData: Ride) {
-        binding.tvTitle.text = "Aydawshı ~${rideData.waitForDriverTime} minut ishinde jetip keledi"
-        loadAvatar(url = rideData.driver.avatar, binding.ivDriver)
-
-        binding.btnCancel.setOnClickListener {
-            CancelTripFragment().show(childFragmentManager, CancelTripFragment.TAG)
+        binding.btnCall.setOnClickListener {
+            sendPhoneNumberToDial(activeRide.driver.phoneNumber)
         }
     }
 
