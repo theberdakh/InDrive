@@ -43,7 +43,7 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
                 is CancelRideUiState.Error -> {}
                 CancelRideUiState.Loading -> {}
                 CancelRideUiState.Success -> {
-                    //findNavController().navigateUp()
+                   // findNavController().navigateUp()
                 }
             }
         }
