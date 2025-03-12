@@ -2,8 +2,8 @@ package com.aralhub.araltaxi.driver.orders.sheet
 
 import android.os.Bundle
 import android.view.View
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetExitLineBinding
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetExitLineBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

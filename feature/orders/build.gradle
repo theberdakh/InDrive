@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.safe.args)
 }
 
 android {
-    namespace 'com.aralhub.indrive.driver.orders'
+    namespace 'com.aralhub.araltaxi.driver.orders'
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
@@ -59,4 +60,7 @@ dependencies {
     //Navigation Component
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.8.8")
+
+    implementation libs.yandex.mapkit
 }

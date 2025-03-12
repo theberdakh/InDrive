@@ -5,8 +5,8 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderLoadingBinding
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetOrderLoadingBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

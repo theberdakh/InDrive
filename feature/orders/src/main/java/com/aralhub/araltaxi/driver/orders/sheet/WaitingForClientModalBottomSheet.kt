@@ -3,8 +3,8 @@ package com.aralhub.araltaxi.driver.orders.sheet
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetWaitingForClientBinding
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetWaitingForClientBinding
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
