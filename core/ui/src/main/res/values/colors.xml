@@ -6,6 +6,7 @@
     <color name="color_brand_primary">#001934</color>
 
     <color name="color_text_primary">#242323</color>
+    <color name="color_content_primary_text">#2D2E2C</color>
     <color name="color_text_secondary">#6C757D</color>
 
     <color name="color_tertiary">#B0BEC5</color>

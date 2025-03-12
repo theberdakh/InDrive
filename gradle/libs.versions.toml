@@ -1,7 +1,6 @@
 [versions]
 compileSdk = "35"
 ktorVersion = "2.3.7"
-lifecycleViewmodelKtx = "2.8.7"
 minSdk = "26"
 
 agp = "8.7.3"
@@ -16,7 +15,7 @@ activity = "1.10.0"
 constraintlayout = "2.2.0"
 kspVersion = "1.9.10-1.0.13"
 daggerHiltVersion = "2.51.1"
-navigationFragmentKtx = "2.8.6"
+navigationFragmentKtx = "2.8.8"
 swiperefreshlayout = "1.1.0"
 yandexMapKit = "4.10.1-full"
 glideVersion = "4.16.0"
@@ -29,9 +28,9 @@ kotlinParcelizePlugin = "1.8.10"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-safe-args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationFragmentKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -64,3 +63,4 @@ dagger = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltVersi
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlinParcelizePlugin"  }
+safe-args = { id = "androidx.navigation.safeargs.kotlin",  version.ref = "navigationFragmentKtx"  }

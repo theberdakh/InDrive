@@ -8,10 +8,10 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.araltaxi.driver.orders.orders.CreateOfferUiState
 import com.aralhub.araltaxi.driver.orders.orders.OfferViewModel
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
@@ -109,6 +109,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 errorHandler.showToast("Maximum price: $maximumPrice")
             }
         }
+        binding.llPickUpAddress.setOnClickListener { onAddressClick.invoke() }
+        binding.llDestinationAddress.setOnClickListener { onAddressClick.invoke() }
     }
 
     private fun initObservers() {
@@ -143,6 +145,11 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         super.onDestroyView()
         if (orderLoadingModalBottomSheet.isAdded)
             orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+    }
+
+    private var onAddressClick: () -> Unit = {}
+    fun setOnAddressClickListener(onAddressClick: () -> Unit) {
+        this.onAddressClick = onAddressClick
     }
 
     companion object {

@@ -13,7 +13,18 @@ data class ActiveOfferResponse(
     val roadDistance: Double,
     val paymentType: Int,
     val pickUpAddress: String,
-    val destinationAddress: String? = null
+    val destinationAddress: String? = null,
+    val locations: List<ClientRideLocationsItems>
+)
+
+data class ClientRideLocationsItems(
+    val coordinates: ClientRideLocationsItemsCoordinates,
+    val name: String
+)
+
+data class ClientRideLocationsItemsCoordinates(
+    val longitude: Number,
+    val latitude: Number
 )
 
 fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferResponse =
@@ -28,6 +39,15 @@ fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferR
             roadDistance = data.distance.totalDistance.toDouble(),
             paymentType = data.paymentMethod.id,
             pickUpAddress = data.clientPickUpAddress,
-            destinationAddress = data.locations.points.getOrNull(1)?.name
+            destinationAddress = data.locations.points.getOrNull(1)?.name,
+            locations = data.locations.points.map {
+                ClientRideLocationsItems(
+                    ClientRideLocationsItemsCoordinates(
+                        it.coordinates.longitude,
+                        it.coordinates.latitude
+                    ),
+                    it.name
+                )
+            }
         )
     }

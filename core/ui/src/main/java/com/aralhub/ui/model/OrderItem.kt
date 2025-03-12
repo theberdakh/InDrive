@@ -15,8 +15,21 @@ data class OrderItem(
     val roadDistance: String = "",
     val paymentType: PaymentType,
     val pickUpAddress: String,
-    val destinationAddress: String? = null
+    val destinationAddress: String? = null,
+    val locations: List<ClientRideLocationsUI>
 ) : Parcelable
+
+@Parcelize
+data class ClientRideLocationsUI(
+    val coordinates: ClientRideLocationsCoordinatesUI,
+    val name: String
+): Parcelable
+
+@Parcelize
+data class ClientRideLocationsCoordinatesUI(
+    val longitude: Double,
+    val latitude: Double
+): Parcelable
 
 enum class PaymentType(
     val resId: Int

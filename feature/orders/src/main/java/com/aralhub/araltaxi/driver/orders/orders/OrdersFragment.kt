@@ -10,14 +10,14 @@ import androidx.activity.addCallback
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.araltaxi.driver.orders.model.RideStatus
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
@@ -34,8 +34,6 @@ import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
 import com.aralhub.araltaxi.services.LocationService
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.ui.adapter.OrderItemAdapter
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -46,7 +44,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -257,6 +254,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                 else -> false
             }
+        }
+        orderModalBottomSheet.setOnAddressClickListener {
+            navigation.goToMapFromOrders(
+                orders.getOrNull(0) ?: return@setOnAddressClickListener
+            )
         }
     }
 

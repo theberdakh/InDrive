@@ -125,6 +125,7 @@
             android:background="@drawable/ic_from_location" />
 
         <LinearLayout
+            android:id="@+id/ll_pick_up_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -166,6 +167,7 @@
             android:background="@drawable/ic_material_symbols_radio_button_checked" />
 
         <LinearLayout
+            android:id="@+id/ll_destination_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
