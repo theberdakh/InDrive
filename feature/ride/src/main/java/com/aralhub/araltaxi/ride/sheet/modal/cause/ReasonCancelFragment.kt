@@ -3,6 +3,7 @@ package com.aralhub.araltaxi.ride.sheet.modal.cause
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.FragmentReasonCancelBinding
@@ -22,7 +23,7 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
     private val binding by viewBinding(FragmentReasonCancelBinding::bind)
     private val adapter by lazy { CancelItemAdapter() }
     private val viewModel by viewModels<ReasonCancelViewModel>()
-    private val rideViewModel by viewModels<RideViewModel>()
+    private val rideViewModel by activityViewModels<RideViewModel>()
     @Inject lateinit var errorHandler: ErrorHandler
     private var rideId = -1
 

@@ -9,8 +9,10 @@ import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -48,8 +50,8 @@ class RideViewModel @Inject constructor(
         }
     }
 
-    private val _cancelRideState = MutableStateFlow<CancelRideUiState>(CancelRideUiState.Loading)
-    val cancelRideState = _cancelRideState.asStateFlow()
+    private val _cancelRideState = MutableSharedFlow<CancelRideUiState>()
+    val cancelRideState = _cancelRideState.asSharedFlow()
     fun cancelRide(rideId: Int) = viewModelScope.launch {
         cancelRideWithoutReasonUseCase(rideId).let {
             when (it) {
