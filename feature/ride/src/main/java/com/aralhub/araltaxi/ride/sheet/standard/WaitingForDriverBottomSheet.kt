@@ -52,7 +52,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
             currentRideId?.let { rideId ->
                 CancelTripFragment().show(childFragmentManager, CancelTripFragment.TAG)
                 Log.i("WaitingForDriver", "rideId: $rideId")
-             //   rideViewModel.cancelRide(rideId)
+                rideViewModel.cancelRide(rideId)
             }?: run {
                 errorHandler.showToast("Ride not found")
             }
@@ -108,7 +108,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                 }
                 is ActiveRideUiState.Success -> {
                     errorHandler.showToast("Success")
-                    displayActiveRide(activeRideState.activeRide)
+                  displayActiveRide(activeRideState.activeRide)
                     Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")
                 }
             }
@@ -120,6 +120,8 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
         binding.btnCall.setOnClickListener {}
         binding.tvDriverName.text = activeRide.driver.fullName
         displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)
+        Log.i("Vehicle", "${activeRide.driver.vehicleType}")
+        Log.i("Vehicle", "${activeRide.driver.vehicleNumber}")
         binding.tvCarInfo.text = StringUtils.getBoldSpanString(
             fullText = "${activeRide.driver.vehicleType}, ${activeRide.driver.vehicleNumber}",
             boldText = activeRide.driver.vehicleNumber

@@ -1,9 +1,7 @@
 package com.aralhub.indrive.core.data.model.ride
 
-import com.aralhub.indrive.core.data.model.MultiLanguageText
 import com.aralhub.indrive.core.data.model.payment.PaymentMethod
 import com.aralhub.indrive.core.data.model.payment.toDomain
-import com.aralhub.indrive.core.data.model.toDomain
 import com.aralhub.network.models.option.NetworkOption
 import com.aralhub.network.models.ride.NetworkRideActive
 
@@ -21,8 +19,8 @@ fun NetworkRideActive.toDomain() = ActiveRide(
         driverId = this.driver.driverId,
         fullName = this.driver.fullName,
         rating = this.driver.rating.toString(),
-        vehicleColor = this.driver.vehicleColor.toDomain(),
-        vehicleType = this.driver.vehicleType.toDomain(),
+        vehicleColor = this.driver.vehicleColor.kk,
+        vehicleType = this.driver.vehicleType.kk,
         vehicleNumber = this.driver.plateNumber,
         phoneNumber = this.driver.phoneNumber ?: "",
         photoUrl = this.driver.photoUrl
@@ -56,8 +54,8 @@ data class ActiveRideDriver(
     val driverId: Int,
     val fullName: String,
     val rating: String,
-    val vehicleColor: MultiLanguageText,
-    val vehicleType: MultiLanguageText,
+    val vehicleColor: String,
+    val vehicleType: String,
     val vehicleNumber: String,
     val phoneNumber: String,
     val photoUrl: String

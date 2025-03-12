@@ -177,9 +177,9 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
                         driverId = it.data.driver.driverId,
                         fullName = it.data.driver.fullName,
                         rating = it.data.driver.rating.toString(),
-                        vehicleColor = it.data.driver.vehicleColor.toDomain(),
-                        vehicleType = it.data.driver.vehicleType.toDomain(),
-                        vehicleNumber = it.data.driver.vehicleType.ru,
+                        vehicleColor = it.data.driver.vehicleColor.kk,
+                        vehicleType = it.data.driver.vehicleType.kk,
+                        vehicleNumber = it.data.driver.vehicleType.kk,
                         phoneNumber = it.data.driver.phoneNumber ?: "",
                         photoUrl = it.data.driver.photoUrl
                     ),

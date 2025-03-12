@@ -166,7 +166,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             when (searchRideUiState) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
-                is SearchRideUiState.Success -> navigation.goToGetOffersFromRequestFragment()
+                is SearchRideUiState.Success -> {
+                   // navigation.goToGetOffersFromRequestFragment()
+                }
             }
         }
 
@@ -180,7 +182,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 ActiveRideUiState.Loading -> {}
                 is ActiveRideUiState.Success -> {
                     Log.i("RequestFragment", "Active ride: ${activeRideUiState.activeRide}")
-                    //   navigation.goToRideFragmentFromRequestFragment()
+                      navigation.goToRideFragmentFromRequestFragment()
                 }
             }
         }

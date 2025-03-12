@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.FragmentReasonCancelBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.ride.ActiveRideUiState
 import com.aralhub.araltaxi.ride.CancelRideUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.ui.adapter.CancelItemAdapter
@@ -23,6 +24,7 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
     private val viewModel by viewModels<ReasonCancelViewModel>()
     private val rideViewModel by viewModels<RideViewModel>()
     @Inject lateinit var errorHandler: ErrorHandler
+    private var rideId = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,19 +32,22 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
         initListeners()
         initObservers()
         viewModel.getCancelCauses()
+        rideViewModel.getActiveRide()
     }
 
     private fun initListeners() {
         binding.btnSend.setOnClickListener {
-            val reasonId = adapter.currentList.find { it.isSelected }?.id
-            reasonId?.let { id ->
-                rideViewModel.cancelRide(id)
-            } ?: run {
-                errorHandler.showToast("Please select a reason")
+            if (rideId != -1){
+                val reasonId = adapter.currentList.find { it.isSelected }?.id
+                reasonId?.let { id ->
+                    rideViewModel.cancelRideWithReason(rideId, id)
+                } ?: run {
+                   rideViewModel.cancelRide(rideId)
+                }
+            } else {
+                errorHandler.showToast("Ride not found")
             }
-        }
-        adapter.setOnItemSelected { cause ->
-            errorHandler.showToast(cause.title)
+
         }
     }
 
@@ -55,13 +60,10 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
             when(cancelRideUiState){
                 is CancelRideUiState.Error -> {
                     errorHandler.showToast(cancelRideUiState.message)
-                    Log.i("RideBottomSheet", "cancelRideUiState: Error ${cancelRideUiState.message}")
                 }
                 CancelRideUiState.Loading -> {}
                 CancelRideUiState.Success -> {
-                    Log.i("Reason cancel bottom sheet", "cancelRideUiState: Success")
                     dismissAllowingStateLoss()
-
                 }
             }
         }
@@ -74,6 +76,14 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
                     errorHandler.showToast(reasonCancelUiState.message)
                 }
                 ReasonCancelUiState.Loading -> {}
+            }
+        }
+
+        observeState(rideViewModel.activeRideState) { activeRideUiState ->
+            when(activeRideUiState){
+                is ActiveRideUiState.Error -> errorHandler.showToast(activeRideUiState.message)
+                ActiveRideUiState.Loading -> {}
+                is ActiveRideUiState.Success -> rideId = activeRideUiState.activeRide.id
             }
         }
     }

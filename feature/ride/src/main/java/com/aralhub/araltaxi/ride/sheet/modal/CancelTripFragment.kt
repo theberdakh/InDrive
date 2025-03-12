@@ -26,6 +26,7 @@ class CancelTripFragment: BottomSheetDialogFragment(R.layout.fragment_cancel_tri
         }
         binding.btnCancel.setOnClickListener {
             reasonCancelFragment.show(parentFragmentManager, ReasonCancelFragment.TAG)
+            dismissAllowingStateLoss()
             Log.i(TAG, "onViewCreated: Cancel button clicked")
             onCancelClickListener()
         }
