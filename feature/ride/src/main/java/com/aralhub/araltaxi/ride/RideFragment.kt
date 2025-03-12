@@ -17,8 +17,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 internal class RideFragment : Fragment(R.layout.fragment_ride) {
     private val binding by viewBinding(FragmentRideBinding::bind)
+
     @Inject
     lateinit var navigator: SheetNavigator
+
     @Inject
     lateinit var bottomSheetNavigation: FeatureRideBottomSheetNavigation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,14 +38,14 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
 
     private fun setUpMapView() {
         binding.mapView.onStart()
-      /*  binding.mapView.mapWindow.map.move(
+        binding.mapView.mapWindow.map.move(
             CameraPosition(
                 Point(42.4619, 59.6166),
-                *//* zoom = *//* 17.0f,
-                *//* azimuth = *//* 150.0f,
-                *//* tilt = *//* 30.0f
+                17.0f,
+               150.0f,
+                30.0f
             )
-        )*/
+        )
     }
 
     override fun onDestroyView() {
