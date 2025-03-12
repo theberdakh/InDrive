@@ -32,7 +32,8 @@
 
     <style name="Widget.InDrive.Button.Primary" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/selector_button_primary</item>
-        <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
+        <item name="android:textColor">@drawable/selector_primary_button_text</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge.SemiBold</item>
     </style>
 
     <style name="Widget.InDrive.Button.GreenGradient" parent="Widget.InDrive.Button.Primary">
@@ -100,7 +101,7 @@
     </style>
 
     <style name="Widget.InDrive.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/color_gray_1</item>
+        <item name="tint">@color/color_gray_2</item>
         <item name="android:minHeight">8dp</item>
         <item name="android:paddingBottom">0dp</item>
     </style>

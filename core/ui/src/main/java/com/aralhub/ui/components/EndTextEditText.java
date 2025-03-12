@@ -42,6 +42,7 @@ public class EndTextEditText extends LinearLayout {
         setBackground(ContextCompat.getDrawable(context, R.drawable.selector_edit_text_auth));
 
         AppCompatEditText editText = new AppCompatEditText(context, attrs);
+        editText.setTextColor(ContextCompat.getColor(context, R.color.color_content_secondary));
         editText.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
         editText.setOnFocusChangeListener((v, hasFocus) -> {
             setActivated(hasFocus);
@@ -73,6 +74,7 @@ public class EndTextEditText extends LinearLayout {
         endTextViewParams.gravity = Gravity.CENTER_VERTICAL;
         endTextView.setClickable(true);
         endTextView.setFocusable(true);
+        endTextView.setTextColor(ContextCompat.getColor(context, R.color.color_content_secondary));
         endTextView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_text));
         endTextContainer.addView(endTextView, endTextViewParams);
 

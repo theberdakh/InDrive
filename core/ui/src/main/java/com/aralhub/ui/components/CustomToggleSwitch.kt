@@ -20,8 +20,8 @@ class CustomToggleSwitch @JvmOverloads constructor(
     private var switchPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var thumbPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private var onColor = ContextCompat.getColor(context, R.color.color_interactive_accent)
-    private var offColor = ContextCompat.getColor(context, R.color.color_content_tertiary)
+    private var onColor = ContextCompat.getColor(context, R.color.color_interactive_control)
+    private var offColor = ContextCompat.getColor(context, R.color.color_gray_1)
     private var thumbColor = Color.WHITE
 
     private var switchWidth = 0

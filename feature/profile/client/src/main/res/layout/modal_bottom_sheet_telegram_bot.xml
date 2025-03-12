@@ -44,7 +44,6 @@
         android:layout_width="match_parent"
         android:text="@string/label_go_to_telegram"
         android:layout_marginVertical="@dimen/margin_small"
-        android:textColor="@color/white"
         android:layout_height="wrap_content"/>
 
     <Button
