@@ -6,6 +6,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.View
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
@@ -26,6 +27,8 @@ import com.aralhub.ui.sheets.ChangePaymentMethodModalBottomSheet
 import com.aralhub.ui.sheets.CommentToDriverModalBottomSheet
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.MoneyFormatter
+import com.aralhub.ui.utils.ViewEx.disable
+import com.aralhub.ui.utils.ViewEx.enable
 import com.aralhub.ui.utils.viewBinding
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -41,8 +44,7 @@ import javax.inject.Inject
 class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private val binding by viewBinding(FragmentCreateOrderBinding::bind)
     private var isConfiguring: Boolean = false
-    @Inject
-    lateinit var errorHandler: ErrorHandler
+    @Inject lateinit var errorHandler: ErrorHandler
     private val changePaymentMethodModalBottomSheet by lazy { ChangePaymentMethodModalBottomSheet() }
     private val commentToDriverModalBottomSheet by lazy { CommentToDriverModalBottomSheet() }
     private var minimumPrice = 0
@@ -61,12 +63,13 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     lateinit var navigation: FeatureCreateOrderNavigation
     private val newCurrentLocationListener = NewCurrentLocationListener(
         onInitMapPosition = { point -> createPlaceMarkObject(point) },
-        onUpdateMapPosition = { point -> updateMapPosition(point) },
-        onProviderDisabledListener = { },
+        onUpdateMapPosition = { point -> createPlaceMarkObject(point) },
+        onProviderDisabledListener = { point ->
+            createPlaceMarkObject(point)},
         onProviderEnabledListener = { }
     )
     private var placeMarkObject: PlacemarkMapObject? = null
-    private var imageProvider: ImageProvider ? = null
+    private var imageProvider: ImageProvider? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,8 +102,9 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     private fun initMap() {
         mapWindow = binding.mapView.mapWindow
         map = mapWindow.map
-        imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-   }
+        imageProvider =
+            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -155,7 +159,8 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun initViews() {
         binding.rvRideOptions.adapter = rideOptionItemAdapter
-
+        binding.btnSendOffer.disable()
+       // MoneyFormatter(binding.etPrice)
     }
 
     private fun initListeners() {
@@ -172,7 +177,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
 
 
-        MoneyFormatter(binding.etPrice)
+
         initChangePaymentMethodListener()
         initCommentToDriverListener()
 
@@ -268,7 +273,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
             when (recommendedPriceUiState) {
                 is RecommendedPriceUiState.Error -> errorHandler.showToast(recommendedPriceUiState.message)
                 RecommendedPriceUiState.Loading -> {
-                    binding.etPrice.setText("Esaplanıp atır...")
+                    binding.etPrice.hint = "Esaplanıp atır..."
                 }
 
                 is RecommendedPriceUiState.Success -> {
@@ -276,6 +281,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                         recommendedPriceUiState.recommendedPrice
                     )
                     recommendedPrice = recommendedPriceUiState.recommendedPrice
+                    binding.btnSendOffer.enable()
                 }
             }
         }
@@ -302,27 +308,20 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun createPlaceMarkObject(point: Point) {
         map?.let {
-            if (it.isValid){
-                placeMarkObject = it.mapObjects.addPlacemark().apply {
-                    geometry = point
-                    imageProvider?.let { imageProvider ->  setIcon(imageProvider) }
+            if (it.isValid) {
+                if (placeMarkObject == null) {
+                    placeMarkObject = it.mapObjects.addPlacemark().apply {
+                        geometry = point
+                        imageProvider?.let { imageProvider -> setIcon(imageProvider) }
+                    }
+                } else {
+                    placeMarkObject?.geometry = point
                 }
                 it.move(CameraPosition(point, 17.0f, 150.0f, 30.0f))
             }
         }
 
     }
-
-    private fun updateMapPosition(point: Point) {
-        val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-        placeMarkObject?.geometry = point
-        map?.let {
-            if (it.isValid) {
-                it.move(cameraPosition)
-            }
-        }
-    }
-
 
 
     private fun displayRecommendedPrice(recommendedPrice: RecommendedPrice) {

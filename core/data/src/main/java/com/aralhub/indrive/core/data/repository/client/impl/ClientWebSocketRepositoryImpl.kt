@@ -13,12 +13,10 @@ import com.aralhub.indrive.core.data.model.client.ClientRideResponsePaymentMetho
 import com.aralhub.indrive.core.data.model.client.ClientRideResponseRecommendedAmount
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
+import com.aralhub.indrive.core.data.model.payment.toDomain
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.ActiveRideDriver
 import com.aralhub.indrive.core.data.model.ride.ActiveRideOptions
-import com.aralhub.indrive.core.data.model.ride.ActiveRidePaymentMethod
-import com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleColor
-import com.aralhub.indrive.core.data.model.ride.ActiveRideVehicleType
 import com.aralhub.indrive.core.data.model.ride.Distance
 import com.aralhub.indrive.core.data.model.ride.DistanceSegment
 import com.aralhub.indrive.core.data.model.ride.LocationPoint
@@ -27,6 +25,8 @@ import com.aralhub.indrive.core.data.model.ride.RecommendedAmount
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.model.ride.SearchRideDriver
 import com.aralhub.indrive.core.data.model.ride.SearchRideLocations
+import com.aralhub.indrive.core.data.model.ride.toDomain
+import com.aralhub.indrive.core.data.model.toDomain
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.WebSocketClientNetworkDataSource
@@ -170,30 +170,20 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
                     amount = it.data.amount,
                     waitAmount = it.data.waitAmount,
                     distance = it.data.distance,
-                    locations = it.data.locations,
+                    locations = it.data.locations.toDomain(),
                     isActive = it.data.isActive,
                     createdAt = it.data.createdAt,
                     driver = ActiveRideDriver(
                         driverId = it.data.driver.driverId,
                         fullName = it.data.driver.fullName,
                         rating = it.data.driver.rating.toString(),
-                        vehicleColor = ActiveRideVehicleColor(
-                            ru = it.data.driver.vehicleColor.ru,
-                            en = it.data.driver.vehicleColor.en,
-                            kk = it.data.driver.vehicleColor.kk
-                        ),
-                        vehicleType = ActiveRideVehicleType(
-                            ru = it.data.driver.vehicleType.ru,
-                            en = it.data.driver.vehicleType.en,
-                            kk = it.data.driver.vehicleType.kk
-                        ),
-                        vehicleNumber = it.data.driver.vehicleType.ru
+                        vehicleColor = it.data.driver.vehicleColor.kk,
+                        vehicleType = it.data.driver.vehicleType.kk,
+                        vehicleNumber = it.data.driver.vehicleType.kk,
+                        phoneNumber = it.data.driver.phoneNumber ?: "",
+                        photoUrl = it.data.driver.photoUrl
                     ),
-                    paymentMethod = ActiveRidePaymentMethod(
-                        id = it.data.paymentMethod.id,
-                        name = it.data.paymentMethod.name,
-                        isActive = it.data.paymentMethod.isActive
-                    ),
+                    paymentMethod = it.data.paymentMethod.toDomain(),
                     options = it.data.options.map { option ->
                         ActiveRideOptions(
                             id = option.id,
@@ -298,6 +288,24 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
 
     override suspend fun updateAutoTake(rideId: String, autoTake: Boolean): Result<Boolean> {
         return dataSource.updateAutoTake(rideId, autoTake).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
+
+    override suspend fun cancelRide(rideId: Int, cancelCauseId: Int): Result<Boolean> {
+        return dataSource.cancelRide(rideId, cancelCauseId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(true)
+            }
+        }
+    }
+
+    override suspend fun cancelRideByPassenger(rideId: Int): Result<Boolean> {
+        return dataSource.cancelRideByPassenger(rideId).let {
             when(it){
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> Result.Success(true)

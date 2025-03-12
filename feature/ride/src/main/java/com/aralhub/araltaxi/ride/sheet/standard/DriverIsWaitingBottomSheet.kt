@@ -17,6 +17,7 @@ import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.WaitingTimeFragment
+import com.aralhub.araltaxi.ride.sheet.modal.cause.ReasonCancelFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
 import com.aralhub.ui.utils.StringUtils
@@ -28,9 +29,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_waiting) {
     private val rideViewModel: RideViewModel by activityViewModels()
-    @Inject
-    lateinit var navigation: FeatureRideBottomSheetNavigation
+    @Inject lateinit var navigation: FeatureRideBottomSheetNavigation
     private val binding by viewBinding(BottomSheetDriverIsWaitingBinding::bind)
+    private val cancelTripFragment = CancelTripFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -72,15 +73,17 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
             fullText = "${rideData.car.model}, ${rideData.car.number}",
             boldText = rideData.car.number
         )
-
         binding.btnCall.setOnClickListener {
             sendPhoneNumberToDial(rideData.driver.phone)
         }
         binding.btnCancel.setOnClickListener {
-            CancelTripFragment().show(childFragmentManager, CancelTripFragment.TAG)
+            cancelTripFragment.show(childFragmentManager, CancelTripFragment.TAG)
         }
         binding.layoutTime.setOnClickListener {
             showWaitingTimeBottomSheet()
+        }
+        cancelTripFragment.setOnCancelClickListener {
+            Log.i("DriverIsWaitingBottomSheet", "showReasonCancel")
         }
     }
 }

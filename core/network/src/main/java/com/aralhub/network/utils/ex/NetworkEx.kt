@@ -16,6 +16,9 @@ object NetworkEx {
                 body()?.let { serverResponse ->
                     Log.i("WebSocketClientNetworkDataSourceImpl", "serverResponse $serverResponse")
                     if (serverResponse.success) {
+                        if (serverResponse.data == null) {
+                            return NetworkResult.Error(message = "Response body is null")
+                        }
                         NetworkResult.Success(data = serverResponse.data)
                     } else {
                         NetworkResult.Error(message = serverResponse.message.toString())
@@ -38,7 +41,6 @@ object NetworkEx {
                     in 500..502 -> {
                         NetworkResult.Error("Server Error")
                     }
-
                     in 504..599 -> {
                         NetworkResult.Error(message = "Server Error")
                     }

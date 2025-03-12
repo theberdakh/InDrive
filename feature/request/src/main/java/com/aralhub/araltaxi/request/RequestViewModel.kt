@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.request
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
@@ -46,8 +45,7 @@ class RequestViewModel @Inject constructor(
     private val clientGetSearchRideUseCase: ClientGetSearchRideUseCase
 ) : ViewModel() {
 
-    private val searchManager =
-        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val searchOptions = SearchOptions().apply {
         searchTypes = SearchType.GEO.value
         resultPageSize = 1
@@ -116,22 +114,13 @@ class RequestViewModel @Inject constructor(
     val fromLocationUiState = _fromLocationUiState.asSharedFlow()
     private var lastLocation = Point(0.0, 0.0)
 
-    fun getFromLocation(latitude: Double, longitude: Double ) = viewModelScope.launch {
-        if (lastLocation.latitude == latitude && lastLocation.longitude == longitude) {
-            return@launch
-        } else {
-            lastLocation = Point(latitude, longitude)
-            searchName(lastLocation.latitude, lastLocation.longitude)
-        }
-    }
-
-    private fun searchName(latitude: Double, longitude: Double) {
+    private fun searchName(latitude: Double, longitude: Double) = viewModelScope.launch {
+        _fromLocationUiState.emit(FromLocationUiState.Loading)
         searchManager.submit(Point(latitude, longitude), 17, searchOptions, object : SearchListener {
             override fun onSearchResponse(response: Response) {
                 val geoObjects = response.collection.children.mapNotNull { it.obj }
                 val names = geoObjects.filter { it.name != null }.map { it.name }
                 if (names.isNotEmpty()) {
-                    Log.i("Log", "Names: $names")
                     viewModelScope.launch {
                         _fromLocationUiState.emit(
                             FromLocationUiState.Success(
@@ -162,10 +151,12 @@ class RequestViewModel @Inject constructor(
 
     private val _fromLocation = MutableStateFlow<SelectedLocation?>(null)
     private val _toLocation = MutableStateFlow<SelectedLocation?>(null)
+    private var isFromLocationManuallySelected = false
     fun updateLocation(location: SelectedLocation) = viewModelScope.launch {
         when (location.locationType) {
             LocationType.FROM -> {
                 _fromLocation.value = location
+                isFromLocationManuallySelected = true
             }
             LocationType.TO -> {
                 _toLocation.value = location
@@ -179,8 +170,17 @@ class RequestViewModel @Inject constructor(
     }
 
     fun clearToLocation() {
-        _toLocation.value = null
         _selectedLocations.value = null
+        _toLocation.value = null
+        _fromLocation.value = null
+    }
+
+    fun setFromLocation(latitude: Double, longitude: Double) {
+        if (!isFromLocationManuallySelected){
+            lastLocation = Point(latitude, longitude)
+            searchName(latitude, longitude)
+        }
+
     }
 
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()

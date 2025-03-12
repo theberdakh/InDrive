@@ -8,6 +8,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.BottomSheetRideBinding
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.ride.ActiveRideUiState
 import com.aralhub.araltaxi.ride.PaymentMethod
 import com.aralhub.araltaxi.ride.Ride
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
@@ -17,6 +19,7 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigati
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,14 +31,16 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
     @Inject
     lateinit var navigation: FeatureRideBottomSheetNavigation
     private val rideViewModel: RideViewModel by activityViewModels()
+    @Inject lateinit var errorHandler: ErrorHandler
     private val binding by viewBinding(BottomSheetRideBinding::bind)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
+        rideViewModel.getActiveRide()
     }
 
     private fun initObservers() {
-        lifecycleScope.launch {
+       /* lifecycleScope.launch {
             rideViewModel.rideState2.collect { state ->
                 when (state) {
                     RideBottomSheetUiState.Error -> {}
@@ -54,7 +59,8 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
                     }
                 }
             }
-        }
+        }*/
+
     }
 
     private fun initRideData(rideData: Ride) {

@@ -33,6 +33,9 @@ class OfferItemAdapter :
             itemOfferBinding.btnDecline.setOnClickListener {
                 onItemDeclineClickListener.invoke(offerItem, adapterPosition)
             }
+
+            itemOfferBinding.btnAccept.setExpirationTime(offerItem.expiresAt)
+
             itemOfferBinding.apply {
                 tvDriverName.text = offerItem.driver.name
                 tvPrice.text = offerItem.offeredPrice + " som"

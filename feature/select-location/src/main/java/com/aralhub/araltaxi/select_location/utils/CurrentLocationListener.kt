@@ -3,13 +3,11 @@ package com.aralhub.araltaxi.select_location.utils
 import android.location.Location
 import android.location.LocationListener
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.Map
 
 class CurrentLocationListener(
     private val onUpdateMapPosition: (listener: Point) -> Unit,
     private val onProviderDisabledListener: (initialPoint: Point) -> Unit,
-    private val onProviderEnabledListener: () -> Unit
+    private val onProviderEnabledListener: (point: Point) -> Unit
 ) :
     LocationListener {
 
@@ -36,7 +34,8 @@ class CurrentLocationListener(
 
     override fun onProviderEnabled(provider: String) {
         super.onProviderEnabled(provider)
-        onProviderEnabledListener()
+        onProviderEnabledListener(initialPoint)
+        onUpdateMapPosition(initialPoint)
     }
 
     private fun updateMapPosition(point: Point) {

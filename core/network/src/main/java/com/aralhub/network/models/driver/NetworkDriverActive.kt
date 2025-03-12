@@ -11,13 +11,14 @@ data class NetworkDriverActive(
     @SerializedName("full_name")
     val fullName: String,
     val rating: Number,
+    @SerializedName("photo_url")
+    val photoUrl: String,
     @SerializedName("color")
     val vehicleColor: NetworkMultiLanguageText,
     @SerializedName("vehicle_type")
     val vehicleType: NetworkMultiLanguageText,
     @SerializedName("plate_number")
     val plateNumber: String,
-    @SerializedName("payment_method")
-    val paymentMethod: NetworkPaymentMethod,
-    val options: List<NetworkOption>
+    @SerializedName("phone_number")
+    val phoneNumber: String?,
 )

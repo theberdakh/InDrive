@@ -118,7 +118,7 @@
                         android:id="@+id/et_price"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:hint="Bahanı kiritiń"
+                        android:hint="Esaplanıp atır..."
                         android:focusableInTouchMode="false"
                         android:inputType="none"
                         android:ellipsize="end"

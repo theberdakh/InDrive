@@ -4,6 +4,7 @@ import android.util.Log
 import com.aralhub.network.WebSocketClientOffersNetworkDataSource
 import com.aralhub.network.models.ClientWebSocketServerResponse
 import com.aralhub.network.models.offer.NetworkOffer
+import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.utils.ClientWebSocketEventNetwork
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -57,6 +58,13 @@ class WebSocketClientOffersNetworkDataSourceImpl(private val client: HttpClient)
                                             )
                                             ClientWebSocketEventNetwork.DriverOffer(driverOffer.data)
                                         }
+                                        OFFER_ACCEPTED  -> {
+                                            val ride = Gson().fromJson<ClientWebSocketServerResponse<NetworkRideActive>>(
+                                                text,
+                                                object: TypeToken<ClientWebSocketServerResponse<NetworkRideActive>>() {}.type
+                                            )
+                                            ClientWebSocketEventNetwork.OfferAccepted(ride.data)
+                                        }
                                         else -> ClientWebSocketEventNetwork.Unknown("Unknown type: ${data.type}")
                                     }
 
@@ -85,5 +93,6 @@ class WebSocketClientOffersNetworkDataSourceImpl(private val client: HttpClient)
 
     companion object {
         private const val DRIVER_OFFER = "driver_offer"
+        private const val OFFER_ACCEPTED = "ride_accepted"
     }
 }

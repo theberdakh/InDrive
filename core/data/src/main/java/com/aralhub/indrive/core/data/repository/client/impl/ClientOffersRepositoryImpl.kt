@@ -1,6 +1,7 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
 import com.aralhub.indrive.core.data.model.offer.Offer
+import com.aralhub.indrive.core.data.model.ride.toDomain
 import com.aralhub.indrive.core.data.repository.client.ClientOffersRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.ClientWebSocketEvent
@@ -14,7 +15,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
-class ClientOffersRepositoryImpl @Inject constructor(private val clientOffersNetworkDataSource: ClientOffersNetworkDataSource, private val webSocketClientOffersNetworkDataSource: WebSocketClientOffersNetworkDataSource) :
+class ClientOffersRepositoryImpl @Inject constructor(
+    private val clientOffersNetworkDataSource: ClientOffersNetworkDataSource,
+    private val webSocketClientOffersNetworkDataSource: WebSocketClientOffersNetworkDataSource
+) :
     ClientOffersRepository {
     override suspend fun acceptOffer(offerId: String): Result<Boolean> {
         return clientOffersNetworkDataSource.acceptOffer(offerId).let {
@@ -49,6 +53,7 @@ class ClientOffersRepositoryImpl @Inject constructor(private val clientOffersNet
                 )
 
                 is ClientWebSocketEventNetwork.Unknown -> ClientWebSocketEvent.Unknown(it.error)
+                is ClientWebSocketEventNetwork.OfferAccepted -> ClientWebSocketEvent.OfferAccepted(it.ride.toDomain())
             }
         }
     }

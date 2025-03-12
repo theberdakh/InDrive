@@ -12,6 +12,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
@@ -19,6 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.aralhub.ui.R;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 
 public class ProgressiveButton extends View {
     private Paint buttonPaint;
@@ -30,6 +35,13 @@ public class ProgressiveButton extends View {
     private int buttonColor = 0xFF9ED4B5; // Light green/mint color
     private float fillProgress = 0f;
     private ValueAnimator fillAnimator;
+
+    // Expiration related fields
+    private String expirationTimeString;
+    private Instant expirationTime;
+    private ValueAnimator countdownAnimator;
+    private boolean showExpiration = false;
+    private boolean hasExpired = false;
 
     public ProgressiveButton(Context context) {
         super(context);
@@ -54,7 +66,6 @@ public class ProgressiveButton extends View {
         backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setStyle(Paint.Style.FILL);
 
-
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
@@ -65,16 +76,14 @@ public class ProgressiveButton extends View {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ProgressiveButton);
         setButtonText(a.getString(R.styleable.ProgressiveButton_progressiveButtonText));
         setButtonColor(a.getColor(R.styleable.ProgressiveButton_progressColor, 0));
-        textPaint.setTextSize(a.getDimension(R.styleable.ProgressiveButton_textSize, 40f));
-        textPaint.setColor(a.getColor(R.styleable.ProgressiveButton_textColor, 0xFF000000)); //Black text
+        textPaint.setTextSize(a.getDimension(R.styleable.ProgressiveButton_textSize, 30f));
+        textPaint.setColor(a.getColor(R.styleable.ProgressiveButton_textColor, 0xFF000000)); // Black text
         backgroundPaint.setColor(a.getColor(R.styleable.ProgressiveButton_buttonColor, 0xFFEEEEEE)); // Light gray background
         a.recycle();
 
         setClickable(true);
         setupRipple();
-
     }
-
 
     private void setupRipple() {
         post(() -> {
@@ -96,11 +105,25 @@ public class ProgressiveButton extends View {
 
             setForeground(rippleDrawable);
         });
-
     }
 
     private void setupFillAnimation() {
         fillAnimator = ValueAnimator.ofFloat(0f, 1f);
+        fillAnimator.setDuration(500); // 500ms duration
+        fillAnimator.setInterpolator(new LinearInterpolator());
+        fillAnimator.addUpdateListener(animation -> {
+            fillProgress = (float) animation.getAnimatedValue();
+            invalidate();
+        });
+    }
+
+    // Add this new method for the reverse animation
+    private void setupReverseFillAnimation() {
+        if (fillAnimator != null) {
+            fillAnimator.cancel();
+        }
+
+        fillAnimator = ValueAnimator.ofFloat(1f, 0f); // Reverse direction from 1 to 0
         fillAnimator.setDuration(500); // 500ms duration
         fillAnimator.setInterpolator(new LinearInterpolator());
         fillAnimator.addUpdateListener(animation -> {
@@ -116,7 +139,7 @@ public class ProgressiveButton extends View {
         buttonRect.set(0, 0, w, h);
 
         // Update clip path for rounded corners
-        float cornerRadius = h / 3f;
+        float cornerRadius = h / 3f; // Match with setupRipple for consistency
         clipPath.reset();
         clipPath.addRoundRect(buttonRect, cornerRadius, cornerRadius, Path.Direction.CW);
     }
@@ -146,13 +169,53 @@ public class ProgressiveButton extends View {
         // Draw centered text
         float textX = getWidth() / 2f;
         float textY = getHeight() / 2f - ((textPaint.descent() + textPaint.ascent()) / 2f);
-        canvas.drawText(buttonText, textX, textY, textPaint);
+
+        if (showExpiration) {
+            // Draw the remaining time text
+            canvas.drawText(getRemainingTimeText(), textX, textY, textPaint);
+        } else {
+            // Draw the normal button text
+            canvas.drawText(buttonText, textX, textY, textPaint);
+        }
+    }
+
+    // Method to calculate and display remaining time
+    private String getRemainingTimeText() {
+        Instant now = Instant.now();
+
+        // If already expired
+        if (now.isAfter(expirationTime)) {
+            // If we just expired and haven't started the reverse animation yet
+            if (!hasExpired) {
+                hasExpired = true;
+                setupReverseFillAnimation();
+            }
+            return "Qabıllanbadı";
+        }
+
+        // Calculate remaining time using compatible methods
+        long remainingMillis = expirationTime.toEpochMilli() - now.toEpochMilli();
+        long seconds = remainingMillis / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+
+        // Format time remaining
+        if (hours > 0) {
+            return String.format("Qabıllaw (%dh %02dm)", hours, minutes);
+        } else if (minutes > 0) {
+            return String.format("Qabıllaw (%dm %02ds)", minutes, seconds);
+        } else {
+            return String.format("Qabıllaw (%ds)", seconds);
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int desiredWidth = 300;
-        int desiredHeight = 100;
+        int desiredHeight = 80;
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -183,25 +246,32 @@ public class ProgressiveButton extends View {
 
     // Public methods to control the animation
     public void startFillAnimation() {
+        setupFillAnimation();
         fillAnimator.start();
     }
 
     public void resetFillAnimation() {
-        fillAnimator.cancel();
+        if (fillAnimator != null) {
+            fillAnimator.cancel();
+        }
         fillProgress = 0f;
         invalidate();
     }
 
     // Setter methods for customization
     public void setButtonText(String text) {
-        this.buttonText = text;
-        invalidate();
+        if (text != null) {
+            this.buttonText = text;
+            invalidate();
+        }
     }
 
     public void setButtonColor(int color) {
-        this.buttonColor = color;
-        buttonPaint.setColor(color);
-        invalidate();
+        if (color != 0) {
+            this.buttonColor = color;
+            buttonPaint.setColor(color);
+            invalidate();
+        }
     }
 
     public void setTextSize(float size) {
@@ -215,6 +285,58 @@ public class ProgressiveButton extends View {
     }
 
     public void setAnimationDuration(long duration) {
-        fillAnimator.setDuration(duration);
+        if (fillAnimator != null) {
+            fillAnimator.setDuration(duration);
+        }
+    }
+
+    public void setExpirationTime(String expirationTimeString) {
+        this.expirationTimeString = expirationTimeString;
+        this.expirationTime = ZonedDateTime.parse(expirationTimeString).toInstant();
+        Log.i("ProgressiveButton", "Expiration time set to: " + expirationTimeString);
+        this.showExpiration = true;
+        this.hasExpired = false;
+
+        // Set up countdown animation
+        setupCountdownAnimation();
+
+        // Start with full progress
+        fillProgress = 1f;
+
+        // Start the countdown
+        countdownAnimator.start();
+
+        // Invalidate to update the view
+        invalidate();
+    }
+
+    private void setupCountdownAnimation() {
+        // Cancel existing animator if it exists
+        if (countdownAnimator != null) {
+            countdownAnimator.cancel();
+        }
+
+        countdownAnimator = ValueAnimator.ofInt(0, 1000);
+        countdownAnimator.setDuration(1000); // Update every second
+        countdownAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        countdownAnimator.setInterpolator(new LinearInterpolator());
+        countdownAnimator.addUpdateListener(animation -> {
+            // Only invalidate if we're showing expiration time
+            if (showExpiration) {
+                invalidate();
+            }
+        });
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // Clean up all animations when the view is detached
+        if (countdownAnimator != null) {
+            countdownAnimator.cancel();
+        }
+        if (fillAnimator != null) {
+            fillAnimator.cancel();
+        }
     }
 }

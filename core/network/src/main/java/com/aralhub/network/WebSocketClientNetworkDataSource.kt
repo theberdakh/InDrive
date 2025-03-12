@@ -10,6 +10,10 @@ import com.aralhub.network.requests.ride.NetworkClientRideRequest
 
 interface WebSocketClientNetworkDataSource {
 
+    suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<ServerResponseEmpty>
+
+    suspend fun cancelRideByPassenger(rideId: Int): NetworkResult<ServerResponseEmpty>
+
     suspend fun getActiveRideByPassenger(userId: Int): NetworkResult<NetworkRideActive>
 
     suspend fun getSearchRideByPassengerId(userId: Int): NetworkResult<NetworkRideSearch>

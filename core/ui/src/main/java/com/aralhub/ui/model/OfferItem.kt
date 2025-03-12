@@ -7,6 +7,7 @@ data class OfferItem(
     val driver: OfferItemDriver,
     val offeredPrice: String,
     val timeToArrive: String,
+    val expiresAt: String
 )
 
 data class OfferItemDriver(
