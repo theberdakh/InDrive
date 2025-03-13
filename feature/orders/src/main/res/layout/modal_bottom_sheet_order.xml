@@ -95,6 +95,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
+            android:textSize="22sp"
+            android:maxLines="1"
             tools:text="10 000 som" />
 
         <TextView
@@ -103,8 +105,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:textSize="22sp"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
-            android:textColor="@color/color_content_secondary"
+            android:textColor="@color/color_text_primary"
             tools:text="7 km" />
 
     </LinearLayout>
@@ -203,6 +206,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:layout_marginTop="16dp"
             android:padding="@dimen/padding_small">
 
             <TextView
@@ -258,12 +262,15 @@
 
         <Button
             android:id="@+id/btn_send_offer"
-            style="@style/Widget.InDrive.Button.Variant"
+            style="@style/Widget.InDrive.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cornerRadius="10dp"
+            android:foreground="@drawable/ripple_text"
             android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_marginBottom="@dimen/margin_small"
-            android:text="@string/label_send_offer" />
+            android:text="Qabıllaw" />
 
     </LinearLayout>
 

@@ -9,3 +9,8 @@ sealed class WebSocketEvent {
     data class OfferAccepted(val rideId: Int) : WebSocketEvent()
     data class Unknown(val error: String) : WebSocketEvent()
 }
+
+sealed class StartedRideWebSocketEvent {
+    data object RideCancelledByPassenger : StartedRideWebSocketEvent()
+    data class UnknownAction(val error: String) : StartedRideWebSocketEvent()
+}

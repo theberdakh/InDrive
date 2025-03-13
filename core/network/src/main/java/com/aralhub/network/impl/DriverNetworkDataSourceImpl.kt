@@ -22,6 +22,7 @@ import com.aralhub.network.utils.ex.MultipartEx
 import com.aralhub.network.utils.ex.NetworkEx.safeRequest
 import com.aralhub.network.utils.ex.NetworkEx.safeRequestEmpty
 import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponse
+import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponseWithNullData
 import java.io.File
 import javax.inject.Inject
 
@@ -76,7 +77,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         rideUUID: String,
         amount: Int
     ): NetworkResult<CreateOfferByDriverResponse?> {
-        return api.createOffer(rideUUID, amount).safeRequestServerResponse()
+        return api.createOffer(rideUUID, amount).safeRequestServerResponseWithNullData()
     }
 
     override suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse?> {

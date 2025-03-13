@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -136,6 +137,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
+                    delay(10000)
+                    orderLoadingModalBottomSheet.dismissAllowingStateLoss()
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

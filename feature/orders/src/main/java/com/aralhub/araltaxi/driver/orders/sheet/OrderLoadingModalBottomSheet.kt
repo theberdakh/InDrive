@@ -48,10 +48,9 @@ class OrderLoadingModalBottomSheet :
     private fun initObservers() {
         rejectOfferState.onEach {
             orderRejectedByClientModalBottomSheet.arguments = arguments
-            orderRejectedByClientModalBottomSheet.show(
-                parentFragmentManager,
-                orderRejectedByClientModalBottomSheet.tag
-            )
+            parentFragmentManager.beginTransaction()
+                .add(orderRejectedByClientModalBottomSheet, orderRejectedByClientModalBottomSheet.tag)
+                .commitAllowingStateLoss()
             dismissAllowingStateLoss()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

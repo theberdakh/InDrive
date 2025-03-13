@@ -23,7 +23,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -40,6 +42,10 @@ class OrdersViewModel @Inject constructor(
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val repository: DriverRepository
 ) : ViewModel() {
+
+    private val _ordersListState = MutableStateFlow<List<OrderItem>>(emptyList())
+    val ordersListState: StateFlow<List<OrderItem>> = _ordersListState.asStateFlow()
+
 
     init {
         getActiveRide()
@@ -91,6 +97,7 @@ class OrdersViewModel @Inject constructor(
                     val listOfOrders = result.data.map { it.asUI() }
                     existingOrdersState.value =
                         (GetActiveOrdersUiState.GetExistOrder(listOfOrders))
+                    _ordersListState.value = listOfOrders
                 }
 
                 is Result.Error -> {
@@ -105,6 +112,7 @@ class OrdersViewModel @Inject constructor(
         .map {
             when (it) {
                 is WebSocketEvent.ActiveOffer -> {
+                    addOrder(it.order.asUI())
                     GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
                 }
 
@@ -113,6 +121,7 @@ class OrdersViewModel @Inject constructor(
                 }
 
                 is WebSocketEvent.RideCancel -> {
+                    removeOrder(it.rideId)
                     GetActiveOrdersUiState.OrderCanceled(it.rideId)
                 }
 
@@ -165,7 +174,7 @@ class OrdersViewModel @Inject constructor(
         }
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.Eagerly,
         GetActiveOrdersUiState.Loading
     )
 
@@ -217,6 +226,21 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
+    private fun addOrder(order: OrderItem) {
+        _ordersListState.value = _ordersListState.value.toMutableList().apply { add(order) }
+    }
+
+    private fun removeOrder(rideId: String) {
+        _ordersListState.value = _ordersListState.value.filterNot { it.id == rideId }
+    }
+
+//    private fun updateOrderStatus(rideId: String, newStatus: OrderStatus) {
+//        _ordersListState.value = _ordersListState.value.map {
+//            if (it.id == rideId) it.copy(status = newStatus) else it
+//        }
+//    }
+
+
     override fun onCleared() {
         super.onCleared()
         disconnect()
@@ -237,6 +261,11 @@ sealed interface GetActiveOrdersUiState {
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
     data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
+}
+
+sealed interface GetStartedRideStatusUiState {
+    data object RideCanceled : GetStartedRideStatusUiState
+    data class Error(val message: String) : GetStartedRideStatusUiState
 }
 
 sealed interface ProfileUiState {

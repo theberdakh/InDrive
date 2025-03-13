@@ -1,10 +1,15 @@
 package com.aralhub.overview
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,8 +18,10 @@ import com.aralhub.araltaxi.overview.R
 import com.aralhub.araltaxi.overview.databinding.FragmentOverviewBinding
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
+import com.aralhub.overview.sheet.LocationServiceOffModalBottomSheet
 import com.aralhub.overview.sheet.LogoutModalBottomSheet
 import com.aralhub.overview.utils.BottomSheetBehaviorDrawerListener
+import com.aralhub.overview.utils.isGPSEnabled
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -29,6 +36,10 @@ import javax.inject.Inject
 class OverviewFragment : Fragment(R.layout.fragment_overview) {
     private val binding by viewBinding(FragmentOverviewBinding::bind)
 
+    private var pLauncher: ActivityResultLauncher<Array<String>>? = null
+
+    private val locationServiceOffModalBottomSheet = LocationServiceOffModalBottomSheet()
+
     @Inject
     lateinit var navigation: FeatureOverviewNavigation
     private val viewModel by viewModels<OverviewViewModel>()
@@ -37,6 +48,8 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
         initObservers()
         initViews()
         initListeners()
+        registerPermissionListener()
+        checkLocationPermission()
         //viewModel.getProfile()
         viewModel.getBalance()
     }
@@ -155,5 +168,53 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
     private fun setUpDrawerLayout() {
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
         binding.drawerLayout.addDrawerListener(BottomSheetBehaviorDrawerListener(bottomSheetBehavior))
+    }
+
+    private fun checkLocationPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                checkGpsEnabled()
+            }
+
+            else -> {
+                pLauncher?.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isGPSEnabled(requireContext()) && locationServiceOffModalBottomSheet.isAdded)
+            locationServiceOffModalBottomSheet.dismiss()
+    }
+
+    private fun checkGpsEnabled() {
+        if (!isGPSEnabled(requireContext()))
+            locationServiceOffModalBottomSheet.show(
+                childFragmentManager,
+                LocationServiceOffModalBottomSheet.TAG
+            )
+    }
+
+    private fun registerPermissionListener() {
+        pLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
+                Log.d("OverviewFragment", "go to accept orders")
+                checkGpsEnabled()
+            } else {
+                Log.d("OverviewFragment", "Permission denied")
+            }
+        }
     }
 }

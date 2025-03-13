@@ -124,7 +124,7 @@ class LocationService : Service() {
 
     companion object {
         const val INTERVAL: Long = 1 * 1000
-        const val SMALLEST_DISTANCE: Float = 5f
+        const val SMALLEST_DISTANCE: Float = 2f
         const val CHANNEL_ID = "location_channel"
         const val ID = 100
     }
