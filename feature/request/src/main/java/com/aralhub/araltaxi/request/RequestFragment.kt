@@ -96,10 +96,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 initialLocation = lastKnownLocation,
                 onProviderEnabledListener = {
                     viewModel.updateLocationEnabled(true)
-                    viewModel.setFromLocation(
-                        lastKnownLocation.latitude,
-                        lastKnownLocation.longitude
-                    )
+                    binding.etFromLocation.setHint("Anıqlanıp atır..")
                 },
                 onProviderDisabledListener = {
                     viewModel.updateLocationEnabled(false)
@@ -139,7 +136,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     errorHandler.showToast(fromLocationUiState.message)
                 }
                 FromLocationUiState.Loading -> {
-                    binding.etFromLocation.setHint("Anıqlanıp atır..")
+                    binding.etFromLocation.setHint("Anıqlanıp atır... ")
                 }
                 is FromLocationUiState.Success -> {
                     Log.i("FromLocation", "Success ${fromLocationUiState.location.name}")
@@ -162,11 +159,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
 
         observeState(viewModel.searchRideUiState) { searchRideUiState ->
+            Log.i("RequestFragment", "Search ride ui state: $searchRideUiState")
             when (searchRideUiState) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
-                   // navigation.goToGetOffersFromRequestFragment()
+                   navigation.goToGetOffersFromRequestFragment()
                 }
             }
         }

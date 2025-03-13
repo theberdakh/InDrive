@@ -1,8 +1,10 @@
 package com.aralhub.network.di
 
 import android.util.Log
+import com.aralhub.network.ClientRideNetworkDataSource
 import com.aralhub.network.WebSocketClientOffersNetworkDataSource
 import com.aralhub.network.WebSocketDriverNetworkDataSource
+import com.aralhub.network.impl.ClientRideNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketClientOffersNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketDriverNetworkDataSourceImpl
 import com.aralhub.network.local.LocalStorage
@@ -50,5 +52,11 @@ object DriverWebSocketModule {
     @Provides
     fun provideClientOffersNetworkDataSource(httpClient: HttpClient): WebSocketClientOffersNetworkDataSource {
         return WebSocketClientOffersNetworkDataSourceImpl(httpClient)
+    }
+
+    @Singleton
+    @Provides
+    fun provideClientRideNetworkDataSource(httpClient: HttpClient): ClientRideNetworkDataSource {
+        return ClientRideNetworkDataSourceImpl(httpClient)
     }
 }

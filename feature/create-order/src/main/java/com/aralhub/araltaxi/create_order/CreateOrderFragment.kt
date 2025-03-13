@@ -273,7 +273,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
             when (recommendedPriceUiState) {
                 is RecommendedPriceUiState.Error -> errorHandler.showToast(recommendedPriceUiState.message)
                 RecommendedPriceUiState.Loading -> {
-                    binding.etPrice.hint = "Esaplanıp atır..."
+                    binding.etPrice.hint = "..."
                 }
 
                 is RecommendedPriceUiState.Success -> {

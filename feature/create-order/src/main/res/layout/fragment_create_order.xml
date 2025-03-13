@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -18,23 +18,22 @@
             <com.yandex.mapkit.mapview.MapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
             <View
                 android:layout_width="50dp"
                 android:layout_height="100dp"
+                android:background="@drawable/ic_center_people"
                 android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/ic_center_people"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btn_menu"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:visibility="gone"
                 android:layout_margin="@dimen/margin_small"
                 android:background="@drawable/shape_circle_icon"
                 android:contentDescription="@string/cd_menu"
@@ -42,20 +41,21 @@
                 android:foreground="@drawable/ripple_round"
                 android:padding="@dimen/padding_medium"
                 android:src="@drawable/ic_mdi_hamburger_menu"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-       <!-- <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:headerLayout="@layout/layout_drawer_header"
-            app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            android:layout_gravity="start"
-            app:menu="@menu/menu_drawer" />-->
+        <!-- <com.google.android.material.navigation.NavigationView
+             android:id="@+id/navigation_view"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             app:headerLayout="@layout/layout_drawer_header"
+             app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
+             android:layout_gravity="start"
+             app:menu="@menu/menu_drawer" />-->
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
@@ -63,15 +63,15 @@
         android:id="@+id/layout_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingTop="0dp"
         android:background="@drawable/bg_bottom_sheet"
+        android:clickable="true"
+        android:fitsSystemWindows="false"
+        android:focusable="true"
         android:orientation="vertical"
-        app:paddingTopSystemWindowInsets="false"
+        android:paddingTop="0dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         app:paddingBottomSystemWindowInsets="true"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:paddingTopSystemWindowInsets="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,68 +88,96 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:fitsSystemWindows="false"
+                android:orientation="vertical"
                 android:paddingHorizontal="@dimen/padding_small">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/padding_small"
-                    android:orientation="horizontal">
+                    android:weightSum="5">
 
-                    <TextView
+                    <FrameLayout
                         android:id="@+id/tv_decrease_500"
-                        android:layout_width="wrap_content"
-                        android:gravity="center"
-                        android:paddingVertical="@dimen/padding_small_50"
-                        android:paddingHorizontal="@dimen/padding_small"
-                        android:text="-500"
-                        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                        android:background="@drawable/bg_blue_radius_10"
-                        android:textColor="@color/white"
-                        android:layout_height="wrap_content"/>
-
-                    <androidx.appcompat.widget.AppCompatEditText
-                        style="@style/Widget.AppCompat.EditText"
-                        android:maxLength="15"
-                        android:background="@android:color/transparent"
-                        android:id="@+id/et_price"
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:hint="Esaplanıp atır..."
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
-                        android:textColorHint="@color/color_gray_3"
-                        android:layout_margin="@dimen/margin_small"
-                        android:layout_height="wrap_content"/>
+                        android:paddingHorizontal="@dimen/padding_medium">
 
-                    <TextView
+                        <View
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_remove" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/et_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:maxLength="9"
+                            android:hint="..."
+                            android:maxLines="1"
+                            android:maxEms="5"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
+                            android:textColorHint="@color/color_gray_3"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:maxLines="1"
+                            android:paddingHorizontal="@dimen/padding_small"
+                            android:gravity="center_vertical"
+                            android:text="som"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                            android:textColor="@color/color_content_tertiary" />
+
+                    </LinearLayout>
+
+
+                    <FrameLayout
                         android:id="@+id/tv_increase_500"
-                        android:layout_width="wrap_content"
-                        android:gravity="center"
-                        android:paddingVertical="@dimen/padding_small_50"
-                        android:paddingHorizontal="@dimen/padding_small"
-                        android:text="+500"
-                        android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                        android:background="@drawable/bg_blue_radius_10"
-                        android:textColor="@color/white"
-                        android:layout_height="wrap_content"/>
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_blue_radius_10"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:paddingHorizontal="@dimen/padding_small"
+                            android:paddingVertical="@dimen/padding_small_50"
+                            android:text="+500"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                            android:textColor="@color/white" />
+
+
+                    </FrameLayout>
+
 
                 </LinearLayout>
-
-
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_small"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_small">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -159,14 +187,14 @@
                         <View
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:background="@drawable/ic_info"/>
+                            android:background="@drawable/ic_info" />
 
                         <TextView
                             android:id="@+id/tv_price"
                             android:layout_width="match_parent"
-                            android:paddingHorizontal="@dimen/padding_small"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
+                            android:paddingHorizontal="@dimen/padding_small"
                             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
                     </LinearLayout>
@@ -174,113 +202,107 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:padding="@dimen/padding_small"
-                        android:foreground="@drawable/ripple_text"
                         android:layout_marginVertical="@dimen/margin_small"
                         android:background="@drawable/shape_gray_radius_10"
-                        android:orientation="horizontal">
+                        android:clickable="true"
+                        android:foreground="@drawable/ripple_text"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding_small">
 
                         <TextView
                             android:id="@+id/tv_from_location_name"
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:maxLines="1"
                             android:ellipsize="end"
-                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                            android:layout_height="wrap_content"/>
+                            android:maxLines="1"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
                         <View
                             android:layout_width="24dp"
-                            android:visibility="gone"
                             android:layout_height="24dp"
+                            android:background="@drawable/ic_baseline_add_circle"
                             android:clickable="true"
                             android:foreground="@drawable/ripple_round"
-                            android:background="@drawable/ic_baseline_add_circle"/>
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:padding="@dimen/padding_small"
-                        android:foreground="@drawable/ripple_text"
                         android:layout_marginVertical="@dimen/margin_small"
                         android:background="@drawable/shape_gray_radius_10"
-                        android:orientation="horizontal">
+                        android:clickable="true"
+                        android:foreground="@drawable/ripple_text"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding_small">
 
                         <TextView
                             android:id="@+id/tv_to_location_name"
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:maxLines="1"
                             android:ellipsize="end"
-                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-                            android:layout_height="wrap_content"/>
+                            android:maxLines="1"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
 
                         <View
                             android:id="@+id/icon_add"
                             android:layout_width="24dp"
-                            android:visibility="invisible"
                             android:layout_height="24dp"
+                            android:background="@drawable/ic_baseline_add_circle"
                             android:clickable="true"
                             android:foreground="@drawable/ripple_round"
-                            android:background="@drawable/ic_baseline_add_circle"/>
+                            android:visibility="invisible" />
 
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/layout_configure"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:paddingHorizontal="@dimen/padding_small"
-                    android:orientation="vertical">
+                    android:visibility="gone">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_ride_options"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_ride_option"
-                        tools:itemCount="3"/>
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_ride_option" />
 
                     <LinearLayout
                         android:id="@+id/layout_comment_to_driver"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/margin_small"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:layout_marginVertical="@dimen/margin_small">
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:padding="@dimen/padding_small"
-                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                             android:text="Aydawshıǵa kommentariy"
-                            android:layout_height="wrap_content"/>
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
                         <View
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:background="@drawable/ic_chevron_right"
                             android:clickable="true"
-                            android:foreground="@drawable/ripple_round"
-                            android:background="@drawable/ic_chevron_right"/>
+                            android:foreground="@drawable/ripple_round" />
                     </LinearLayout>
 
 
                 </LinearLayout>
-
-
-
-
-
-
 
 
             </LinearLayout>
@@ -299,32 +321,31 @@
                 <ImageView
                     android:id="@+id/ivChangePaymentMethod"
                     android:layout_width="0dp"
-                    android:layout_weight="0.2"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_cash"
-                    android:paddingHorizontal="@dimen/padding_small"/>
+                    android:layout_weight="0.2"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:src="@drawable/ic_cash" />
 
                 <Button
                     android:id="@+id/btn_send_offer"
                     style="@style/Widget.InDrive.Button.Primary"
-                    android:text="Usınıs jiberiw"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/margin_small"
-                    android:layout_height="wrap_content"/>
+                    android:layout_weight="1"
+                    android:text="Usınıs jiberiw" />
 
                 <ImageView
                     android:id="@+id/iv_configure"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:clickable="true"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_tune"
-                    android:paddingHorizontal="@dimen/padding_small"/>
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:src="@drawable/ic_tune" />
 
             </LinearLayout>
         </LinearLayout>
-
 
 
     </androidx.core.widget.NestedScrollView>

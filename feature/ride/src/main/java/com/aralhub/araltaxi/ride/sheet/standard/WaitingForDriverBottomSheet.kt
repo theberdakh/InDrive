@@ -16,12 +16,14 @@ import com.aralhub.araltaxi.ride.CancelRideUiState
 import com.aralhub.araltaxi.ride.Ride
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
 import com.aralhub.araltaxi.ride.RideState
+import com.aralhub.araltaxi.ride.RideStateUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
@@ -94,6 +96,26 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                 CancelRideUiState.Loading -> {}
                 CancelRideUiState.Success -> {
                     Log.i("RideBottomSheet", "cancelRideUiState: Success")
+                }
+            }
+        }
+
+        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
+            when(rideStateUiState){
+                is RideStateUiState.Error -> {}
+                RideStateUiState.Loading -> {}
+                is RideStateUiState.Success -> {
+                   when(rideStateUiState.rideState){
+                       is RideStatus.CanceledByDriver -> {}
+                       is RideStatus.DriverOnTheWay -> {}
+                       is RideStatus.DriverWaitingClient -> {
+                            navigation.goToDriverIsWaiting()
+                       }
+                       is RideStatus.RideCompleted -> {}
+                       is RideStatus.RideStarted -> {}
+                       is RideStatus.RideStartedAfterWaiting -> {}
+                       is RideStatus.Unknown -> {}
+                   }
                 }
             }
         }

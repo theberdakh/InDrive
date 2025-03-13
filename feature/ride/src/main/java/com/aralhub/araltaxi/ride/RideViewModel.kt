@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
+import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
+import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -23,7 +25,8 @@ import javax.inject.Inject
 class RideViewModel @Inject constructor(
     private val getActiveRideUseCase: ClientGetActiveRideUseCase,
     private val cancelRideWithoutReasonUseCase: ClientCancelRideWithoutReasonUseCase,
-    private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase
+    private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
+    private val getClientRideStatusUseCase: GetClientRideStatusUseCase
 ) : ViewModel() {
     val rideState = getRideState().stateIn(
         scope = viewModelScope,
@@ -78,11 +81,12 @@ class RideViewModel @Inject constructor(
         }
     }
 
-    init {
-
-        /*  getRideState().onEach {
-              _rideState.emit(it)
-          }.launchIn(viewModelScope)*/
+    private var _rideStateUiState = MutableStateFlow<RideStateUiState>(RideStateUiState.Loading)
+    val rideStateUiState = _rideStateUiState.asStateFlow()
+    fun getClientRideState() = viewModelScope.launch {
+        getClientRideStatusUseCase().collect {
+            _rideStateUiState.emit(RideStateUiState.Success(it))
+        }
     }
 }
 
@@ -167,6 +171,12 @@ val cardRideData = Ride(
     driverWaitTime = "2 minutes",
     waitForDriverTime = "5 minutes"
 )
+
+sealed interface RideStateUiState{
+    data object Loading : RideStateUiState
+    data class Success(val rideState: RideStatus) : RideStateUiState
+    data class Error(val message: String) : RideStateUiState
+}
 
 sealed interface ActiveRideUiState {
     data object Loading : ActiveRideUiState

@@ -24,8 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:padding="@dimen/padding_small"
         android:text="Nelikten sapardı biykarlaǵanıńızdı bildirip ótiń."
-        android:textAppearance="@style/TextAppearance.InDrive.Text" />
+        android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
     <RadioGroup
         android:layout_width="match_parent"

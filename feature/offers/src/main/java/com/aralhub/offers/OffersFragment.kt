@@ -3,6 +3,7 @@ package com.aralhub.offers
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.offers.R
@@ -25,7 +26,7 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
     @Inject lateinit var errorHandler: ErrorHandler
     @Inject lateinit var featureOffersNavigation: FeatureOffersNavigation
     private val offerItemAdapter by lazy { OfferItemAdapter() }
-    private val viewModel by viewModels<OffersViewModel>()
+    private val viewModel by activityViewModels<OffersViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

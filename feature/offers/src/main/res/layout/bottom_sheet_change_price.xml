@@ -4,7 +4,88 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding_small"
+        android:weightSum="5">
+
+        <FrameLayout
+            android:id="@+id/tv_decrease_500"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/padding_medium">
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_remove" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/et_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLength="9"
+                android:hint="..."
+                android:maxLines="1"
+                android:maxEms="5"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
+                android:textColorHint="@color/color_gray_3"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:gravity="center_vertical"
+                android:text="som"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                android:textColor="@color/color_content_tertiary" />
+
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/tv_increase_500"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_radius_10"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:paddingHorizontal="@dimen/padding_small"
+                android:paddingVertical="@dimen/padding_small_50"
+                android:text="+500"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                android:textColor="@color/white" />
+
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -13,11 +94,13 @@
         android:paddingBottom="@dimen/padding_small">
 
         <TextView
+            android:id="@+id/tv_minus_500"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_blue_radius_10"
             android:gravity="center"
-            android:padding="@dimen/padding_small"
+            android:paddingHorizontal="@dimen/padding_small"
+            android:paddingVertical="@dimen/padding_small_50"
             android:text="-500"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
             android:textColor="@color/white" />
@@ -33,21 +116,24 @@
             android:ellipsize="end"
             android:gravity="center"
             android:inputType="none"
+            android:focusable="false"
             android:maxLength="15"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
             android:textColorHint="@color/color_gray_3" />
 
         <TextView
+            android:id="@+id/tv_plus_500"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_blue_radius_10"
             android:gravity="center"
-            android:padding="@dimen/padding_small"
+            android:paddingHorizontal="@dimen/padding_small"
+            android:paddingVertical="@dimen/padding_small_50"
             android:text="+500"
             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
             android:textColor="@color/white" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
     <LinearLayout

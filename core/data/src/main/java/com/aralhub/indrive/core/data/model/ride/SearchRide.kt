@@ -8,7 +8,7 @@ data class SearchRide(
     val uuid: String,
     val passenger: SearchRideDriver,
     val baseAmount: Number,
-    val updatedAmount: Number,
+    val updatedAmount: Number?,
     val recommendedAmount: RecommendedAmount,
     val locations: SearchRideLocations,
     val comment: String,

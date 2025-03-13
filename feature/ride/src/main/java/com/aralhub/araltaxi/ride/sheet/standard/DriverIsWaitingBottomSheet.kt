@@ -13,6 +13,7 @@ import com.aralhub.araltaxi.client.ride.databinding.BottomSheetDriverIsWaitingBi
 import com.aralhub.araltaxi.ride.Ride
 import com.aralhub.araltaxi.ride.RideBottomSheetUiState
 import com.aralhub.araltaxi.ride.RideState
+import com.aralhub.araltaxi.ride.RideStateUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
@@ -20,6 +21,8 @@ import com.aralhub.araltaxi.ride.sheet.modal.WaitingTimeFragment
 import com.aralhub.araltaxi.ride.sheet.modal.cause.ReasonCancelFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,22 +45,25 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
     }
 
     private fun initObservers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED){
-                rideViewModel.rideState2.collect { state ->
-                    when (state) {
-                        RideBottomSheetUiState.Error -> {}
-                        RideBottomSheetUiState.Loading -> {}
-                        is RideBottomSheetUiState.Success -> {
-                            Log.i("DriverIsWaitingBottomSheet", "initObservers: ${state.rideState}")
-                            when (state.rideState) {
-                                RideState.WAITING_FOR_DRIVER -> {}
-                                RideState.DRIVER_IS_WAITING -> {initRideData(state.rideData)}
-                                RideState.DRIVER_CANCELED -> {}
-                                RideState.IN_RIDE -> {navigation.goToRide()}
-                                RideState.FINISHED -> {}
-                            }
+        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
+            when(rideStateUiState){
+                is RideStateUiState.Error -> {}
+                RideStateUiState.Loading -> {}
+                is RideStateUiState.Success -> {
+                    when(rideStateUiState.rideState){
+                        is RideStatus.CanceledByDriver -> {}
+                        is RideStatus.DriverOnTheWay -> {}
+                        is RideStatus.DriverWaitingClient -> {
+                            navigation.goToRide()
                         }
+                        is RideStatus.RideCompleted -> {}
+                        is RideStatus.RideStarted -> {
+                            navigation.goToRide()
+                        }
+                        is RideStatus.RideStartedAfterWaiting -> {
+                            navigation.goToRide()
+                        }
+                        is RideStatus.Unknown -> {}
                     }
                 }
             }
