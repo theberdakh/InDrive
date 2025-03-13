@@ -112,6 +112,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun initObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.ordersListState.collect { orders ->
+                adapter.submitList(orders) // UI обновится автоматически
+                binding.tvOrdersNotFound.visibility =
+                    if (orders.isEmpty()) View.VISIBLE else View.GONE
+            }
+        }
+
         binding.tvUuid.setOnClickListener {
             viewModel.cancelRide(
                 rideId = rideId,
@@ -152,7 +160,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                         is GetActiveOrdersUiState.OrderCanceled -> {
                             orders.removeIf { it.id == getActiveOrdersUiState.rideId }
-                            adapter.submitList(orders)
+//                            adapter.submitList(orders)
                             binding.tvOrdersNotFound.isVisible = orders.isEmpty()
                         }
 
@@ -170,10 +178,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             )
                             Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
                             goingToPickUpModalBottomSheet.arguments = bundle
-                                goingToPickUpModalBottomSheet.show(
-                                    childFragmentManager,
-                                    GoingToPickUpModalBottomSheet.TAG
-                                )
+                            goingToPickUpModalBottomSheet.show(
+                                childFragmentManager,
+                                GoingToPickUpModalBottomSheet.TAG
+                            )
                             viewModel.updateRideStatus(
                                 rideId,
                                 RideStatus.DRIVER_ON_THE_WAY.status
@@ -184,7 +192,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
                             orders.add(getActiveOrdersUiState.data)
-                            adapter.submitList(orders)
+//                            adapter.submitList(orders)
                             binding.tvOrdersNotFound.invisible()
                         }
 
@@ -192,7 +200,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             if (getActiveOrdersUiState.data.isNotEmpty()) {
                                 binding.tvOrdersNotFound.invisible()
                                 orders.addAll(getActiveOrdersUiState.data)
-                                adapter.submitList(getActiveOrdersUiState.data)
+//                                adapter.submitList(getActiveOrdersUiState.data)
                             } else {
                                 binding.tvOrdersNotFound.show()
                             }
@@ -285,6 +293,17 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 orders.getOrNull(0) ?: return@setOnAddressClickListener
             )
         }
+
+        rideCanceledByPassengerModalBottomSheet.setOnUnderstandClickListener {
+            dismissAllBottomSheets()
+            viewModel.getExistingOrders(
+                SendDriverLocationUI(
+                    latitude = 42.41268,
+                    longitude = 59.688043,
+                    distance = 500000
+                )
+            )
+        }
     }
 
     private fun initReasonCancelModalBottomSheet() {
@@ -338,6 +357,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewModel.updateRideStatus(
                 rideId,
                 RideStatus.RIDE_COMPLETED.status
+            )
+            viewModel.getExistingOrders(
+                SendDriverLocationUI(
+                    latitude = 42.41268,
+                    longitude = 59.688043,
+                    distance = 500000
+                )
             )
         }
         rideModalBottomSheet.setOnRideCanceledListener {
@@ -434,4 +460,22 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun showExitLineBottomSheet() {
         exitLineModalBottomSheet.show(childFragmentManager, ExitLineModalBottomSheet.TAG)
     }
+
+    private fun dismissAllBottomSheets() {
+        listOf(
+            orderModalBottomSheet,
+            goingToPickUpModalBottomSheet,
+            waitingForClientModalBottomSheet,
+            rideModalBottomSheet,
+            rideFinishedModalBottomSheet,
+            cancelTripModalBottomSheet,
+            tripCanceledModalBottomSheet,
+            filterModalBottomSheet,
+            reasonCancelModalBottomSheet,
+            exitLineModalBottomSheet
+        ).forEach { sheet ->
+            if (sheet.isAdded) sheet.dismissAllowingStateLoss()
+        }
+    }
+
 }

@@ -12,11 +12,18 @@ class RideCancelledByPassengerModalBottomSheet :
 
     private val binding by viewBinding(ModalBottomSheetRideCancelledByPassengerBinding::bind)
 
+    private var action: () -> Unit = {}
+    fun setOnUnderstandClickListener(action: () -> Unit) {
+        this.action = action
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isCancelable = false
         binding.btnUnderstand.setOnClickListener {
-            dismiss()
+            action()
+            dismissAllowingStateLoss()
         }
     }
 }
