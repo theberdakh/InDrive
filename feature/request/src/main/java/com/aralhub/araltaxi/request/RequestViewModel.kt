@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.request
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
@@ -231,8 +232,14 @@ class RequestViewModel @Inject constructor(
         _activeRideUiState.emit(ActiveRideUiState.Loading)
         _activeRideUiState.emit(clientGetActiveRideUseCase().let {
             when (it) {
-                is Result.Error -> ActiveRideUiState.Error(it.message)
-                is Result.Success -> ActiveRideUiState.Success(it.data)
+                is Result.Error -> {
+                    Log.i("RequestViewModel", "getActiveRide: ${it.message}")
+                    ActiveRideUiState.Error(it.message)
+                }
+                is Result.Success -> {
+                    Log.i("RequestViewModel", "getActiveRide: ${it.data}")
+                    ActiveRideUiState.Success(it.data)
+                }
             }
         })
     }

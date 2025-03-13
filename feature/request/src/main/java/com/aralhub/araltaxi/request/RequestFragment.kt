@@ -25,6 +25,7 @@ import com.aralhub.ui.adapter.location.LocationItemAdapter
 import com.aralhub.ui.model.LocationItemClickOwner
 import com.aralhub.ui.model.args.LocationType
 import com.aralhub.ui.model.args.SelectedLocation
+import com.aralhub.ui.sheets.LoadingModalBottomSheet
 import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -47,6 +48,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private val adapter = LocationItemAdapter()
     private val viewModel by viewModels<RequestViewModel>()
     private var locationManager: LocationManager? = null
+    // Variables to track latest states
+    private var latestSearchRideState: SearchRideUiState? = null
+    private var latestActiveRideState: ActiveRideUiState? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,7 +63,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         locationManager =
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager?.let { observeLocationUpdates(it) }
-        initObservers()
+        observeStates()
         initViews()
         initListeners()
         viewModel.getProfile()
@@ -114,7 +118,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         )
     }
 
-    private fun initObservers() {
+    private fun observeStates() {
         observeState(viewModel.selectedLocations) { selectedLocations ->
             Log.i("RequestFragment", "Selected locations: $selectedLocations")
             selectedLocations?.let {
@@ -135,9 +139,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                     Log.i("FromLocation", "Error: ${fromLocationUiState.message}")
                     errorHandler.showToast(fromLocationUiState.message)
                 }
+
                 FromLocationUiState.Loading -> {
                     binding.etFromLocation.setHint("Anıqlanıp atır... ")
+
                 }
+
                 is FromLocationUiState.Success -> {
                     Log.i("FromLocation", "Success ${fromLocationUiState.location.name}")
                     binding.etFromLocation.text = fromLocationUiState.location.name
@@ -160,26 +167,27 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
         observeState(viewModel.searchRideUiState) { searchRideUiState ->
             Log.i("RequestFragment", "Search ride ui state: $searchRideUiState")
+            latestSearchRideState = searchRideUiState
+            updateLoadingDialog()
             when (searchRideUiState) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
-                   navigation.goToGetOffersFromRequestFragment()
+                    navigation.goToGetOffersFromRequestFragment()
                 }
             }
         }
 
         observeState(viewModel.activeRideUiState) { activeRideUiState ->
+            latestActiveRideState = activeRideUiState
+            updateLoadingDialog()
             when (activeRideUiState) {
-                is ActiveRideUiState.Error -> Log.e(
-                    "RequestFragment",
-                    "Active ride error: ${activeRideUiState.message}"
-                )
-
+                is ActiveRideUiState.Error -> {}
                 ActiveRideUiState.Loading -> {}
                 is ActiveRideUiState.Success -> {
                     Log.i("RequestFragment", "Active ride: ${activeRideUiState.activeRide}")
-                      navigation.goToRideFragmentFromRequestFragment()
+                    LoadingModalBottomSheet.hide(childFragmentManager)
+                    navigation.goToRideFragmentFromRequestFragment()
                 }
             }
         }
@@ -378,6 +386,47 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         binding.layoutBottomSheet.isVisible = true
+    }
+
+    private fun updateLoadingDialog() {
+        val searchState = latestSearchRideState
+        val activeState = latestActiveRideState
+
+        // Show dialog if we haven't received final states yet
+        if (searchState == null || activeState == null ||
+            (searchState is SearchRideUiState.Loading || activeState is ActiveRideUiState.Loading)
+        ) {
+            showLoadingDialog()
+            return
+        }
+
+        // Hide dialog when:
+        // 1. One of them is Success
+        // 2. Both are Error
+        when {
+            searchState is SearchRideUiState.Success || activeState is ActiveRideUiState.Success -> {
+                hideLoadingDialog()
+            }
+
+            searchState is SearchRideUiState.Error && activeState is ActiveRideUiState.Error -> {
+                hideLoadingDialog()
+            }
+        }
+    }
+
+    private fun showLoadingDialog() {
+        Log.i("Dialog", "Show")
+      LoadingModalBottomSheet.show(childFragmentManager)
+    }
+
+    private fun hideLoadingDialog() {
+        Log.i("Dialog", "Hide")
+        LoadingModalBottomSheet.hide(childFragmentManager)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingModalBottomSheet.hide(childFragmentManager)
     }
 
 }
