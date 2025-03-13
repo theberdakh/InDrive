@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:text="Geolokaciya xızmeti óshik"
         android:gravity="center"
+        android:textSize="26sp"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title"/>
 
     <TextView
@@ -29,6 +30,7 @@
         android:padding="@dimen/padding_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:text="Buyırtpalardı qabıllap baslaw ushın, qurılmańızda geolokaciya xızmetin qosıp qoyıń."
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text"/>
@@ -36,9 +38,10 @@
 
     <Button
         style="@style/Widget.InDrive.Button.Primary"
-        android:id="@+id/btn_clear"
+        android:id="@+id/btn_enable"
         android:text="Qosıw"
-        android:layout_margin="@dimen/margin_small"
+        android:layout_marginVertical="20dp"
+        android:layout_marginHorizontal="14dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -3,7 +3,7 @@
     <!--TextAppearances, text size dimensions-->
     <!--Only android:textSize/android:textColor/android:textStyle (bold, italc) /android:fontFamily /android:letterSpacing /android:lineSpacingMultiplier/ android:textAllCaps-->
     <style name="TextAppearance.InDrive.Text" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/color_interactive_control</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>

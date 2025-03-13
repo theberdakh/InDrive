@@ -8,6 +8,7 @@ import com.aralhub.network.models.location.NetworkSendLocationRequest
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 import com.aralhub.network.models.offer.NetworkOfferCancelResponse
 import com.aralhub.network.models.offer.NetworkOfferRejectedResponse
+import com.aralhub.network.utils.StartedRideWebSocketEventNetwork
 import com.aralhub.network.utils.WebSocketEventNetwork
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -32,6 +33,7 @@ class WebSocketDriverNetworkDataSourceImpl(
 ) : WebSocketDriverNetworkDataSource {
 
     private var session: WebSocketSession? = null
+    private var rideStatusSession: WebSocketSession? = null
 
     override fun getActiveOrders(): Flow<WebSocketEventNetwork> {
         return flow {
@@ -129,6 +131,45 @@ class WebSocketDriverNetworkDataSourceImpl(
         Log.d("WebSocketLog", "Session Closed")
     }
 
+    override fun getStartedRideStatus(): Flow<StartedRideWebSocketEventNetwork> {
+        return flow {
+            rideStatusSession = client.webSocketSession {
+                url("ws://araltaxi.aralhub.uz/ride/wb")
+            }
+            if (rideStatusSession?.isActive == true) {
+                Log.d("WebSocketLog", "Started ride web socket Connected")
+            }
+            val messageStates = rideStatusSession
+                ?.incoming
+                ?.consumeAsFlow()
+                ?.filterIsInstance<Frame.Text>()
+                ?.mapNotNull { frame ->
+                    val jsonString = frame.readText()
+                    Log.d("WebSocketLog", jsonString)
+                    try {
+                        val baseResponse =
+                            Gson().fromJson(jsonString, WebSocketServerResponse::class.java)
+
+                        when (baseResponse.type) {
+                            RIDE_CANCELED_BY_PASSENGER -> {
+                                StartedRideWebSocketEventNetwork.RideCancelledByPassenger
+                            }
+
+                            else -> {
+                                StartedRideWebSocketEventNetwork.UnknownAction(jsonString)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("WebSocketLog", "Parsing error: ${e.message}")
+                        StartedRideWebSocketEventNetwork.UnknownAction(jsonString)
+                    }
+                }
+            messageStates?.let {
+                emitAll(messageStates)
+            }
+        }
+    }
+
     companion object {
         const val NEW_RIDE_REQUEST = "new_ride_request"
         const val DRIVER_OFFER = "driver_offer"
@@ -138,6 +179,7 @@ class WebSocketDriverNetworkDataSourceImpl(
         const val LOCATION_UPDATE = "location_update"
         const val RIDE_ACCEPTED = "ride_accepted"
         const val RIDE_CANCELED = "ride_cancel"
+        const val RIDE_CANCELED_BY_PASSENGER = "cancelled_by_passenger"
         const val RIDE_DELETED = "ride_deleted"
         const val RIDE_AMOUNT_UPDATED = "ride_amount_updated"
         const val ERROR = "error"

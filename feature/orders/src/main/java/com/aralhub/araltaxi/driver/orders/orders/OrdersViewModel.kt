@@ -165,7 +165,7 @@ class OrdersViewModel @Inject constructor(
         }
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.Eagerly,
         GetActiveOrdersUiState.Loading
     )
 
@@ -237,6 +237,11 @@ sealed interface GetActiveOrdersUiState {
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
     data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
+}
+
+sealed interface GetStartedRideStatusUiState {
+    data object RideCanceled : GetStartedRideStatusUiState
+    data class Error(val message: String) : GetStartedRideStatusUiState
 }
 
 sealed interface ProfileUiState {

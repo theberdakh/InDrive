@@ -28,6 +28,7 @@ import com.aralhub.araltaxi.driver.orders.sheet.GoingToPickUpModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.LogoutModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.OrderModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.ReasonCancelModalBottomSheet
+import com.aralhub.araltaxi.driver.orders.sheet.RideCancelledByPassengerModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
@@ -60,12 +61,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val viewModel by viewModels<OrdersViewModel>()
+    private val startedRideStatusViewModel by viewModels<StartedRideStatusViewModel>()
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
     private val waitingForClientModalBottomSheet = WaitingForClientModalBottomSheet()
     private val rideModalBottomSheet = RideModalBottomSheet()
     private val rideFinishedModalBottomSheet = RideFinishedModalBottomSheet()
     private val cancelTripModalBottomSheet = CancelTripModalBottomSheet()
+    private val rideCanceledByPassengerModalBottomSheet = RideCancelledByPassengerModalBottomSheet()
     private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
     private val filterModalBottomSheet = FilterModalBottomSheet()
     private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
@@ -167,15 +170,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             )
                             Log.w("OrdersFragment", "ordersList: ${orders.getOrNull(0)}")
                             goingToPickUpModalBottomSheet.arguments = bundle
-                            goingToPickUpModalBottomSheet.show(
-                                childFragmentManager,
-                                GoingToPickUpModalBottomSheet.TAG
-                            )
+                                goingToPickUpModalBottomSheet.show(
+                                    childFragmentManager,
+                                    GoingToPickUpModalBottomSheet.TAG
+                                )
                             viewModel.updateRideStatus(
                                 rideId,
                                 RideStatus.DRIVER_ON_THE_WAY.status
                             )
                             orderModalBottomSheet.dismissAllowingStateLoss()
+                            startedRideStatus()
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
@@ -192,6 +196,27 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             } else {
                                 binding.tvOrdersNotFound.show()
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startedRideStatus() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                startedRideStatusViewModel.startedRideStatus.collectLatest { result ->
+                    when (result) {
+                        is GetStartedRideStatusUiState.Error -> errorHandler.showToast(
+                            result.message
+                        )
+
+                        is GetStartedRideStatusUiState.RideCanceled -> {
+                            rideCanceledByPassengerModalBottomSheet.show(
+                                childFragmentManager,
+                                rideCanceledByPassengerModalBottomSheet.tag
+                            )
                         }
                     }
                 }

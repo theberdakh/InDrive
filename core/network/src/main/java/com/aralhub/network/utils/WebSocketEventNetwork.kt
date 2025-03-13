@@ -13,3 +13,8 @@ sealed class WebSocketEventNetwork {
         WebSocketEventNetwork()
     data class Unknown(val error: String) : WebSocketEventNetwork()
 }
+
+sealed class StartedRideWebSocketEventNetwork {
+    data object RideCancelledByPassenger: StartedRideWebSocketEventNetwork()
+    data class UnknownAction(val error: String): StartedRideWebSocketEventNetwork()
+}
