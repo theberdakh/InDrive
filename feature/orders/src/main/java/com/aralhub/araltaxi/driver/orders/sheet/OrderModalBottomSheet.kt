@@ -87,7 +87,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             offerAmount = binding.etPrice.text?.filter { it.isDigit() }.toString().toInt()
             if (order != null) {
                 offerViewModel.createOffer(
-                    order!!.id,
+                    order!!.uuid,
                     offerAmount
                 )
             }

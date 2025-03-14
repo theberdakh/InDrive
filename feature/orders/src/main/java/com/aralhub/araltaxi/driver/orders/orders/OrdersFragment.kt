@@ -1,7 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,7 +26,6 @@ import com.aralhub.araltaxi.driver.orders.sheet.FilterModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.GoingToPickUpModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.LogoutModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.OrderModalBottomSheet
-import com.aralhub.araltaxi.driver.orders.sheet.ReasonCancelModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideCancelledByPassengerModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
@@ -46,8 +44,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,8 +51,6 @@ import javax.inject.Inject
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
-
-    private var rideId: Int = 0
 
     @Inject
     lateinit var errorHandler: ErrorHandler
@@ -71,9 +65,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private val rideCanceledByPassengerModalBottomSheet = RideCancelledByPassengerModalBottomSheet()
     private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
     private val filterModalBottomSheet = FilterModalBottomSheet()
-    private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
     private val exitLineModalBottomSheet =
         ExitLineModalBottomSheet { findNavController().navigateUp() }
+
+    private val rideId = 0
 
     @Inject
     lateinit var navigation: FeatureOrdersNavigation
@@ -87,9 +82,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initGoingToPickUpModalBottomSheet()
         initWaitingForClientModalBottomSheet()
         initRideModalBottomSheet()
-        initCancelTripModalBottomSheet()
         initTripCanceledModalBottomSheet()
-        initReasonCancelModalBottomSheet()
         initListeners()
 
     }
@@ -132,8 +125,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             }
         }
 
-        viewModel.activeOrdersUiState.onEach { rideId ->
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
                 is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
@@ -170,7 +161,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         }
 
                         is GetActiveOrdersUiState.OfferAccepted -> {
-                            rideId = getActiveOrdersUiState.rideId
                             val orders = viewModel.ordersListState.value
                             val bundle = Bundle()
                             bundle.putParcelable(
@@ -184,7 +174,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                 GoingToPickUpModalBottomSheet.TAG
                             )
                             viewModel.updateRideStatus(
-                                rideId,
+                                getActiveOrdersUiState.rideId,
                                 RideStatus.DRIVER_ON_THE_WAY.status
                             )
                             orderModalBottomSheet.dismissAllowingStateLoss()
@@ -305,16 +295,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         }
     }
 
-    private fun initReasonCancelModalBottomSheet() {
-        reasonCancelModalBottomSheet.setSendReasonListener {
-            reasonCancelModalBottomSheet.dismissAllowingStateLoss()
-            tripCanceledModalBottomSheet.show(
-                childFragmentManager,
-                TripCanceledModalBottomSheet.TAG
-            )
-        }
-    }
-
     private fun initTripCanceledModalBottomSheet() {
         tripCanceledModalBottomSheet.setOnCloseListener {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
@@ -326,23 +306,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 cancelTripModalBottomSheet
             ).firstOrNull { it.isAdded }
             activeBottomSheet?.dismissAllowingStateLoss()
-        }
-    }
-
-    private fun initCancelTripModalBottomSheet() {
-        cancelTripModalBottomSheet.setOnCancelTripListener {
-            cancelTripModalBottomSheet.dismissAllowingStateLoss()
-            viewModel.cancelRide(
-                rideId,
-                2
-            )
-            reasonCancelModalBottomSheet.show(
-                childFragmentManager,
-                ReasonCancelModalBottomSheet.TAG
-            )
-        }
-        cancelTripModalBottomSheet.setOnBackListener {
-            cancelTripModalBottomSheet.dismissAllowingStateLoss()
         }
     }
 
@@ -408,7 +371,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 RideStatus.DRIVER_WAITING_CLIENT.status
             )
         }
-        goingToPickUpModalBottomSheet.setOnRideCanceledListener {
+        goingToPickUpModalBottomSheet.setOnRideCanceledListener { rideId ->
+            val bundle = Bundle()
+            bundle.putInt("rideId", rideId)
+            cancelTripModalBottomSheet.arguments = bundle
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
         }
     }
@@ -470,7 +436,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             cancelTripModalBottomSheet,
             tripCanceledModalBottomSheet,
             filterModalBottomSheet,
-            reasonCancelModalBottomSheet,
             exitLineModalBottomSheet
         ).forEach { sheet ->
             if (sheet.isAdded) sheet.dismissAllowingStateLoss()

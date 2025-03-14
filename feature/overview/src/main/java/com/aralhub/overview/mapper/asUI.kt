@@ -13,7 +13,8 @@ fun ActiveOfferResponse.asUI() = with(this) {
     val roadDistanceValue =
         if (roadDistance < 1000) "${roadDistance.toInt()} m" else "${roadDistance.toInt() / 1000} km"
     OrderItem(
-        id = id,
+        id = 1,
+        uuid = uuid,
         name = name,
         pickUp = pickUp,
         avatar = avatar,

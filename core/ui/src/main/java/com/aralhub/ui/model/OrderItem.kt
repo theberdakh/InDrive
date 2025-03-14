@@ -6,7 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OrderItem(
-    val id: String,
+    val id: Int,
+    val uuid: String,
     val name: String,
     val pickUp: String?,
     val avatar: String,

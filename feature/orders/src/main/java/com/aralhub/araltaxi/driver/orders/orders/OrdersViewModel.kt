@@ -179,16 +179,15 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private var _activeOrdersUiState = MutableSharedFlow<Int?>()
-    val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
-
+    private var _rideCanceledResult = MutableSharedFlow<Int?>()
+    val rideCanceledResult = _rideCanceledResult.asSharedFlow()
     fun cancelRide(rideId: Int, cancelCauseId: Int) {
         viewModelScope.launch {
             repository.cancelRide(rideId, cancelCauseId).let { result ->
                 when (result) {
                     is Result.Error -> {}
                     is Result.Success -> {
-                        _activeOrdersUiState.emit(0)
+                        _rideCanceledResult.emit(0)
                     }
                 }
             }
@@ -216,7 +215,7 @@ class OrdersViewModel @Inject constructor(
     }
 
     private fun removeOrder(rideId: String) {
-        _ordersListState.value = _ordersListState.value.filterNot { it.id == rideId }
+        _ordersListState.value = _ordersListState.value.filterNot { it.uuid == rideId }
     }
 
 //    private fun updateOrderStatus(rideId: String, newStatus: OrderStatus) {

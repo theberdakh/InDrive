@@ -2,7 +2,6 @@ package com.aralhub.indrive.core.data.repository.driver.impl
 
 import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
 import com.aralhub.indrive.core.data.model.offer.toActiveOfferDomain
-import com.aralhub.indrive.core.data.model.offer.toOfferAcceptedDomain
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.DriverNetworkDataSource

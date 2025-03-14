@@ -24,8 +24,8 @@ class GoingToPickUpModalBottomSheet :
         this.onClientPickedUp = onPickedUp
     }
 
-    private var rideCanceledListener: () -> Unit = {}
-    fun setOnRideCanceledListener(onRideCanceled: () -> Unit) {
+    private var rideCanceledListener: (rideId: Int) -> Unit = {}
+    fun setOnRideCanceledListener(onRideCanceled: (rideId: Int) -> Unit) {
         this.rideCanceledListener = onRideCanceled
     }
 
@@ -52,7 +52,7 @@ class GoingToPickUpModalBottomSheet :
             }
         }
         binding.btnCancel.setOnClickListener {
-            rideCanceledListener.invoke()
+            rideCanceledListener(order?.id ?: 0)
         }
     }
 

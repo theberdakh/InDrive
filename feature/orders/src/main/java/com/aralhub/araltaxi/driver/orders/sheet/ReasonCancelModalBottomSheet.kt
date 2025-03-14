@@ -9,16 +9,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ReasonCancelModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_reason_cancel) {
+
     private val binding by viewBinding(ModalBottomSheetReasonCancelBinding::bind)
-    private var sendListener: () -> Unit = {}
-    fun setSendReasonListener(listener: () -> Unit) {
-        sendListener = listener
-    }
+
+    private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isCancelable = false
         binding.btnSend.setOnClickListener {
-            sendListener.invoke()
+            dismissAllowingStateLoss()
+            tripCanceledModalBottomSheet.show(
+                childFragmentManager,
+                TripCanceledModalBottomSheet.TAG
+            )
         }
     }
 

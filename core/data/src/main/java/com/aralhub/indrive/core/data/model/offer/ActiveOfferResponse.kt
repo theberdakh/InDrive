@@ -5,7 +5,8 @@ import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 
 data class ActiveOfferResponse(
-    val id: String,
+    val id: Int,
+    val uuid: String,
     val name: String,
     val pickUp: String?,
     val avatar: String,
@@ -28,10 +29,11 @@ data class ClientRideLocationsItemsCoordinates(
     val latitude: Number
 )
 
-fun WebSocketServerResponse<NetworkActiveOfferResponse>.toOfferAcceptedDomain(): ActiveOfferResponse =
+fun WebSocketServerResponse<NetworkActiveOfferResponse>.toDomain(): ActiveOfferResponse =
     with(this) {
         return ActiveOfferResponse(
-            id = data.uuid,
+            id = 1,
+            uuid = data.uuid,
             name = data.passenger.userFullName,
             pickUp = data.clientPickUpAddress,
             avatar = data.passenger.avatar ?: "https://randomuser.me/api/portraits/men/8.jpg",
@@ -56,7 +58,8 @@ fun WebSocketServerResponse<NetworkActiveOfferResponse>.toOfferAcceptedDomain():
 fun NetworkActiveRideByDriverResponse.toActiveOfferDomain(): ActiveOfferResponse =
     with(this) {
         return ActiveOfferResponse(
-            id = uuid,
+            id = id,
+            uuid = uuid,
             name = passenger.userFullName,
             pickUp = locations.points.getOrNull(0)?.name,
             avatar = passenger.avatar ?: "https://randomuser.me/api/portraits/men/9.jpg",
