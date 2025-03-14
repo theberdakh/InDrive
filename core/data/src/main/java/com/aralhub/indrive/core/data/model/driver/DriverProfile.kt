@@ -10,3 +10,9 @@ data class DriverProfile(
     val phoneNumber: String,
     val photoUrl: String
 )
+
+data class DriverInfo(
+    val phoneNumber: String,
+    val fullName: String,
+    val avatar: String
+)

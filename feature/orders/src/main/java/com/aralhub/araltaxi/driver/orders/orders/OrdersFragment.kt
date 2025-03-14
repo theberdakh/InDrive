@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -31,10 +32,15 @@ import com.aralhub.araltaxi.driver.orders.sheet.RideFinishedModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.RideModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.TripCanceledModalBottomSheet
 import com.aralhub.araltaxi.driver.orders.sheet.WaitingForClientModalBottomSheet
+import com.aralhub.araltaxi.driver.orders.utils.SoundManager
 import com.aralhub.araltaxi.services.LocationService
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.ui.adapter.OrderItemAdapter
+import com.aralhub.ui.dialog.ErrorMessageDialog
+import com.aralhub.ui.dialog.LoadingDialog
 import com.aralhub.ui.model.OrderItem
+import com.aralhub.ui.model.profile.DriverInfoUI
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.ViewEx.invisible
 import com.aralhub.ui.utils.ViewEx.show
@@ -43,12 +49,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment(R.layout.fragment_orders) {
+
     private val binding by viewBinding(FragmentOrdersBinding::bind)
     private val adapter = OrderItemAdapter()
 
@@ -70,11 +78,25 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private val rideId = 0
 
+    private var errorDialog: ErrorMessageDialog? = null
+    private var loadingDialog: LoadingDialog? = null
+    private var isResponseReceived = false
+
+    private var soundManager: SoundManager? = null
+
     @Inject
     lateinit var navigation: FeatureOrdersNavigation
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        errorDialog = ErrorMessageDialog(context)
+        loadingDialog = LoadingDialog(context)
+        soundManager = SoundManager(context)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         startService()
         fetchData()
         initViews()
@@ -100,7 +122,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 distance = 500000
             )
         )
-//        viewModel.getDriverProfile()
+        viewModel.getDriverProfile()
     }
 
     private fun showActiveRideSheet() {
@@ -119,7 +141,8 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ordersListState.collect { orders ->
-                adapter.submitList(orders) // UI обновится автоматически
+                dismissLoading()
+                adapter.submitList(orders)
                 binding.tvOrdersNotFound.visibility =
                     if (orders.isEmpty()) View.VISIBLE else View.GONE
             }
@@ -127,16 +150,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
         observeState(viewModel.profileUiState) { profileUiState ->
             when (profileUiState) {
-                is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
-                ProfileUiState.Loading -> {}
+                is ProfileUiState.Error -> showErrorDialog(profileUiState.message)
+                ProfileUiState.Loading -> showLoading()
                 is ProfileUiState.Success -> displayProfile(profileUiState.driverProfile)
             }
         }
 
         observeState(viewModel.logoutUiState) { logoutUiState ->
             when (logoutUiState) {
-                is LogoutUiState.Error -> errorHandler.showToast(logoutUiState.message)
-                LogoutUiState.Loading -> {}
+                is LogoutUiState.Error -> showErrorDialog(logoutUiState.message)
+                LogoutUiState.Loading -> showLoading()
                 LogoutUiState.Success -> navigation.goToLogoFromOrders()
             }
         }
@@ -145,12 +168,9 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
                     when (getActiveOrdersUiState) {
-                        is GetActiveOrdersUiState.Error -> errorHandler.showToast(
-                            getActiveOrdersUiState.message
-                        )
+                        is GetActiveOrdersUiState.Error -> showErrorDialog(getActiveOrdersUiState.message)
 
-                        GetActiveOrdersUiState.Loading -> {
-                        }
+                        GetActiveOrdersUiState.Loading -> showLoading()
 
                         is GetActiveOrdersUiState.OrderCanceled -> {
 //                            adapter.submitList(orders)
@@ -183,10 +203,12 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
 //                            adapter.submitList(orders)
+                            soundManager?.playSound()
                             binding.tvOrdersNotFound.invisible()
                         }
 
                         is GetActiveOrdersUiState.GetExistOrder -> {
+                            dismissLoading()
                             if (getActiveOrdersUiState.data.isNotEmpty()) {
                                 binding.tvOrdersNotFound.invisible()
 //                                adapter.submitList(getActiveOrdersUiState.data)
@@ -205,9 +227,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 startedRideStatusViewModel.startedRideStatus.collectLatest { result ->
                     when (result) {
-                        is GetStartedRideStatusUiState.Error -> errorHandler.showToast(
-                            result.message
-                        )
+                        is GetStartedRideStatusUiState.Error -> showErrorDialog(result.message)
 
                         is GetStartedRideStatusUiState.RideCanceled -> {
                             rideCanceledByPassengerModalBottomSheet.show(
@@ -221,13 +241,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         }
     }
 
-    private fun displayProfile(driverProfile: DriverProfile) {
+    private fun displayProfile(driverProfile: DriverInfo) {
+        dismissLoading()
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
             driverProfile.fullName
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
             driverProfile.phoneNumber
         Glide.with(requireContext())
-            .load("https://araltaxi.aralhub.uz/${driverProfile.photoUrl}")
+            .load("https://araltaxi.aralhub.uz/${driverProfile.avatar}")
             .centerCrop()
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
             .signature(ObjectKey(System.currentTimeMillis()))
@@ -440,6 +461,34 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         ).forEach { sheet ->
             if (sheet.isAdded) sheet.dismissAllowingStateLoss()
         }
+    }
+
+    private fun showErrorDialog(errorMessage: String?) {
+        errorDialog?.show(errorMessage)
+    }
+
+    private fun showLoading() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(300)
+            if (!isResponseReceived) {
+                loadingDialog?.show()
+            }
+        }
+    }
+
+    private fun dismissLoading() {
+        isResponseReceived = true
+        loadingDialog?.dismiss()
+    }
+
+    private fun dismissErrorDialog() {
+        errorDialog?.dismiss()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dismissErrorDialog()
+        dismissLoading()
     }
 
 }

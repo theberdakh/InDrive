@@ -3,6 +3,7 @@ package com.aralhub.indrive.core.data.repository.driver.impl
 import com.aralhub.indrive.core.data.model.driver.DriverBalance
 import com.aralhub.indrive.core.data.model.driver.DriverBalanceInfo
 import com.aralhub.indrive.core.data.model.driver.DriverCard
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.indrive.core.data.model.location.SendLocationRequest
@@ -56,21 +57,16 @@ class DriverAuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun driverInfo(): Result<DriverProfile> {
+    override suspend fun driverInfo(): Result<DriverInfo> {
         driverNetworkDataSource.getDriverInfo().let {
             return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
                     Result.Success(
-                        DriverProfile(
-                            driverId = it.data.driverId,
-                            fullName = it.data.fullName,
-                            rating = it.data.rating,
-                            color = it.data.color.kk,
-                            vehicleType = it.data.vehicleType.kk,
-                            plateNumber = it.data.plateNumber,
+                        DriverInfo(
                             phoneNumber = it.data.phoneNumber,
-                            photoUrl = it.data.photoUrl
+                            fullName = it.data.fullName,
+                            avatar = it.data.avatar
                         )
                     )
                 }

@@ -6,7 +6,7 @@ import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveRideByDriverUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetDriverBalanceUseCase
-import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.overview.mapper.asUI
 import com.aralhub.ui.model.OrderItem
@@ -95,7 +95,7 @@ sealed interface DriverBalanceUiState {
 }
 
 sealed interface ProfileUiState {
-    data class Success(val profile: DriverProfile) : ProfileUiState
+    data class Success(val profile: DriverInfo) : ProfileUiState
     data class Error(val message: String) : ProfileUiState
     data object Loading : ProfileUiState
 }

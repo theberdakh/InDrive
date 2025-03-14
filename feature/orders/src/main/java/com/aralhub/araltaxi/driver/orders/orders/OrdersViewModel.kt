@@ -12,7 +12,7 @@ import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
-import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
@@ -254,6 +254,6 @@ sealed interface GetStartedRideStatusUiState {
 
 sealed interface ProfileUiState {
     data object Loading : ProfileUiState
-    data class Success(val driverProfile: DriverProfile) : ProfileUiState
+    data class Success(val driverProfile: DriverInfo) : ProfileUiState
     data class Error(val message: String) : ProfileUiState
 }
