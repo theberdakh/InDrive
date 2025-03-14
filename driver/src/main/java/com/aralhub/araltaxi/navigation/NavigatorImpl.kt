@@ -6,6 +6,9 @@ import com.aralhub.araltaxi.driver.R
 import com.aralhub.araltaxi.driver.driver_auth.addsms.AddSMSFragment
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
+import com.aralhub.araltaxi.driver.orders.orders.OrdersFragment
+import com.aralhub.araltaxi.driver.orders.orders.OrdersFragmentDirections
+import com.aralhub.overview.OverviewFragmentDirections
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import com.aralhub.ui.model.OrderItem
 import javax.inject.Inject
@@ -44,8 +47,8 @@ class NavigatorImpl @Inject constructor() : Navigator, FeatureDriverAuthNavigati
         this.navController = null
     }
 
-    override fun goToAcceptOrders() {
-        navController?.navigate(R.id.action_overviewFragment_to_ordersFragment)
+    override fun goToAcceptOrders(argument: Bundle?) {
+        navController?.navigate(R.id.action_overviewFragment_to_ordersFragment, argument)
     }
 
     override fun goToProfileFromOverview() {

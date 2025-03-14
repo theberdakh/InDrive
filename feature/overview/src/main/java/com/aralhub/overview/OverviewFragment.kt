@@ -22,6 +22,7 @@ import com.aralhub.overview.sheet.LocationServiceOffModalBottomSheet
 import com.aralhub.overview.sheet.LogoutModalBottomSheet
 import com.aralhub.overview.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.overview.utils.isGPSEnabled
+import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -94,6 +95,12 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
                 LogoutUiState.Loading -> Log.i("RequestFragment", "logoutUiState: loading")
                 LogoutUiState.Success -> navigation.goToLogoFromOverview()
             }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.activeOrdersUiState.onEach { order: OrderItem? ->
+            val bundle = Bundle()
+            bundle.putParcelable("OrderDetail", order)
+            navigation.goToAcceptOrders(bundle)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 

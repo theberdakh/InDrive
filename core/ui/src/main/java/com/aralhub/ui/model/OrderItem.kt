@@ -14,7 +14,7 @@ data class OrderItem(
     val pickUpDistance: String = "",
     val roadDistance: String = "",
     val paymentType: PaymentType,
-    val pickUpAddress: String,
+    val pickUpAddress: String?,
     val destinationAddress: String? = null,
     val locations: List<ClientRideLocationsUI>
 ) : Parcelable

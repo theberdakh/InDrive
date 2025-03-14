@@ -55,18 +55,6 @@
                 android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                 android:visibility="visible" />
 
-            <TextView
-                android:id="@+id/tv_uuid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_margin="@dimen/margin_small"
-                android:layout_marginBottom="20dp"
-                android:drawablePadding="@dimen/padding_small"
-                android:text="uuid"
-                android:textColor="@color/color_content_secondary"
-                app:drawableStartCompat="@drawable/ic_info" />
-
             <View
                 android:id="@+id/btn_filter"
                 android:layout_width="56dp"

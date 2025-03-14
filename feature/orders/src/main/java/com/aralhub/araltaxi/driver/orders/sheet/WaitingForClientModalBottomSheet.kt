@@ -18,8 +18,8 @@ class WaitingForClientModalBottomSheet :
 
     private var order: OrderItem? = null
 
-    private var onGoingToRideListener: () -> Unit = {}
-    fun setOnGoingToRideListener(onGoingToRide: () -> Unit) {
+    private var onGoingToRideListener: (order: OrderItem?) -> Unit = {}
+    fun setOnGoingToRideListener(onGoingToRide: (order: OrderItem?) -> Unit) {
         this.onGoingToRideListener = onGoingToRide
     }
 
@@ -46,7 +46,7 @@ class WaitingForClientModalBottomSheet :
 
     private fun setupListeners() {
         binding.btnGoToRide.setOnClickListener {
-            onGoingToRideListener.invoke()
+            onGoingToRideListener(order)
         }
         binding.btnCancel.setOnClickListener {
             rideCanceledListener.invoke()

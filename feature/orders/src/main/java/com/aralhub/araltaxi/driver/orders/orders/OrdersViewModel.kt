@@ -46,11 +46,6 @@ class OrdersViewModel @Inject constructor(
     private val _ordersListState = MutableStateFlow<List<OrderItem>>(emptyList())
     val ordersListState: StateFlow<List<OrderItem>> = _ordersListState.asStateFlow()
 
-
-    init {
-        getActiveRide()
-    }
-
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
     fun getDriverProfile() = viewModelScope.launch {
@@ -186,16 +181,6 @@ class OrdersViewModel @Inject constructor(
 
     private var _activeOrdersUiState = MutableSharedFlow<Int?>()
     val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
-    fun getActiveRide() {
-        viewModelScope.launch {
-            repository.getActiveRide().let { result ->
-                when (result) {
-                    is Result.Error -> {}
-                    is Result.Success -> _activeOrdersUiState.emit((result.data))
-                }
-            }
-        }
-    }
 
     fun cancelRide(rideId: Int, cancelCauseId: Int) {
         viewModelScope.launch {

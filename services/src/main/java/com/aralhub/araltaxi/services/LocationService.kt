@@ -45,7 +45,7 @@ class LocationService : Service() {
     private val locationListener = LocationListener { location ->
         val latitude = location.latitude
         val longitude = location.longitude
-        updateNotification(latitude, longitude)
+//        updateNotification(latitude, longitude)
         scope.launch {
             sendDriverLocationUseCase.invoke(
                 latitude = latitude,

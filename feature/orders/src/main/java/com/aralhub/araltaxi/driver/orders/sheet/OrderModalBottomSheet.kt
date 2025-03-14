@@ -110,8 +110,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                 errorHandler.showToast("Maximum price: $maximumPrice")
             }
         }
-        binding.llPickUpAddress.setOnClickListener { onAddressClick.invoke() }
-        binding.llDestinationAddress.setOnClickListener { onAddressClick.invoke() }
+        binding.llPickUpAddress.setOnClickListener { onAddressClick(order) }
+        binding.llDestinationAddress.setOnClickListener { onAddressClick(order) }
     }
 
     private fun initObservers() {
@@ -150,8 +150,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             orderLoadingModalBottomSheet.dismissAllowingStateLoss()
     }
 
-    private var onAddressClick: () -> Unit = {}
-    fun setOnAddressClickListener(onAddressClick: () -> Unit) {
+    private var onAddressClick: (order: OrderItem?) -> Unit = {}
+    fun setOnAddressClickListener(onAddressClick: (order: OrderItem?) -> Unit) {
         this.onAddressClick = onAddressClick
     }
 

@@ -1,5 +1,8 @@
 package com.aralhub.indrive.core.data.repository.driver.impl
 
+import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
+import com.aralhub.indrive.core.data.model.offer.toActiveOfferDomain
+import com.aralhub.indrive.core.data.model.offer.toOfferAcceptedDomain
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.DriverNetworkDataSource
@@ -9,7 +12,7 @@ import javax.inject.Inject
 class DriverRepositoryImpl @Inject constructor(
     private val driverNetworkDataSource: DriverNetworkDataSource
 ) : DriverRepository {
-    override suspend fun getActiveRide(): Result<Int?> {
+    override suspend fun getActiveRide(): Result<ActiveOfferResponse?> {
         driverNetworkDataSource.getActiveRide().let {
             return when (it) {
                 is NetworkResult.Error -> {
@@ -17,7 +20,7 @@ class DriverRepositoryImpl @Inject constructor(
                 }
 
                 is NetworkResult.Success -> {
-                    Result.Success(it.data?.id)
+                    Result.Success(it.data?.toActiveOfferDomain())
                 }
             }
         }

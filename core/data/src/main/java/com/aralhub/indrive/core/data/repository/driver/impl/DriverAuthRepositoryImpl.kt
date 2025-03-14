@@ -8,7 +8,7 @@ import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.indrive.core.data.model.location.SendLocationRequest
 import com.aralhub.indrive.core.data.model.location.toDTO2
 import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
-import com.aralhub.indrive.core.data.model.offer.toDomain
+import com.aralhub.indrive.core.data.model.offer.toOfferAcceptedDomain
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.DriverNetworkDataSource
@@ -159,7 +159,7 @@ class DriverAuthRepositoryImpl @Inject constructor(
             return when (it) {
                 is NetworkResult.Error -> Result.Error(it.message)
                 is NetworkResult.Success -> {
-                    val listOfOrders = it.data.map { order -> order.toDomain() }
+                    val listOfOrders = it.data.map { order -> order.toOfferAcceptedDomain() }
                     Result.Success(listOfOrders)
                 }
             }

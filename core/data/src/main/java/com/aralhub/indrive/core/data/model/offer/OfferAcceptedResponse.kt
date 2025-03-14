@@ -17,7 +17,7 @@ data class OfferAcceptedResponse(
     val paymentMethod: Int
 )
 
-fun NetworkActiveRideByDriverResponse.toDomain() = with(this) {
+fun NetworkActiveRideByDriverResponse.toOfferAcceptedDomain() = with(this) {
     OfferAcceptedResponse(
         id = id,
         uuid = uuid,

@@ -2,7 +2,7 @@ package com.aralhub.indrive.core.data.repository.driver.impl
 
 import com.aralhub.indrive.core.data.model.location.SendLocationRequest
 import com.aralhub.indrive.core.data.model.location.toDTO
-import com.aralhub.indrive.core.data.model.offer.toDomain
+import com.aralhub.indrive.core.data.model.offer.toOfferAcceptedDomain
 import com.aralhub.indrive.core.data.repository.driver.DriverWebSocketRepository
 import com.aralhub.indrive.core.data.util.StartedRideWebSocketEvent
 import com.aralhub.indrive.core.data.util.WebSocketEvent
@@ -18,7 +18,7 @@ class DriverWebSocketRepositoryImpl @Inject constructor(
     override fun getActiveRides() = driverNetworkDataSource.getActiveOrders().map {
         when (it) {
             is WebSocketEventNetwork.ActiveOffer -> {
-                WebSocketEvent.ActiveOffer(it.offer.toDomain())
+                WebSocketEvent.ActiveOffer(it.offer.toOfferAcceptedDomain())
             }
 
             is WebSocketEventNetwork.OfferAccepted -> {

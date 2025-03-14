@@ -19,8 +19,8 @@ class GoingToPickUpModalBottomSheet :
 
     private var order: OrderItem? = null
 
-    private var onClientPickedUp: () -> Unit = {}
-    fun setOnClientPickedUp(onPickedUp: () -> Unit) {
+    private var onClientPickedUp: (order: OrderItem?) -> Unit = {}
+    fun setOnClientPickedUp(onPickedUp: (order: OrderItem?) -> Unit) {
         this.onClientPickedUp = onPickedUp
     }
 
@@ -48,7 +48,7 @@ class GoingToPickUpModalBottomSheet :
     private fun setupListeners() {
         binding.slideArrived.setOnSlideChangeListener {
             if (it == 1f) {
-                onClientPickedUp.invoke()
+                onClientPickedUp(order)
             }
         }
         binding.btnCancel.setOnClickListener {

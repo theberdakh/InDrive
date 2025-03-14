@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
+import com.aralhub.araltaxi.core.domain.driver.GetActiveRideByDriverUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetDriverBalanceUseCase
 import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.overview.mapper.asUI
+import com.aralhub.ui.model.OrderItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,8 +20,14 @@ import javax.inject.Inject
 class OverviewViewModel @Inject constructor(
     private val driverProfileUseCase: DriverProfileUseCase,
     private val driverBalanceUseCase: GetDriverBalanceUseCase,
-    private val driverLogoutUseCase: DriverLogoutUseCase
+    private val driverLogoutUseCase: DriverLogoutUseCase,
+    private val getActiveRideByDriverUseCase: GetActiveRideByDriverUseCase
 ) : ViewModel() {
+
+    init {
+        getActiveRide()
+    }
+
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
     fun getProfile() = viewModelScope.launch {
@@ -57,6 +66,20 @@ class OverviewViewModel @Inject constructor(
             }
         })
     }
+
+    private var _activeOrdersUiState = MutableSharedFlow<OrderItem?>()
+    val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
+    private fun getActiveRide() {
+        viewModelScope.launch {
+            getActiveRideByDriverUseCase().let { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    is Result.Success -> _activeOrdersUiState.emit((result.data?.asUI()))
+                }
+            }
+        }
+    }
+
 }
 
 sealed interface LogoutUiState {
