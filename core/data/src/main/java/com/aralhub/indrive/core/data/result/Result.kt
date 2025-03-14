@@ -26,20 +26,3 @@ inline fun <T, R> Result<T>.fold(
 }
 
 
-inline fun <T> Result<T>.toUiState(
-    crossinline onSuccess: (T) -> UiState<T>,
-    crossinline onError: (String) -> UiState<T>
-): UiState<T> = when (this) {
-    is Result.Success -> onSuccess(data)
-    is Result.Error -> onError(message)
-}
-
-
-sealed interface UiState<out T> {
-    data class Success<out T>(val data: T) : UiState<T>
-    data object Loading
-    data class Error(val message: String)
-}
-
-
-

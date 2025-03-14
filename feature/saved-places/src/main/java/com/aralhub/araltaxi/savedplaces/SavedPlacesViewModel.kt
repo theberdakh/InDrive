@@ -7,6 +7,8 @@ import com.aralhub.araltaxi.core.domain.address.GetAllSavedAddressesUseCase
 import com.aralhub.indrive.core.data.model.address.Address
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
 import com.aralhub.indrive.core.data.result.fold
+import com.aralhub.ui.model.AddressCategory
+import com.aralhub.ui.model.AddressItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +21,12 @@ class SavedPlacesViewModel @Inject constructor(
     private val getAllSavedAddressesUseCase: GetAllSavedAddressesUseCase
 ) : ViewModel() {
 
-    private val _createAddressUiState = MutableStateFlow<CreateAddressUiState>(CreateAddressUiState.Loading)
+    private val _createAddressUiState =
+        MutableStateFlow<CreateAddressUiState>(CreateAddressUiState.Loading)
     val createAddressUiState = _createAddressUiState.asStateFlow()
 
-    private val _savedPlacesUiState = MutableStateFlow<SavedPlacesUiState>(SavedPlacesUiState.Loading)
+    private val _savedPlacesUiState =
+        MutableStateFlow<SavedPlacesUiState>(SavedPlacesUiState.Loading)
     val savedPlacesUiState = _savedPlacesUiState.asStateFlow()
 
     fun createAddress(address: CreateAddressRequest) {
@@ -34,15 +38,26 @@ class SavedPlacesViewModel @Inject constructor(
         }
     }
 
-    fun getAllSavedAddresses(userId: Int) {
+    fun getAllSavedAddresses() {
         viewModelScope.launch {
-            _savedPlacesUiState.value = getAllSavedAddressesUseCase(userId).fold(
-                onSuccess = SavedPlacesUiState::Success,
+            _savedPlacesUiState.value = getAllSavedAddressesUseCase().fold(
+                onSuccess = {
+                    SavedPlacesUiState.Success(it.map { address -> address.toAddressItem() })
+                },
                 onError = SavedPlacesUiState::Error
             )
         }
     }
 }
+
+fun Address.toAddressItem() = AddressItem(
+    id = this.id,
+    name = this.name,
+    address = this.address,
+    category = AddressCategory.OTHER,
+    latitude = this.latitude,
+    longitude = this.longitude
+)
 
 sealed interface CreateAddressUiState {
     data object Loading : CreateAddressUiState
@@ -52,6 +67,6 @@ sealed interface CreateAddressUiState {
 
 sealed interface SavedPlacesUiState {
     data object Loading : SavedPlacesUiState
-    data class Success(val addresses: List<Address>) : SavedPlacesUiState
+    data class Success(val addresses: List<AddressItem>) : SavedPlacesUiState
     data class Error(val message: String) : SavedPlacesUiState
 }
