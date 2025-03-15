@@ -1,8 +1,11 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetWaitingForClientBinding
 import com.aralhub.ui.model.OrderItem
@@ -17,6 +20,9 @@ class WaitingForClientModalBottomSheet :
     private val binding by viewBinding(ModalBottomSheetWaitingForClientBinding::bind)
 
     private var order: OrderItem? = null
+
+    private var timer: CountDownTimer? = null
+    private var remainingTime = 5L
 
     private var onGoingToRideListener: (order: OrderItem?) -> Unit = {}
     fun setOnGoingToRideListener(onGoingToRide: (order: OrderItem?) -> Unit) {
@@ -41,6 +47,7 @@ class WaitingForClientModalBottomSheet :
 
         setupUI()
         setupListeners()
+        startTimer()
 
     }
 
@@ -71,6 +78,48 @@ class WaitingForClientModalBottomSheet :
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
             .apply(RequestOptions.circleCropTransform())
             .into(binding.ivAvatar)
+    }
+
+    private fun startTimer() {
+        timer?.cancel()
+        timer = object : CountDownTimer(remainingTime * 1000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                remainingTime = millisUntilFinished / 1000
+                binding.tvTime.text = formatTime(remainingTime)
+            }
+
+            override fun onFinish() {
+                binding.tvTime.setTextColor(ContextCompat.getColor(requireContext(), com.aralhub.ui.R.color.color_status_error_2))
+                binding.tvTimerLabel.text = getString(com.aralhub.ui.R.string.label_paid_waiting_time_started)
+                startPaidWaitingTimer()
+            }
+        }.start()
+    }
+
+    private fun startPaidWaitingTimer() {
+        var paidWaitingTime = 0L // Время платного ожидания
+
+        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) { // Бесконечный таймер
+            override fun onTick(millisUntilFinished: Long) {
+                paidWaitingTime++
+                binding.tvTime.text = formatTime(paidWaitingTime)
+            }
+
+            override fun onFinish() {}
+        }.start()
+    }
+
+    private fun formatTime(timeInSeconds: Long): String {
+        val minutes = timeInSeconds / 60
+        val seconds = timeInSeconds % 60
+        return String.format("%d:%02d", minutes, seconds)
+    }
+
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        timer?.cancel() // Останавливаем таймер при выходе
     }
 
     companion object {

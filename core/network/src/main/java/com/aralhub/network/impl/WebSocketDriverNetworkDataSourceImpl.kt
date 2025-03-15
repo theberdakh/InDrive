@@ -114,13 +114,6 @@ class WebSocketDriverNetworkDataSourceImpl(
         }
     }
 
-    //{"type":"offer_accepted",
-    //"data":{"id":301,"uuid":"24ab31b3-6eba-47b6-8efd-5e4d375c6078","status":"agreed_with_driver","amount":7000.0,"wait_amount":0.0,"distance":2056.1,
-    //"locations":{"points":[{"coordinates":{"longitude":59.61438666666666,"latitude":42.47357333333333},"name":"4R-191, 59"},
-    //{"coordinates":{"longitude":59.60338592529297,"latitude":42.4633674621582},"name":"Nókis oraylıq diyxan bazarı"}]},
-    //"is_active":true,"created_at":"2025-03-15T05:45:47.678916Z",
-    //"passenger":{"id":40,"full_name":"Atabek Otebaev","phone_number":"+998913821929","rating":0.0,"photo_url":null},
-    //"payment_method":{"id":2,"name":"string","is_active":true},"options":[],"is_commission_applied":false}}
     override suspend fun sendLocation(data: NetworkSendLocationRequest) {
         session?.outgoing?.send(
             Frame.Text(Gson().toJson(data))

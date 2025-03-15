@@ -20,14 +20,18 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sheet_order) {
+
     private val binding by viewBinding(ModalBottomSheetOrderBinding::bind)
+
     private val orderLoadingModalBottomSheet = OrderLoadingModalBottomSheet()
 
     private val offerViewModel by viewModels<OfferViewModel>()
@@ -93,7 +97,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             }
         }
         binding.tvDecrease500.setOnClickListener {
-            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }.replace(" ", ""))
+            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }
+                .replace(" ", ""))
             if (price - 500 >= minimumPrice) {
                 val editable = Editable.Factory.getInstance().newEditable("${price - 500}")
                 binding.etPrice.text = editable
@@ -102,7 +107,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             }
         }
         binding.tvIncrease500.setOnClickListener {
-            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }.replace(" ", ""))
+            val price = Integer.parseInt(binding.etPrice.text.toString().filter { it.isDigit() }
+                .replace(" ", ""))
             if (price + 500 <= maximumPrice) {
                 val editable = Editable.Factory.getInstance().newEditable("${price + 500}")
                 binding.etPrice.text = editable
@@ -137,8 +143,10 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
-                    delay(60000)
-                    orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        delay(60000)
+                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                    }
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

@@ -25,7 +25,6 @@ import com.aralhub.overview.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.overview.utils.isGPSEnabled
 import com.aralhub.ui.dialog.ErrorMessageDialog
 import com.aralhub.ui.dialog.LoadingDialog
-import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -112,9 +111,10 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.activeOrdersUiState.onEach { order: OrderItem? ->
+        viewModel.activeOrdersUiState.onEach { result ->
             val bundle = Bundle()
-            bundle.putParcelable("OrderDetail", order)
+            bundle.putParcelable("OrderDetail", result?.order)
+            bundle.putString("Status", result?.status)
             navigation.goToAcceptOrders(bundle)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

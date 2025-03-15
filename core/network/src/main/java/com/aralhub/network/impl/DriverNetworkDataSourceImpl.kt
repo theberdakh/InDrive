@@ -12,6 +12,7 @@ import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
+import com.aralhub.network.models.driver.NetworkRideCompletedResponse
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
 import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
@@ -88,8 +89,8 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         return api.cancelRide(rideId, cancelCauseId).safeRequestEmpty()
     }
 
-    override suspend fun updateRideStatus(rideId: Int, status: String): NetworkResult<Boolean> {
-        return api.updateRideStatus(rideId, status).safeRequestEmpty()
+    override suspend fun updateRideStatus(rideId: Int, status: String): NetworkResult<NetworkRideCompletedResponse?> {
+        return api.updateRideStatus(rideId, status).safeRequestServerResponseWithNullData()
     }
 
     override suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo> {

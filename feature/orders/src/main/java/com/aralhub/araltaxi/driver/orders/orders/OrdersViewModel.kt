@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
@@ -9,6 +8,7 @@ import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
+import com.aralhub.araltaxi.core.domain.driver.UpdateRideStatusUseCase
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
@@ -17,6 +17,7 @@ import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
+import com.aralhub.ui.model.RideCompletedUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,7 @@ class OrdersViewModel @Inject constructor(
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
+    private val updateRideStatusUseCase: UpdateRideStatusUseCase,
     private val repository: DriverRepository
 ) : ViewModel() {
 
@@ -198,16 +200,18 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
+    private var _updateRideStatusResult = MutableSharedFlow<RideUpdateUiState>()
+    val updateRideStatusResult = _updateRideStatusResult.asSharedFlow()
     fun updateRideStatus(rideId: Int, status: String) {
         viewModelScope.launch {
-            repository.updateRideStatus(rideId, status).let { result ->
+            updateRideStatusUseCase(rideId, status).let { result ->
                 when (result) {
                     is Result.Error -> {
-                        Log.d("OrdersViewModel", "error")
+                        _updateRideStatusResult.emit(RideUpdateUiState.Error(result.message))
                     }
 
                     is Result.Success -> {
-                        Log.d("OrdersViewModel", "success")
+                        _updateRideStatusResult.emit(RideUpdateUiState.Success(result.data?.asUI()))
                     }
                 }
             }
@@ -266,4 +270,9 @@ sealed interface RideCancelUiState {
     data object Loading : RideCancelUiState
     data object Success : RideCancelUiState
     data class Error(val message: String) : RideCancelUiState
+}
+
+sealed interface RideUpdateUiState {
+    data class Success(val data: RideCompletedUI?) : RideUpdateUiState
+    data class Error(val message: String) : RideUpdateUiState
 }

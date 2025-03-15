@@ -9,7 +9,7 @@ import com.aralhub.araltaxi.core.domain.driver.GetDriverBalanceUseCase
 import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.overview.mapper.asUI
-import com.aralhub.ui.model.OrderItem
+import com.aralhub.ui.model.GetActiveRideByDriverUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -67,14 +67,19 @@ class OverviewViewModel @Inject constructor(
         })
     }
 
-    private var _activeOrdersUiState = MutableSharedFlow<OrderItem?>()
+    private var _activeOrdersUiState = MutableSharedFlow<GetActiveRideByDriverUI?>()
     val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
     private fun getActiveRide() {
         viewModelScope.launch {
             getActiveRideByDriverUseCase().let { result ->
                 when (result) {
                     is Result.Error -> {}
-                    is Result.Success -> _activeOrdersUiState.emit((result.data?.asUI()))
+                    is Result.Success -> _activeOrdersUiState.emit(
+                        (GetActiveRideByDriverUI(
+                            order = result.data?.data?.asUI(),
+                            status = result.data?.status
+                        ))
+                    )
                 }
             }
         }

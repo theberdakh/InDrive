@@ -10,6 +10,7 @@ import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
+import com.aralhub.network.models.driver.NetworkRideCompletedResponse
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
 import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
@@ -88,6 +89,6 @@ interface DriverNetworkApi {
     suspend fun updateRideStatus(
         @Path("rideId") rideId: Int,
         @Query("status") status: String
-    ): Response<ServerResponseEmpty>
+    ): Response<ServerResponse<NetworkRideCompletedResponse?>>
 
 }

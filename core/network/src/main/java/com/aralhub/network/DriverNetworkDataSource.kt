@@ -10,6 +10,7 @@ import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
 import com.aralhub.network.models.driver.NetworkDriverInfo
+import com.aralhub.network.models.driver.NetworkRideCompletedResponse
 import com.aralhub.network.models.location.NetworkSendLocationRequestWithoutType
 import com.aralhub.network.models.offer.CreateOfferByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
@@ -38,5 +39,5 @@ interface DriverNetworkDataSource {
 
     suspend fun getActiveRide(): NetworkResult<NetworkActiveRideByDriverResponse?>
     suspend fun cancelRide(rideId: Int, cancelCauseId: Int): NetworkResult<Boolean>
-    suspend fun updateRideStatus(rideId: Int, status: String): NetworkResult<Boolean>
+    suspend fun updateRideStatus(rideId: Int, status: String): NetworkResult<NetworkRideCompletedResponse?>
 }

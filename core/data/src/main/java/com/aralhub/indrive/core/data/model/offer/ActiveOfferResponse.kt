@@ -4,6 +4,10 @@ import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.offer.NetworkActiveOfferResponse
 
+data class ActiveRideByDriverResponse(
+    val data: ActiveOfferResponse?,
+    val status: String?
+)
 data class ActiveOfferResponse(
     val id: Int,
     val uuid: String,

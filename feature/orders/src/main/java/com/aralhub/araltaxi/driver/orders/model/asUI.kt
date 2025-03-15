@@ -1,11 +1,13 @@
 package com.aralhub.araltaxi.driver.orders.model
 
+import com.aralhub.indrive.core.data.model.driver.RideCompleted
 import com.aralhub.indrive.core.data.model.offer.ActiveOfferResponse
 import com.aralhub.indrive.core.data.model.offer.OfferAcceptedResponse
 import com.aralhub.ui.model.ClientRideLocationsCoordinatesUI
 import com.aralhub.ui.model.ClientRideLocationsUI
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.model.PaymentType
+import com.aralhub.ui.model.RideCompletedUI
 
 fun ActiveOfferResponse.asUI() = with(this) {
     val paymentType = if (paymentType == 1) PaymentType.CASH else PaymentType.CARD
@@ -64,3 +66,17 @@ fun OfferAcceptedResponse.asUI() = with(this) {
         }
     )
 }
+
+fun RideCompleted.asUI(): RideCompletedUI =
+    with(this) {
+        return RideCompletedUI(
+            amount = amount,
+            waitAmount = waitAmount,
+            totalAmount = totalAmount,
+            commissionAmount = commissionAmount,
+            cashbackAmount = cashbackAmount,
+            duration = duration,
+            distance = distance,
+            paymentMethodId = paymentMethodId
+        )
+    }

@@ -125,11 +125,30 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun showActiveRideSheet() {
-        goingToPickUpModalBottomSheet.arguments = arguments
-        goingToPickUpModalBottomSheet.show(
-            childFragmentManager,
-            GoingToPickUpModalBottomSheet.TAG
-        )
+        val status = arguments?.getString("Status") ?: ""
+        when (status) {
+            "driver_on_the_way" -> {
+                goingToPickUpModalBottomSheet.arguments = arguments
+                goingToPickUpModalBottomSheet.show(
+                    childFragmentManager,
+                    GoingToPickUpModalBottomSheet.TAG
+                )
+            }
+            "driver_waiting_client" -> {
+                waitingForClientModalBottomSheet.arguments = arguments
+                waitingForClientModalBottomSheet.show(
+                    childFragmentManager,
+                    WaitingForClientModalBottomSheet.TAG
+                )
+            }
+            "ride_started" -> {
+                rideModalBottomSheet.arguments = arguments
+                rideModalBottomSheet.show(
+                    childFragmentManager,
+                    RideModalBottomSheet.TAG
+                )
+            }
+        }
     }
 
     private fun startService() {
@@ -211,6 +230,29 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 //                                adapter.submitList(getActiveOrdersUiState.data)
                             } else {
                                 binding.tvOrdersNotFound.show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.updateRideStatusResult.collectLatest { result ->
+                    when (result) {
+                        is RideUpdateUiState.Error -> showErrorDialog(result.message)
+                        is RideUpdateUiState.Success -> {
+                            if (result.data != null) {
+                                rideModalBottomSheet.dismissAllowingStateLoss()
+
+                                val bundle = Bundle()
+                                bundle.putParcelable("RideCompletedDetail", result.data)
+                                rideFinishedModalBottomSheet.arguments = bundle
+                                rideFinishedModalBottomSheet.show(
+                                    childFragmentManager,
+                                    RideFinishedModalBottomSheet.TAG
+                                )
                             }
                         }
                     }
@@ -328,6 +370,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         tripCanceledModalBottomSheet.setOnCloseListener {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
             dismissAllBottomSheets()
+            viewModel.getExistingOrders(
+                SendDriverLocationUI(
+                    latitude = 42.41268,
+                    longitude = 59.688043,
+                    distance = 500000
+                )
+            )
         }
 
         reasonCancelModalBottomSheet.setOnRideCancelledListener {
@@ -342,11 +391,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun initRideModalBottomSheet() {
         rideModalBottomSheet.setOnRideFinishedListener { order: OrderItem? ->
-            rideModalBottomSheet.dismissAllowingStateLoss()
-            rideFinishedModalBottomSheet.show(
-                childFragmentManager,
-                RideFinishedModalBottomSheet.TAG
-            )
             viewModel.updateRideStatus(
                 order!!.id,
                 RideStatus.RIDE_COMPLETED.status
@@ -474,6 +518,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun showErrorDialog(errorMessage: String?) {
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
         errorDialog?.show(errorMessage)
     }
 

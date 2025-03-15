@@ -1,9 +1,15 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetGoingToPickUpBinding
 import com.aralhub.ui.model.OrderItem
@@ -54,6 +60,12 @@ class GoingToPickUpModalBottomSheet :
         binding.btnCancel.setOnClickListener {
             rideCanceledListener(order)
         }
+
+        binding.btnNavigator.setOnClickListener {
+            val longitude = order!!.locations.getOrNull(0)?.coordinates?.longitude
+            val latitude = order!!.locations.getOrNull(0)?.coordinates?.latitude
+            openNavigationChooser(requireContext(), latitude!!, longitude!!)
+        }
     }
 
     private fun setupUI() = binding.apply {
@@ -78,6 +90,27 @@ class GoingToPickUpModalBottomSheet :
             .into(binding.ivAvatar)
     }
 
+    private fun openNavigationChooser(context: Context, latitude: Double, longitude: Double) {
+        val uriYandex = "yandexnavi://build_route_on_map?lat_to=${latitude}&lon_to=${longitude}"
+        val intentYandex = Intent(Intent.ACTION_VIEW, Uri.parse(uriYandex))
+        intentYandex.setPackage("ru.yandex.yandexnavi")
+
+        val uriGoogle = Uri.parse("google.navigation:q=${latitude},${longitude}&mode=w")
+        val intentGoogle = Intent(Intent.ACTION_VIEW, uriGoogle)
+        intentGoogle.setPackage("com.google.android.apps.maps")
+
+        val chooserIntent = Intent.createChooser(intentYandex, "Выберите навигатор")
+        val arr = arrayOfNulls<Intent>(1)
+        arr[0] = intentGoogle
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arr)
+
+        val activities = context.packageManager.queryIntentActivities(chooserIntent, 0)
+        if(activities.size>0){
+            startActivity(chooserIntent)
+        }else{
+            //do sth..
+        }
+    }
 
     companion object {
         const val TAG = "GoingToPickUpModalBottomSheet"
