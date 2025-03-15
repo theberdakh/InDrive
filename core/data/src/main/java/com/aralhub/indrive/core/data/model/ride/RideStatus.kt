@@ -10,10 +10,10 @@ package com.aralhub.indrive.core.data.model.ride
  * */
 sealed class RideStatus {
     data class DriverWaitingClient(val message: String) : RideStatus()
-    data class RideStartedAfterWaiting(val message: String) : RideStatus()
+    data class PaidWaiting(val message: String) : RideStatus()
+    data class PaidWaitingStarted(val message: String) : RideStatus()
     data class RideStarted(val message: String) : RideStatus()
     data class RideCompleted(val message: String) : RideStatus()
     data class DriverOnTheWay(val message: String) : RideStatus()
-    data class CanceledByDriver(val message: String) : RideStatus()
     data class Unknown(val error: String) : RideStatus()
 }

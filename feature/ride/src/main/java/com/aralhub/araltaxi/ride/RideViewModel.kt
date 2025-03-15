@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.ride
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
@@ -85,6 +86,7 @@ class RideViewModel @Inject constructor(
     val rideStateUiState = _rideStateUiState.asStateFlow()
     fun getClientRideState() = viewModelScope.launch {
         getClientRideStatusUseCase().collect {
+            Log.i("RideState", it.toString())
             _rideStateUiState.emit(RideStateUiState.Success(it))
         }
     }

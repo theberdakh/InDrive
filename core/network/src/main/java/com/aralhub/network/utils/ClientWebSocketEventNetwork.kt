@@ -2,7 +2,6 @@ package com.aralhub.network.utils
 
 import com.aralhub.network.models.offer.NetworkOffer
 import com.aralhub.network.models.ride.NetworkRideActive
-import com.aralhub.network.models.ride.NetworkRideStatus
 import com.google.gson.annotations.SerializedName
 
 
@@ -12,39 +11,39 @@ sealed class ClientWebSocketEventNetwork {
     data class OfferAccepted(val ride: NetworkRideActive) : ClientWebSocketEventNetwork()
 }
 
-data class DriverWaitingClientStatus(
-    @SerializedName("free_wait_minutes")
-    val freeWaitMinutes: Double,
-    @SerializedName("wait_price_per_minute")
-    val waitPricePerMinute: Int
-)
 
-data class PaidWaitingStartedStatus(
+data class NetworkDriverWaitingClientMessage(
     val message: String,
     @SerializedName("wait_price_per_minute")
-    val waitPricePerMinute: Int
+    val waitPricePerMinute: Int,
+    @SerializedName("start_free_time")
+    val startFreeTime: Double,
+    @SerializedName("end_free_time")
+    val endFreeTime: Double
 )
 
-data class RideStartedStatus(
-    val status: String,
-    val message: String
-)
-
-data class RideStarted(
-    val message: String,
-    @SerializedName("wait_amount")
-    val waitAmount: String
-)
-
-data class PaidWaitingStatus(
+data class NetworkRideStartedMessage(
     val message: String,
     @SerializedName("wait_amount")
     val waitAmount: Double
 )
 
+sealed class ClientWebSocketEventRideMessage {
+    data class DriverOnTheWay(val message: String): ClientWebSocketEventRideMessage()
+    data class DriverWaitingClientMessage(val message: NetworkDriverWaitingClientMessage): ClientWebSocketEventRideMessage()
+    data class PaidWaitingStarted(val message: String): ClientWebSocketEventRideMessage()
+    data class PaidWaiting(val message: String): ClientWebSocketEventRideMessage()
+    data class RideStarted(val message: NetworkRideStartedMessage): ClientWebSocketEventRideMessage()
+    data class RideCompleted(val message: String): ClientWebSocketEventRideMessage()
+    data class Unknown(val error: String) : ClientWebSocketEventRideMessage()
+}
 
-sealed class ClientWebSocketEventRide {
-    data class RideUpdate(val networkRideStatus: NetworkRideStatus): ClientWebSocketEventRide()
-    data class Unknown(val error: String) : ClientWebSocketEventRide()
+enum class NetworkRideStatus(val status: String) {
+    DRIVER_ON_THE_WAY("driver_on_the_way"),
+    DRIVER_WAITING_CLIENT("driver_waiting_client"),
+    PAID_WAITING_STARTED("paid_waiting_started"),
+    PAID_WAITING("paid_waiting"),
+    RIDE_STARTED("ride_started"),
+    RIDE_COMPLETED("ride_completed"),
 }
 

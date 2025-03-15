@@ -1,36 +1,45 @@
 package com.aralhub.indrive.core.data.repository.client.impl
 
+import android.util.Log
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.indrive.core.data.repository.client.ClientRideRepository
 import com.aralhub.network.ClientRideNetworkDataSource
-import com.aralhub.network.models.ride.NetworkRideStatus
-import com.aralhub.network.utils.ClientWebSocketEventRide
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import com.aralhub.network.utils.ClientWebSocketEventRideMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ClientRideRepositoryImpl @Inject constructor(private val clientRideNetworkDataSource: ClientRideNetworkDataSource): ClientRideRepository {
-    override suspend fun getRideStatus(): Flow<RideStatus> {
-        return clientRideNetworkDataSource.getRide().map {
-            when(it){
-                is ClientWebSocketEventRide.RideUpdate -> {
-                    when(it.networkRideStatus.status) {
-                        NetworkRideStatus.DRIVER_ON_THE_WAY-> RideStatus.DriverOnTheWay(it.networkRideStatus.message)
-                        NetworkRideStatus.RIDE_COMPLETED-> RideStatus.RideCompleted(it.networkRideStatus.message)
-                        NetworkRideStatus.RIDE_STARTED_AFTER_WAITING-> RideStatus.RideStartedAfterWaiting(it.networkRideStatus.message)
-                        NetworkRideStatus.CANCELED_BY_DRIVER-> RideStatus.CanceledByDriver(it.networkRideStatus.message)
-                        NetworkRideStatus.DRIVER_WAITING_CLIENT-> RideStatus.DriverWaitingClient(it.networkRideStatus.message)
-                        NetworkRideStatus.RIDE_STARTED-> RideStatus.RideStarted(it.networkRideStatus.message)
-                        else -> RideStatus.Unknown(it.networkRideStatus.message)
-                    }
+    private val _rideStatusFlow = MutableSharedFlow<RideStatus>(replay = 1)
+    private val rideStatusFlow = _rideStatusFlow.asSharedFlow()
+
+    // Coroutine scope for the collection
+    private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    override suspend fun getRideStatus(): SharedFlow<RideStatus> {
+
+        repositoryScope.launch {
+            clientRideNetworkDataSource.getRide().collect { event ->
+                val status = when(event) {
+                    is ClientWebSocketEventRideMessage.DriverOnTheWay -> RideStatus.DriverOnTheWay(event.message)
+                    is ClientWebSocketEventRideMessage.DriverWaitingClientMessage -> RideStatus.DriverWaitingClient(event.message.message)
+                    is ClientWebSocketEventRideMessage.PaidWaiting -> RideStatus.PaidWaiting(event.message)
+                    is ClientWebSocketEventRideMessage.PaidWaitingStarted -> RideStatus.PaidWaitingStarted(event.message)
+                    is ClientWebSocketEventRideMessage.RideCompleted -> RideStatus.RideCompleted(event.message)
+                    is ClientWebSocketEventRideMessage.RideStarted -> RideStatus.RideStarted(event.message.message)
+                    is ClientWebSocketEventRideMessage.Unknown -> RideStatus.Unknown(event.error)
                 }
-                is ClientWebSocketEventRide.Unknown -> {
-                    RideStatus.Unknown(it.error)
-                }
+                _rideStatusFlow.emit(status)
+                Log.i("ClientRideRepositoryImpl", "Emitted ride status: $status")
             }
         }
+        return rideStatusFlow
     }
-
     override suspend fun close() {
         clientRideNetworkDataSource.close()
     }

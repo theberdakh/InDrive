@@ -3,6 +3,7 @@ package com.aralhub.network.impl
 import android.util.Log
 import com.aralhub.network.WebSocketClientOffersNetworkDataSource
 import com.aralhub.network.models.ClientWebSocketServerResponse
+import com.aralhub.network.models.ClientWebSocketServerResponseOffers
 import com.aralhub.network.models.offer.NetworkOffer
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.utils.ClientWebSocketEventNetwork
@@ -52,16 +53,16 @@ class WebSocketClientOffersNetworkDataSourceImpl(private val client: HttpClient)
 
                                     val event = when (data.type) {
                                         DRIVER_OFFER -> {
-                                            val driverOffer = Gson().fromJson<ClientWebSocketServerResponse<NetworkOffer>>(
+                                            val driverOffer = Gson().fromJson<ClientWebSocketServerResponseOffers<NetworkOffer>>(
                                                 text,
-                                                object : TypeToken<ClientWebSocketServerResponse<NetworkOffer>>() {}.type
+                                                object : TypeToken<ClientWebSocketServerResponseOffers<NetworkOffer>>() {}.type
                                             )
                                             ClientWebSocketEventNetwork.DriverOffer(driverOffer.data)
                                         }
                                         OFFER_ACCEPTED  -> {
-                                            val ride = Gson().fromJson<ClientWebSocketServerResponse<NetworkRideActive>>(
+                                            val ride = Gson().fromJson<ClientWebSocketServerResponseOffers<NetworkRideActive>>(
                                                 text,
-                                                object: TypeToken<ClientWebSocketServerResponse<NetworkRideActive>>() {}.type
+                                                object: TypeToken<ClientWebSocketServerResponseOffers<NetworkRideActive>>() {}.type
                                             )
                                             ClientWebSocketEventNetwork.OfferAccepted(ride.data)
                                         }
