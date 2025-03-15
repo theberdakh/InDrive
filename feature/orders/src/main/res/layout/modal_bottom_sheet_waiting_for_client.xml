@@ -53,12 +53,13 @@
                 android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
             <TextView
+                android:id="@+id/tv_timer_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/padding_small"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="@dimen/padding_small"
-                android:text="@string/label_paid_waiting_time_started"
+                android:text="@string/label_free_waiting_time"
                 android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
                 android:textSize="14sp" />
 

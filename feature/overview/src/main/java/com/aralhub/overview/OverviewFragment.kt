@@ -1,6 +1,7 @@
 package com.aralhub.overview
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -16,68 +17,84 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.overview.R
 import com.aralhub.araltaxi.overview.databinding.FragmentOverviewBinding
-import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
 import com.aralhub.overview.sheet.LocationServiceOffModalBottomSheet
 import com.aralhub.overview.sheet.LogoutModalBottomSheet
 import com.aralhub.overview.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.overview.utils.isGPSEnabled
+import com.aralhub.ui.dialog.ErrorMessageDialog
+import com.aralhub.ui.dialog.LoadingDialog
 import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment(R.layout.fragment_overview) {
+
     private val binding by viewBinding(FragmentOverviewBinding::bind)
 
     private var pLauncher: ActivityResultLauncher<Array<String>>? = null
 
     private val locationServiceOffModalBottomSheet = LocationServiceOffModalBottomSheet()
 
+    private var errorDialog: ErrorMessageDialog? = null
+    private var loadingDialog: LoadingDialog? = null
+    private var isResponseReceived = false
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        errorDialog = ErrorMessageDialog(context)
+        loadingDialog = LoadingDialog(context)
+    }
+
     @Inject
     lateinit var navigation: FeatureOverviewNavigation
     private val viewModel by viewModels<OverviewViewModel>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fetchData()
         initObservers()
         initViews()
         initListeners()
         registerPermissionListener()
         checkLocationPermission()
-        //viewModel.getProfile()
+
+    }
+
+    private fun fetchData() {
+        viewModel.getProfile()
         viewModel.getBalance()
     }
 
     private fun initObservers() {
-//        viewModel.getProfile()
         viewModel.profileUiState.onEach {
             when (it) {
-                is ProfileUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "profileUiState: error ${it.message}"
-                )
+                is ProfileUiState.Error -> showErrorDialog(it.message)
 
-                ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
+                ProfileUiState.Loading -> showLoading()
+
                 is ProfileUiState.Success -> displayProfile(it.profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-
         viewModel.balanceUiState.onEach {
             when (it) {
-                is DriverBalanceUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "balanceUiState: error ${it.message}"
-                )
+                is DriverBalanceUiState.Error -> showErrorDialog(it.message)
 
-                DriverBalanceUiState.Loading -> Log.i("RequestFragment", "balanceUiState: loading")
+                DriverBalanceUiState.Loading -> showLoading()
+
                 is DriverBalanceUiState.Success -> {
+                    dismissLoading()
                     binding.tvBalance.text = it.balance.toString()
                     binding.tvDailyIncome.text = it.dayBalance.toString()
                 }
@@ -86,18 +103,26 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
 
         viewModel.logoutUiState.onEach {
             when (it) {
-                is LogoutUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "logoutUiState: error ${it.message}"
-                )
+                is LogoutUiState.Error -> showErrorDialog(it.message)
 
-                LogoutUiState.Loading -> Log.i("RequestFragment", "logoutUiState: loading")
+                LogoutUiState.Loading -> showLoading()
+
                 LogoutUiState.Success -> navigation.goToLogoFromOverview()
             }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.activeOrdersUiState.onEach { result ->
+            val bundle = Bundle()
+            bundle.putParcelable("OrderDetail", result?.order)
+            bundle.putString("Status", result?.status)
+            navigation.goToAcceptOrders(bundle)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun initListeners() {
+        errorDialog?.setOnDismissClicked {
+            dismissErrorDialog()
+        }
         binding.btnAcceptOrders.setOnClickListener {
             // check for location, if not enabled show: LocationServiceOffModalBottomSheet().show(childFragmentManager, LocationServiceOffModalBottomSheet.TAG)
             navigation.goToAcceptOrders()
@@ -150,13 +175,14 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
         setUpDrawerLayout()
     }
 
-    private fun displayProfile(profile: DriverProfile) {
+    private fun displayProfile(profile: DriverInfo) {
+        dismissLoading()
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
             profile.fullName
         binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
             profile.phoneNumber
         Glide.with(requireContext())
-            .load("https://araltaxi.aralhub.uz/${profile.photoUrl}")
+            .load("https://araltaxi.aralhub.uz/${profile.avatar}")
             .centerCrop()
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
             .signature(ObjectKey(System.currentTimeMillis()))
@@ -216,5 +242,33 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
                 Log.d("OverviewFragment", "Permission denied")
             }
         }
+    }
+
+    private fun showErrorDialog(errorMessage: String?) {
+        errorDialog?.show(errorMessage)
+    }
+
+    private fun showLoading() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(500)
+            if (!isResponseReceived) {
+                loadingDialog?.show()
+            }
+        }
+    }
+
+    private fun dismissLoading() {
+        isResponseReceived = true
+        loadingDialog?.dismiss()
+    }
+
+    private fun dismissErrorDialog() {
+        errorDialog?.dismiss()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dismissErrorDialog()
+        dismissLoading()
     }
 }

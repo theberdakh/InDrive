@@ -73,7 +73,7 @@ data class LocationPointCoordinates(
 data class SearchRideDriver(
     val userId: Int,
     val userFullName: String,
-    val userRating: Number
+    val userRating: Number?
 )
 
 data class RecommendedAmount(

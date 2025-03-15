@@ -9,6 +9,12 @@ data class ProfileItem(
     val type: ProfileItemCategory
 )
 
+data class DriverInfoUI(
+    val fullName: String,
+    val phoneNumber: String,
+    val avatar: String
+)
+
 object ProfileItemDiffCallback : DiffUtil.ItemCallback<ProfileItem>() {
     override fun areItemsTheSame(oldItem: ProfileItem, newItem: ProfileItem): Boolean {
         return oldItem.type == newItem.type

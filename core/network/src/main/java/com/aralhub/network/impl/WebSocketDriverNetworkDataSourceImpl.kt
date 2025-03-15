@@ -95,7 +95,7 @@ class WebSocketDriverNetworkDataSourceImpl(
                                             TypeToken<WebSocketServerResponse<NetworkActiveRideByDriverResponse>>() {}.type
                                     )
                                 WebSocketEventNetwork.OfferAccepted(
-                                    offerData.data.id
+                                    offerData.data
                                 )
                             }
 

@@ -232,6 +232,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btnNavigator"
         style="@style/Widget.InDrive.Button.Primary"
         android:text="@string/label_navigator"
         android:layout_margin="@dimen/margin_medium"

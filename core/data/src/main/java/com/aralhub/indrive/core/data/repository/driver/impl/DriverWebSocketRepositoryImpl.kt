@@ -22,7 +22,7 @@ class DriverWebSocketRepositoryImpl @Inject constructor(
             }
 
             is WebSocketEventNetwork.OfferAccepted -> {
-                WebSocketEvent.OfferAccepted(it.rideId)
+                WebSocketEvent.OfferAccepted(it.data.toDomain())
             }
 
             is WebSocketEventNetwork.OfferReject -> {

@@ -1,8 +1,6 @@
 package com.aralhub.indrive.core.data.model.offer
 
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
-import com.aralhub.network.models.offer.Locations
-import com.aralhub.network.models.websocketclient.ClientRideResponsePassenger
 
 data class OfferAcceptedResponse(
     val id: Int,
@@ -11,9 +9,10 @@ data class OfferAcceptedResponse(
     val amount: Int,
     val waitAmount: Int,
     val distance: Float,
-    val locations: Locations,
+    val locations: List<ClientRideLocationsItems>,
     val isActive: Boolean,
-    val passenger: ClientRideResponsePassenger,
+    val name: String,
+    val avatar: String?,
     val paymentMethod: Int
 )
 
@@ -25,9 +24,18 @@ fun NetworkActiveRideByDriverResponse.toDomain() = with(this) {
         amount = amount,
         waitAmount = waitAmount,
         distance = distance,
-        locations = locations,
+        locations = locations.points.map {
+            ClientRideLocationsItems(
+                ClientRideLocationsItemsCoordinates(
+                    it.coordinates.longitude,
+                    it.coordinates.latitude
+                ),
+                it.name
+            )
+        },
         isActive = isActive,
-        passenger = passenger,
+        name = passenger.userFullName,
+        avatar = passenger.avatar,
         paymentMethod = paymentMethod.id
     )
 }

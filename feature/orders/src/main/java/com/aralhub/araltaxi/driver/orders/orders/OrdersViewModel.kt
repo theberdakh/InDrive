@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
@@ -9,14 +8,16 @@ import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
+import com.aralhub.araltaxi.core.domain.driver.UpdateRideStatusUseCase
 import com.aralhub.araltaxi.driver.orders.model.SendDriverLocationUI
 import com.aralhub.araltaxi.driver.orders.model.asDomain
 import com.aralhub.araltaxi.driver.orders.model.asUI
-import com.aralhub.indrive.core.data.model.driver.DriverProfile
+import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
 import com.aralhub.ui.model.OrderItem
+import com.aralhub.ui.model.RideCompletedUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,16 +41,12 @@ class OrdersViewModel @Inject constructor(
     getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
+    private val updateRideStatusUseCase: UpdateRideStatusUseCase,
     private val repository: DriverRepository
 ) : ViewModel() {
 
     private val _ordersListState = MutableStateFlow<List<OrderItem>>(emptyList())
     val ordersListState: StateFlow<List<OrderItem>> = _ordersListState.asStateFlow()
-
-
-    init {
-        getActiveRide()
-    }
 
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
@@ -117,7 +114,7 @@ class OrdersViewModel @Inject constructor(
                 }
 
                 is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.OfferAccepted(it.rideId)
+                    GetActiveOrdersUiState.OfferAccepted(it.data.asUI())
                 }
 
                 is WebSocketEvent.RideCancel -> {
@@ -156,7 +153,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferAccepted -> {
-                GetActiveOrdersUiState.OfferAccepted(result.rideId)
+                GetActiveOrdersUiState.OfferAccepted(result.data)
             }
 
             is GetActiveOrdersUiState.OrderCanceled -> {
@@ -184,42 +181,37 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private var _activeOrdersUiState = MutableSharedFlow<Int?>()
-    val activeOrdersUiState = _activeOrdersUiState.asSharedFlow()
-    fun getActiveRide() {
-        viewModelScope.launch {
-            repository.getActiveRide().let { result ->
-                when (result) {
-                    is Result.Error -> {}
-                    is Result.Success -> _activeOrdersUiState.emit((result.data))
-                }
-            }
-        }
-    }
-
+    private var _rideCanceledResult = MutableSharedFlow<RideCancelUiState>()
+    val rideCanceledResult = _rideCanceledResult.asSharedFlow()
     fun cancelRide(rideId: Int, cancelCauseId: Int) {
         viewModelScope.launch {
+            _rideCanceledResult.emit(RideCancelUiState.Loading)
             repository.cancelRide(rideId, cancelCauseId).let { result ->
                 when (result) {
-                    is Result.Error -> {}
+                    is Result.Error -> {
+                        _rideCanceledResult.emit(RideCancelUiState.Error(result.message))
+                    }
+
                     is Result.Success -> {
-                        _activeOrdersUiState.emit(0)
+                        _rideCanceledResult.emit(RideCancelUiState.Success)
                     }
                 }
             }
         }
     }
 
+    private var _updateRideStatusResult = MutableSharedFlow<RideUpdateUiState>()
+    val updateRideStatusResult = _updateRideStatusResult.asSharedFlow()
     fun updateRideStatus(rideId: Int, status: String) {
         viewModelScope.launch {
-            repository.updateRideStatus(rideId, status).let { result ->
+            updateRideStatusUseCase(rideId, status).let { result ->
                 when (result) {
                     is Result.Error -> {
-                        Log.d("OrdersViewModel", "error")
+                        _updateRideStatusResult.emit(RideUpdateUiState.Error(result.message))
                     }
 
                     is Result.Success -> {
-                        Log.d("OrdersViewModel", "success")
+                        _updateRideStatusResult.emit(RideUpdateUiState.Success(result.data?.asUI()))
                     }
                 }
             }
@@ -231,7 +223,7 @@ class OrdersViewModel @Inject constructor(
     }
 
     private fun removeOrder(rideId: String) {
-        _ordersListState.value = _ordersListState.value.filterNot { it.id == rideId }
+        _ordersListState.value = _ordersListState.value.filterNot { it.uuid == rideId }
     }
 
 //    private fun updateOrderStatus(rideId: String, newStatus: OrderStatus) {
@@ -259,7 +251,7 @@ sealed interface GetActiveOrdersUiState {
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
-    data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
+    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 
@@ -270,6 +262,17 @@ sealed interface GetStartedRideStatusUiState {
 
 sealed interface ProfileUiState {
     data object Loading : ProfileUiState
-    data class Success(val driverProfile: DriverProfile) : ProfileUiState
+    data class Success(val driverProfile: DriverInfo) : ProfileUiState
     data class Error(val message: String) : ProfileUiState
+}
+
+sealed interface RideCancelUiState {
+    data object Loading : RideCancelUiState
+    data object Success : RideCancelUiState
+    data class Error(val message: String) : RideCancelUiState
+}
+
+sealed interface RideUpdateUiState {
+    data class Success(val data: RideCompletedUI?) : RideUpdateUiState
+    data class Error(val message: String) : RideUpdateUiState
 }

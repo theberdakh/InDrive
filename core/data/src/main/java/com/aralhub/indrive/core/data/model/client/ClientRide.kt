@@ -98,7 +98,7 @@ data class ClientRideResponsePaymentMethod(
 data class ClientRideResponsePassenger(
     val userId: Int,
     val userFullName: String,
-    val userRating: Number
+    val userRating: Number?
 )
 
 data class ClientRideResponseLocations(
