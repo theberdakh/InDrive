@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class NetworkDriverSearch(
     @SerializedName("user_id")
     val userId: Int,
-    @SerializedName("user_fullname")
+    @SerializedName("full_name")
     val userFullName: String,
-    @SerializedName("user_rating")
+    @SerializedName("rating")
     val userRating: Number
 )

@@ -31,7 +31,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
         setUpMapView()
         initBottomNavController()
         initObservers()
-        rideViewModel.getClientRideState()
     }
 
     private fun initListeners() {
@@ -45,15 +44,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
                 CancelRideUiState.Loading -> {}
                 CancelRideUiState.Success -> {
                    findNavController().navigateUp()
-                }
-            }
-        }
-        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {}
-                RideStateUiState.Loading -> {}
-                is RideStateUiState.Success -> {
-                    Log.i("RideFragment", "initObservers: ${rideStateUiState.rideState}")
                 }
             }
         }

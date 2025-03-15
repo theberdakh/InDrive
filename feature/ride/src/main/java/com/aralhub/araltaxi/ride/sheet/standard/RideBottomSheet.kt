@@ -38,29 +38,10 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
-        rideViewModel.getActiveRide()
+        //rideViewModel.getActiveRide()
     }
 
     private fun initObservers() {
-        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {}
-                RideStateUiState.Loading -> {}
-                is RideStateUiState.Success -> {
-                    when(rideStateUiState.rideState){
-                        is RideStatus.CanceledByDriver -> {}
-                        is RideStatus.DriverOnTheWay -> {}
-                        is RideStatus.DriverWaitingClient -> {}
-                        is RideStatus.RideCompleted -> {
-                            navigation.goToRideFinished()
-                        }
-                        is RideStatus.RideStarted -> {}
-                        is RideStatus.RideStartedAfterWaiting -> {}
-                        is RideStatus.Unknown -> {}
-                    }
-                }
-            }
-        }
 
     }
 

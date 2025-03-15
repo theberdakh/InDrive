@@ -45,29 +45,6 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
     }
 
     private fun initObservers() {
-        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {}
-                RideStateUiState.Loading -> {}
-                is RideStateUiState.Success -> {
-                    when(rideStateUiState.rideState){
-                        is RideStatus.CanceledByDriver -> {}
-                        is RideStatus.DriverOnTheWay -> {}
-                        is RideStatus.DriverWaitingClient -> {
-                            navigation.goToRide()
-                        }
-                        is RideStatus.RideCompleted -> {}
-                        is RideStatus.RideStarted -> {
-                            navigation.goToRide()
-                        }
-                        is RideStatus.RideStartedAfterWaiting -> {
-                            navigation.goToRide()
-                        }
-                        is RideStatus.Unknown -> {}
-                    }
-                }
-            }
-        }
     }
 
     private fun initRideData(rideData: Ride) {
