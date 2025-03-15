@@ -1,12 +1,12 @@
 package com.aralhub.network
 
-import com.aralhub.network.utils.ClientWebSocketEventNetwork
-import com.aralhub.network.utils.ClientWebSocketEventRide
+import com.aralhub.network.utils.ClientWebSocketEventRideMessage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface ClientRideNetworkDataSource {
 
-    suspend fun getRide(): Flow<ClientWebSocketEventRide>
+    suspend fun getRide(): SharedFlow<ClientWebSocketEventRideMessage>
 
     suspend fun close()
 }

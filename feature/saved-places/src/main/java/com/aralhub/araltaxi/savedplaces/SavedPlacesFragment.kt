@@ -14,6 +14,7 @@ import com.aralhub.ui.model.AddressItem
 import com.aralhub.ui.adapter.AddressItemAdapter
 import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.ViewEx.hide
 import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
@@ -34,6 +35,7 @@ class SavedPlacesFragment : Fragment(R.layout.fragment_saved_places) {
         initViews()
         initListeners()
         initObservers()
+        viewModel.getAllSavedAddresses()
     }
 
     private fun initViews() {
@@ -41,42 +43,31 @@ class SavedPlacesFragment : Fragment(R.layout.fragment_saved_places) {
     }
 
     private fun initObservers() {
-        viewModel.getAllSavedAddresses(38)
-        viewModel.savedPlacesUiState.onEach {
-            when (it) {
-                is SavedPlacesUiState.Error -> errorHandler.showToast(it.message)
+        observeState(viewModel.savedPlacesUiState){ savedPlacesUiState ->
+            when(savedPlacesUiState){
+                is SavedPlacesUiState.Error -> errorHandler.showToast(savedPlacesUiState.message)
                 SavedPlacesUiState.Loading -> {}
                 is SavedPlacesUiState.Success -> {
-                    if (it.data.isNotEmpty()){
+                    if (savedPlacesUiState.addresses.isNotEmpty()){
                         binding.tvNoSavedPlaces.hide()
-                        adapter.submitList(it.data.map { address ->
-                            AddressItem(
-                                id = address.id,
-                                name = address.name,
-                                address = address.address,
-                                category = AddressCategory.OTHER,
-                                latitude = address.latitude,
-                                longitude = address.longitude
-                            )
-                        })
+                        adapter.submitList(savedPlacesUiState.addresses)
                     } else {
                         binding.tvNoSavedPlaces.show()
                     }
-
                 }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
 
-        viewModel.createAddressUiState.onEach {
-            when (it) {
-                is CreateAddressUiState.Error -> errorHandler.showToast(it.message)
+        observeState(viewModel.createAddressUiState){ createAddressUiState ->
+            when(createAddressUiState){
+                is CreateAddressUiState.Error -> errorHandler.showToast(createAddressUiState.message)
                 CreateAddressUiState.Loading -> {}
                 is CreateAddressUiState.Success -> {
                     errorHandler.showToast("Address created successfully")
-                    viewModel.getAllSavedAddresses(38)
+                    viewModel.getAllSavedAddresses()
                 }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun initListeners() {

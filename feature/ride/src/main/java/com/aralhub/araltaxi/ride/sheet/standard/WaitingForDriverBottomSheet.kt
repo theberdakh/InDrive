@@ -39,6 +39,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     @Inject lateinit var errorHandler: ErrorHandler
     @Inject
     lateinit var navigation: FeatureRideBottomSheetNavigation
+    private var currentRideId = 0
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -48,21 +49,14 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
 
     private fun initListeners() {
         binding.btnCancel.setOnClickListener {
-            val currentRideId = rideViewModel.activeRideState.value.let { state ->
-                if (state is ActiveRideUiState.Success) state.activeRide.id else null
-            }
-            currentRideId?.let { rideId ->
+            currentRideId.let { rideId ->
                 CancelTripFragment().show(childFragmentManager, CancelTripFragment.TAG)
-                Log.i("WaitingForDriver", "rideId: $rideId")
                 rideViewModel.cancelRide(rideId)
-            }?: run {
-                errorHandler.showToast("Ride not found")
             }
         }
     }
 
     private fun initObservers() {
-        Log.i("WaitingForDriver", "initObservers: called")
       /*  lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED){
                 rideViewModel.rideState2.collect { state ->
@@ -100,7 +94,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
             }
         }
 
-        observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
+     /*   observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
             when(rideStateUiState){
                 is RideStateUiState.Error -> {}
                 RideStateUiState.Loading -> {}
@@ -118,7 +112,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                    }
                 }
             }
-        }
+        }*/
         observeState(rideViewModel.activeRideState){ activeRideState ->
             when(activeRideState){
                 is ActiveRideUiState.Error -> {
@@ -129,6 +123,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                     Log.i("RideBottomSheet", "initObservers: Loading")
                 }
                 is ActiveRideUiState.Success -> {
+                    currentRideId = activeRideState.activeRide.id
                     errorHandler.showToast("Success")
                   displayActiveRide(activeRideState.activeRide)
                     Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")

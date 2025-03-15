@@ -33,7 +33,7 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
         initListeners()
         initObservers()
         viewModel.getCancelCauses()
-        rideViewModel.getActiveRide()
+      //  rideViewModel.getActiveRide()
     }
 
     private fun initListeners() {

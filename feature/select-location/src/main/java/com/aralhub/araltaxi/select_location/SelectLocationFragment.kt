@@ -36,7 +36,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private lateinit var map: Map
     private lateinit var floatLandAnimation: FloatLandAnimation
     @Inject lateinit var errorHandler: ErrorHandler
-
     private val viewModel by viewModels<SelectLocationViewModel>()
     private val binding by viewBinding(FragmentSelectLocationBinding::bind)
     private val movementHandler = Handler(Looper.getMainLooper())
@@ -120,6 +119,8 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
 
     private fun initListeners() {
         binding.btnSelectLocation.setOnClickListener {
+            Log.i("Location", "Selected $locationOwner")
+            Log.i("Location", "Selected lat $selectedLatitude")
             val result = Bundle().apply {
                 putDouble("latitude", selectedLatitude)
                 putDouble("longitude", selectedLongitude)

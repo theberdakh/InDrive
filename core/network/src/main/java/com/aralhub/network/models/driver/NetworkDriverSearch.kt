@@ -7,6 +7,6 @@ data class NetworkDriverSearch(
     val userId: Int,
     @SerializedName("full_name")
     val userFullName: String,
-    @SerializedName("user_rating")
-    val userRating: Number?
+    @SerializedName("rating")
+    val userRating: Number
 )
