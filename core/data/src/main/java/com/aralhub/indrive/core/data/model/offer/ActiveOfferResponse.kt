@@ -67,7 +67,7 @@ fun NetworkActiveRideByDriverResponse.toActiveOfferDomain(): ActiveOfferResponse
             pickUpDistance = distance.toDouble(),
             roadDistance = distance.toDouble(),
             paymentType = paymentMethod.id,
-            pickUpAddress = locations.points.getOrNull(1)?.name,
+            pickUpAddress = locations.points.getOrNull(0)?.name,
             destinationAddress = locations.points.getOrNull(1)?.name,
             locations = locations.points.map {
                 ClientRideLocationsItems(

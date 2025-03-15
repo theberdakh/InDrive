@@ -1,29 +1,102 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetReasonCancelBinding
+import com.aralhub.araltaxi.driver.orders.orders.OrdersViewModel
+import com.aralhub.araltaxi.driver.orders.orders.RideCancelUiState
+import com.aralhub.ui.dialog.ErrorMessageDialog
+import com.aralhub.ui.dialog.LoadingDialog
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ReasonCancelModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_reason_cancel) {
 
     private val binding by viewBinding(ModalBottomSheetReasonCancelBinding::bind)
 
-    private val tripCanceledModalBottomSheet = TripCanceledModalBottomSheet()
+    private val viewModel by viewModels<OrdersViewModel>()
+
+    private var errorDialog: ErrorMessageDialog? = null
+    private var loadingDialog: LoadingDialog? = null
+
+    private var action: () -> Unit = {}
+    fun setOnRideCancelledListener(action: () -> Unit) {
+        this.action = action
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        errorDialog = ErrorMessageDialog(context)
+        loadingDialog = LoadingDialog(context)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        isCancelable = false
+
+        setupListeners()
+        setupObservers()
+
+    }
+
+    private fun setupListeners() {
         binding.btnSend.setOnClickListener {
-            dismissAllowingStateLoss()
-            tripCanceledModalBottomSheet.show(
-                childFragmentManager,
-                TripCanceledModalBottomSheet.TAG
-            )
+            val rideId = arguments?.getInt("rideId")
+            rideId?.let { id -> viewModel.cancelRide(id, 2) }
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.rideCanceledResult.onEach { result ->
+            when (result) {
+                is RideCancelUiState.Error -> {
+                    showErrorDialog(result.message)
+                }
+
+                RideCancelUiState.Loading -> {
+                    showLoading()
+                }
+
+                RideCancelUiState.Success -> {
+                    dismissLoading()
+                    action.invoke()
+                }
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun showErrorDialog(errorMessage: String?) {
+        dismissLoading()
+        errorDialog?.show(errorMessage)
+    }
+
+    private fun showLoading() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            loadingDialog?.show()
+        }
+    }
+
+    private fun dismissLoading() {
+        loadingDialog?.dismiss()
+    }
+
+    private fun dismissErrorDialog() {
+        errorDialog?.dismiss()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dismissErrorDialog()
+        dismissLoading()
     }
 
     companion object {

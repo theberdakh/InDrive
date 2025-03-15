@@ -4,7 +4,6 @@ import com.aralhub.indrive.core.data.model.driver.DriverBalance
 import com.aralhub.indrive.core.data.model.driver.DriverBalanceInfo
 import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.driver.DriverInfo
-import com.aralhub.indrive.core.data.model.driver.DriverProfile
 import com.aralhub.indrive.core.data.model.driver.DriverProfileWithVehicle
 import com.aralhub.indrive.core.data.model.location.SendLocationRequest
 import com.aralhub.indrive.core.data.model.location.toDTO2

@@ -137,7 +137,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
-                    delay(10000)
+                    delay(60000)
                     orderLoadingModalBottomSheet.dismissAllowingStateLoss()
                 }
             }

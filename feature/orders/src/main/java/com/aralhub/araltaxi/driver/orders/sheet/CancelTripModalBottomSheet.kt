@@ -1,33 +1,36 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetCancelTripBinding
-import com.aralhub.araltaxi.driver.orders.orders.OrdersViewModel
+import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
-@AndroidEntryPoint
 class CancelTripModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_cancel_trip) {
 
     private val binding by viewBinding(ModalBottomSheetCancelTripBinding::bind)
 
-    private val viewModel by viewModels<OrdersViewModel>()
+    private var order: OrderItem? = null
 
-    private val reasonCancelModalBottomSheet = ReasonCancelModalBottomSheet()
+    private var action: (order: OrderItem?) -> Unit = {}
+    fun setOnRideCancelClickListener(action: (order: OrderItem?) -> Unit) {
+        this.action = action
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        order = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("OrderDetail", OrderItem::class.java)
+        } else {
+            arguments?.getParcelable("OrderDetail")
+        }
+
         setupListeners()
-        setupObservers()
 
     }
 
@@ -36,19 +39,8 @@ class CancelTripModalBottomSheet :
             dismissAllowingStateLoss()
         }
         binding.btnCancel.setOnClickListener {
-            val rideId = arguments?.getInt("rideId")
-            rideId?.let { id -> viewModel.cancelRide(id, 2) }
+            action.invoke(order)
         }
-    }
-
-    private fun setupObservers() {
-        viewModel.rideCanceledResult.onEach { rideId ->
-            dismissAllowingStateLoss()
-            reasonCancelModalBottomSheet.show(
-                childFragmentManager,
-                ReasonCancelModalBottomSheet.TAG
-            )
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     companion object {

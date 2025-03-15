@@ -18,13 +18,13 @@ class RideModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_she
 
     private var order: OrderItem? = null
 
-    private var rideFinishedListener: () -> Unit = {}
-    fun setOnRideFinishedListener(onRideFinished: () -> Unit) {
+    private var rideFinishedListener: (order: OrderItem?) -> Unit = {}
+    fun setOnRideFinishedListener(onRideFinished: (order: OrderItem?) -> Unit) {
         this.rideFinishedListener = onRideFinished
     }
 
-    private var rideCanceledListener: () -> Unit = {}
-    fun setOnRideCanceledListener(onRideCanceled: () -> Unit) {
+    private var rideCanceledListener: (order: OrderItem?) -> Unit = {}
+    fun setOnRideCanceledListener(onRideCanceled: (order: OrderItem?) -> Unit) {
         this.rideCanceledListener = onRideCanceled
     }
 
@@ -46,11 +46,11 @@ class RideModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_she
 
     private fun setupListeners() {
         binding.btnCancel.setOnClickListener {
-            rideCanceledListener.invoke()
+            rideCanceledListener.invoke(order)
         }
         binding.slideButtonFinish.setOnSlideChangeListener {
             if (it == 1f) {
-                rideFinishedListener.invoke()
+                rideFinishedListener.invoke(order)
             }
         }
     }

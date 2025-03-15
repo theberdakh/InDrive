@@ -112,7 +112,7 @@ class OrdersViewModel @Inject constructor(
                 }
 
                 is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.OfferAccepted(it.rideId)
+                    GetActiveOrdersUiState.OfferAccepted(it.data.asUI())
                 }
 
                 is WebSocketEvent.RideCancel -> {
@@ -151,7 +151,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferAccepted -> {
-                GetActiveOrdersUiState.OfferAccepted(result.rideId)
+                GetActiveOrdersUiState.OfferAccepted(result.data)
             }
 
             is GetActiveOrdersUiState.OrderCanceled -> {
@@ -179,15 +179,19 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private var _rideCanceledResult = MutableSharedFlow<Int?>()
+    private var _rideCanceledResult = MutableSharedFlow<RideCancelUiState>()
     val rideCanceledResult = _rideCanceledResult.asSharedFlow()
     fun cancelRide(rideId: Int, cancelCauseId: Int) {
         viewModelScope.launch {
+            _rideCanceledResult.emit(RideCancelUiState.Loading)
             repository.cancelRide(rideId, cancelCauseId).let { result ->
                 when (result) {
-                    is Result.Error -> {}
+                    is Result.Error -> {
+                        _rideCanceledResult.emit(RideCancelUiState.Error(result.message))
+                    }
+
                     is Result.Success -> {
-                        _rideCanceledResult.emit(0)
+                        _rideCanceledResult.emit(RideCancelUiState.Success)
                     }
                 }
             }
@@ -243,7 +247,7 @@ sealed interface GetActiveOrdersUiState {
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
     data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
-    data class OfferAccepted(val rideId: Int) : GetActiveOrdersUiState
+    data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 
@@ -256,4 +260,10 @@ sealed interface ProfileUiState {
     data object Loading : ProfileUiState
     data class Success(val driverProfile: DriverInfo) : ProfileUiState
     data class Error(val message: String) : ProfileUiState
+}
+
+sealed interface RideCancelUiState {
+    data object Loading : RideCancelUiState
+    data object Success : RideCancelUiState
+    data class Error(val message: String) : RideCancelUiState
 }
