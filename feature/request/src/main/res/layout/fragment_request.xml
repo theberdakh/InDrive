@@ -99,6 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
+                app:startIconDrawable="@drawable/ic_start_location"
                 android:hint="@string/hint_from_location"
                 app:endText="Karta"
                 app:hintTextColor="@color/color_tertiary" />
@@ -107,6 +108,7 @@
                 android:id="@+id/et_to_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_end_location"
                 android:layout_margin="@dimen/margin_medium"
                 android:hint="@string/hint_to_location"
                 app:endText="Karta"
