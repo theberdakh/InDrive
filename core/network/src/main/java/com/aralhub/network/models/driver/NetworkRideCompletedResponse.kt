@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class NetworkRideCompletedResponse(
     val amount: Int,
     @SerializedName("wait_amount")
-    val waitAmount: Int,
+    val waitAmount: Double,
     @SerializedName("total_amount")
     val totalAmount: Int,
     @SerializedName("commission_amount")

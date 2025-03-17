@@ -7,7 +7,7 @@ data class OfferAcceptedResponse(
     val uuid: String,
     val status: String,
     val amount: Int,
-    val waitAmount: Int,
+    val waitAmount: Double,
     val distance: Float,
     val locations: List<ClientRideLocationsItems>,
     val isActive: Boolean,

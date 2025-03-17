@@ -12,7 +12,7 @@ data class NetworkActiveRideByDriverResponse(
     val status: String,
     val amount: Int,
     @SerializedName("wait_amount")
-    val waitAmount: Int,
+    val waitAmount: Double,
     val distance: Float,
     val locations: Locations,
     @SerializedName("is_active")

@@ -40,7 +40,7 @@ data class ActiveRide(
     val uuid: String,
     val status: String,
     val amount: Int,
-    val waitAmount: Int,
+    val waitAmount: Double,
     val distance: Double,
     val locations: SearchRideLocations,
     val isActive: Boolean,
