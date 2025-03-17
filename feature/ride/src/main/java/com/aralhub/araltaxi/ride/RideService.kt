@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -20,11 +22,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RideService: Service() {
+class RideService : Service() {
     @Inject lateinit var useCase: GetClientRideStatusUseCase
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private lateinit var notificationManager: NotificationManager
+
     override fun onBind(intent: Intent): IBinder? = null
 
     override fun onCreate() {
@@ -36,18 +39,18 @@ class RideService: Service() {
     private fun observeStates() {
         scope.launch {
             useCase().collect {
-                updateNotification(when(it) {
-                    is RideStatus.DriverOnTheWay -> "Driver is on the way"
-                    is RideStatus.DriverWaitingClient -> "Driver is waiting for you"
-                    is RideStatus.PaidWaiting -> "Paid waiting"
-                    is RideStatus.PaidWaitingStarted -> "Paid waiting started"
-                    is RideStatus.RideCompleted -> "Ride completed"
-                    is RideStatus.RideStarted -> "Ride started"
-                    is RideStatus.Unknown -> "Unknown"
-                })
+                val message = when (it) {
+                    is RideStatus.DriverOnTheWay -> it.message
+                    is RideStatus.DriverWaitingClient -> it.message
+                    is RideStatus.PaidWaiting -> it.message
+                    is RideStatus.PaidWaitingStarted -> it.message
+                    is RideStatus.RideCompleted -> it.message
+                    is RideStatus.RideStarted -> it.message
+                    is RideStatus.Unknown -> it.error
+                }
+                updateNotification(message, it is RideStatus.DriverWaitingClient)
             }
         }
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -59,20 +62,31 @@ class RideService: Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
             .build()
-        val foregroundServiceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC } else { UNSPECIFIED_FOREGROUND_SERVICE_TYPE }
+        val foregroundServiceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        } else {
+            UNSPECIFIED_FOREGROUND_SERVICE_TYPE
+        }
         ServiceCompat.startForeground(this, ID, notification, foregroundServiceType)
 
         return START_STICKY
     }
 
-    private fun updateNotification(text: String) {
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+    private fun updateNotification(text: String, playSound: Boolean = false) {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Ride is going...")
             .setContentText(text)
             .setSmallIcon(R.drawable.notification_icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
-            .build()
+
+        // Add sound only when playSound is true (i.e., for DriverWaitingClient)
+        if (playSound) {
+            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            builder.setSound(soundUri)
+        }
+
+        val notification = builder.build()
 
         scope.launch(Dispatchers.Main) {
             notificationManager.notify(ID, notification)
@@ -84,7 +98,16 @@ class RideService: Service() {
             CHANNEL_ID,
             CHANNEL_NAME,
             NotificationManager.IMPORTANCE_HIGH
-        )
+        ).apply {
+            // Configure channel to allow sound
+            setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
 
         notificationManager.createNotificationChannel(channel)
     }
@@ -94,13 +117,10 @@ class RideService: Service() {
         job.cancel()
     }
 
-
     companion object {
         const val CHANNEL_ID = "location_channel"
         const val CHANNEL_NAME = "Foreground Service Channel"
         const val UNSPECIFIED_FOREGROUND_SERVICE_TYPE = 0
         const val ID = 100
     }
-
-
 }

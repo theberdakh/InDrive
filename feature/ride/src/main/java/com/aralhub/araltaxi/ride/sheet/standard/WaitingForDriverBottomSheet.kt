@@ -51,7 +51,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
         binding.btnCancel.setOnClickListener {
             currentRideId.let { rideId ->
                 CancelTripFragment().show(childFragmentManager, CancelTripFragment.TAG)
-                rideViewModel.cancelRide(rideId)
             }
         }
     }
