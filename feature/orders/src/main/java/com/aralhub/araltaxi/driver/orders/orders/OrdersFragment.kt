@@ -1,13 +1,17 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -47,6 +51,8 @@ import com.aralhub.ui.utils.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -83,6 +89,8 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private var soundManager: SoundManager? = null
 
+    private var fusedLocationClient: FusedLocationProviderClient? = null
+
     @Inject
     lateinit var navigation: FeatureOrdersNavigation
 
@@ -97,6 +105,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         super.onViewCreated(view, savedInstanceState)
 
         startService()
+        initData()
         fetchData()
         initViews()
         initObservers()
@@ -108,19 +117,38 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     }
 
-    private fun fetchData() {
+    private fun initData() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+    }
 
+    private fun getExistingOrders() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient?.lastLocation
+                ?.addOnSuccessListener { location: Location? ->
+                    // Got last known location. In some rare situations this can be null.
+                    location?.let {
+                        viewModel.getExistingOrders(
+                            SendDriverLocationUI(
+                                latitude = it.latitude,
+                                longitude = it.longitude,
+                                distance = 500000
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun fetchData() {
+        getExistingOrders()
         arguments?.let {
             showActiveRideSheet()
         }
-
-        viewModel.getExistingOrders(
-            SendDriverLocationUI(
-                latitude = 42.41268,
-                longitude = 59.688043,
-                distance = 500000
-            )
-        )
         viewModel.getDriverProfile()
     }
 
@@ -128,25 +156,33 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         val status = arguments?.getString("Status") ?: ""
         when (status) {
             "driver_on_the_way" -> {
-                goingToPickUpModalBottomSheet.arguments = arguments
-                goingToPickUpModalBottomSheet.show(
-                    childFragmentManager,
-                    GoingToPickUpModalBottomSheet.TAG
-                )
+                if (!goingToPickUpModalBottomSheet.isAdded) {
+                    goingToPickUpModalBottomSheet.arguments = arguments
+                    goingToPickUpModalBottomSheet.show(
+                        childFragmentManager,
+                        GoingToPickUpModalBottomSheet.TAG
+                    )
+                }
             }
+
             "driver_waiting_client" -> {
-                waitingForClientModalBottomSheet.arguments = arguments
-                waitingForClientModalBottomSheet.show(
-                    childFragmentManager,
-                    WaitingForClientModalBottomSheet.TAG
-                )
+                if (!waitingForClientModalBottomSheet.isAdded) {
+                    waitingForClientModalBottomSheet.arguments = arguments
+                    waitingForClientModalBottomSheet.show(
+                        childFragmentManager,
+                        WaitingForClientModalBottomSheet.TAG
+                    )
+                }
             }
+
             "ride_started" -> {
-                rideModalBottomSheet.arguments = arguments
-                rideModalBottomSheet.show(
-                    childFragmentManager,
-                    RideModalBottomSheet.TAG
-                )
+                if (!rideModalBottomSheet.isAdded) {
+                    rideModalBottomSheet.arguments = arguments
+                    rideModalBottomSheet.show(
+                        childFragmentManager,
+                        RideModalBottomSheet.TAG
+                    )
+                }
             }
         }
     }
@@ -345,13 +381,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
         rideCanceledByPassengerModalBottomSheet.setOnUnderstandClickListener {
             dismissAllBottomSheets()
-            viewModel.getExistingOrders(
-                SendDriverLocationUI(
-                    latitude = 42.41268,
-                    longitude = 59.688043,
-                    distance = 500000
-                )
-            )
+            getExistingOrders()
         }
     }
 
@@ -370,13 +400,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         tripCanceledModalBottomSheet.setOnCloseListener {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
             dismissAllBottomSheets()
-            viewModel.getExistingOrders(
-                SendDriverLocationUI(
-                    latitude = 42.41268,
-                    longitude = 59.688043,
-                    distance = 500000
-                )
-            )
+            getExistingOrders()
         }
 
         reasonCancelModalBottomSheet.setOnRideCancelledListener {
@@ -395,13 +419,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 order!!.id,
                 RideStatus.RIDE_COMPLETED.status
             )
-            viewModel.getExistingOrders(
-                SendDriverLocationUI(
-                    latitude = 42.41268,
-                    longitude = 59.688043,
-                    distance = 500000
-                )
-            )
+            getExistingOrders()
         }
         rideModalBottomSheet.setOnRideCanceledListener {
             cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)

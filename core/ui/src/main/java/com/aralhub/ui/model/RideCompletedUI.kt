@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RideCompletedUI(
     val amount: Int,
-    val waitAmount: Int,
+    val waitAmount: Double,
     val totalAmount: Int,
     val commissionAmount: Int,
     val cashbackAmount: Double?,

@@ -4,7 +4,7 @@ import com.aralhub.network.models.driver.NetworkRideCompletedResponse
 
 data class RideCompleted(
     val amount: Int,
-    val waitAmount: Int,
+    val waitAmount: Double,
     val totalAmount: Int,
     val commissionAmount: Int,
     val cashbackAmount: Double?,

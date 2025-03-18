@@ -30,7 +30,7 @@ data class NetworkRideActive(
     val status: String,
     val amount: Int,
     @SerializedName("wait_amount")
-    val waitAmount: Int,
+    val waitAmount: Double,
     val distance: Double,
     val locations: NetworkLocations,
     @SerializedName("is_active")
