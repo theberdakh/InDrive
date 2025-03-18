@@ -63,6 +63,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         private var currentLongitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
         private var currentLatitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
     }
+
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
@@ -90,7 +91,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-     locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         observeStates()
         initViews()
         initListeners()
@@ -114,8 +115,16 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        if (PermissionHelper.arePermissionsGranted(requireContext(), listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+        if (PermissionHelper.arePermissionsGranted(
+                requireContext(),
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        ) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
                 LOCATION_REQUEST_MIN_TIME,
                 LOCATION_REQUEST_MIN_DISTANCE
             ) { location ->
@@ -145,7 +154,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 binding.etToLocation.text = ""
             }
         }
-        observeState(requestViewModel2.navigateToCreateOrderFlow){ selectedLocations ->
+        observeState(requestViewModel2.navigateToCreateOrderFlow) { selectedLocations ->
             if (!isNavigatedToCreateOrderFragment && selectedLocations != null) {
                 isNavigatedToCreateOrderFragment = true
                 navigation.goToCreateOrderFromRequestFragment(selectedLocations)
@@ -226,7 +235,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
 
         val textFields = listOf(binding.etFromLocation, binding.etToLocation)
-        for (textField in textFields){
+        for (textField in textFields) {
             textField.setOnActivatedListener {
                 textField.setEndTextVisible(it)
             }
@@ -290,7 +299,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
 
-        parentFragmentManager.setFragmentResultListener(CREATE_ORDER_REQUEST_KEY, viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener(
+            CREATE_ORDER_REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, _ ->
             isNavigatedToCreateOrderFragment = false
         }
     }
@@ -299,12 +311,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         adapter.setOnItemClickListener {
             when (it.clickOwner) {
                 LocationItemClickOwner.FROM -> {
-                    requestViewModel2.setFromLocation( SelectedLocation(
-                        name = it.title,
-                        longitude = it.longitude,
-                        latitude = it.latitude,
-                        locationType = LocationType.FROM
-                    ))
+                    requestViewModel2.setFromLocation(
+                        SelectedLocation(
+                            name = it.title,
+                            longitude = it.longitude,
+                            latitude = it.latitude,
+                            locationType = LocationType.FROM
+                        )
+                    )
                     adapter.submitList(null)
                 }
 
@@ -405,7 +419,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun updateMap(longitude: Double, latitude: Double) {
-       val  imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
         placeMarkObject?.let {
             it.geometry = Point(latitude, longitude)
         } ?: run {

@@ -6,8 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientAcceptOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientDeclineOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetOffersUseCase
+import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
 import com.aralhub.indrive.core.data.model.offer.Offer
+import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.indrive.core.data.result.fold
 import com.aralhub.indrive.core.data.util.ClientWebSocketEvent
 import com.aralhub.ui.model.OfferItem
 import com.aralhub.ui.model.OfferItemDriver
@@ -16,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,14 +27,34 @@ import javax.inject.Inject
 class OffersViewModel @Inject constructor(
     private val getOffersUseCase: ClientGetOffersUseCase,
     private val acceptOfferUseCase: ClientAcceptOfferUseCase,
-    private val declineOfferUseCase: ClientDeclineOfferUseCase
+    private val declineOfferUseCase: ClientDeclineOfferUseCase,
+    private val getClientGetSearchRideUseCase: ClientGetSearchRideUseCase
 ) : ViewModel() {
     private var _offersUiState = MutableStateFlow<OffersUiState>(OffersUiState.Loading)
     val offersUiState = _offersUiState.asSharedFlow()
 
+    private var _searchRideUiState = MutableStateFlow<SearchRideUiState>(SearchRideUiState.Loading)
+    val searchRideUiState = _searchRideUiState.asStateFlow()
+
     init {
         startExpirationChecker()
+        getSearchRide()
     }
+
+    private fun getSearchRide() {
+        viewModelScope.launch {
+            _searchRideUiState.emit(getClientGetSearchRideUseCase().fold(
+                onSuccess = {
+                    SearchRideUiState.Success(it)
+                },
+                onError = {
+                    SearchRideUiState.Error(it)
+                }
+            ))
+        }
+
+    }
+
 
     private fun startExpirationChecker() = viewModelScope.launch {
         while (true) {
@@ -157,4 +181,10 @@ sealed interface DeclineOfferUiState {
     data object Loading : DeclineOfferUiState
     data class Success(val position: Int) : DeclineOfferUiState
     data class Error(val message: String) : DeclineOfferUiState
+}
+
+sealed interface SearchRideUiState {
+    data class Success(val searchRide: SearchRide): SearchRideUiState
+    data object Loading: SearchRideUiState
+    data class Error(val message: String): SearchRideUiState
 }

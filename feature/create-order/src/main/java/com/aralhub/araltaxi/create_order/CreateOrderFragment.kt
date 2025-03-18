@@ -7,6 +7,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.View
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
@@ -214,6 +215,18 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                 )
             )
 
+            Log.i("Locations", "${listOf(
+                GeoPoint(
+                    latitude = it.from.latitude,
+                    longitude = it.from.longitude,
+                    name = it.from.name
+                ),
+                GeoPoint(
+                    latitude = it.to.latitude,
+                    longitude = it.to.longitude,
+                    name = it.to.name
+                )
+            )}")
             requestRoutes(it)
             binding.tvFromLocationName.text = it.from.name
             binding.tvToLocationName.text = it.to.name
