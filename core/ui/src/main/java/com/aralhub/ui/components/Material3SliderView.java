@@ -185,13 +185,18 @@ public class Material3SliderView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (isInThumbRange(x)) {
+                // Проверяем, если пользователь нажал на дорожку, но не на сам ползунок
+                if (!isInThumbRange(x)) {
+                    // Устанавливаем ближайшее значение по X
+                    updateValueFromX(x);
+                    animatePressed(true);
+                    return true;
+                } else {
                     isDragging = true;
                     animatePressed(true);
                     updateValueFromX(x);
                     return true;
                 }
-                break;
 
             case MotionEvent.ACTION_MOVE:
                 if (isDragging) {
@@ -208,11 +213,13 @@ public class Material3SliderView extends View {
                     updateValueFromX(x);
                     return true;
                 }
-                break;
+                animatePressed(false); // Анимация исчезновения
+                return true;
         }
 
         return super.onTouchEvent(event);
     }
+
 
     private boolean isInThumbRange(float x) {
         return Math.abs(x - thumbX) <= haloRadius;
