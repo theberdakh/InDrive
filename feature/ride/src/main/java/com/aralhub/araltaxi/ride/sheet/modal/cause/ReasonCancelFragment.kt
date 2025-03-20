@@ -37,17 +37,7 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
 
     private fun initListeners() {
         binding.btnSend.setOnClickListener {
-            if (rideId != -1){
-                val reasonId = adapter.currentList.find { it.isSelected }?.id
-                reasonId?.let { id ->
-                    rideViewModel.cancelRideWithReason(rideId, id)
-                } ?: run {
-                   rideViewModel.cancelRide(rideId)
-                }
-            } else {
-                errorHandler.showToast("Ride not found")
-            }
-
+            rideViewModel.cancelRide(rideId)
         }
     }
 
@@ -61,6 +51,25 @@ class ReasonCancelFragment: BottomSheetDialogFragment(R.layout.fragment_reason_c
                 is CancelRideUiState.Error -> {
                     errorHandler.showToast(cancelRideUiState.message)
                 }
+                CancelRideUiState.Loading -> {}
+                CancelRideUiState.Success -> {
+                    if (rideId != -1){
+                        val reasonId = adapter.currentList.find { it.isSelected }?.id
+                        reasonId?.let { id ->
+                            rideViewModel.cancelRideWithReason(rideId, id)
+                        } ?: run {
+                            dismissAllowingStateLoss()
+                        }
+                    } else {
+                        errorHandler.showToast("Ride not found")
+                    }
+                }
+            }
+        }
+
+        observeState(rideViewModel.cancelRideWithReasonState){cancelRideUiState ->
+            when(cancelRideUiState){
+                is CancelRideUiState.Error -> {}
                 CancelRideUiState.Loading -> {}
                 CancelRideUiState.Success -> {
                     dismissAllowingStateLoss()

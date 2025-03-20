@@ -10,6 +10,7 @@ import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.WaitingTimeFragment
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,6 +31,7 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
     }
 
     private fun initObservers() {
+
         /*
         observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
             when(rideStateUiState){

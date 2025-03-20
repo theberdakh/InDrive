@@ -460,17 +460,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun updateMap(longitude: Double, latitude: Double) {
         Log.i("RequestFragment", "Update Map")
-        placeMarkObject = null
-        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
         placeMarkObject?.let {
-            it.geometry = Point(latitude, longitude)
-            Log.i("RequestFragment", "Update Map not null ${ binding.mapView.mapWindow.map.mapObjects.isVisible}")
-        } ?: run {
-            Log.i("RequestFragment", "Update Map placemarkobject null")
-            placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
-                geometry = Point(latitude, longitude)
-                setIcon(imageProvider)
-            }
+            binding.mapView.mapWindow.map.mapObjects.clear()
+        }
+        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+        placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+            geometry = Point(latitude, longitude)
+            setIcon(imageProvider)
+            isVisible = true
         }
         binding.mapView.mapWindow.map.move(
             CameraPosition(Point(latitude, longitude), 17.0f, 150.0f, 30.0f)

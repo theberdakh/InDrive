@@ -35,11 +35,13 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
         setUpMapView()
         initBottomNavController()
         initObservers()
+        startService()
         rideViewModel.getClientRideState()
     }
 
     private fun startService() {
         val intent = Intent(requireContext(), RideService::class.java)
+        Log.i("RideService", "startService")
         requireActivity().startService(intent)
     }
 
@@ -48,21 +50,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     }
 
     private fun initObservers() {
-
-        observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {
-                    Log.i("Ride state", "RideFragment: Error")
-                }
-                RideStateUiState.Loading -> {
-                    Log.i("Ride state", "RideFragment: Loading")
-                }
-                is RideStateUiState.Success -> {
-                    Log.i("Ride state", "RideFragment: Success")
-                    startService()
-                }
-            }
-        }
         observeState(rideViewModel.cancelRideState){ cancelRideUiState ->
             when(cancelRideUiState){
                 is CancelRideUiState.Error -> {}

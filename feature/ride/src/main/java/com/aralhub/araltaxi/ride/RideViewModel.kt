@@ -44,6 +44,10 @@ class RideViewModel @Inject constructor(
 
     private val _cancelRideState = MutableSharedFlow<CancelRideUiState>()
     val cancelRideState = _cancelRideState.asSharedFlow()
+
+    private val _cancelRideWithReasonState = MutableSharedFlow<CancelRideUiState>()
+    val cancelRideWithReasonState = _cancelRideWithReasonState.asSharedFlow()
+
     fun cancelRide(rideId: Int) = viewModelScope.launch {
         cancelRideWithoutReasonUseCase(rideId).let {
             when (it) {
@@ -62,11 +66,11 @@ class RideViewModel @Inject constructor(
         cancelRideWithReasonUseCase(rideId, reasonId).let {
             when (it) {
                 is Result.Error -> {
-                    _cancelRideState.emit(CancelRideUiState.Error(it.message))
+                    _cancelRideWithReasonState.emit(CancelRideUiState.Error(it.message))
                 }
 
                 is Result.Success -> {
-                    _cancelRideState.emit(CancelRideUiState.Success)
+                    _cancelRideWithReasonState.emit(CancelRideUiState.Success)
                 }
             }
         }
