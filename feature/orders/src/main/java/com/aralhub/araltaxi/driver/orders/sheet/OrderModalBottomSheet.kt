@@ -8,6 +8,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.araltaxi.driver.orders.orders.CreateOfferUiState
@@ -72,6 +73,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
         etPrice.setText(getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice))
         tvClientName.text = order?.name
+        tvRecommendPrice.text = getString(R.string.recommend_price, getString(com.aralhub.ui.R.string.standard_uzs_price, order?.recommendedPrice))
         tvDistance.text = order?.roadDistance
         tvDistanceToClient.text = order?.pickUpDistance
         tvFromLocation.text = order?.pickUpAddress
@@ -89,6 +91,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
             offerAmount = binding.etPrice.text?.filter { it.isDigit() }.toString().toInt()
+            Log.i(TAG, "setupListeners: $order")
             if (order != null) {
                 offerViewModel.createOffer(
                     order!!.uuid,
@@ -126,10 +129,14 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             when (result) {
                 is CreateOfferUiState.Error -> {
                     //show error
+                    binding.btnSendOffer.isEnabled = true
                 }
 
-                CreateOfferUiState.Loading -> {}
+                CreateOfferUiState.Loading -> {
+                    binding.btnSendOffer.isEnabled = false
+                }
                 is CreateOfferUiState.Success -> {
+                    binding.btnSendOffer.isEnabled = true
                     val bundle = Bundle()
                     val customOfferAmount = binding.etPrice.text.toString()
                     val offerAmount = customOfferAmount.ifEmpty {
@@ -144,7 +151,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         OrderLoadingModalBottomSheet.TAG
                     )
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        delay(60000)
+                        delay(10000)
                         orderLoadingModalBottomSheet.dismissAllowingStateLoss()
                     }
                 }

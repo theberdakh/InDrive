@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.utils.mockFlow
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.araltaxi.driver.orders.model.RideStatus
@@ -55,6 +56,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -192,6 +195,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         requireActivity().startService(intent)
     }
 
+    private fun stopService() {
+        val intent = Intent(requireContext(), LocationService::class.java)
+        requireActivity().stopService(intent)
+    }
+
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ordersListState.collect { orders ->
@@ -220,7 +228,9 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
+                viewModel.ordersState
+                    .collectLatest { getActiveOrdersUiState ->
+                    Log.d("OrdersFragment", "initObservers: $getActiveOrdersUiState")
                     when (getActiveOrdersUiState) {
                         is GetActiveOrdersUiState.Error -> showErrorDialog(getActiveOrdersUiState.message)
 
@@ -231,7 +241,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         }
 
                         is GetActiveOrdersUiState.OfferRejected -> {
-
                         }
 
                         is GetActiveOrdersUiState.OfferAccepted -> {
@@ -254,7 +263,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                         }
 
                         is GetActiveOrdersUiState.GetNewOrder -> {
-//                            adapter.submitList(orders)
                             soundManager?.playSound()
                             binding.tvOrdersNotFound.invisible()
                         }
@@ -263,7 +271,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             dismissLoading()
                             if (getActiveOrdersUiState.data.isNotEmpty()) {
                                 binding.tvOrdersNotFound.invisible()
-//                                adapter.submitList(getActiveOrdersUiState.data)
+                                adapter.submitList(getActiveOrdersUiState.data)
                             } else {
                                 binding.tvOrdersNotFound.show()
                             }
@@ -561,6 +569,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         super.onDestroyView()
         dismissErrorDialog()
         dismissLoading()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        stopService()
     }
 
 }

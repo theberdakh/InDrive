@@ -251,12 +251,13 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_recommend_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:drawablePadding="@dimen/padding_small"
             android:gravity="center_vertical"
-            android:text="Usınıs etilgen baha 12 000 som"
+            android:text="@string/recommend_price"
             android:textColor="@color/color_content_secondary"
             app:drawableStartCompat="@drawable/ic_info" />
 

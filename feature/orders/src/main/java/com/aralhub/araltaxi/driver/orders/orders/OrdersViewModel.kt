@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
@@ -104,7 +105,7 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private val ordersState = getActiveOrdersUseCase
+    private val webSocketOrdersState = getActiveOrdersUseCase
         .invoke()
         .map {
             when (it) {
@@ -123,6 +124,7 @@ class OrdersViewModel @Inject constructor(
                 }
 
                 is WebSocketEvent.OfferReject -> {
+                    rejectOfferState.emit(Unit)
                     GetActiveOrdersUiState.OfferRejected(it.rideUUID)
                 }
 
@@ -139,9 +141,9 @@ class OrdersViewModel @Inject constructor(
             GetActiveOrdersUiState.Loading
         )
 
-    val combinedOrdersState = merge(
+    val ordersState = merge(
         existingOrdersState,
-        ordersState
+        webSocketOrdersState
     ).map { result ->
         when (result) {
             is GetActiveOrdersUiState.GetExistOrder -> {
@@ -161,7 +163,7 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferRejected -> {
-                rejectOfferState.emit(result.rideUUID)
+                Log.d("OrdersViewModel", "ordersState: ${result.rideUUID}")
                 GetActiveOrdersUiState.OfferRejected(result.rideUUID)
             }
 
