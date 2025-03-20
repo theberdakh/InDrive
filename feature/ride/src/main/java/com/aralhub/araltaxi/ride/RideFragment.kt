@@ -31,7 +31,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     private val rideViewModel by activityViewModels<RideViewModel>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startService()
         initListeners()
         setUpMapView()
         initBottomNavController()
@@ -53,22 +52,14 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
         observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
             when(rideStateUiState){
                 is RideStateUiState.Error -> {
-                    Log.i("RideFragment", "initObservers: Loading")
+                    Log.i("Ride state", "RideFragment: Error")
                 }
                 RideStateUiState.Loading -> {
-                    Log.i("RideFragment", "initObservers: Loading")
+                    Log.i("Ride state", "RideFragment: Loading")
                 }
                 is RideStateUiState.Success -> {
-                    Log.i("RideFragment", "initObservers: ${rideStateUiState.rideState}")
-                    when(rideStateUiState.rideState){
-                        is RideStatus.DriverOnTheWay -> errorHandler.showToast("Driver is on the way")
-                        is RideStatus.DriverWaitingClient -> errorHandler.showToast("Driver is waiting for you")
-                        is RideStatus.PaidWaiting -> errorHandler.showToast("Paid waiting")
-                        is RideStatus.PaidWaitingStarted -> errorHandler.showToast("Paid waiting started")
-                        is RideStatus.RideCompleted -> errorHandler.showToast("Ride completed")
-                        is RideStatus.RideStarted -> errorHandler.showToast("Ride started")
-                        is RideStatus.Unknown -> errorHandler.showToast("Unknown")
-                    }
+                    Log.i("Ride state", "RideFragment: Success")
+                    startService()
                 }
             }
         }

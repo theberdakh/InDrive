@@ -9,6 +9,7 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.aralhub.araltaxi.client.ride.R
@@ -48,6 +49,7 @@ class RideService : Service() {
                     is RideStatus.RideStarted -> it.message
                     is RideStatus.Unknown -> it.error
                 }
+                Log.i("Service", message)
                 updateNotification(message, it is RideStatus.DriverWaitingClient)
             }
         }

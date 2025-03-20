@@ -14,7 +14,7 @@ class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSo
     private val localStorage: LocalStorage) :
     AddressRepository {
     override suspend fun createAddress(createAddressRequest: CreateAddressRequest): Result<Address> =
-        addressNetworkDataSource.address(createAddressRequest.toNetwork()).asResult {
+        addressNetworkDataSource.address(createAddressRequest.toNetwork(localStorage.userId)).asResult {
             Result.Success(it.toDomain())
         }
 
@@ -29,7 +29,7 @@ class AddressRepositoryImpl @Inject constructor(private val addressNetworkDataSo
     override suspend fun updateAddress(
         addressId: Int,
         createAddressRequest: CreateAddressRequest
-    ): Result<Address> = addressNetworkDataSource.updateAddress(addressId, createAddressRequest.toNetwork()).asResult { Result.Success(it.toDomain()) }
+    ): Result<Address> = addressNetworkDataSource.updateAddress(addressId, createAddressRequest.toNetwork(localStorage.userId)).asResult { Result.Success(it.toDomain()) }
 
     override suspend fun deleteAddress(addressId: Int): Result<Boolean> = addressNetworkDataSource.deleteAddress(addressId).asResult { Result.Success(true) }
 

@@ -10,6 +10,7 @@ import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
 import com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment
 import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
+import com.aralhub.araltaxi.savedplaces.saveaddress.SaveAddressFragment
 import com.aralhub.araltaxi.select_location.SelectLocationFragment
 import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.ui.model.args.SelectedLocations
@@ -103,6 +104,14 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun navigateToEditSavedPlace(savedPlaceId: Int) {
         navController?.navigate(R.id.action_savedPlacesFragment_to_editSavedPlaceFragment, EditSavedPlaceFragment.args(savedPlaceId))
+    }
+
+    override fun navigateToSelectLocationFromSavedPlaces() {
+        navController?.navigate(R.id.action_savedPlacesFragment_to_selectLocationFragment, SelectLocationFragment.args(owner = SelectLocationFragment.Companion.LocationOwner.UNSPECIFIED))
+    }
+
+    override fun navigateToSaveAddressFromSavedPlaces(name: String, address: String, latitude: Double, longitude: Double) {
+        navController?.navigate(R.id.action_savedPlacesFragment_to_saveAddressFragment, SaveAddressFragment.args(name, address, latitude, longitude))
     }
 
     override fun goToOffersFromCreateOrderFragment() {

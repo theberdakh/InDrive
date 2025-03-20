@@ -125,6 +125,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                 putDouble("latitude", selectedLatitude)
                 putDouble("longitude", selectedLongitude)
                 putString("locationName", selectedTitle)
+                putString("locationAddress", selectedSubtitle)
                 putInt("owner", locationOwner)
             }
 

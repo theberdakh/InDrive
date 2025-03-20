@@ -5,22 +5,15 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.BottomSheetWaitingForDriverBinding
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.ride.ActiveRideUiState
 import com.aralhub.araltaxi.ride.CancelRideUiState
-import com.aralhub.araltaxi.ride.Ride
-import com.aralhub.araltaxi.ride.RideBottomSheetUiState
-import com.aralhub.araltaxi.ride.RideState
 import com.aralhub.araltaxi.ride.RideStateUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
-import com.aralhub.araltaxi.ride.utils.FragmentEx.loadAvatar
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
@@ -29,7 +22,6 @@ import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,6 +48,35 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     }
 
     private fun initObservers() {
+        observeState(rideViewModel.waitingForDriverRideState){ rideStateUiState ->
+            when(rideStateUiState){
+                is RideStateUiState.Error -> {
+                    Log.i("Ride state", "WaitingForDriver: Error")
+                }
+                RideStateUiState.Loading -> {
+                    Log.i("Ride state", "WaitingForDriver: Loading")
+                }
+                is RideStateUiState.Success -> {
+                    Log.i("Ride State: Waiting For diver", "${rideStateUiState.rideState}")
+                    when(rideStateUiState.rideState){
+                        is RideStatus.DriverOnTheWay -> {
+                            Log.i("Navigation", "driverOnTheWay")
+                        }
+                        is RideStatus.DriverWaitingClient -> {
+                            Log.i("Navigation", "goToDriverIsWaiting")
+                            navigation.goToDriverIsWaiting()
+                        }
+                        is RideStatus.PaidWaiting -> {
+                            Log.i("Navigation", "paidWaiting")
+                        }
+                        is RideStatus.PaidWaitingStarted -> {}
+                        is RideStatus.RideCompleted -> {}
+                        is RideStatus.RideStarted -> {}
+                        is RideStatus.Unknown -> {}
+                    }
+                }
+            }
+        }
       /*  lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED){
                 rideViewModel.rideState2.collect { state ->

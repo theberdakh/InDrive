@@ -11,14 +11,10 @@ import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.indrive.core.data.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,14 +25,6 @@ class RideViewModel @Inject constructor(
     private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
     private val getClientRideStatusUseCase: GetClientRideStatusUseCase
 ) : ViewModel() {
-    val rideState = getRideState().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = RideBottomSheetUiState.Loading
-    )
-
-    private var _rideState = MutableStateFlow<RideBottomSheetUiState>(RideBottomSheetUiState.Loading)
-    val rideState2 = _rideState.asStateFlow()
 
     private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
     val activeRideState = _activeRideState.asStateFlow()
@@ -62,6 +50,7 @@ class RideViewModel @Inject constructor(
                 is Result.Error -> {
                     _cancelRideState.emit(CancelRideUiState.Error(it.message))
                 }
+
                 is Result.Success -> {
                     _cancelRideState.emit(CancelRideUiState.Success)
                 }
@@ -75,6 +64,7 @@ class RideViewModel @Inject constructor(
                 is Result.Error -> {
                     _cancelRideState.emit(CancelRideUiState.Error(it.message))
                 }
+
                 is Result.Success -> {
                     _cancelRideState.emit(CancelRideUiState.Success)
                 }
@@ -82,99 +72,23 @@ class RideViewModel @Inject constructor(
         }
     }
 
-    private var _rideStateUiState = MutableStateFlow<RideStateUiState>(RideStateUiState.Loading)
-    val rideStateUiState = _rideStateUiState.asStateFlow()
+    private var _rideStateUiState = MutableSharedFlow<RideStateUiState>()
+    val rideStateUiState = _rideStateUiState.asSharedFlow()
+
+    private var _waitingForDriverRideState = MutableSharedFlow<RideStateUiState>()
+    val waitingForDriverRideState = _waitingForDriverRideState.asSharedFlow()
+
     fun getClientRideState() = viewModelScope.launch {
         getClientRideStatusUseCase().collect {
-            Log.i("RideState", it.toString())
+            Log.i("RideState ViewModel", it.toString())
+            _waitingForDriverRideState.emit(RideStateUiState.Success(it))
             _rideStateUiState.emit(RideStateUiState.Success(it))
         }
     }
 }
 
 
-fun getRideState() = flow {
-    emit(RideBottomSheetUiState.Success(RideState.WAITING_FOR_DRIVER, cardRideData))
-    delay(3000)
-    emit(RideBottomSheetUiState.Success(RideState.DRIVER_IS_WAITING, cardRideData))
-    delay(3000)
-    emit(RideBottomSheetUiState.Success(RideState.IN_RIDE, cardRideData))
-    delay(3000)
-    emit(RideBottomSheetUiState.Success(RideState.FINISHED, cardRideData))
-}
-
-sealed interface RideBottomSheetUiState {
-    data object Loading : RideBottomSheetUiState
-    data class Success(val rideState: RideState, val rideData: Ride) : RideBottomSheetUiState
-    data object Error : RideBottomSheetUiState
-}
-
-data class Ride(
-    val driver: Driver,
-    val car: Car,
-    val route: Route,
-    val price: String,
-    val paymentMethod: PaymentMethod,
-    val waitForDriverTime: String,
-    val driverWaitTime: String
-)
-
-enum class PaymentMethod {
-    CASH,
-    CARD
-}
-
-data class Route(
-    val start: String,
-    val end: String,
-    val time: String
-)
-
-data class Driver(
-    val name: String,
-    val phone: String,
-    val rating: Float,
-    val avatar: String,
-    val cardNumber: String
-)
-
-data class Car(
-    val model: String,
-    val number: String
-)
-
-enum class RideState {
-    WAITING_FOR_DRIVER,
-    DRIVER_IS_WAITING,
-    DRIVER_CANCELED,
-    IN_RIDE,
-    FINISHED
-}
-
-val cardRideData = Ride(
-    driver = Driver(
-        name = "John Doe",
-        phone = "+1234567890",
-        rating = 4.5f,
-        avatar = "https://www.example.com/avatar.jpg",
-        cardNumber = "1234 5678 9012 3456"
-    ),
-    car = Car(
-        model = "Toyota Camry",
-        number = "A123BC"
-    ),
-    route = Route(
-        start = "Moscow, Russia",
-        end = "Saint Petersburg, Russia",
-        time = "1 hour 30 minutes"
-    ),
-    price = "1000 RUB",
-    paymentMethod = PaymentMethod.CARD,
-    driverWaitTime = "2 minutes",
-    waitForDriverTime = "5 minutes"
-)
-
-sealed interface RideStateUiState{
+sealed interface RideStateUiState {
     data object Loading : RideStateUiState
     data class Success(val rideState: RideStatus) : RideStateUiState
     data class Error(val message: String) : RideStateUiState
