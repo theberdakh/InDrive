@@ -48,8 +48,8 @@ class OverviewViewModel @Inject constructor(
             when (it) {
                 is Result.Error -> DriverBalanceUiState.Error(it.message)
                 is Result.Success -> DriverBalanceUiState.Success(
-                    it.data.balance,
-                    it.data.dailyBalance
+                    it.data.balance.toInt(),
+                    it.data.dailyBalance.toInt()
                 )
             }
         })
@@ -94,7 +94,7 @@ sealed interface LogoutUiState {
 }
 
 sealed interface DriverBalanceUiState {
-    data class Success(val balance: Number, val dayBalance: Number) : DriverBalanceUiState
+    data class Success(val balance: Int, val dayBalance: Int) : DriverBalanceUiState
     data class Error(val message: String) : DriverBalanceUiState
     data object Loading : DriverBalanceUiState
 }
