@@ -20,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.araltaxi.core.common.utils.mockFlow
+import com.aralhub.araltaxi.core.common.sharedpreference.DriverSharedPreference
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.araltaxi.driver.orders.model.RideStatus
@@ -97,6 +97,9 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     @Inject
     lateinit var navigation: FeatureOrdersNavigation
 
+    @Inject
+    lateinit var driverSharedPreference: DriverSharedPreference
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         errorDialog = ErrorMessageDialog(context)
@@ -118,6 +121,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initTripCanceledModalBottomSheet()
         initListeners()
 
+        if (!goingToPickUpModalBottomSheet.isAdded) {
+            goingToPickUpModalBottomSheet.arguments = arguments
+            goingToPickUpModalBottomSheet.show(
+                childFragmentManager,
+                GoingToPickUpModalBottomSheet.TAG
+            )
+        }
+
     }
 
     private fun initData() {
@@ -134,12 +145,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             fusedLocationClient?.lastLocation
                 ?.addOnSuccessListener { location: Location? ->
                     // Got last known location. In some rare situations this can be null.
+                    val distance = driverSharedPreference.distance
                     location?.let {
                         viewModel.getExistingOrders(
                             SendDriverLocationUI(
                                 latitude = it.latitude,
                                 longitude = it.longitude,
-                                distance = 500000
+                                distance = distance
                             )
                         )
                     }
@@ -159,6 +171,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         val status = arguments?.getString("Status") ?: ""
         when (status) {
             "driver_on_the_way" -> {
+                if (!goingToPickUpModalBottomSheet.isAdded) {
+                    goingToPickUpModalBottomSheet.arguments = arguments
+                    goingToPickUpModalBottomSheet.show(
+                        childFragmentManager,
+                        GoingToPickUpModalBottomSheet.TAG
+                    )
+                }
+            }
+
+            "agreed_with_driver" -> {
                 if (!goingToPickUpModalBottomSheet.isAdded) {
                     goingToPickUpModalBottomSheet.arguments = arguments
                     goingToPickUpModalBottomSheet.show(
@@ -391,6 +413,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             dismissAllBottomSheets()
             getExistingOrders()
         }
+
+        binding.btnFilter.setOnClickListener {
+            filterModalBottomSheet.show(
+                childFragmentManager,
+                FilterModalBottomSheet.TAG
+            )
+        }
     }
 
     private fun initTripCanceledModalBottomSheet() {
@@ -483,12 +512,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initViews() {
         initToolbar()
         initRecyclerView()
-        binding.btnFilter.setOnClickListener {
-            filterModalBottomSheet.show(
-                childFragmentManager,
-                FilterModalBottomSheet.TAG
-            )
-        }
     }
 
     private fun initRecyclerView() {

@@ -40,7 +40,7 @@
 
     <Button
         android:id="@+id/btn_close"
-        style="@style/Widget.InDrive.Button.GreenGradient"
+        style="@style/Widget.InDrive.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="14dp"

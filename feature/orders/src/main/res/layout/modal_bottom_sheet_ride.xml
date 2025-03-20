@@ -236,6 +236,8 @@
         style="@style/Widget.InDrive.Button.Primary"
         android:text="@string/label_navigator"
         android:layout_margin="@dimen/margin_medium"
+        android:backgroundTint="@color/color_interactive_accent"
+        android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />

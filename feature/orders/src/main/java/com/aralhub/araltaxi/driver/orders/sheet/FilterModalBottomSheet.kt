@@ -17,16 +17,29 @@ class FilterModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_s
     @Inject
     lateinit var driverSharedPreference: DriverSharedPreference
 
-    private var distance: Int = 3000
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val distance = (driverSharedPreference.distance.toFloat() / 1000f)
+        binding.slider.currentValue = distance
+
+        binding.tvRadius.text = createStringBuilder(distance)
+
         binding.slider.setOnValueChangeListener { value ->
-            binding.tvRadius.text = "$value km"
+            binding.tvRadius.text = createStringBuilder(value)
             driverSharedPreference.distance = (value * 1000).toInt()
         }
-        binding.btnApply.setOnClickListener { dismissAllowingStateLoss() }
+
+        binding.btnApply.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+
+        binding.tvClearFilter.setOnClickListener { dismiss() }
+
+    }
+
+    private fun createStringBuilder(distance: Float) = buildString {
+        append(distance).append(" km")
     }
 
     companion object {

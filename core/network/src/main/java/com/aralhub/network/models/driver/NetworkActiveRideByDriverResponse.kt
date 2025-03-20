@@ -13,7 +13,7 @@ data class NetworkActiveRideByDriverResponse(
     val status: String,
     val amount: Int,
     @SerializedName("wait_amount")
-    val waitAmount: Double,
+    val waitAmount: Int,
     @SerializedName("recommended_amount")
     val recommendedAmount: ClientRideRequestRecommendedAmount,
     val distance: Float,

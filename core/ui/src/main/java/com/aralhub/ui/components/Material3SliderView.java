@@ -32,7 +32,7 @@ public class Material3SliderView extends View {
     private float minValue = 1f;
     private float maxValue = 5f;
     private float stepSize = 0.5f;
-    private float currentValue = 1f;
+    private float currentValue = 3f;
     private float thumbX;
     private float trackY;
     private boolean isDragging = false;

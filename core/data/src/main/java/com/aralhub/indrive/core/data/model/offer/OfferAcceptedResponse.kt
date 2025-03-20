@@ -7,8 +7,8 @@ data class OfferAcceptedResponse(
     val uuid: String,
     val status: String,
     val amount: Int,
-    val waitAmount: Double,
-    val recommendedPrice: Double,
+    val waitAmount: Int,
+    val recommendedPrice: Int,
     val distance: Float,
     val locations: List<ClientRideLocationsItems>,
     val isActive: Boolean,
@@ -24,7 +24,7 @@ fun NetworkActiveRideByDriverResponse.toDomain() = with(this) {
         status = status,
         amount = amount,
         waitAmount = waitAmount,
-        recommendedPrice = recommendedAmount.recommendedAmount.toDouble(),
+        recommendedPrice = recommendedAmount.recommendedAmount,
         distance = distance,
         locations = locations.points.map {
             ClientRideLocationsItems(

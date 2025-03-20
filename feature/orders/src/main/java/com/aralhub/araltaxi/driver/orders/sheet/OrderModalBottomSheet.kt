@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,7 +43,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private var baseAmount = 0
 
     private var minimumPrice = 1000
-    private var maximumPrice = 1000000
+    private var maximumPrice = 500000
 
     @Inject
     lateinit var errorHandler: ErrorHandler
@@ -91,7 +92,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
             offerAmount = binding.etPrice.text?.filter { it.isDigit() }.toString().toInt()
-            Log.i(TAG, "setupListeners: $order")
+            Log.i(TAG, "offerAmount: $offerAmount \nsetupListeners: $order")
             if (order != null) {
                 offerViewModel.createOffer(
                     order!!.uuid,
@@ -150,9 +151,13 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
                         parentFragmentManager,
                         OrderLoadingModalBottomSheet.TAG
                     )
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        delay(10000)
-                        orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(20000)
+                        withContext(Dispatchers.Main) {
+                            if (orderLoadingModalBottomSheet.isAdded) {
+                                orderLoadingModalBottomSheet.dismissAllowingStateLoss()
+                            }
+                        }
                     }
                 }
             }

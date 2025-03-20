@@ -1,9 +1,9 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
+import com.aralhub.araltaxi.core.domain.driver.CancelRideUseCase
 import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
@@ -43,7 +43,7 @@ class OrdersViewModel @Inject constructor(
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val updateRideStatusUseCase: UpdateRideStatusUseCase,
-    private val repository: DriverRepository
+    private val cancelRideUseCase: CancelRideUseCase
 ) : ViewModel() {
 
     private val _ordersListState = MutableStateFlow<List<OrderItem>>(emptyList())
@@ -163,7 +163,6 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferRejected -> {
-                Log.d("OrdersViewModel", "ordersState: ${result.rideUUID}")
                 GetActiveOrdersUiState.OfferRejected(result.rideUUID)
             }
 
@@ -188,7 +187,7 @@ class OrdersViewModel @Inject constructor(
     fun cancelRide(rideId: Int, cancelCauseId: Int) {
         viewModelScope.launch {
             _rideCanceledResult.emit(RideCancelUiState.Loading)
-            repository.cancelRide(rideId, cancelCauseId).let { result ->
+            cancelRideUseCase(rideId, cancelCauseId).let { result ->
                 when (result) {
                     is Result.Error -> {
                         _rideCanceledResult.emit(RideCancelUiState.Error(result.message))

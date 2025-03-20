@@ -27,6 +27,17 @@ class IntPreference(
         pref.edit { putInt(property.name, value).apply() }
 }
 
+class FloatPreference(
+    private val pref: SharedPreferences,
+    private val defValue: Float = -1f
+) : ReadWriteProperty<Any, Float> {
+    override fun getValue(thisRef: Any, property: KProperty<*>) =
+        pref.getFloat(property.name, defValue)
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) =
+        pref.edit { putFloat(property.name, value).apply() }
+}
+
 class LongPreference(
     private val pref: SharedPreferences,
     private val defValue: Long = 0L
