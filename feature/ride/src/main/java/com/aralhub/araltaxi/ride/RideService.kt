@@ -78,6 +78,7 @@ class RideService : Service() {
                     ) // Play sound for ride completion
                     is RideStatus.RideStarted -> Pair(rideStatus.message, false)
                     is RideStatus.Unknown -> Pair(rideStatus.error, false)
+                    is RideStatus.CanceledByDriver -> Pair(rideStatus.message, false)
                 }
 
                 Log.i("RideService", "Status update: $message")

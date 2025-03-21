@@ -13,7 +13,9 @@ import com.aralhub.araltaxi.ride.CancelRideUiState
 import com.aralhub.araltaxi.ride.RideStateUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
+import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
+import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
@@ -29,8 +31,8 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     private val binding by viewBinding(BottomSheetWaitingForDriverBinding::bind)
     private val rideViewModel: RideViewModel by activityViewModels()
     @Inject lateinit var errorHandler: ErrorHandler
-    @Inject
-    lateinit var navigation: FeatureRideBottomSheetNavigation
+    @Inject lateinit var featureRideBottomSheetNavigation: FeatureRideBottomSheetNavigation
+    @Inject lateinit var navigation: FeatureRideNavigation
     private var currentRideId = 0
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,7 +66,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                         }
                         is RideStatus.DriverWaitingClient -> {
                             Log.i("Navigation", "goToDriverIsWaiting")
-                            navigation.goToDriverIsWaiting()
+                            featureRideBottomSheetNavigation.goToDriverIsWaiting()
                         }
                         is RideStatus.PaidWaiting -> {
                             Log.i("Navigation", "paidWaiting")
@@ -73,6 +75,9 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                         is RideStatus.RideCompleted -> {}
                         is RideStatus.RideStarted -> {}
                         is RideStatus.Unknown -> {}
+                        is RideStatus.CanceledByDriver -> TripCanceledByDriverFragment(
+                            onClearClick = { navigation.goBackToCreateOfferFromRide() }
+                        ).show(childFragmentManager, CancelTripFragment.TAG)
                     }
                 }
             }

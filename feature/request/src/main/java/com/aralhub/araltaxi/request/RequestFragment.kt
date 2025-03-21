@@ -38,8 +38,13 @@ import com.aralhub.ui.utils.ViewEx.hide
 import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.GeoObjectTapListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.GeoObjectSelectionMetadata
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,6 +74,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         private const val CURRENT_LOCATION_NOT_INITIALISED_VALUE = 0.0
         private var currentLongitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
         private var currentLatitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
+
+        private val START_ANIMATION = Animation(Animation.Type.LINEAR, 1f)
+        private val SMOOTH_ANIMATION = Animation(Animation.Type.SMOOTH, 0.4f)
     }
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
@@ -88,6 +96,21 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private var placeMarkObject: PlacemarkMapObject? = null
     private var isNavigatedToCreateOrderFragment = false
     private var isFullscreen = false
+    private lateinit var mapWindow: MapWindow
+    private lateinit var map: Map
+
+    private val geoObjectTapListener = GeoObjectTapListener {
+        // Move camera to selected geoObject
+        val point = it.geoObject.geometry.firstOrNull()?.point ?: return@GeoObjectTapListener true
+        map.cameraPosition.run {
+            val position = CameraPosition(point, zoom, azimuth, tilt)
+            map.move(position, SMOOTH_ANIMATION, null)
+        }
+        val selectionMetadata = it.geoObject.metadataContainer.getItem(GeoObjectSelectionMetadata::class.java)
+        map.selectGeoObject(selectionMetadata)
+        errorHandler.showToast("Tapped ${it.geoObject.name} id = ${selectionMetadata.objectId}")
+        true
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -96,12 +119,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        mapWindow = binding.mapView.mapWindow
+        map = mapWindow.map
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         observeStates()
         initViews()
         initListeners()
     }
+
 
     override fun onStart() {
         super.onStart()

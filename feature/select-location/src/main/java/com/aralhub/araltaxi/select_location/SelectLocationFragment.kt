@@ -27,6 +27,8 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.map.SizeChangedListener
+import com.yandex.mapkit.search.Address
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,6 +37,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     private lateinit var mapWindow: MapWindow
     private lateinit var map: Map
     private lateinit var floatLandAnimation: FloatLandAnimation
+
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val viewModel by viewModels<SelectLocationViewModel>()
@@ -118,7 +121,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             map.addCameraListener(cameraListener)
             updateFocusInfo()
             map.move(
-                CameraPosition(Point(42.4651,59.6136), 17.0f, 150.0f, 30.0f)
+                CameraPosition(Point(42.4651, 59.6136), 17.0f, 150.0f, 30.0f)
             )
         }
 
@@ -200,19 +203,53 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     }
 
     private fun initObservers() {
-        observeState(viewModel.uiState) {
-            when (it.searchState) {
-                SearchState.Error -> errorHandler.showToast("Error to find location name")
+        observeState(viewModel.uiState) { selectLocationUiState ->
+            when (selectLocationUiState.searchState) {
+                SearchState.Error -> {
+                    errorHandler.showToast("Error to find location name")
+                    Log.i("Select Location", "Error")
+                }
                 SearchState.Loading -> {
                     binding.itemSelectLocation.tvTitle.text = "Updating..."
+                    Log.i("Select Location", "Loading")
+
                 }
 
                 SearchState.Off -> binding.itemSelectLocation.tvTitle.text = "Searching..."
                 is SearchState.Success -> {
+                    Log.i("Select Location", "Success: ${selectLocationUiState.searchState.items.size}")
+                    val address = selectLocationUiState.searchState.items.firstOrNull()?.geoObject
+                        ?.metadataContainer
+                        ?.getItem(ToponymObjectMetadata::class.java)
+                        ?.address
+                        ?.components
+                        ?.map {
+                            Log.i("Map", "${it.name} ${it.kinds}")
+                        }
+
+                    val house = selectLocationUiState.searchState.items.firstOrNull()?.geoObject
+                        ?.metadataContainer
+                        ?.getItem(ToponymObjectMetadata::class.java)
+                        ?.address
+                        ?.components
+                        ?.firstOrNull { it.kinds.contains(Address.Component.Kind.HOUSE) }
+                        ?.name
+
+                    val street = selectLocationUiState.searchState.items.firstOrNull()?.geoObject
+                        ?.metadataContainer
+                        ?.getItem(ToponymObjectMetadata::class.java)
+                        ?.address
+                        ?.components
+                        ?.firstOrNull { it.kinds.contains(Address.Component.Kind.STREET) }
+                        ?.name
+
+                    Log.i("Search", "$street, $house, $address")
+
+
                     viewModel.selectLocation(
-                        it.searchState.items.firstOrNull()?.geoObject?.name ?: "Unknown Location",
-                        it.searchState.items.firstOrNull()?.geoObject?.descriptionText ?: "",
-                        it.searchState.items.firstOrNull()?.point ?: Point(0.0, 0.0)
+                        selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.name ?: "Unknown Location",
+                        selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.descriptionText ?: "",
+                        selectLocationUiState.searchState.items.firstOrNull()?.point ?: Point(0.0, 0.0)
                     )
                 }
             }
@@ -229,7 +266,8 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                     selectedSubtitle = locationSelectedUiState.subtitle
 
                     binding.itemSelectLocation.tvTitle.text = locationSelectedUiState.title
-                    binding.itemSelectLocation.tvSubtitle.text = locationSelectedUiState.subtitle
+                    binding.itemSelectLocation.tvSubtitle.text =
+                        locationSelectedUiState.subtitle
                     binding.btnSelectLocation.enable()
                 }
             }
@@ -237,7 +275,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     }
 
     private fun updatePlacemarkAndSearchLocation(point: Point) {
-        viewModel.submitLocation(point, 17)
+        viewModel.submitLocation(point, 17, map.visibleRegion)
         /* searchManager.submit(point, 17, searchOptions, object : SearchListener {
              override fun onSearchResponse(response: Response) {
                  val geoObjects = response.collection.children.mapNotNull { it.obj }

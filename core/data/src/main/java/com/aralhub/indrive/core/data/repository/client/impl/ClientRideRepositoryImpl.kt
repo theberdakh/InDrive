@@ -33,6 +33,7 @@ class ClientRideRepositoryImpl @Inject constructor(private val clientRideNetwork
                     is ClientWebSocketEventRideMessage.RideCompleted -> RideStatus.RideCompleted(event.message)
                     is ClientWebSocketEventRideMessage.RideStarted -> RideStatus.RideStarted(event.message.message)
                     is ClientWebSocketEventRideMessage.Unknown -> RideStatus.Unknown(event.error)
+                    is ClientWebSocketEventRideMessage.CancelledByDriver -> RideStatus.CanceledByDriver(event.message)
                 }
                 _rideStatusFlow.emit(status)
                 Log.i("ClientRideRepositoryImpl", "Emitted ride status: $status")

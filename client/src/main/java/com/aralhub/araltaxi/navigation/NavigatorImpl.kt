@@ -8,6 +8,7 @@ import com.aralhub.araltaxi.profile.client.navigation.FeatureProfileNavigation
 import com.aralhub.client.clientauth.addsms.AddSMSFragment
 import com.aralhub.client.clientauth.navigation.FeatureClientAuthNavigation
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
+import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment
 import com.aralhub.araltaxi.savedplaces.navigation.FeatureSavedPlaceNavigation
 import com.aralhub.araltaxi.savedplaces.saveaddress.SaveAddressFragment
@@ -18,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation, FeatureSavedPlaceNavigation, FeatureCreateOrderNavigation{
+class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigation, FeatureRequestNavigation, FeatureOffersNavigation, FeatureProfileNavigation, FeatureSavedPlaceNavigation, FeatureCreateOrderNavigation, FeatureRideNavigation{
 
     private var navController: NavController? = null
 
@@ -116,5 +117,9 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
 
     override fun goToOffersFromCreateOrderFragment() {
         navController?.navigate(R.id.action_createOrderFragment_to_offersFragment)
+    }
+
+    override fun goBackToCreateOfferFromRide() {
+        navController?.navigateUp()
     }
 }

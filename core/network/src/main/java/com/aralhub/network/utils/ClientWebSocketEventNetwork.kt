@@ -35,6 +35,7 @@ sealed class ClientWebSocketEventRideMessage {
     data class PaidWaiting(val message: String): ClientWebSocketEventRideMessage()
     data class RideStarted(val message: NetworkRideStartedMessage): ClientWebSocketEventRideMessage()
     data class RideCompleted(val message: String): ClientWebSocketEventRideMessage()
+    data class CancelledByDriver(val message: String): ClientWebSocketEventRideMessage()
     data class Unknown(val error: String) : ClientWebSocketEventRideMessage()
 }
 
@@ -45,5 +46,6 @@ enum class NetworkRideStatus(val status: String) {
     PAID_WAITING("paid_waiting"),
     RIDE_STARTED("ride_started"),
     RIDE_COMPLETED("ride_completed"),
+    CANCELED_BY_DRIVER("cancelled_by_driver")
 }
 
