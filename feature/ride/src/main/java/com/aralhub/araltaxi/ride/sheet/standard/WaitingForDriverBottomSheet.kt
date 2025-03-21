@@ -72,8 +72,12 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                             Log.i("Navigation", "paidWaiting")
                         }
                         is RideStatus.PaidWaitingStarted -> {}
-                        is RideStatus.RideCompleted -> {}
-                        is RideStatus.RideStarted -> {}
+                        is RideStatus.RideCompleted -> {
+                            featureRideBottomSheetNavigation.goToRideFinishedFromWaitingForDriver()
+                        }
+                        is RideStatus.RideStarted -> {
+                            featureRideBottomSheetNavigation.goToRideFromWaitingForDriver()
+                        }
                         is RideStatus.Unknown -> {}
                         is RideStatus.CanceledByDriver -> TripCanceledByDriverFragment(
                             onClearClick = { navigation.goBackToCreateOfferFromRide() }
