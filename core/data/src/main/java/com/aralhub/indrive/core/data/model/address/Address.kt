@@ -5,15 +5,14 @@ import com.aralhub.network.requests.address.NetworkAddressRequest
 
 
 data class CreateAddressRequest(
-    val userId: Int,
     val name: String,
     val address: String,
     val latitude: Number,
     val longitude: Number
 )
 
-fun CreateAddressRequest.toNetwork() = NetworkAddressRequest(
-    this.userId,
+fun CreateAddressRequest.toNetwork(userId: Int) = NetworkAddressRequest(
+    userId,
     this.name,
     this.address,
     this.latitude,

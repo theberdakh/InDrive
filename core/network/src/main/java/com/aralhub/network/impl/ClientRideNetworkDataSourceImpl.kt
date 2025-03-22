@@ -61,10 +61,7 @@ class ClientRideNetworkDataSourceImpl(private val client: HttpClient) :
                                     Log.i("WebSocketLog", "Parsed type: ${data.type}")
                                     val event = when (data.type) {
                                         RIDE_STATUS_UPDATE -> {
-                                            Log.i(
-                                                "WebSocketLog",
-                                                "Parsed status: ${data.data.status}"
-                                            )
+                                            Log.i("WebSocketLog", "Parsed status: ${data.data.status}")
                                             when (data.data.status) {
                                                 NetworkRideStatus.DRIVER_ON_THE_WAY.status -> {
                                                     Log.i(
@@ -144,6 +141,11 @@ class ClientRideNetworkDataSourceImpl(private val client: HttpClient) :
                                                     ClientWebSocketEventRideMessage.RideCompleted(
                                                         message.data.message
                                                     )
+                                                }
+                                                NetworkRideStatus.CANCELED_BY_DRIVER.status -> {
+                                                    val message = Gson().fromJson<ClientWebSocketServerResponseUpdate<String>>(text,
+                                                        object : TypeToken<ClientWebSocketServerResponseUpdate<String>>() {}.type)
+                                                    ClientWebSocketEventRideMessage.CancelledByDriver(message.data.message)
                                                 }
 
                                                 else -> ClientWebSocketEventRideMessage.Unknown("Unknown status: ${data.data.status}")

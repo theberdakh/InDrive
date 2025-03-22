@@ -183,8 +183,19 @@
             android:id="@+id/action_savedPlacesFragment_to_editSavedPlaceFragment"
             app:destination="@id/editSavedPlaceFragment"/>
 
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_selectLocationFragment"
+            app:destination="@id/selectLocationFragment"/>
+
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_saveAddressFragment"
+            app:destination="@id/saveAddressFragment"/>
+
     </fragment>
 
+    <fragment
+        android:id="@+id/saveAddressFragment"
+        android:name="com.aralhub.araltaxi.savedplaces.saveaddress.SaveAddressFragment"/>
     <fragment
         android:id="@+id/editSavedPlaceFragment"
         android:name="com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment"/>

@@ -3,12 +3,17 @@ package com.aralhub.araltaxi.request
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
+import androidx.appcompat.app.ActionBar.LayoutParams
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -29,10 +34,17 @@ import com.aralhub.ui.sheets.LoadingModalBottomSheet
 import com.aralhub.ui.sheets.LogoutModalBottomSheet
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.hide
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.GeoObjectTapListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.GeoObjectSelectionMetadata
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,14 +74,14 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         private const val CURRENT_LOCATION_NOT_INITIALISED_VALUE = 0.0
         private var currentLongitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
         private var currentLatitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
-    }
 
+        private val START_ANIMATION = Animation(Animation.Type.LINEAR, 1f)
+        private val SMOOTH_ANIMATION = Animation(Animation.Type.SMOOTH, 0.4f)
+    }
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-
     @Inject
     lateinit var navigation: FeatureRequestNavigation
-
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val adapter = LocationItemAdapter()
@@ -83,6 +95,22 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private var placeMarkObject: PlacemarkMapObject? = null
     private var isNavigatedToCreateOrderFragment = false
+    private var isFullscreen = false
+    private lateinit var mapWindow: MapWindow
+    private lateinit var map: Map
+
+    private val geoObjectTapListener = GeoObjectTapListener {
+        // Move camera to selected geoObject
+        val point = it.geoObject.geometry.firstOrNull()?.point ?: return@GeoObjectTapListener true
+        map.cameraPosition.run {
+            val position = CameraPosition(point, zoom, azimuth, tilt)
+            map.move(position, SMOOTH_ANIMATION, null)
+        }
+        val selectionMetadata = it.geoObject.metadataContainer.getItem(GeoObjectSelectionMetadata::class.java)
+        map.selectGeoObject(selectionMetadata)
+        errorHandler.showToast("Tapped ${it.geoObject.name} id = ${selectionMetadata.objectId}")
+        true
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -91,15 +119,19 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mapWindow = binding.mapView.mapWindow
+        map = mapWindow.map
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         observeStates()
         initViews()
         initListeners()
     }
 
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        Log.i("RequestFragment", "onStart")
     }
 
     override fun onResume() {
@@ -111,6 +143,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         super.onStop()
         binding.mapView.onStop()
         locationManager = null
+    }
+
+    private val locationListener = LocationListener { location ->
+        requestViewModel2.setCurrentLocation(location.latitude, location.longitude)
     }
 
     @SuppressLint("MissingPermission")
@@ -126,12 +162,10 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 LOCATION_REQUEST_MIN_TIME,
-                LOCATION_REQUEST_MIN_DISTANCE
-            ) { location ->
-                requestViewModel2.setCurrentLocation(location.latitude, location.longitude)
-            }
+                LOCATION_REQUEST_MIN_DISTANCE,
+                locationListener
+            )
         }
-
     }
 
     private fun observeStates() {
@@ -167,6 +201,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 SuggestionsUiState.Loading -> {}
                 is SuggestionsUiState.Success -> {
                     adapter.submitList(null)
+                    binding.space.hide()
                     adapter.submitList(suggestionsUiState.suggestions)
                 }
             }
@@ -218,8 +253,29 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private fun initListeners() {
         initFragmentResultListener()
         initAdapterListener()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            true
+        ) {
+            if (isFullscreen || adapter.currentList.isNotEmpty()) {
+                adapter.submitList(null)
+                binding.space.hide()
+            } else {
+                requireActivity().finish()
+            }
+        }
+
+        binding.mapView.setOnClickListener {
+            if (isFullscreen){
+                binding.space.hide()
+                isFullscreen = false
+            }
+        }
+
         binding.etFromLocation.setOnTextChangedListener {
             if (it.isNotEmpty() && !it.isNullOrBlank()) {
+                Log.i("Suggest", "Suggest Location")
                 viewModel.suggestLocation(it, LocationItemClickOwner.FROM)
             } else {
                 adapter.submitList(null)
@@ -228,6 +284,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
         binding.etToLocation.setOnTextChangedListener {
             if (it.isNotEmpty() && !it.isNullOrBlank()) {
+                Log.i("Suggest 2", "Suggest Location 2")
                 viewModel.suggestLocation(it, LocationItemClickOwner.TO)
             } else {
                 adapter.submitList(null)
@@ -235,9 +292,13 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
 
         val textFields = listOf(binding.etFromLocation, binding.etToLocation)
+
         for (textField in textFields) {
             textField.setOnActivatedListener {
                 textField.setEndTextVisible(it)
+                if (!isFullscreen) {
+                   // binding.space.show()
+                }
             }
         }
 
@@ -324,7 +385,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
                 LocationItemClickOwner.TO -> {
                     binding.etToLocation.text = it.title
-                    viewModel.updateLocation(
+                    requestViewModel2.setToLocation(
                         SelectedLocation(
                             name = it.title,
                             longitude = it.longitude,
@@ -388,8 +449,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
 
     private fun setUpBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
-        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-        binding.layoutBottomSheet.isVisible = true
+        bottomSheetBehavior?.apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            peekHeight = 200
+            isHideable = false
+        }
+        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun updateLoadingDialog() {
@@ -419,22 +484,18 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     }
 
     private fun updateMap(longitude: Double, latitude: Double) {
-        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+        Log.i("RequestFragment", "Update Map")
         placeMarkObject?.let {
-            it.geometry = Point(latitude, longitude)
-        } ?: run {
-            placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
-                geometry = Point(latitude, longitude)
-                setIcon(imageProvider)
-            }
+            binding.mapView.mapWindow.map.mapObjects.clear()
+        }
+        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+        placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+            geometry = Point(latitude, longitude)
+            setIcon(imageProvider)
+            isVisible = true
         }
         binding.mapView.mapWindow.map.move(
-            CameraPosition(
-                Point(latitude, longitude),
-                17.0f,
-                150.0f,
-                30.0f
-            )
+            CameraPosition(Point(latitude, longitude), 17.0f, 150.0f, 30.0f)
         )
     }
 

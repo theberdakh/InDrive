@@ -7,7 +7,7 @@ data class NetworkAddress(
     val userId: Int,
     val name: String,
     val address: String,
-    val latitude: Int,
-    val longitude: Int,
+    val latitude: Double,
+    val longitude: Double,
     val id: Int
 )

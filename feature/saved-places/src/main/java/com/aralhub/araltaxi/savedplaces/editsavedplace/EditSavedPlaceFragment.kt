@@ -39,11 +39,6 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
     }
 
     private fun initObservers() {
-        if (savedPlaceId != DEFAULT_SAVED_PLACE_ID) {
-            viewModel.getAddressById(savedPlaceId)
-        } else {
-            errorHandler.showToast("Invalid saved place id")
-        }
 
         viewModel.getAddressByIdUiState.onEach {
             when(it){
@@ -110,6 +105,11 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
 
     private fun initArgs() {
         savedPlaceId = requireArguments().getInt(ARG_SAVED_PLACE_ID)
+        if (savedPlaceId != DEFAULT_SAVED_PLACE_ID) {
+            viewModel.getAddressById(savedPlaceId)
+        } else {
+            errorHandler.showToast("Invalid saved place id")
+        }
     }
 
     private fun initListeners() {
@@ -128,9 +128,7 @@ class EditSavedPlaceFragment: Fragment(R.layout.fragment_edit_saved_place) {
                 name = binding.etPlaceName.text.toString(),
                 address = binding.itemAddress.tvSubtitle.text.toString(),
                 latitude = 0.0,
-                longitude = 0.0,
-                userId = 38
-            ))
+                longitude = 0.0))
         }
     }
 
