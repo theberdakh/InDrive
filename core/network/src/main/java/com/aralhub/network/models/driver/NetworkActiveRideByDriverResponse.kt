@@ -1,8 +1,6 @@
 package com.aralhub.network.models.driver
 
 import com.aralhub.network.models.offer.Locations
-import com.aralhub.network.models.websocketclient.ClientRideRequestRecommendedAmount
-import com.aralhub.network.models.websocketclient.ClientRideResponseOptions
 import com.aralhub.network.models.websocketclient.ClientRideResponsePassenger
 import com.aralhub.network.models.websocketclient.ClientRideResponsePaymentMethod
 import com.google.gson.annotations.SerializedName
@@ -14,8 +12,6 @@ data class NetworkActiveRideByDriverResponse(
     val amount: Int,
     @SerializedName("wait_amount")
     val waitAmount: Int,
-    @SerializedName("recommended_amount")
-    val recommendedAmount: ClientRideRequestRecommendedAmount,
     val distance: Float,
     val locations: Locations,
     @SerializedName("is_active")

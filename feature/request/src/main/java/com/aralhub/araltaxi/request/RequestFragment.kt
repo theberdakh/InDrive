@@ -213,7 +213,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is SearchRideUiState.Error -> {}
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
-//                    navigation.goToGetOffersFromRequestFragment()
+                    navigation.goToGetOffersFromRequestFragment()
                 }
             }
         }
