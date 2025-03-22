@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.safe.args)
 }
 
 android {
@@ -39,6 +40,7 @@ dependencies {
     //Core Modules
     implementation project(':core:ui')
     implementation project(':core:network')
+    implementation project(':core:data')
 
     //Feature Modules
     implementation project(':feature:auth:driver-auth')
@@ -47,6 +49,9 @@ dependencies {
     implementation project(':feature:profile:driver')
     implementation project(':feature:history:driver')
     implementation project(':feature:revenue')
+
+    //Service
+    implementation project(':services')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
@@ -64,4 +69,7 @@ dependencies {
     //Navigation Component
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
+
+    implementation libs.yandex.mapkit
+
 }

@@ -48,7 +48,7 @@
 
 
             <TextView
-                android:id="@+id/tv_distance"
+                android:id="@+id/tvDistanceToClient"
                 android:paddingHorizontal="@dimen/padding_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,11 +154,11 @@
             android:layout_height="24dp"
             android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/margin_small"
             tools:src="@drawable/ic_cash"
             tools:text="4 min" />
 
         <TextView
+            android:id="@+id/tv_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -166,10 +166,12 @@
             android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
 
         <TextView
+            android:id="@+id/tvDistance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:layout_marginEnd="8dp"
             tools:text="7 km"
             android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
             android:textColor="@color/color_content_secondary" />
@@ -238,6 +240,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btn_navigator"
         style="@style/Widget.InDrive.Button.Primary"
         android:text="@string/label_navigator"
         android:layout_margin="@dimen/margin_small"

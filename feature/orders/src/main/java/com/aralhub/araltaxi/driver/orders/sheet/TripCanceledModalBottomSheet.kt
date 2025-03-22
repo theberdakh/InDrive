@@ -2,8 +2,8 @@ package com.aralhub.araltaxi.driver.orders.sheet
 
 import android.os.Bundle
 import android.view.View
-import com.aralhub.indrive.driver.orders.R
-import com.aralhub.indrive.driver.orders.databinding.ModalBottomSheetTripCanceledBinding
+import com.aralhub.araltaxi.driver.orders.R
+import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetTripCanceledBinding
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -21,6 +21,7 @@ class TripCanceledModalBottomSheet :
         binding.btnClose.setOnClickListener {
             onCloseListener.invoke()
         }
+        isCancelable = false
     }
     companion object {
         const val TAG = "TripCanceledModalBottomSheet"

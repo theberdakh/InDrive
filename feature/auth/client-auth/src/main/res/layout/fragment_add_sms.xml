@@ -36,8 +36,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter"
+                    android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"
                     android:gravity="center"
-                    android:padding="@dimen/padding_medium"
+                    android:padding="@dimen/padding_small"
                     tools:text="@string/label_confirm_description" />
 
 
@@ -74,13 +75,12 @@
             android:id="@+id/btn_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:layout_gravity="bottom"
             android:layout_margin="@dimen/margin_medium"
             app:buttonEnabled="false"
             android:background="@drawable/selector_button_primary"
             app:progressButtonText="@string/label_continue"
-            app:textAppearance="@style/TextAppearance.InDrive.PrimaryButton" />
+            app:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

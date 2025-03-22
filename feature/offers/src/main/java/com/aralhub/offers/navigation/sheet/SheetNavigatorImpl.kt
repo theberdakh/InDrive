@@ -2,6 +2,7 @@ package com.aralhub.offers.navigation.sheet
 
 import androidx.navigation.NavController
 import com.aralhub.araltaxi.client.offers.R
+import com.aralhub.offers.sheet.standard.changeprice.ChangePriceBottomSheet
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +18,7 @@ internal class SheetNavigatorImpl @Inject constructor(): SheetNavigator, Feature
         this.navController = null
     }
 
-    override fun goToChangePriceFragment() {
-        navController?.navigate(R.id.action_changeOrCancelRequestBottomSheet_to_changePriceBottomSheet)
+    override fun goToChangePriceFragment(searchRideId: String) {
+        navController?.navigate(R.id.action_changeOrCancelRequestBottomSheet_to_changePriceBottomSheet, ChangePriceBottomSheet.args(searchRideId))
     }
 }

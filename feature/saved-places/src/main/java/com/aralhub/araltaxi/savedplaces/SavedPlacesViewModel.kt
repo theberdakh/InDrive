@@ -1,12 +1,15 @@
 package com.aralhub.araltaxi.savedplaces
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.address.CreateAddressUseCase
 import com.aralhub.araltaxi.core.domain.address.GetAllSavedAddressesUseCase
 import com.aralhub.indrive.core.data.model.address.Address
 import com.aralhub.indrive.core.data.model.address.CreateAddressRequest
-import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.indrive.core.data.result.fold
+import com.aralhub.ui.model.AddressCategory
+import com.aralhub.ui.model.AddressItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,40 +22,35 @@ class SavedPlacesViewModel @Inject constructor(
     private val getAllSavedAddressesUseCase: GetAllSavedAddressesUseCase
 ) : ViewModel() {
 
-    private val _createAddressUiState = MutableStateFlow<CreateAddressUiState>(CreateAddressUiState.Loading)
-    val createAddressUiState = _createAddressUiState.asStateFlow()
-
     private val _savedPlacesUiState =
         MutableStateFlow<SavedPlacesUiState>(SavedPlacesUiState.Loading)
     val savedPlacesUiState = _savedPlacesUiState.asStateFlow()
 
-    fun createAddress(address: CreateAddressRequest) = viewModelScope.launch {
-        _createAddressUiState.value = createAddressUseCase.invoke(address).let {
-            when (it) {
-                is Result.Error -> CreateAddressUiState.Error(it.message)
-                is Result.Success -> CreateAddressUiState.Success(it.data)
-            }
-        }
-    }
 
-    fun getAllSavedAddresses(userId: Int) = viewModelScope.launch {
-        _savedPlacesUiState.value = getAllSavedAddressesUseCase.invoke(userId).let {
-            when (it) {
-                is Result.Error -> SavedPlacesUiState.Error(it.message)
-                is Result.Success -> SavedPlacesUiState.Success(it.data)
-            }
+    fun getAllSavedAddresses() {
+        viewModelScope.launch {
+            _savedPlacesUiState.value = getAllSavedAddressesUseCase().fold(
+                onSuccess = {
+                    Log.i("Locations", "$it")
+                    SavedPlacesUiState.Success(it.map { address -> address.toAddressItem() })
+                },
+                onError = SavedPlacesUiState::Error
+            )
         }
     }
 }
 
-sealed interface CreateAddressUiState {
-    data object Loading : CreateAddressUiState
-    data class Success(val data: Address) : CreateAddressUiState
-    data class Error(val message: String) : CreateAddressUiState
-}
+fun Address.toAddressItem() = AddressItem(
+    id = this.id,
+    name = this.name,
+    address = this.address,
+    category = AddressCategory.OTHER,
+    latitude = this.latitude,
+    longitude = this.longitude
+)
 
 sealed interface SavedPlacesUiState {
     data object Loading : SavedPlacesUiState
-    data class Success(val data: List<Address>) : SavedPlacesUiState
+    data class Success(val addresses: List<AddressItem>) : SavedPlacesUiState
     data class Error(val message: String) : SavedPlacesUiState
 }

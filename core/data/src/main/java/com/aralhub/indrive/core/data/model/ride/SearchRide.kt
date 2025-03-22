@@ -1,10 +1,14 @@
 package com.aralhub.indrive.core.data.model.ride
 
+import com.aralhub.network.models.location.NetworkLocationPoint
+import com.aralhub.network.models.location.NetworkLocationPointCoordinates
+import com.aralhub.network.models.location.NetworkLocations
+
 data class SearchRide(
     val uuid: String,
     val passenger: SearchRideDriver,
     val baseAmount: Number,
-    val updatedAmount: Number,
+    val updatedAmount: Number?,
     val recommendedAmount: RecommendedAmount,
     val locations: SearchRideLocations,
     val comment: String,
@@ -39,8 +43,17 @@ data class PaymentMethod(
     val isActive: Boolean
 )
 
+fun NetworkLocations.toDomain() = SearchRideLocations(
+    points = points.map { it.toDomain() }
+)
+
 data class SearchRideLocations(
     val points: List<LocationPoint>
+)
+
+fun NetworkLocationPoint.toDomain() = LocationPoint(
+    coordinates = coordinates.toDomain(),
+    name = name
 )
 
 data class LocationPoint(
@@ -48,6 +61,10 @@ data class LocationPoint(
     val name: String
 )
 
+fun NetworkLocationPointCoordinates.toDomain() = LocationPointCoordinates(
+    longitude = longitude,
+    latitude = latitude
+)
 data class LocationPointCoordinates(
     val longitude: Number,
     val latitude: Number
@@ -56,7 +73,7 @@ data class LocationPointCoordinates(
 data class SearchRideDriver(
     val userId: Int,
     val userFullName: String,
-    val userRating: Number
+    val userRating: Number?
 )
 
 data class RecommendedAmount(

@@ -55,31 +55,82 @@
     </fragment>
 
     <fragment
+        android:id="@+id/selectLocationFragment"
+        android:name="com.aralhub.araltaxi.select_location.SelectLocationFragment"/>
+    <fragment
         android:id="@+id/requestFragment"
         android:name="com.aralhub.araltaxi.request.RequestFragment">
 
         <action
-            android:id="@+id/action_homeFragment_to_offersFragment"
-            app:destination="@id/offersFragment"/>
+            android:id="@+id/action_requestFragment_to_offersFragment"
+            app:destination="@id/offersFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action
             android:id="@+id/action_requestFragment_to_profileFragment"
-            app:destination="@id/profileFragment"/>
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
+
+        <action android:id="@+id/action_requestFragment_to_selectLocationFragment"
+            app:destination="@id/selectLocationFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"/>
 
         <action android:id="@+id/action_requestFragment_to_supportFragment"
-            app:destination="@id/supportFragment"/>
+            app:destination="@id/supportFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action android:id="@+id/action_requestFragment_to_historyFragment"
-            app:destination="@id/historyFragment"/>
+            app:destination="@id/historyFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action android:id="@+id/action_requestFragment_to_savedPlacesFragment"
-            app:destination="@id/savedPlacesFragment"/>
+            app:destination="@id/savedPlacesFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
+
+        <action
+            android:id="@+id/action_requestFragment_to_createOrderFragment"
+            app:destination="@id/createOrderFragment"
+            app:enterAnim="@anim/to_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"/>
 
         <action
             android:id="@+id/action_requestFragment_to_logoFragment"
             app:popUpTo="@id/requestFragment"
             app:popUpToInclusive="true"
             app:destination="@id/logoFragment"/>
+
+        <action
+            android:id="@+id/action_requestFragment_to_rideFragment"
+            app:destination="@id/rideFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createOrderFragment"
+        android:name="com.aralhub.araltaxi.create_order.CreateOrderFragment">
+
+        <action android:id="@+id/action_createOrderFragment_to_offersFragment"
+            app:destination="@id/offersFragment"/>
 
     </fragment>
 
@@ -91,6 +142,12 @@
             app:popUpTo="@id/offersFragment"
             app:popUpToInclusive="true"
             app:destination="@id/rideFragment" />
+
+        <action
+            android:id="@+id/action_offersFragment_to_requestFragment"
+            app:destination="@id/requestFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="false"/>
 
     </fragment>
 
@@ -126,10 +183,23 @@
             android:id="@+id/action_savedPlacesFragment_to_editSavedPlaceFragment"
             app:destination="@id/editSavedPlaceFragment"/>
 
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_selectLocationFragment"
+            app:destination="@id/selectLocationFragment"/>
+
+        <action
+            android:id="@+id/action_savedPlacesFragment_to_saveAddressFragment"
+            app:destination="@id/saveAddressFragment"/>
+
     </fragment>
 
     <fragment
+        android:id="@+id/saveAddressFragment"
+        android:name="com.aralhub.araltaxi.savedplaces.saveaddress.SaveAddressFragment"/>
+    <fragment
         android:id="@+id/editSavedPlaceFragment"
         android:name="com.aralhub.araltaxi.savedplaces.editsavedplace.EditSavedPlaceFragment"/>
+
+
 
 </navigation>

@@ -1,5 +1,6 @@
 package com.aralhub.network.di
 
+import android.content.Context
 import com.aralhub.network.api.AddressNetworkApi
 import com.aralhub.network.api.CancelCauseNetworkApi
 import com.aralhub.network.api.DriverNetworkApi
@@ -10,9 +11,11 @@ import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.utils.AuthInterceptor
 import com.aralhub.network.utils.NetworkErrorInterceptor
 import com.aralhub.network.utils.TokenAuthenticator
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,6 +27,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @[Provides Singleton]
+    fun provideChucker(
+        @ApplicationContext context: Context,
+    ): ChuckerInterceptor = ChuckerInterceptor.Builder(context).build()
+
     @Provides
     @Singleton
     fun provideHttpLoggingInterceptor() = HttpLoggingInterceptor().apply {
@@ -32,11 +40,13 @@ object NetworkModule {
 
     @[Provides Singleton]
     fun provideMainOkHttpClient(
+        chucker: ChuckerInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
         tokenAuthenticator: TokenAuthenticator,
         networkErrorInterceptor: NetworkErrorInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(chucker)
         .addInterceptor(httpLoggingInterceptor)
         .addInterceptor(networkErrorInterceptor)
         .addInterceptor(authInterceptor)

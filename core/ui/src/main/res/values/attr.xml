@@ -32,6 +32,7 @@
     </declare-styleable>
 
     <declare-styleable name="EndTextEditText">
+        <attr name="startIconDrawable" format="reference" />
         <attr name="endText" format="string" />
         <attr name="endTextVisible" format="boolean"/>
         <attr name="android:hint" format="string" />

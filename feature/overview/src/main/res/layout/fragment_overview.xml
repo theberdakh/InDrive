@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:theme="@style/Theme.InDrive">
 
@@ -28,13 +28,14 @@
                 android:layout_height="match_parent"
                 android:background="#f1f3f5"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:paddingHorizontal="16dp"
+                android:paddingTop="20dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Sálem!"
-                    android:textAppearance="@style/TextAppearance.InDrive.DisplaySmall"
+                    android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
                     android:textSize="32sp" />
 
                 <TextView
@@ -62,15 +63,17 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_top_left"
                             android:orientation="vertical"
-                            android:paddingVertical="@dimen/padding_small"
-                            android:paddingHorizontal="@dimen/padding_medium">
+                            android:paddingHorizontal="@dimen/padding_medium"
+                            android:paddingVertical="@dimen/padding_small">
 
                             <TextView
                                 android:id="@+id/tv_daily_income"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                tools:text="86 000"
-                                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
+                                tools:text="86 000" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -87,15 +90,17 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_top_right"
                             android:orientation="vertical"
-                            android:paddingVertical="@dimen/padding_small"
-                            android:paddingHorizontal="@dimen/padding_medium">
+                            android:paddingHorizontal="@dimen/padding_medium"
+                            android:paddingVertical="@dimen/padding_small">
 
                             <TextView
                                 android:id="@+id/tv_balance"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                tools:text="86 000"
-                                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody" />
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:textAppearance="@style/TextAppearance.InDrive.Text.TitleBody"
+                                tools:text="86 000" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -112,11 +117,11 @@
                         android:layout_height="0dp"
                         android:layout_marginTop="1dp"
                         android:layout_weight="1"
-                        android:visibility="gone"
                         android:background="@drawable/round_bottom"
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/padding_medium"
-                       android:paddingVertical="@dimen/padding_small">
+                        android:paddingVertical="@dimen/padding_small"
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -142,11 +147,11 @@
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
-            app:menu="@menu/menu_drawer"
-            app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            app:headerLayout="@layout/layout_drawer_header"
             android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            android:layout_gravity="start"
+            app:headerLayout="@layout/layout_drawer_header"
+            app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
+            app:menu="@menu/menu_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
@@ -181,7 +186,9 @@
                 style="@style/Widget.InDrive.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp"
                 android:text="Buyırtpalardı qabıllaw" />
 
         </LinearLayout>

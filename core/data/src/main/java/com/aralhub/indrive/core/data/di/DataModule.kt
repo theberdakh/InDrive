@@ -5,11 +5,21 @@ import com.aralhub.indrive.core.data.repository.address.AddressRepositoryImpl
 import com.aralhub.indrive.core.data.repository.cancel.CancelRepository
 import com.aralhub.indrive.core.data.repository.cancel.impl.CancelRepositoryImpl
 import com.aralhub.indrive.core.data.repository.client.ClientAuthRepository
+import com.aralhub.indrive.core.data.repository.client.ClientOffersRepository
+import com.aralhub.indrive.core.data.repository.client.ClientRideRepository
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.repository.client.impl.ClientAuthRepositoryImpl
+import com.aralhub.indrive.core.data.repository.client.impl.ClientOffersRepositoryImpl
+import com.aralhub.indrive.core.data.repository.client.impl.ClientRideRepositoryImpl
 import com.aralhub.indrive.core.data.repository.client.impl.ClientWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
+import com.aralhub.indrive.core.data.repository.driver.DriverOfferRepository
+import com.aralhub.indrive.core.data.repository.driver.DriverRepository
+import com.aralhub.indrive.core.data.repository.driver.DriverWebSocketRepository
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverAuthRepositoryImpl
+import com.aralhub.indrive.core.data.repository.driver.impl.DriverOfferRepositoryImpl
+import com.aralhub.indrive.core.data.repository.driver.impl.DriverRepositoryImpl
+import com.aralhub.indrive.core.data.repository.driver.impl.DriverWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.repository.payment.impl.PaymentRepositoryImpl
 import com.aralhub.indrive.core.data.repository.rideoption.RideOptionRepository
@@ -57,4 +67,29 @@ abstract class DataModule {
     internal abstract fun bindsAddressRepository(
         topicsRepository: AddressRepositoryImpl,
     ): AddressRepository
+
+    @Binds
+    internal abstract fun bindsDriverWebSocketRepository(
+        topicsRepository: DriverWebSocketRepositoryImpl,
+    ): DriverWebSocketRepository
+
+    @Binds
+    internal abstract fun bindsDriverOfferRepository(
+        repo: DriverOfferRepositoryImpl,
+    ): DriverOfferRepository
+
+    @Binds
+    internal abstract fun bindsDriverRepository(
+        repo: DriverRepositoryImpl,
+    ): DriverRepository
+
+    @Binds
+    internal abstract fun bindsOffersRepository(
+        repo: ClientOffersRepositoryImpl,
+    ): ClientOffersRepository
+
+    @Binds
+    internal abstract fun bindsRideRepository(
+        repository: ClientRideRepositoryImpl
+    ): ClientRideRepository
 }

@@ -3,77 +3,140 @@ package com.aralhub.araltaxi.request
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.addCallback
+import androidx.appcompat.app.ActionBar.LayoutParams
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import com.aralhub.araltaxi.client.request.R
 import com.aralhub.araltaxi.client.request.databinding.FragmentRequestBinding
+import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.permission.PermissionHelper
 import com.aralhub.araltaxi.request.navigation.FeatureRequestNavigation
-import com.aralhub.araltaxi.request.navigation.sheet.SheetNavigator
-import com.aralhub.araltaxi.request.sheet.modal.LogoutModalBottomSheet
 import com.aralhub.araltaxi.request.utils.BottomSheetBehaviorDrawerListener
 import com.aralhub.araltaxi.request.utils.MapKitInitializer
-import com.aralhub.araltaxi.request.utils.SelectLocationCameraListener
 import com.aralhub.indrive.core.data.model.client.ClientProfile
+import com.aralhub.ui.adapter.location.LocationItemAdapter
+import com.aralhub.ui.model.LocationItemClickOwner
+import com.aralhub.ui.model.args.LocationType
+import com.aralhub.ui.model.args.SelectedLocation
+import com.aralhub.ui.sheets.LoadingModalBottomSheet
+import com.aralhub.ui.sheets.LogoutModalBottomSheet
+import com.aralhub.ui.utils.GlideEx.displayAvatar
+import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.hide
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.GeoObjectTapListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.GeoObjectSelectionMetadata
 import com.yandex.mapkit.map.Map
-import com.yandex.mapkit.map.Map.CameraCallback
+import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class RequestFragment : Fragment(R.layout.fragment_request) {
+
+    private companion object {
+        private const val LOCATION_REQUEST_MIN_TIME = 0L //Milliseconds
+        private const val LOCATION_REQUEST_MIN_DISTANCE = 5f //Meter
+
+        //To fetch args when go back from SelectLocationFragment
+        private const val SELECT_LOCATION_OWNER_FROM = 0
+        private const val SELECT_LOCATION_OWNER_TO = 1
+        private const val SELECT_LOCATION_REQUEST_KEY = "location_key"
+        private const val SELECT_LOCATION_KEY_LATITUDE = "latitude"
+        private const val SELECT_LOCATION_KEY_LONGITUDE = "longitude"
+        private const val SELECT_LOCATION_KEY_LOCATION_NAME = "locationName"
+        private const val SELECT_LOCATION_KEY_LOCATION_OWNER = "owner"
+        private const val NULL_STRING = "null" //locationName can be null
+
+        //To fetch args when go back from CreateOrderFragment
+        private const val CREATE_ORDER_REQUEST_KEY = "cancel"
+
+        //CurrentLocation values
+        private const val CURRENT_LOCATION_NOT_INITIALISED_VALUE = 0.0
+        private var currentLongitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
+        private var currentLatitude = CURRENT_LOCATION_NOT_INITIALISED_VALUE
+
+        private val START_ANIMATION = Animation(Animation.Type.LINEAR, 1f)
+        private val SMOOTH_ANIMATION = Animation(Animation.Type.SMOOTH, 0.4f)
+    }
     private val binding by viewBinding(FragmentRequestBinding::bind)
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-    private var selectLocationCameraListener: SelectLocationCameraListener? = null
-    @Inject
-    lateinit var sheetNavigator: SheetNavigator
     @Inject
     lateinit var navigation: FeatureRequestNavigation
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.forEach { permission ->
-                Log.i("RequestTaxiFragment", "Permission: ${permission.key} is granted: ${permission.value}")
-            }
-        }
+    @Inject
+    lateinit var errorHandler: ErrorHandler
+    private val adapter = LocationItemAdapter()
     private val viewModel by viewModels<RequestViewModel>()
-    private var placeMarkObject: PlacemarkMapObject? = null
+    private val requestViewModel2 by viewModels<RequestViewModel2>()
     private var locationManager: LocationManager? = null
-    private var gpsEnabled: Boolean = false
+
+    // Variables to track latest states
+    private var latestSearchRideState: SearchRideUiState? = null
+    private var latestActiveRideState: ActiveRideUiState? = null
+
+    private var placeMarkObject: PlacemarkMapObject? = null
+    private var isNavigatedToCreateOrderFragment = false
+    private var isFullscreen = false
+    private lateinit var mapWindow: MapWindow
+    private lateinit var map: Map
+
+    private val geoObjectTapListener = GeoObjectTapListener {
+        // Move camera to selected geoObject
+        val point = it.geoObject.geometry.firstOrNull()?.point ?: return@GeoObjectTapListener true
+        map.cameraPosition.run {
+            val position = CameraPosition(point, zoom, azimuth, tilt)
+            map.move(position, SMOOTH_ANIMATION, null)
+        }
+        val selectionMetadata = it.geoObject.metadataContainer.getItem(GeoObjectSelectionMetadata::class.java)
+        map.selectGeoObject(selectionMetadata)
+        errorHandler.showToast("Tapped ${it.geoObject.name} id = ${selectionMetadata.objectId}")
+        true
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         MapKitInitializer.init("f1c206ee-1f73-468c-8ba8-ec3ef7a7f69a", requireContext())
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapWindow = binding.mapView.mapWindow
+        map = mapWindow.map
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        observeStates()
+        initViews()
+        initListeners()
+    }
+
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        Log.i("RequestFragment", "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationManager?.let { observeLocationUpdates(it) }
     }
 
     override fun onStop() {
@@ -82,133 +145,269 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         locationManager = null
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        listenToLocationUpdates()
-        initViews()
-        initListeners()
-        initObservers()
+    private val locationListener = LocationListener { location ->
+        requestViewModel2.setCurrentLocation(location.latitude, location.longitude)
     }
 
-
     @SuppressLint("MissingPermission")
-    private fun listenToLocationUpdates() {
-        launchPermissions()
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        try {
-            val isProviderEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            gpsEnabled = isProviderEnabled == true
-            viewModel.updateLocationEnabled(gpsEnabled)
-        } catch (_: Exception) {
-            gpsEnabled = false
-            viewModel.updateLocationEnabled(gpsEnabled)
-            Toast.makeText(requireContext(), "Location is off", Toast.LENGTH_SHORT).show()
-        }
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f) {
-            Toast.makeText(
+    private fun observeLocationUpdates(locationManager: LocationManager) {
+        if (PermissionHelper.arePermissionsGranted(
                 requireContext(),
-                "Requesting Location Updates",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            val map = binding.mapView.mapWindow.map
-            val point = Point(it.latitude, it.longitude)
-            val cameraPosition = CameraPosition(point, 17.0f, 150.0f, 30.0f)
-            map.move(cameraPosition)
-            val imageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-            setPlaceMarkToPosition(
-                cameraPosition,
-                binding.mapView.mapWindow.map,
-                point,
-                imageProvider
-            ) { placeMarkPoint ->
-                Toast.makeText(
-                    requireContext(),
-                    "Tapped. lat: ${placeMarkPoint.latitude}, ${placeMarkPoint.longitude}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    private fun setPlaceMarkToPosition(
-        position: CameraPosition,
-        map: Map,
-        point: Point,
-        imageProvider: ImageProvider,
-        onPlaceMarkTap: (point: Point) -> Unit
-    ) {
-        map.move(position)
-        if (placeMarkObject == null) {
-            placeMarkObject = map.mapObjects.addPlacemark().apply {
-                geometry = point
-                setIcon(imageProvider)
-            }
-            placeMarkObject!!.addTapListener { _, placeMarkPoint ->
-                onPlaceMarkTap(placeMarkPoint)
-                true
-            }
-        } else {
-            placeMarkObject!!.geometry = point
-        }
-    }
-
-    private fun initObservers() {
-        viewModel.locationEnabled.onEach { isEnabled ->
-            if (isEnabled) {
-                Toast.makeText(requireContext(), "Location is enabled", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Location is disabled", Toast.LENGTH_SHORT).show()
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.getProfile()
-        viewModel.profileUiState.onEach {
-            when (it) {
-                is ProfileUiState.Error -> Log.i(
-                    "RequestFragment",
-                    "profileUiState: error ${it.message}"
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
+            )
+        ) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                LOCATION_REQUEST_MIN_TIME,
+                LOCATION_REQUEST_MIN_DISTANCE,
+                locationListener
+            )
+        }
+    }
 
-                ProfileUiState.Loading -> Log.i("RequestFragment", "profileUiState: loading")
-                is ProfileUiState.Success -> displayProfile(it.profile)
+    private fun observeStates() {
+        observeState(requestViewModel2.currentLocationFlow) {
+            updateMap(it.longitude, it.latitude)
+            currentLatitude = it.latitude
+            currentLongitude = it.longitude
+            binding.etFromLocation.text = it.name
+        }
+        observeState(requestViewModel2.fromLocationFlow) {
+            it?.let { fromLocation ->
+                binding.etFromLocation.text = fromLocation.name
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-        viewModel.logOutUiState.onEach {
-            when (it) {
-                is LogOutUiState.Error -> Log.i("RequestFragment", "logOutUiState: error ${it.message}")
-                LogOutUiState.Loading -> Log.i("RequestFragment", "logOutUiState: loading")
+        }
+        observeState(requestViewModel2.toLocationFlow) {
+            it?.let { toLocation ->
+                Log.i("Location", "${toLocation.name}")
+                binding.etToLocation.text = toLocation.name
+            } ?: run {
+                binding.etToLocation.text = ""
+            }
+        }
+        observeState(requestViewModel2.navigateToCreateOrderFlow) { selectedLocations ->
+            if (!isNavigatedToCreateOrderFragment && selectedLocations != null) {
+                isNavigatedToCreateOrderFragment = true
+                navigation.goToCreateOrderFromRequestFragment(selectedLocations)
+                requestViewModel2.clearToLocation()
+            }
+        }
+        observeState(viewModel.suggestionsUiState) { suggestionsUiState ->
+            when (suggestionsUiState) {
+                is SuggestionsUiState.Error -> errorHandler.showToast(suggestionsUiState.message)
+                SuggestionsUiState.Loading -> {}
+                is SuggestionsUiState.Success -> {
+                    adapter.submitList(null)
+                    binding.space.hide()
+                    adapter.submitList(suggestionsUiState.suggestions)
+                }
+            }
+        }
+        observeState(viewModel.searchRideUiState) { searchRideUiState ->
+            latestSearchRideState = searchRideUiState
+            updateLoadingDialog()
+            when (searchRideUiState) {
+                is SearchRideUiState.Error -> {}
+                SearchRideUiState.Loading -> {}
+                is SearchRideUiState.Success -> {
+                    navigation.goToGetOffersFromRequestFragment()
+                }
+            }
+        }
+        observeState(viewModel.activeRideUiState) { activeRideUiState ->
+            latestActiveRideState = activeRideUiState
+            updateLoadingDialog()
+            when (activeRideUiState) {
+                is ActiveRideUiState.Error -> {}
+                ActiveRideUiState.Loading -> {}
+                is ActiveRideUiState.Success -> {
+                    LoadingModalBottomSheet.hide(childFragmentManager)
+                    navigation.goToRideFragmentFromRequestFragment()
+                }
+            }
+        }
+        observeState(viewModel.profileUiState) { profileUiState ->
+            when (profileUiState) {
+                is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
+                ProfileUiState.Loading -> {}
+                is ProfileUiState.Success -> displayProfile(profileUiState.profile)
+            }
+        }
+        observeState(viewModel.logOutUiState) { logOutUiState ->
+            when (logOutUiState) {
+                is LogOutUiState.Error -> errorHandler.showToast(logOutUiState.message)
+                LogOutUiState.Loading -> {}
                 LogOutUiState.Success -> navigation.goToLogoFromRequestFragment()
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    private fun displayProfile(profile: ClientProfile) {
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
-            profile.fullName
-        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
-            profile.phone
-        Glide.with(this)
-            .load("https://araltaxi.aralhub.uz/${profile.profilePhoto}")
-            .apply(RequestOptions.circleCropTransform())
-            .signature(ObjectKey(System.currentTimeMillis()))
-            .into(binding.navigationView.getHeaderView(0).findViewById(R.id.iv_avatar))
-    }
-
-    private fun launchPermissions() {
-        locationPermissionLauncher.launch(requiredPermissions)
+        }
     }
 
     private fun initViews() {
+        binding.rvLocations.adapter = adapter
         setUpBottomSheet()
-        initBottomNavController()
     }
 
     private fun initListeners() {
+        initFragmentResultListener()
+        initAdapterListener()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            true
+        ) {
+            if (isFullscreen || adapter.currentList.isNotEmpty()) {
+                adapter.submitList(null)
+                binding.space.hide()
+            } else {
+                requireActivity().finish()
+            }
+        }
+
+        binding.mapView.setOnClickListener {
+            if (isFullscreen){
+                binding.space.hide()
+                isFullscreen = false
+            }
+        }
+
+        binding.etFromLocation.setOnTextChangedListener {
+            if (it.isNotEmpty() && !it.isNullOrBlank()) {
+                Log.i("Suggest", "Suggest Location")
+                viewModel.suggestLocation(it, LocationItemClickOwner.FROM)
+            } else {
+                adapter.submitList(null)
+            }
+        }
+
+        binding.etToLocation.setOnTextChangedListener {
+            if (it.isNotEmpty() && !it.isNullOrBlank()) {
+                Log.i("Suggest 2", "Suggest Location 2")
+                viewModel.suggestLocation(it, LocationItemClickOwner.TO)
+            } else {
+                adapter.submitList(null)
+            }
+        }
+
+        val textFields = listOf(binding.etFromLocation, binding.etToLocation)
+
+        for (textField in textFields) {
+            textField.setOnActivatedListener {
+                textField.setEndTextVisible(it)
+                if (!isFullscreen) {
+                   // binding.space.show()
+                }
+            }
+        }
+
+        binding.etFromLocation.setEndTextClickListener {
+            navigation.goToSelectFromLocationFromRequestFragment()
+        }
+
+        binding.etToLocation.setEndTextClickListener {
+            navigation.goToSelectToLocationFromRequestFragment()
+        }
+
         binding.btnMenu.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+
+        binding.btnCurrentLocation.setOnClickListener {
+            if (currentLatitude != CURRENT_LOCATION_NOT_INITIALISED_VALUE && currentLongitude != CURRENT_LOCATION_NOT_INITIALISED_VALUE) {
+                updateMap(currentLongitude, currentLatitude)
+            }
+        }
+
+        initNavigationViewListener()
+        initDrawerListener()
+
+    }
+
+    private fun initFragmentResultListener() {
+        parentFragmentManager.clearFragmentResultListener(SELECT_LOCATION_REQUEST_KEY)
+        parentFragmentManager.setFragmentResultListener(
+            SELECT_LOCATION_REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val latitude = bundle.getDouble(SELECT_LOCATION_KEY_LATITUDE)
+            val longitude = bundle.getDouble(SELECT_LOCATION_KEY_LONGITUDE)
+            val locationName = bundle.getString(SELECT_LOCATION_KEY_LOCATION_NAME) ?: NULL_STRING
+            val locationOwner = bundle.getInt(SELECT_LOCATION_KEY_LOCATION_OWNER)
+            when (locationOwner) {
+                SELECT_LOCATION_OWNER_FROM -> {
+                    requestViewModel2.setFromLocation(
+                        SelectedLocation(
+                            name = locationName,
+                            longitude = longitude,
+                            latitude = latitude,
+                            locationType = LocationType.FROM
+                        )
+                    )
+                }
+
+                SELECT_LOCATION_OWNER_TO -> {
+                    requestViewModel2.setToLocation(
+                        SelectedLocation(
+                            name = locationName,
+                            longitude = longitude,
+                            latitude = latitude,
+                            locationType = LocationType.TO
+                        )
+                    )
+                }
+            }
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            CREATE_ORDER_REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, _ ->
+            isNavigatedToCreateOrderFragment = false
+        }
+    }
+
+    private fun initAdapterListener() {
+        adapter.setOnItemClickListener {
+            when (it.clickOwner) {
+                LocationItemClickOwner.FROM -> {
+                    requestViewModel2.setFromLocation(
+                        SelectedLocation(
+                            name = it.title,
+                            longitude = it.longitude,
+                            latitude = it.latitude,
+                            locationType = LocationType.FROM
+                        )
+                    )
+                    adapter.submitList(null)
+                }
+
+                LocationItemClickOwner.TO -> {
+                    binding.etToLocation.text = it.title
+                    requestViewModel2.setToLocation(
+                        SelectedLocation(
+                            name = it.title,
+                            longitude = it.longitude,
+                            latitude = it.latitude,
+                            locationType = LocationType.TO
+                        )
+                    )
+                    adapter.submitList(null)
+                }
+            }
+        }
+    }
+
+    private fun initDrawerListener() {
+        if (bottomSheetBehavior != null) {
+            binding.drawerLayout.addDrawerListener(
+                BottomSheetBehaviorDrawerListener(bottomSheetBehavior!!)
+            )
+        }
+    }
+
+    private fun initNavigationViewListener() {
         binding.navigationView.getHeaderView(0).setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navigation.goToProfileFromRequestFragment()
@@ -246,59 +445,83 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 else -> false
             }
         }
-        if (bottomSheetBehavior != null) {
-            binding.drawerLayout.addDrawerListener(
-                BottomSheetBehaviorDrawerListener(
-                    bottomSheetBehavior!!
-                )
-            )
-        }
-    }
-
-    private fun setUpSelectLocation() {
-        selectLocationCameraListener?.let {
-            binding.mapView.mapWindow.map.addCameraListener(selectLocationCameraListener!!)
-            it.setOnLocationChangedListener {
-                Log.i("RequestFragment", "onLocationChanged: $it")
-            }
-        }
-
-    }
-
-    private fun setUpMapView(latitude: Double, longitude: Double) {
-        val point = Point(latitude, longitude)
-        val imageProvider =
-            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_vector)
-        binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
-            geometry = point
-            setIcon(imageProvider)
-        }
-        val cameraCallback = CameraCallback {}
-        binding.mapView.mapWindow.map.move(
-            CameraPosition(
-                point,/* zoom = */
-                17.0f,/* azimuth = */
-                150.0f,/* tilt = */
-                30.0f
-            ), Animation(Animation.Type.LINEAR, 1f), cameraCallback
-        )
     }
 
     private fun setUpBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBottomSheet)
-        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-        binding.layoutBottomSheet.isVisible = true
+        bottomSheetBehavior?.apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            peekHeight = 200
+            isHideable = false
+        }
+        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    private fun initBottomNavController() {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.let { sheetNavigator.bind(navController) }
+    private fun updateLoadingDialog() {
+        val searchState = latestSearchRideState
+        val activeState = latestActiveRideState
+
+        // Show dialog if we haven't received final states yet
+        if (searchState == null || activeState == null ||
+            (searchState is SearchRideUiState.Loading || activeState is ActiveRideUiState.Loading)
+        ) {
+            showLoadingDialog()
+            return
+        }
+
+        // Hide dialog when:
+        // 1. One of them is Success
+        // 2. Both are Error
+        when {
+            searchState is SearchRideUiState.Success || activeState is ActiveRideUiState.Success -> {
+                hideLoadingDialog()
+            }
+
+            searchState is SearchRideUiState.Error && activeState is ActiveRideUiState.Error -> {
+                hideLoadingDialog()
+            }
+        }
     }
 
-    override fun onDestroy() {
-        sheetNavigator.unbind()
-        super.onDestroy()
+    private fun updateMap(longitude: Double, latitude: Double) {
+        Log.i("RequestFragment", "Update Map")
+        placeMarkObject?.let {
+            binding.mapView.mapWindow.map.mapObjects.clear()
+        }
+        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_vector)
+        placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+            geometry = Point(latitude, longitude)
+            setIcon(imageProvider)
+            isVisible = true
+        }
+        binding.mapView.mapWindow.map.move(
+            CameraPosition(Point(latitude, longitude), 17.0f, 150.0f, 30.0f)
+        )
     }
+
+    private fun displayProfile(profile: ClientProfile) {
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_name).text =
+            profile.fullName
+        binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.tv_phone).text =
+            profile.phone
+        val imageView =
+            binding.navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_avatar)
+        displayAvatar(profile.profilePhoto, imageView)
+    }
+
+    private fun showLoadingDialog() {
+        Log.i("Dialog", "Show")
+        LoadingModalBottomSheet.show(childFragmentManager)
+    }
+
+    private fun hideLoadingDialog() {
+        Log.i("Dialog", "Hide")
+        LoadingModalBottomSheet.hide(childFragmentManager)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingModalBottomSheet.hide(childFragmentManager)
+    }
+
 }

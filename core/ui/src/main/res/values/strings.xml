@@ -31,7 +31,7 @@
     <string name="label_call">Qońıraw etiw</string>
     <string name="label_driver">Aydawshi</string>
     <string name="label_driver_is_waiting">Aydawshı sizdi kútip tur</string>
-    <string name="label_driver_rating">%1$f★</string>
+    <string name="label_driver_rating">%1$s★</string>
     <string name="label_free_waiting_time">Biypul kútiw waqtı</string>
     <string name="label_total_money">Jámi</string>
     <string name="label_payment_method">Tólem usılı</string>
@@ -40,7 +40,7 @@
 
     <string name="label_trip_ended">Sapar juwmaqlandı</string>
     <string name="label_trip_ended_description_payment_online">Ótinish, tómendegi karta maǵlıwmatları arqalı jol haqın aydawshıǵa tikkeley ótkeriń.</string>
-    <string name="label_trip_ended_description_payment_cash">Ótinish, kelisilgen jol haqın naq pulda tikkeley aydawshınıń ózine tóleń.</string>
+    <string name="label_trip_ended_description_payment_cash">Jolawshı jol haqın naq pul arqalı tóleydi.</string>
     <string name="label_card_number">Karta nomeri</string>
     <string name="label_close">Jabıw</string>
     
@@ -95,4 +95,7 @@
     <string name="label_telegram_bot_description">Sorawlarıńızǵa operativ túrde juwap alıw ushın, Telegramdaǵı chat-botımız arqalı xabarlasıń.</string>
     <string name="label_go_to_telegram">Telegramǵa ótiw</string>
     <string name="label_exit_description">Siz akkauntı tárk etip atırsız. Ámeldi tastıyıqlaysız ba?</string>
+
+    <string name="standard_uzs_price">%s som</string>
+    <string name="placeholder_recommended_price">Usınıs etilgen baha %1$d som</string>
 </resources>

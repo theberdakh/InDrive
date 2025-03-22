@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -17,7 +18,7 @@
             <com.yandex.mapkit.mapview.MapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
             <ImageButton
                 android:id="@+id/btn_menu"
@@ -40,30 +41,49 @@
             android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="start"
             app:headerLayout="@layout/layout_drawer_header"
             app:itemTextAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            android:layout_gravity="start"
             app:menu="@menu/menu_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:id="@+id/layout_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
         android:clickable="true"
+        android:fitsSystemWindows="false"
         android:focusable="true"
-        android:paddingTop="0dp"
-        android:background="@drawable/bg_bottom_sheet"
         android:orientation="vertical"
-        app:paddingTopSystemWindowInsets="false"
+        app:behavior_draggable="false"
+        android:paddingTop="0dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         app:paddingBottomSystemWindowInsets="true"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:paddingTopSystemWindowInsets="false">
+
+
+        <ImageButton
+            android:id="@+id/btn_current_location"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:layout_gravity="end"
+            android:background="@drawable/shape_circle_icon"
+            android:contentDescription="@string/cd_menu"
+            android:elevation="2dp"
+            android:foreground="@drawable/ripple_round"
+            android:padding="@dimen/padding_medium"
+            android:src="@drawable/ic_carbon_location_current_1"
+            />
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_bottom_sheet"
             android:orientation="vertical">
 
             <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -73,19 +93,50 @@
                 android:padding="0dp"
                 android:paddingBottom="0dp" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/bottom_sheet_nav_host"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+
+            <com.aralhub.ui.components.EndTextEditText
+                android:id="@+id/et_from_location"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_medium"
+                app:startIconDrawable="@drawable/ic_start_location"
+                android:hint="@string/hint_from_location"
+                app:endText="Karta"
+                app:hintTextColor="@color/color_tertiary" />
+
+            <com.aralhub.ui.components.EndTextEditText
+                android:id="@+id/et_to_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/request_nav" />
+                app:startIconDrawable="@drawable/ic_end_location"
+                android:layout_margin="@dimen/margin_medium"
+                android:hint="@string/hint_to_location"
+                app:endText="Karta"
+                app:hintTextColor="@color/color_tertiary" />
+
+            <View
+                android:id="@+id/space"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_locations"
+                tools:itemCount="12"
+                tools:listitem="@layout/item_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="true"
+                android:paddingBottom="25dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+
 
         </LinearLayout>
 
 
+</LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

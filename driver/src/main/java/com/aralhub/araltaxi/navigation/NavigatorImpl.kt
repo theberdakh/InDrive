@@ -1,16 +1,22 @@
 package com.aralhub.araltaxi.navigation
 
+import android.os.Bundle
 import androidx.navigation.NavController
 import com.aralhub.araltaxi.driver.R
 import com.aralhub.araltaxi.driver.driver_auth.addsms.AddSMSFragment
 import com.aralhub.araltaxi.driver.driver_auth.navigation.FeatureDriverAuthNavigation
 import com.aralhub.araltaxi.driver.orders.navigation.FeatureOrdersNavigation
+import com.aralhub.araltaxi.driver.orders.orders.OrdersFragment
+import com.aralhub.araltaxi.driver.orders.orders.OrdersFragmentDirections
+import com.aralhub.overview.OverviewFragmentDirections
 import com.aralhub.overview.navigation.FeatureOverviewNavigation
+import com.aralhub.ui.model.OrderItem
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigation, FeatureOverviewNavigation, FeatureOrdersNavigation{
+class NavigatorImpl @Inject constructor() : Navigator, FeatureDriverAuthNavigation,
+    FeatureOverviewNavigation, FeatureOrdersNavigation {
 
     private var navController: NavController? = null
 
@@ -23,7 +29,10 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
     }
 
     override fun goToAddSMSCode(phone: String) {
-        navController?.navigate(R.id.action_addPhoneFragment_to_addSmsFragment, AddSMSFragment.args(phone))
+        navController?.navigate(
+            R.id.action_addPhoneFragment_to_addSmsFragment,
+            AddSMSFragment.args(phone)
+        )
     }
 
     override fun goToOverviewFromLogo() {
@@ -38,8 +47,8 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
         this.navController = null
     }
 
-    override fun goToAcceptOrders() {
-        navController?.navigate(R.id.action_overviewFragment_to_ordersFragment)
+    override fun goToAcceptOrders(argument: Bundle?) {
+        navController?.navigate(R.id.action_overviewFragment_to_ordersFragment, argument)
     }
 
     override fun goToProfileFromOverview() {
@@ -60,6 +69,16 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureDriverAuthNavigatio
 
     override fun goToLogoFromOverview() {
         navController?.navigate(R.id.action_overviewFragment_to_logoFragment)
+    }
+
+    override fun goToMapFromOrders(order: OrderItem) {
+        val bundle = Bundle()
+        bundle.putParcelable("OrderDetail", order)
+        val direction = R.id.action_ordersFragment_to_showOrderRouteFragment
+        navController?.navigate(
+            direction,
+            bundle
+        )
     }
 
     override fun goToProfileFromOrders() {

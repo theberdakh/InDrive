@@ -5,6 +5,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat
@@ -12,6 +13,7 @@ import com.aralhub.ui.R
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+
 class MoneyFormatter(
     private val editText: EditText,
     private val isFinished: (Boolean) -> Unit = {}
@@ -44,7 +46,7 @@ class MoneyFormatter(
                 }
 
                 val formattedText = formatNumber(digitsOnly)
-                editText.setText(formatWithSuffix(formattedText, editText.hasFocus()))
+                editText.setText(formatWithSuffix(formattedText))
                 editText.setSelection(formattedText.length)
 
                 isFinished(digitsOnly.isNotEmpty())
@@ -54,7 +56,7 @@ class MoneyFormatter(
 
         editText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             val currentText = editText.text.toString().replace(suffix, "").trim()
-            editText.setText(formatWithSuffix(currentText, hasFocus))
+            editText.setText(formatWithSuffix(currentText))
             editText.setSelection(currentText.length)
         }
     }
@@ -63,15 +65,27 @@ class MoneyFormatter(
         return decimalFormat.format(digits.toLong())
     }
 
-    private fun formatWithSuffix(text: String, showSuffix: Boolean): SpannableString {
-        val result = SpannableString("$text${if (showSuffix) suffix else ""}")
-        if (showSuffix) {
-            result.setSpan(
-                ForegroundColorSpan(ContextCompat.getColor(editText.context, R.color.color_content_tertiary)),
-                text.length, result.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
+    private fun formatWithSuffix(text: String): SpannableString {
+        Log.d("MoneyFormatter", "formatWithSuffix: $text")
+        val result = SpannableString("$text$suffix")
+        result.setSpan(
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    editText.context,
+                    R.color.color_content_tertiary
+                )
+            ),
+            text.length, result.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         return result
+    }
+
+    fun getUnformattedText(): String {
+        return editText.text.toString().replace(suffix, "").replace(" ", "").trim()
+    }
+
+    fun unformattedText(editText: EditText): String {
+        return editText.text.toString().replace(suffix, "").replace(" ", "").trim()
     }
 }

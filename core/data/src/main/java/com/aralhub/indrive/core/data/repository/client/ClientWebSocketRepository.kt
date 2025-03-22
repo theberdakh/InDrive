@@ -12,6 +12,11 @@ import com.aralhub.indrive.core.data.result.Result
 interface ClientWebSocketRepository {
     suspend fun getRecommendedPrice(points: List<GeoPoint>): Result<RecommendedPrice>
     suspend fun createRide(clientRideRequest: ClientRideRequest): Result<ClientRide>
-    suspend fun getActiveRideByPassenger(userId: Int): Result<ActiveRide>
-    suspend fun getSearchRideByPassengerId(userId: Int): Result<SearchRide>
+    suspend fun getActiveRideByPassenger(): Result<ActiveRide>
+    suspend fun getSearchRideByPassengerId(): Result<SearchRide>
+    suspend fun cancelSearchRide(rideId: String): Result<Boolean>
+    suspend fun updateSearchRideAmount(rideId: String, amount: Number): Result<Boolean>
+    suspend fun updateAutoTake(rideId: String, autoTake: Boolean): Result<Boolean>
+    suspend fun cancelRide(rideId: Int, cancelCauseId: Int): Result<Boolean>
+    suspend fun cancelRideByPassenger(rideId: Int): Result<Boolean>
 }

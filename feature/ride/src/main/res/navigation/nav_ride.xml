@@ -16,6 +16,18 @@
             app:popUpTo="@id/waitingForDriverBottomSheet"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/action_waitingForDriverBottomSheet_toRideBottomSheet"
+            app:destination="@id/rideBottomSheet"
+            app:popUpTo="@id/waitingForDriverBottomSheet"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_waitingForDriverBottomSheet_toRideFinishedBottomSheet"
+            app:destination="@id/rideFinishedBottomSheet"
+            app:popUpTo="@id/waitingForDriverBottomSheet"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
     <fragment

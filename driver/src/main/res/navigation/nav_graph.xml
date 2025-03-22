@@ -98,6 +98,9 @@
             app:popUpTo="@id/overviewFragment"
             app:popUpToInclusive="true"
             app:destination="@id/logoFragment"/>
+        <action
+            android:id="@+id/action_ordersFragment_to_showOrderRouteFragment"
+            app:destination="@id/showOrderRouteFragment" />
 
     </fragment>
 
@@ -120,5 +123,14 @@
         android:id="@+id/revenueFragment"
         android:name="com.aralhub.araltaxi.revenue.RevenueFragment"
         tools:layout="@layout/fragment_revenue"/>
+
+    <fragment
+        android:id="@+id/showOrderRouteFragment"
+        android:name="com.aralhub.araltaxi.driver.orders.orders.ShowOrderRouteFragment"
+        tools:layout="@layout/fragment_show_order_route">
+        <argument
+            android:name="order"
+            app:argType="com.aralhub.ui.model.OrderItem" />
+    </fragment>
 
 </navigation>

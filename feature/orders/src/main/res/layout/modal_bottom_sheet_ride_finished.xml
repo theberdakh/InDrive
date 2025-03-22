@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -22,63 +22,68 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="@string/label_trip_ended"
-        android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
+        android:textAppearance="@style/TextAppearance.InDrive.Text.Title"
+        android:textSize="26sp"
+        tools:text="Siz 14 000 som dáramat taptıńız" />
 
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_small"
-        tools:text="@string/label_trip_ended_description_payment_online"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.InDrive.Text"/>
-
+        android:padding="@dimen/padding_small"
+        android:textAppearance="@style/TextAppearance.InDrive.Text"
+        android:text="@string/label_trip_ended_description_payment_cash" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginTop="36dp"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_total_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="12 500 som"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"/>
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_total_money"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"/>
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_waiting_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="12 500 som"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"/>
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/label_total_money"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"/>
+                android:text="Kútiw waqtı ushın"
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
 
@@ -87,47 +92,49 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small"
         android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_small"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_waiting_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="12 500 som"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"/>
+                android:text="12 min"
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_trip_duration"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"/>
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_total_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="6.3 km"
-                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"/>
+                android:textAppearance="@style/TextAppearance.InDrive.BodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_total_distance"
-                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall"/>
+                android:textAppearance="@style/TextAppearance.InDrive.TitleSmall" />
 
         </LinearLayout>
 
@@ -138,7 +145,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="16dp">
 
 
         <ImageView
@@ -159,14 +167,13 @@
 
     </LinearLayout>
 
-
     <Button
         android:id="@+id/btn_close"
         style="@style/Widget.InDrive.Button.Variant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginVertical="@dimen/margin_small"
-        android:text="@string/label_close"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="@string/label_close" />
 
 </LinearLayout>

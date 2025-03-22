@@ -7,5 +7,12 @@ data class DriverProfile(
     val color: String,
     val vehicleType: String,
     val plateNumber: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val photoUrl: String
+)
+
+data class DriverInfo(
+    val phoneNumber: String,
+    val fullName: String,
+    val avatar: String
 )

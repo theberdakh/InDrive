@@ -3,10 +3,11 @@
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:endColor="#0C2239"
-                android:startColor="#001934" />
+                android:endColor="#A9EC00"
+                android:startColor="#9BEC00" />
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_splash"
-        android:gravity="center"/>
+    <item
+        android:drawable="@drawable/ic_splash"
+        android:gravity="center" />
 </layer-list>

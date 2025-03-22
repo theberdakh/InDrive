@@ -16,6 +16,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = "https://jitpack.io"
+        }
     }
 }
 
@@ -42,3 +45,6 @@ include ':feature:history:driver'
 include ':feature:revenue'
 include ':feature:history:client'
 include ':feature:saved-places'
+include ':services'
+include ':feature:select-location'
+include ':feature:create-order'

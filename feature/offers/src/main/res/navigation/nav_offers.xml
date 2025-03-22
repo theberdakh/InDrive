@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/changeOrCancelRequestBottomSheet"
-        android:name="com.aralhub.offers.sheet.standard.ChangeOrCancelRequestBottomSheet"
+        android:name="com.aralhub.offers.sheet.standard.changeorcancel.ChangeOrCancelRequestBottomSheet"
         tools:layout="@layout/bottom_sheet_change_or_cancel_request">
 
         <action
@@ -18,6 +18,6 @@
 
     <fragment
         android:id="@+id/changePriceBottomSheet"
-        android:name="com.aralhub.offers.sheet.standard.ChangePriceBottomSheet" />
+        android:name="com.aralhub.offers.sheet.standard.changeprice.ChangePriceBottomSheet" />
 
 </navigation>

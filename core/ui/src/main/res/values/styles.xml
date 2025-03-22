@@ -32,7 +32,9 @@
 
     <style name="Widget.InDrive.Button.Primary" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/selector_button_primary</item>
-        <item name="android:textAppearance">@style/TextAppearance.InDrive.PrimaryButton</item>
+        <item name="android:textColor">@drawable/selector_primary_button_text</item>
+        <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge.SemiBold</item>
+        <item name="android:paddingVertical">16dp</item>
     </style>
 
     <style name="Widget.InDrive.Button.GreenGradient" parent="Widget.InDrive.Button.Primary">
@@ -100,7 +102,7 @@
     </style>
 
     <style name="Widget.InDrive.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/color_gray_1</item>
+        <item name="tint">@color/color_gray_2</item>
         <item name="android:minHeight">8dp</item>
         <item name="android:paddingBottom">0dp</item>
     </style>
@@ -122,7 +124,7 @@
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
     
-    <style name="Widget.InDrive.Radio.Button" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="Widget.InDrive.Radio.Button" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:button">@drawable/selector_radio_button</item>
         <item name="android:textAppearance">@style/TextAppearance.InDrive.BodyLarge</item>
     </style>

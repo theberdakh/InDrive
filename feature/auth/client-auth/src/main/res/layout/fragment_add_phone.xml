@@ -35,6 +35,7 @@
                     android:id="@+id/et_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="phone"
                     android:layout_marginHorizontal="@dimen/margin_medium"
                     android:layout_marginTop="@dimen/margin_medium"
                     android:hint="@string/hint_phone"
@@ -56,13 +57,13 @@
             android:id="@+id/btn_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:layout_gravity="bottom"
             android:layout_margin="@dimen/margin_medium"
+
             app:buttonEnabled="false"
             android:background="@drawable/selector_button_primary"
             app:progressButtonText="@string/label_continue"
-            app:textAppearance="@style/TextAppearance.InDrive.PrimaryButton" />
+            app:textAppearance="@style/TextAppearance.InDrive.BodyLarge.SemiBold" />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

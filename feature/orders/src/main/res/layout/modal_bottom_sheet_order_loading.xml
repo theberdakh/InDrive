@@ -21,10 +21,11 @@
         android:indeterminate="true"/>
 
     <TextView
+        android:id="@+id/tv_offer_amount"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="14 000 som usınısıńız jolawshı tárepinen kórip shıǵılıp atır…"
+        android:text="@string/driver_offer_loading"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title"/>
 
     <TextView

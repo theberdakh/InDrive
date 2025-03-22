@@ -4,5 +4,5 @@ import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import javax.inject.Inject
 
 class ClientGetActiveRideUseCase @Inject constructor(private val webSocketRepository: ClientWebSocketRepository) {
-    suspend  operator fun invoke(userId: Int) = webSocketRepository.getActiveRideByPassenger(userId)
+    suspend  operator fun invoke() = webSocketRepository.getActiveRideByPassenger()
 }
