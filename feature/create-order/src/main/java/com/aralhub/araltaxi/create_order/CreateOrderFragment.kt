@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.create_order
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.permission.PermissionHelper
 import com.aralhub.araltaxi.create_order.databinding.FragmentCreateOrderBinding
 import com.aralhub.araltaxi.create_order.navigation.FeatureCreateOrderNavigation
 import com.aralhub.araltaxi.create_order.utils.NewCurrentLocationListener
@@ -138,8 +140,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         initMap()
         initObservers()
         initViews()
@@ -182,12 +183,21 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     @SuppressLint("MissingPermission")
     private fun observeLocationUpdates(locationManager: LocationManager) {
-        locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            0,
-            0f,
-            newCurrentLocationListener
-        )
+        if (PermissionHelper.arePermissionsGranted(
+                requireContext(),
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        ) {
+            locationManager?.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0f,
+                newCurrentLocationListener
+            )
+        }
     }
 
     private fun initArgs() {

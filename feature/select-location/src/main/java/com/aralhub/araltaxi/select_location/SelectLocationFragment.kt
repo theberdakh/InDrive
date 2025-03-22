@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.select_location
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Bundle
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.permission.PermissionHelper
 import com.aralhub.araltaxi.select_location.databinding.FragmentSelectLocationBinding
 import com.aralhub.araltaxi.select_location.utils.CurrentLocationListener
 import com.aralhub.ui.utils.FloatLandAnimation
@@ -175,12 +177,22 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-        locationManager?.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            0,
-            0f,
-            currentLocationListener
-        )
+        if (PermissionHelper.arePermissionsGranted(
+                requireContext(),
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        ) {
+            locationManager?.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0f,
+                currentLocationListener
+            )
+        }
+
     }
 
     override fun onPause() {
