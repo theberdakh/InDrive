@@ -260,9 +260,4 @@
         android:layout_margin="@dimen/margin_small"
         app:SlideButtonText="@string/label_arrived" />
 
-    <com.aralhub.ui.MyCustomView
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        app:square_color="@color/color_interactive_control"/>
-
 </LinearLayout>

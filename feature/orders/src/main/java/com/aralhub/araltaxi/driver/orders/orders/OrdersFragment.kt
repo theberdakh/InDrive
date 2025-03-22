@@ -121,14 +121,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         initTripCanceledModalBottomSheet()
         initListeners()
 
-        if (!goingToPickUpModalBottomSheet.isAdded) {
-            goingToPickUpModalBottomSheet.arguments = arguments
-            goingToPickUpModalBottomSheet.show(
-                childFragmentManager,
-                GoingToPickUpModalBottomSheet.TAG
-            )
-        }
-
     }
 
     private fun initData() {
