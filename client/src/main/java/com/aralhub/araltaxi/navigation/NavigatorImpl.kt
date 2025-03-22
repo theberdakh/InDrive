@@ -96,7 +96,7 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
     }
 
     override fun goBackToRequestFragmentFromOffersFragment() {
-        navController?.navigate(R.id.action_offersFragment_to_requestFragment)
+        navController?.navigateUp()
     }
 
     override fun goToLogoFragmentFromProfileFragment() {
@@ -118,6 +118,15 @@ class NavigatorImpl @Inject constructor(): Navigator, FeatureClientAuthNavigatio
     override fun goToOffersFromCreateOrderFragment() {
         navController?.navigate(R.id.action_createOrderFragment_to_offersFragment)
     }
+
+    override fun goToSelectFromLocationFromCreateOrderFragment() {
+        navController?.navigate(R.id.action_createOrderFragment_to_selectLocationFragment, SelectLocationFragment.args(SelectLocationFragment.Companion.LocationOwner.FROM))
+    }
+
+    override fun goToSelectToLocationFromCreateOrderFragment() {
+        navController?.navigate(R.id.action_createOrderFragment_to_selectLocationFragment, SelectLocationFragment.args(SelectLocationFragment.Companion.LocationOwner.TO))
+    }
+
 
     override fun goBackToCreateOfferFromRide() {
         navController?.navigateUp()

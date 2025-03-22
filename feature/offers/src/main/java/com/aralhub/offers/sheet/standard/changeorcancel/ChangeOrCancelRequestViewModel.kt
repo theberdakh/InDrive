@@ -50,11 +50,11 @@ class ChangeOrCancelRequestViewModel @Inject constructor(
     private val _cancelSearchRideUiState = MutableStateFlow<CancelSearchRideUiState>(CancelSearchRideUiState.Loading)
     val cancelSearchRideUiState = _cancelSearchRideUiState.asStateFlow()
 
-    fun cancelSearchRide() = viewModelScope.launch{
+    fun cancelSearchRide(searchId: String) = viewModelScope.launch{
         clientGetSearchRideUseCase().let { searchRideResult ->
             _cancelSearchRideUiState.value =  when(searchRideResult){
                 is Result.Error ->  CancelSearchRideUiState.Error(searchRideResult.message)
-                is Result.Success -> cancelSearchRideUseCase(searchRideResult.data.uuid).let {
+                is Result.Success -> cancelSearchRideUseCase(searchId).let {
                     when(it){
                         is Result.Error -> CancelSearchRideUiState.Error(it.message)
                         is Result.Success -> CancelSearchRideUiState.Success

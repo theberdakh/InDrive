@@ -7,6 +7,7 @@ import com.aralhub.araltaxi.core.domain.client.ClientAcceptOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientDeclineOfferUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetOffersUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
+import com.aralhub.araltaxi.core.domain.client.CloseOffersWebSocketUseCase
 import com.aralhub.indrive.core.data.model.offer.Offer
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
@@ -26,10 +27,12 @@ import javax.inject.Inject
 @HiltViewModel
 class OffersViewModel @Inject constructor(
     private val getOffersUseCase: ClientGetOffersUseCase,
+    private val closeOffersWebSocketUseCase: CloseOffersWebSocketUseCase,
     private val acceptOfferUseCase: ClientAcceptOfferUseCase,
     private val declineOfferUseCase: ClientDeclineOfferUseCase,
     private val getClientGetSearchRideUseCase: ClientGetSearchRideUseCase
 ) : ViewModel() {
+
     private var _offersUiState = MutableStateFlow<OffersUiState>(OffersUiState.Loading)
     val offersUiState = _offersUiState.asSharedFlow()
 
@@ -39,6 +42,12 @@ class OffersViewModel @Inject constructor(
     init {
         startExpirationChecker()
         getSearchRide()
+    }
+
+    fun closeOffersWebSocket() {
+        viewModelScope.launch {
+            closeOffersWebSocketUseCase()
+        }
     }
 
     private fun getSearchRide() {
@@ -52,9 +61,7 @@ class OffersViewModel @Inject constructor(
                 }
             ))
         }
-
     }
-
 
     private fun startExpirationChecker() = viewModelScope.launch {
         while (true) {

@@ -15,8 +15,12 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.araltaxi.ride.sheet.modal.WaitingTimeFragment
+import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -52,6 +56,7 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
                 }
                 is ActiveRideUiState.Success -> {
                     currentRideId = activeRideState.activeRide.id
+                    displayActiveRide(activeRideState.activeRide)
                     Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")
                 }
             }
@@ -91,6 +96,23 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
                     }
                 }
             }
+        }
+    }
+
+
+    private fun displayActiveRide(activeRide: ActiveRide) {
+        binding.tvTitle.text = getString(com.aralhub.ui.R.string.label_driver_is_waiting)
+        binding.tvDriverName.text = activeRide.driver.fullName
+        displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)
+        Log.i("Vehicle", "${activeRide.driver.vehicleType}")
+        Log.i("Vehicle", "${activeRide.driver.vehicleNumber}")
+        binding.tvCarInfo.text = StringUtils.getBoldSpanString(
+            fullText = "${activeRide.driver.vehicleType}, ${activeRide.driver.vehicleNumber}",
+            boldText = activeRide.driver.vehicleNumber
+        )
+        binding.tvDriverRating.text =  getString(com.aralhub.ui.R.string.label_driver_rating, activeRide.driver.rating)
+        binding.btnCall.setOnClickListener {
+            sendPhoneNumberToDial(activeRide.driver.phoneNumber)
         }
     }
 
