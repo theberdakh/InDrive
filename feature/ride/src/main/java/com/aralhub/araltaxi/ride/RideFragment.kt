@@ -31,16 +31,17 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     private val rideViewModel by activityViewModels<RideViewModel>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startService()
         initListeners()
         setUpMapView()
         initBottomNavController()
         initObservers()
+        startService()
         rideViewModel.getClientRideState()
     }
 
     private fun startService() {
         val intent = Intent(requireContext(), RideService::class.java)
+        Log.i("RideService", "startService")
         requireActivity().startService(intent)
     }
 
@@ -49,29 +50,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     }
 
     private fun initObservers() {
-
-        observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {
-                    Log.i("RideFragment", "initObservers: Loading")
-                }
-                RideStateUiState.Loading -> {
-                    Log.i("RideFragment", "initObservers: Loading")
-                }
-                is RideStateUiState.Success -> {
-                    Log.i("RideFragment", "initObservers: ${rideStateUiState.rideState}")
-                    when(rideStateUiState.rideState){
-                        is RideStatus.DriverOnTheWay -> errorHandler.showToast("Driver is on the way")
-                        is RideStatus.DriverWaitingClient -> errorHandler.showToast("Driver is waiting for you")
-                        is RideStatus.PaidWaiting -> errorHandler.showToast("Paid waiting")
-                        is RideStatus.PaidWaitingStarted -> errorHandler.showToast("Paid waiting started")
-                        is RideStatus.RideCompleted -> errorHandler.showToast("Ride completed")
-                        is RideStatus.RideStarted -> errorHandler.showToast("Ride started")
-                        is RideStatus.Unknown -> errorHandler.showToast("Unknown")
-                    }
-                }
-            }
-        }
         observeState(rideViewModel.cancelRideState){ cancelRideUiState ->
             when(cancelRideUiState){
                 is CancelRideUiState.Error -> {}

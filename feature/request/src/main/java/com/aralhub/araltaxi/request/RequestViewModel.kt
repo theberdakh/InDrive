@@ -91,11 +91,11 @@ class RequestViewModel @Inject constructor(
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
 
-    private val _activeRideUiState = MutableSharedFlow<ActiveRideUiState>()
-    val activeRideUiState = _activeRideUiState.asSharedFlow()
+    private val _activeRideUiState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
+    val activeRideUiState = _activeRideUiState.asStateFlow()
 
-    private val _searchRideUiState = MutableSharedFlow<SearchRideUiState>()
-    val searchRideUiState = _searchRideUiState.asSharedFlow()
+    private val _searchRideUiState = MutableStateFlow<SearchRideUiState>(SearchRideUiState.Loading)
+    val searchRideUiState = _searchRideUiState.asStateFlow()
 
     private val _logOutUiState = MutableSharedFlow<LogOutUiState>()
     val logOutUiState = _logOutUiState.asSharedFlow()

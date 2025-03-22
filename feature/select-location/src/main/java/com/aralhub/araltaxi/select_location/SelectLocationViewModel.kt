@@ -1,10 +1,17 @@
 package com.aralhub.araltaxi.select_location
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aralhub.araltaxi.select_location.utils.getPointsAt10MeterRadius
+import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polygon
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.VisibleRegion
 import com.yandex.mapkit.map.VisibleRegionUtils
+import com.yandex.mapkit.search.Address
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
@@ -12,6 +19,7 @@ import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
 import com.yandex.mapkit.search.Session.SearchListener
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -32,26 +40,49 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class SelectLocationViewModel @Inject constructor(): ViewModel() {
-    private val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+class SelectLocationViewModel @Inject constructor() : ViewModel() {
+    private val searchManager =
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val point = MutableStateFlow(defaultPoint)
     private var searchSession: Session? = null
     private val searchState = MutableStateFlow<SearchState>(SearchState.Off)
     private val region = MutableStateFlow<VisibleRegion?>(null)
+
     @OptIn(FlowPreview::class)
     private val throttledRegion = region.debounce(1.seconds)
     private val locationIsValid = MutableStateFlow(false)
 
-    val uiState: StateFlow<SelectLocationUiState> = combine(point, searchState) { point, searchState ->
-        SelectLocationUiState(
-            point = point,
-            searchState = searchState
-        )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, SelectLocationUiState(defaultPoint))
+    val uiState: StateFlow<SelectLocationUiState> =
+        combine(point, searchState) { point, searchState ->
+            SelectLocationUiState(
+                point = point,
+                searchState = searchState
+            )
+        }.stateIn(viewModelScope, SharingStarted.Lazily, SelectLocationUiState(defaultPoint))
 
-    fun submitLocation(point: Point, zoom: Int) {
+    fun submitLocation(point: Point, zoom: Int, visibleRegion: VisibleRegion) {
+
         this.point.value = point
-        searchManager.submit(point, zoom, searchOptions, searchListener)
+        val locations = getPointsAt10MeterRadius(point.latitude, point.longitude)
+        val polygonPoints = arrayListOf(
+            Point(locations[0].lat, locations[0].lon),
+            Point(locations[1].lat, locations[1].lon),
+            Point(locations[2].lat, locations[2].lon),
+            Point(locations[3].lat, locations[3].lon),
+        )
+        Log.i("Locations", "$locations")
+        val polygons = Geometry.fromPolygon(
+            Polygon(LinearRing(polygonPoints), ArrayList())
+        )
+        val polyLine = Polyline(polygonPoints)
+
+        val regions  = VisibleRegion( Point(locations[0].lat, locations[0].lon), Point(locations[1].lat, locations[1].lon), Point(locations[2].lat, locations[2].lon), Point(locations[3].lat, locations[3].lon))
+       // searchSession?.setSearchArea(polygons)
+        //searchManager.submit("", Polyline(polygonPoints), Geometry.fromPoint(point), searchOptions, searchListener)
+      //  searchManager.submit("жилой дом", Geometry.fromPoint(point), searchOptions, searchListener)
+      //  searchManager.submit("", polyLine, Geometry.fromPolyline(polyLine), searchOptions, searchListener)
+            // searchManager.submit("жилой дом", VisibleRegionUtils.toPolygon(regions), searchOptions, searchListener)
+       searchManager.submit(point, zoom, searchOptions, searchListener)
     }
 
     private val _locationSelectedUiState = MutableSharedFlow<LocationSelectedUiState>()
@@ -59,7 +90,6 @@ class SelectLocationViewModel @Inject constructor(): ViewModel() {
     fun selectLocation(title: String, subtitle: String, point: Point) = viewModelScope.launch {
         _locationSelectedUiState.emit(LocationSelectedUiState.Success(title, subtitle, point))
     }
-
 
 
     fun setVisibleRegion(region: VisibleRegion) {
@@ -80,9 +110,28 @@ class SelectLocationViewModel @Inject constructor(): ViewModel() {
             }
     }
 
-    private val searchListener = object: SearchListener {
+    private val searchListener = object : SearchListener {
         override fun onSearchResponse(response: Response) {
             val items = response.collection.children.mapNotNull {
+                Log.i("Search Response", "Success: ${it.collection?.metadataContainer?.getItem(
+                    ToponymObjectMetadata::class.java)
+                    ?.address
+                    ?.components
+                    ?.map { loc ->
+                        Log.i("Search Response", " Success ${loc.name} ${loc.kinds}")
+                    }}")
+
+                Log.i("Search Response", "Success 2: ${it.obj?.metadataContainer?.getItem(
+                    ToponymObjectMetadata::class.java)
+                    ?.address
+                    ?.components
+                    ?.map { loc ->
+                        Log.i("Search Response", "Success 2 ${loc.name} ${loc.kinds}")
+                    }}")
+                val addresses = it.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.components!!.filter { comp -> comp.kinds.contains(Address.Component.Kind.STREET) || comp.kinds.contains(Address.Component.Kind.HOUSE) }
+                for(address in addresses){
+                    Log.i("Address", "${address.name}")
+                }
                 val point = it.obj?.geometry?.firstOrNull()?.point ?: return@mapNotNull null
                 SearchResponseItem(point, it.obj)
             }
@@ -95,6 +144,7 @@ class SelectLocationViewModel @Inject constructor(): ViewModel() {
         }
 
         override fun onSearchError(error: Error) {
+            Log.i("Search Response", "Error")
             searchState.value = SearchState.Error
         }
     }
@@ -104,7 +154,7 @@ class SelectLocationViewModel @Inject constructor(): ViewModel() {
             searchTypes = SearchType.GEO.value
             resultPageSize = 1
         }
-        private val defaultPoint = Point(42.4651,59.6136)
+        private val defaultPoint = Point(42.4651, 59.6136)
 
         private const val MIN_LAT = 41.0
         private const val MAX_LAT = 44.0
@@ -115,7 +165,9 @@ class SelectLocationViewModel @Inject constructor(): ViewModel() {
 }
 
 sealed interface LocationSelectedUiState {
-    data class Success(val title: String, val subtitle: String, val point: Point): LocationSelectedUiState
-    data object Error: LocationSelectedUiState
-    data object Loading: LocationSelectedUiState
+    data class Success(val title: String, val subtitle: String, val point: Point) :
+        LocationSelectedUiState
+
+    data object Error : LocationSelectedUiState
+    data object Loading : LocationSelectedUiState
 }

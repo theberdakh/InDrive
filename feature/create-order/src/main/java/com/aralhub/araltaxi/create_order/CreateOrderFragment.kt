@@ -445,6 +445,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     }
 
     private fun drawDrivingRoutes(drivingRoutes: MutableList<DrivingRoute>) {
+        Log.i("Routes","Route: $drivingRoutes")
         val route = drivingRoutes[0]
         mapObjects?.clear()
         mapObjects?.addPolyline(route.geometry)
@@ -457,8 +458,7 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
     }
 
     private fun addRouteFromPointMarker(point: Point) {
-        val fromPointImageProvider =
-            ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_pickup_marker)
+        val fromPointImageProvider = ImageProvider.fromResource(requireContext(), com.aralhub.ui.R.drawable.ic_pickup_marker)
         map?.let {
             if (it.isValid) {
                 if (fromRoutePlaceMarkObject == null) {

@@ -15,5 +15,6 @@ sealed class RideStatus {
     data class RideStarted(val message: String) : RideStatus()
     data class RideCompleted(val message: String) : RideStatus()
     data class DriverOnTheWay(val message: String) : RideStatus()
+    data class CanceledByDriver(val message: String) : RideStatus()
     data class Unknown(val error: String) : RideStatus()
 }
