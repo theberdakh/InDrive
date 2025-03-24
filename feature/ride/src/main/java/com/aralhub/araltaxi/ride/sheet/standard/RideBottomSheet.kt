@@ -15,8 +15,12 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigati
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
+import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.StringUtils
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -58,6 +62,21 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
     }
 
     private fun initObservers() {
+        observeState(rideViewModel.activeRideState){ activeRideState ->
+            when(activeRideState){
+                is ActiveRideUiState.Error -> {
+                    Log.i("RideBottomSheet", "initObservers: Error ${activeRideState.message}")
+                }
+                ActiveRideUiState.Loading -> {
+                    Log.i("RideBottomSheet", "initObservers: Loading")
+                }
+                is ActiveRideUiState.Success -> {
+                    currentRideId = activeRideState.activeRide.id
+                    displayActiveRide(activeRideState.activeRide)
+                    Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")
+                }
+            }
+        }
         observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
             when(rideStateUiState){
                 is RideStateUiState.Error -> {
@@ -83,6 +102,25 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
                     }
                 }
             }
+        }
+    }
+
+
+    private fun displayActiveRide(activeRide: ActiveRide) {
+        binding.tvTitle.text = "Aydawshı ~${activeRide.waitAmount} minut ishinde jetip keledi"
+        binding.btnCall.setOnClickListener {}
+        binding.tvDriverName.text = activeRide.driver.fullName
+        displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)
+        Log.i("Vehicle", "${activeRide.driver.vehicleType}")
+        Log.i("Vehicle", "${activeRide.driver.vehicleNumber}")
+        binding.tvCarInfo.text = StringUtils.getBoldSpanString(
+            fullText = "${activeRide.driver.vehicleType}, ${activeRide.driver.vehicleNumber}",
+            boldText = activeRide.driver.vehicleNumber
+        )
+        binding.tvToLocation.text = activeRide.locations.points[activeRide.locations.points.size -1].name
+        binding.tvDriverRating.text =  getString(com.aralhub.ui.R.string.label_driver_rating, activeRide.driver.rating)
+        binding.btnCall.setOnClickListener {
+            sendPhoneNumberToDial(activeRide.driver.phoneNumber)
         }
     }
 

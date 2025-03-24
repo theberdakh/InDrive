@@ -57,7 +57,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                 isMapMoving = false
                 floatLandAnimation.land()
             }
-
             // Handle map movement start
             if (!isMapMoving) {
                 binding.btnSelectLocation.disable()
@@ -144,6 +143,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
             parentFragmentManager.setFragmentResult("location_key", result)
             if (map.isValid) {
                 map.removeCameraListener(cameraListener)
+                Log.i("NavigationUp", "SelectLocationFragment: $selectedLatitude, $selectedLongitude")
                 findNavController().navigateUp()
             }
         }
@@ -208,7 +208,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
         super.onStop()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         locationManager = null
@@ -224,7 +223,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                 SearchState.Loading -> {
                     binding.itemSelectLocation.tvTitle.text = "Updating..."
                     Log.i("Select Location", "Loading")
-
                 }
 
                 SearchState.Off -> binding.itemSelectLocation.tvTitle.text = "Searching..."
@@ -256,8 +254,6 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                         ?.name
 
                     Log.i("Search", "$street, $house, $address")
-
-
                     viewModel.selectLocation(
                         selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.name ?: "Unknown Location",
                         selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.descriptionText ?: "",

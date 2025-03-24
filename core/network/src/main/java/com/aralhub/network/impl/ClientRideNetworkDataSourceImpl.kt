@@ -53,6 +53,7 @@ class ClientRideNetworkDataSourceImpl(private val client: HttpClient) :
                             .filterIsInstance<Frame.Text>()
                             .collect { frameText ->
                                 val text = frameText.readText()
+                                Log.i("WebSocketLog", "Received text: $text")
                                 try {
                                     val data = Gson().fromJson(
                                         text,

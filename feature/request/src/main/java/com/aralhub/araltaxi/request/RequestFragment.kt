@@ -181,13 +181,16 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
         observeState(requestViewModel2.toLocationFlow) {
             it?.let { toLocation ->
-                Log.i("Location", "${toLocation.name}")
+                Log.i("LocationTo", "${toLocation.name}")
+                isNavigatedToCreateOrderFragment = false
+                Log.i("LocationTo", "isNavigated ${isNavigatedToCreateOrderFragment}")
                 binding.etToLocation.text = toLocation.name
             } ?: run {
                 binding.etToLocation.text = ""
             }
         }
         observeState(requestViewModel2.navigateToCreateOrderFlow) { selectedLocations ->
+            Log.i("Location", "Navigate to Create Order $isNavigatedToCreateOrderFragment")
             if (!isNavigatedToCreateOrderFragment && selectedLocations != null) {
                 isNavigatedToCreateOrderFragment = true
                 navigation.goToCreateOrderFromRequestFragment(selectedLocations)
@@ -223,7 +226,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 is ActiveRideUiState.Error -> {}
                 ActiveRideUiState.Loading -> {}
                 is ActiveRideUiState.Success -> {
-                    LoadingModalBottomSheet.hide(childFragmentManager)
+                    Log.i("RequestFragment", "Active Ride Success")
                     navigation.goToRideFragmentFromRequestFragment()
                 }
             }
@@ -291,7 +294,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         }
 
         val textFields = listOf(binding.etFromLocation, binding.etToLocation)
-
         for (textField in textFields) {
             textField.setOnActivatedListener {
                 textField.setEndTextVisible(it)
@@ -347,6 +349,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 }
 
                 SELECT_LOCATION_OWNER_TO -> {
+                    Log.i("Location", "To Location $locationName")
                     requestViewModel2.setToLocation(
                         SelectedLocation(
                             name = locationName,

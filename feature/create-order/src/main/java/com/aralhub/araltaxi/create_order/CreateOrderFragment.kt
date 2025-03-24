@@ -84,7 +84,6 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         override fun onDrivingRoutes(drivingRoutes: MutableList<DrivingRoute>) {
             drawDrivingRoutes(drivingRoutes)
         }
-
         override fun onDrivingRoutesError(error: Error) {
             when (error) {
                 is NetworkError -> errorHandler.showToast(getString(com.aralhub.ui.R.string.error_network_connection))
@@ -95,7 +94,6 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun showFullRoute(route: DrivingRoute) {
         val routePoints = route.geometry.points
-
         val bounds = BoundingBox(
             Point(
                 routePoints.minOf { it.latitude },
@@ -191,12 +189,10 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
                 )
             )
         ) {
-            locationManager?.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 0,
                 0f,
-                newCurrentLocationListener
-            )
+                newCurrentLocationListener)
         }
     }
 
@@ -296,6 +292,13 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
             findNavController().navigateUp()
         }
 
+        binding.tvFromLocationName.setOnClickListener {
+            navigation.goToSelectFromLocationFromCreateOrderFragment()
+        }
+
+        binding.tvToLocationName.setOnClickListener {
+            navigation.goToSelectToLocationFromCreateOrderFragment()
+        }
 
 
         initChangePaymentMethodListener()
