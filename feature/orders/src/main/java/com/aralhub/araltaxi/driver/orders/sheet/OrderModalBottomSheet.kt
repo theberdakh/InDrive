@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -8,11 +9,12 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
-import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetOrderBinding
 import com.aralhub.araltaxi.driver.orders.orders.CreateOfferUiState
 import com.aralhub.araltaxi.driver.orders.orders.OfferViewModel
+import com.aralhub.ui.dialog.ErrorMessageDialog
+import com.aralhub.ui.dialog.LoadingDialog
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.MoneyFormatter
 import com.aralhub.ui.utils.viewBinding
@@ -48,6 +50,15 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     @Inject
     lateinit var errorHandler: ErrorHandler
 
+    private var errorDialog: ErrorMessageDialog? = null
+    private var loadingDialog: LoadingDialog? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        errorDialog = ErrorMessageDialog(context)
+        loadingDialog = LoadingDialog(context)
+    }
+
     override fun onStart() {
         super.onStart()
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
@@ -74,7 +85,10 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         tvPrice.text = getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice)
         etPrice.setText(getString(com.aralhub.ui.R.string.standard_uzs_price, order?.roadPrice))
         tvClientName.text = order?.name
-        tvRecommendPrice.text = getString(R.string.recommend_price, getString(com.aralhub.ui.R.string.standard_uzs_price, order?.recommendedPrice))
+        tvRecommendPrice.text = getString(
+            R.string.recommend_price,
+            getString(com.aralhub.ui.R.string.standard_uzs_price, order?.recommendedPrice)
+        )
         tvDistance.text = order?.roadDistance
         tvDistanceToClient.text = order?.pickUpDistance
         tvFromLocation.text = order?.pickUpAddress
@@ -91,13 +105,16 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private fun setupListeners() {
         binding.btnSendOffer.setOnClickListener {
-            offerAmount = binding.etPrice.text?.filter { it.isDigit() }.toString().toInt()
+            val priceValue = binding.etPrice.text.toString().filter { it.isDigit() }
+            offerAmount = if (priceValue.isNotBlank()) priceValue.toInt() else 0
             Log.i(TAG, "offerAmount: $offerAmount \nsetupListeners: $order")
-            if (order != null) {
+            if (order != null && offerAmount != 0) {
                 offerViewModel.createOffer(
                     order!!.uuid,
                     offerAmount
                 )
+            } else {
+                showErrorDialog("Нельзя отправить оффер")
             }
         }
         binding.tvDecrease500.setOnClickListener {
@@ -129,14 +146,17 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
             Log.i(TAG, "initObservers: $result")
             when (result) {
                 is CreateOfferUiState.Error -> {
-                    //show error
+                    showErrorDialog(result.message)
                     binding.btnSendOffer.isEnabled = true
                 }
 
                 CreateOfferUiState.Loading -> {
+                    showLoading()
                     binding.btnSendOffer.isEnabled = false
                 }
+
                 is CreateOfferUiState.Success -> {
+                    dismissLoading()
                     binding.btnSendOffer.isEnabled = true
                     val bundle = Bundle()
                     val customOfferAmount = binding.etPrice.text.toString()
@@ -166,6 +186,8 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     override fun onDestroyView() {
         super.onDestroyView()
+        dismissErrorDialog()
+        dismissLoading()
         if (orderLoadingModalBottomSheet.isAdded)
             orderLoadingModalBottomSheet.dismissAllowingStateLoss()
     }
@@ -173,6 +195,26 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
     private var onAddressClick: (order: OrderItem?) -> Unit = {}
     fun setOnAddressClickListener(onAddressClick: (order: OrderItem?) -> Unit) {
         this.onAddressClick = onAddressClick
+    }
+
+    private fun showErrorDialog(errorMessage: String?) {
+        dismissLoading()
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
+        errorDialog?.show(errorMessage)
+
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
+    }
+
+    private fun showLoading() {
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoading() {
+        loadingDialog?.dismiss()
+    }
+
+    private fun dismissErrorDialog() {
+        errorDialog?.dismiss()
     }
 
     companion object {

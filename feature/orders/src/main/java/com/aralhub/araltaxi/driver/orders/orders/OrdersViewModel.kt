@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.orders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
@@ -158,7 +157,6 @@ class OrdersViewModel @Inject constructor(
             }
 
             is GetActiveOrdersUiState.OfferAccepted -> {
-                Log.e("WebSocketLog", "viewModel Offer Accepted!!!!!!!")
                 GetActiveOrdersUiState.OfferAccepted(result.data)
             }
 

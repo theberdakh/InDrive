@@ -1,5 +1,6 @@
 package com.aralhub.network.impl
 
+import android.util.Log
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
@@ -80,6 +81,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         rideUUID: String,
         amount: Int
     ): NetworkResult<CreateOfferByDriverResponse?> {
+        Log.d("DriverNetworkDataSource", "createOffer: $rideUUID, $amount")
         return api.createOffer(rideUUID, amount).safeRequestServerResponseWithNullData()
     }
 

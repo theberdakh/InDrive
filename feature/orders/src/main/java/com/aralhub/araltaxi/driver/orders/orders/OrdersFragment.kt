@@ -88,7 +88,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private var errorDialog: ErrorMessageDialog? = null
     private var loadingDialog: LoadingDialog? = null
-    private var isResponseReceived = false
 
     private var soundManager: SoundManager? = null
 
@@ -244,54 +243,56 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.ordersState
                     .collectLatest { getActiveOrdersUiState ->
-                    Log.d("OrdersFragment", "initObservers: $getActiveOrdersUiState")
-                    when (getActiveOrdersUiState) {
-                        is GetActiveOrdersUiState.Error -> showErrorDialog(getActiveOrdersUiState.message)
+                        Log.d("OrdersFragment", "initObservers: $getActiveOrdersUiState")
+                        when (getActiveOrdersUiState) {
+                            is GetActiveOrdersUiState.Error -> showErrorDialog(
+                                getActiveOrdersUiState.message
+                            )
 
-                        GetActiveOrdersUiState.Loading -> showLoading()
+                            GetActiveOrdersUiState.Loading -> showLoading()
 
-                        is GetActiveOrdersUiState.OrderCanceled -> {
+                            is GetActiveOrdersUiState.OrderCanceled -> {
 //                            adapter.submitList(orders)
-                        }
+                            }
 
-                        is GetActiveOrdersUiState.OfferRejected -> {
-                        }
+                            is GetActiveOrdersUiState.OfferRejected -> {
+                            }
 
-                        is GetActiveOrdersUiState.OfferAccepted -> {
-                            val bundle = Bundle()
-                            bundle.putParcelable(
-                                "OrderDetail",
-                                getActiveOrdersUiState.data
-                            )
-                            goingToPickUpModalBottomSheet.arguments = bundle
-                            goingToPickUpModalBottomSheet.show(
-                                childFragmentManager,
-                                GoingToPickUpModalBottomSheet.TAG
-                            )
-                            viewModel.updateRideStatus(
-                                getActiveOrdersUiState.data.id,
-                                RideStatus.DRIVER_ON_THE_WAY.status
-                            )
-                            orderModalBottomSheet.dismissAllowingStateLoss()
-                            startedRideStatus()
-                        }
+                            is GetActiveOrdersUiState.OfferAccepted -> {
+                                val bundle = Bundle()
+                                bundle.putParcelable(
+                                    "OrderDetail",
+                                    getActiveOrdersUiState.data
+                                )
+                                goingToPickUpModalBottomSheet.arguments = bundle
+                                goingToPickUpModalBottomSheet.show(
+                                    childFragmentManager,
+                                    GoingToPickUpModalBottomSheet.TAG
+                                )
+                                viewModel.updateRideStatus(
+                                    getActiveOrdersUiState.data.id,
+                                    RideStatus.DRIVER_ON_THE_WAY.status
+                                )
+                                orderModalBottomSheet.dismissAllowingStateLoss()
+                                startedRideStatus()
+                            }
 
-                        is GetActiveOrdersUiState.GetNewOrder -> {
-                            soundManager?.playSound()
-                            binding.tvOrdersNotFound.invisible()
-                        }
-
-                        is GetActiveOrdersUiState.GetExistOrder -> {
-                            dismissLoading()
-                            if (getActiveOrdersUiState.data.isNotEmpty()) {
+                            is GetActiveOrdersUiState.GetNewOrder -> {
+                                soundManager?.playSound()
                                 binding.tvOrdersNotFound.invisible()
-                                adapter.submitList(getActiveOrdersUiState.data)
-                            } else {
-                                binding.tvOrdersNotFound.show()
+                            }
+
+                            is GetActiveOrdersUiState.GetExistOrder -> {
+                                dismissLoading()
+                                if (getActiveOrdersUiState.data.isNotEmpty()) {
+                                    binding.tvOrdersNotFound.invisible()
+                                    adapter.submitList(getActiveOrdersUiState.data)
+                                } else {
+                                    binding.tvOrdersNotFound.show()
+                                }
                             }
                         }
                     }
-                }
             }
         }
 
@@ -561,18 +562,15 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun showErrorDialog(errorMessage: String?) {
         errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
         errorDialog?.show(errorMessage)
+
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
     }
 
     private fun showLoading() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (!isResponseReceived) {
-                loadingDialog?.show()
-            }
-        }
+        loadingDialog?.show()
     }
 
     private fun dismissLoading() {
-        isResponseReceived = true
         loadingDialog?.dismiss()
     }
 
