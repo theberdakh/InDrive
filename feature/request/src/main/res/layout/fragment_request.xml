@@ -97,7 +97,6 @@
             <com.aralhub.ui.components.EndTextEditText
                 android:id="@+id/et_from_location"
                 android:layout_width="match_parent"
-                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 app:startIconDrawable="@drawable/ic_start_location"

@@ -14,6 +14,8 @@ import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.offers.navigation.sheet.SheetNavigator
 import com.aralhub.ui.adapter.OfferItemAdapter
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.hide
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.model.Config
@@ -84,7 +86,13 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                 OffersUiState.Loading -> {}
                 is OffersUiState.Success -> {
                     offerItemAdapter.submitList(offersUiState.offers)
-                    binding.dotLottie.stop()
+                    if (offersUiState.offers.isNotEmpty()){
+                        binding.dotLottie.stop()
+                        binding.dotLottie.hide()
+                    } else {
+                        binding.dotLottie.show()
+                        binding.dotLottie.play()
+                    }
                 }
             }
         }
