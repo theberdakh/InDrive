@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
+import com.aralhub.araltaxi.core.common.sharedpreference.DriverSharedPreference
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.FragmentOrdersBinding
 import com.aralhub.araltaxi.driver.orders.model.RideStatus
@@ -55,6 +56,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -85,7 +88,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private var errorDialog: ErrorMessageDialog? = null
     private var loadingDialog: LoadingDialog? = null
-    private var isResponseReceived = false
 
     private var soundManager: SoundManager? = null
 
@@ -93,6 +95,9 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     @Inject
     lateinit var navigation: FeatureOrdersNavigation
+
+    @Inject
+    lateinit var driverSharedPreference: DriverSharedPreference
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -131,12 +136,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             fusedLocationClient?.lastLocation
                 ?.addOnSuccessListener { location: Location? ->
                     // Got last known location. In some rare situations this can be null.
+                    val distance = driverSharedPreference.distance
                     location?.let {
                         viewModel.getExistingOrders(
                             SendDriverLocationUI(
                                 latitude = it.latitude,
                                 longitude = it.longitude,
-                                distance = 500000
+                                distance = distance
                             )
                         )
                     }
@@ -156,6 +162,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         val status = arguments?.getString("Status") ?: ""
         when (status) {
             "driver_on_the_way" -> {
+                if (!goingToPickUpModalBottomSheet.isAdded) {
+                    goingToPickUpModalBottomSheet.arguments = arguments
+                    goingToPickUpModalBottomSheet.show(
+                        childFragmentManager,
+                        GoingToPickUpModalBottomSheet.TAG
+                    )
+                }
+            }
+
+            "agreed_with_driver" -> {
                 if (!goingToPickUpModalBottomSheet.isAdded) {
                     goingToPickUpModalBottomSheet.arguments = arguments
                     goingToPickUpModalBottomSheet.show(
@@ -192,6 +208,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         requireActivity().startService(intent)
     }
 
+    private fun stopService() {
+        val intent = Intent(requireContext(), LocationService::class.java)
+        requireActivity().stopService(intent)
+    }
+
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ordersListState.collect { orders ->
@@ -220,56 +241,58 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.combinedOrdersState.collectLatest { getActiveOrdersUiState ->
-                    when (getActiveOrdersUiState) {
-                        is GetActiveOrdersUiState.Error -> showErrorDialog(getActiveOrdersUiState.message)
+                viewModel.ordersState
+                    .collectLatest { getActiveOrdersUiState ->
+                        Log.d("OrdersFragment", "initObservers: $getActiveOrdersUiState")
+                        when (getActiveOrdersUiState) {
+                            is GetActiveOrdersUiState.Error -> showErrorDialog(
+                                getActiveOrdersUiState.message
+                            )
 
-                        GetActiveOrdersUiState.Loading -> showLoading()
+                            GetActiveOrdersUiState.Loading -> showLoading()
 
-                        is GetActiveOrdersUiState.OrderCanceled -> {
+                            is GetActiveOrdersUiState.OrderCanceled -> {
 //                            adapter.submitList(orders)
-                        }
+                            }
 
-                        is GetActiveOrdersUiState.OfferRejected -> {
+                            is GetActiveOrdersUiState.OfferRejected -> {
+                            }
 
-                        }
+                            is GetActiveOrdersUiState.OfferAccepted -> {
+                                val bundle = Bundle()
+                                bundle.putParcelable(
+                                    "OrderDetail",
+                                    getActiveOrdersUiState.data
+                                )
+                                goingToPickUpModalBottomSheet.arguments = bundle
+                                goingToPickUpModalBottomSheet.show(
+                                    childFragmentManager,
+                                    GoingToPickUpModalBottomSheet.TAG
+                                )
+                                viewModel.updateRideStatus(
+                                    getActiveOrdersUiState.data.id,
+                                    RideStatus.DRIVER_ON_THE_WAY.status
+                                )
+                                orderModalBottomSheet.dismissAllowingStateLoss()
+                                startedRideStatus()
+                            }
 
-                        is GetActiveOrdersUiState.OfferAccepted -> {
-                            val bundle = Bundle()
-                            bundle.putParcelable(
-                                "OrderDetail",
-                                getActiveOrdersUiState.data
-                            )
-                            goingToPickUpModalBottomSheet.arguments = bundle
-                            goingToPickUpModalBottomSheet.show(
-                                childFragmentManager,
-                                GoingToPickUpModalBottomSheet.TAG
-                            )
-                            viewModel.updateRideStatus(
-                                getActiveOrdersUiState.data.id,
-                                RideStatus.DRIVER_ON_THE_WAY.status
-                            )
-                            orderModalBottomSheet.dismissAllowingStateLoss()
-                            startedRideStatus()
-                        }
-
-                        is GetActiveOrdersUiState.GetNewOrder -> {
-//                            adapter.submitList(orders)
-                            soundManager?.playSound()
-                            binding.tvOrdersNotFound.invisible()
-                        }
-
-                        is GetActiveOrdersUiState.GetExistOrder -> {
-                            dismissLoading()
-                            if (getActiveOrdersUiState.data.isNotEmpty()) {
+                            is GetActiveOrdersUiState.GetNewOrder -> {
+                                soundManager?.playSound()
                                 binding.tvOrdersNotFound.invisible()
-//                                adapter.submitList(getActiveOrdersUiState.data)
-                            } else {
-                                binding.tvOrdersNotFound.show()
+                            }
+
+                            is GetActiveOrdersUiState.GetExistOrder -> {
+                                dismissLoading()
+                                if (getActiveOrdersUiState.data.isNotEmpty()) {
+                                    binding.tvOrdersNotFound.invisible()
+                                    adapter.submitList(getActiveOrdersUiState.data)
+                                } else {
+                                    binding.tvOrdersNotFound.show()
+                                }
                             }
                         }
                     }
-                }
             }
         }
 
@@ -383,6 +406,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             dismissAllBottomSheets()
             getExistingOrders()
         }
+
+        binding.btnFilter.setOnClickListener {
+            filterModalBottomSheet.show(
+                childFragmentManager,
+                FilterModalBottomSheet.TAG
+            )
+        }
     }
 
     private fun initTripCanceledModalBottomSheet() {
@@ -475,12 +505,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initViews() {
         initToolbar()
         initRecyclerView()
-        binding.btnFilter.setOnClickListener {
-            filterModalBottomSheet.show(
-                childFragmentManager,
-                FilterModalBottomSheet.TAG
-            )
-        }
     }
 
     private fun initRecyclerView() {
@@ -538,18 +562,15 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun showErrorDialog(errorMessage: String?) {
         errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
         errorDialog?.show(errorMessage)
+
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
     }
 
     private fun showLoading() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (!isResponseReceived) {
-                loadingDialog?.show()
-            }
-        }
+        loadingDialog?.show()
     }
 
     private fun dismissLoading() {
-        isResponseReceived = true
         loadingDialog?.dismiss()
     }
 
@@ -561,6 +582,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         super.onDestroyView()
         dismissErrorDialog()
         dismissLoading()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        stopService()
     }
 
 }

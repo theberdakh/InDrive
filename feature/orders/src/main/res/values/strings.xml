@@ -5,4 +5,5 @@
     <string name="not_confirmed_desc">Jolawshı siz jibergen %s usınısın qabıllamadı. Siz qaytadan usınıs jiberiwińiz múmkin.</string>
     <string name="route">Jónelis</string>
     <string name="ride_completed_income_text">Siz %s dáramat taptıńız</string>
+    <string name="recommend_price">Usınıs etilgen baha %s</string>
 </resources>

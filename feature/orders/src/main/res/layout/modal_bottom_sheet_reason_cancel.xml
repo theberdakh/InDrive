@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -16,79 +18,24 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/padding_small"
-        android:text="Sapar biykarlandı"
+        android:text="Ne ushın biykarladıńız?"
         android:textAppearance="@style/TextAppearance.InDrive.Text.Title" />
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_reasons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Nelikten sapardı biykarlaǵanıńızdı bildirip ótiń."
-        android:textAppearance="@style/TextAppearance.InDrive.Text" />
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium">
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/Widget.InDrive.Radio.Button"
-            android:padding="@dimen/padding_small"
-            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            android:textColor="@color/color_content_secondary"
-            android:text="Jobalarım ózgerip ketti"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
-        <RadioButton
-            android:padding="@dimen/padding_small"
-            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
-            style="@style/Widget.InDrive.Radio.Button"
-            android:textColor="@color/color_content_secondary"
-            android:text="Pikirimdi ózgerttim"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
-        <RadioButton
-            android:padding="@dimen/padding_small"
-            style="@style/Widget.InDrive.Radio.Button"
-            android:text="Aydawshı kóp kúttirdi"
-            android:textColor="@color/color_content_secondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RadioButton
-            style="@style/Widget.InDrive.Radio.Button"
-            android:textColor="@color/color_content_secondary"
-            android:padding="@dimen/padding_small"
-            android:text="Mánzillerdi nadurıs kórsetippen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RadioButton
-            style="@style/Widget.InDrive.Radio.Button"
-            android:textColor="@color/color_content_secondary"
-            android:padding="@dimen/padding_small"
-            android:text="Bilqastan tastıyıqlap jiberdim"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RadioButton
-            style="@style/Widget.InDrive.Radio.Button"
-            android:textColor="@color/color_content_secondary"
-            android:padding="@dimen/padding_small"
-            android:text="Basqa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </RadioGroup>
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="10dp"
+        tools:listitem="@layout/item_cancel"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     <Button
         android:id="@+id/btn_send"
         style="@style/Widget.InDrive.Button.Primary"
         android:text="Jollaw"
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"/>

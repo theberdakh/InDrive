@@ -9,7 +9,7 @@ data class OrderItem(
     val id: Int,
     val uuid: String,
     val name: String,
-    val pickUp: String?,
+    val recommendedPrice: String?,
     val avatar: String,
     val roadPrice: String = "",
     val pickUpDistance: String = "",

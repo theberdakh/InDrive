@@ -1,5 +1,8 @@
 package com.aralhub.indrive.core.data.repository.driver.impl
 
+import com.aralhub.indrive.core.data.model.cancel.CancelCause
+import com.aralhub.indrive.core.data.model.cancel.DriverCancelCause
+import com.aralhub.indrive.core.data.model.cancel.toDomain
 import com.aralhub.indrive.core.data.model.driver.RideCompleted
 import com.aralhub.indrive.core.data.model.driver.toDomain
 import com.aralhub.indrive.core.data.model.offer.ActiveRideByDriverResponse
@@ -54,6 +57,20 @@ class DriverRepositoryImpl @Inject constructor(
 
                 is NetworkResult.Success -> {
                     Result.Success(it.data?.toDomain())
+                }
+            }
+        }
+    }
+
+    override suspend fun getCancelCauses(): Result<List<DriverCancelCause>> {
+        driverNetworkDataSource.getCancelCauses().let {
+            return when (it) {
+                is NetworkResult.Error -> {
+                    Result.Error(it.message)
+                }
+
+                is NetworkResult.Success -> {
+                    Result.Success(it.data.toDomain())
                 }
             }
         }

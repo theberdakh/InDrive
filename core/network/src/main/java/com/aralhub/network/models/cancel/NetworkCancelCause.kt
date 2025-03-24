@@ -9,3 +9,8 @@ data class NetworkCancelCause(
     val isActive: Boolean,
     val id: Int
 )
+
+data class NetworkDriverCancelCause(
+    val id: Int,
+    val name: String
+)

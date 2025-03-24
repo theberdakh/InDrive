@@ -47,10 +47,11 @@ class LocationService : Service() {
         val longitude = location.longitude
 //        updateNotification(latitude, longitude)
         scope.launch {
+            val distance = driverSharedPreference.distance
             sendDriverLocationUseCase.invoke(
                 latitude = latitude,
                 longitude = longitude,
-                driverSharedPreference.distance
+                distance
             )
         }
     }

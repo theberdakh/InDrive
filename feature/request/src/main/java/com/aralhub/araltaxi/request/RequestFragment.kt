@@ -144,7 +144,6 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
         binding.mapView.onStop()
         locationManager = null
     }
-
     private val locationListener = LocationListener { location ->
         requestViewModel2.setCurrentLocation(location.latitude, location.longitude)
     }
@@ -159,12 +158,12 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 )
             )
         ) {
-            locationManager.requestLocationUpdates(
+            /*locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 LOCATION_REQUEST_MIN_TIME,
                 LOCATION_REQUEST_MIN_DISTANCE,
                 locationListener
-            )
+            )*/
         }
     }
 
