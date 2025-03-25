@@ -293,11 +293,11 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
 
         binding.tvFromLocationName.setOnClickListener {
-            navigation.goToSelectFromLocationFromCreateOrderFragment()
+          //  navigation.goToSelectFromLocationFromCreateOrderFragment()
         }
 
         binding.tvToLocationName.setOnClickListener {
-            navigation.goToSelectToLocationFromCreateOrderFragment()
+           // navigation.goToSelectToLocationFromCreateOrderFragment()
         }
 
 

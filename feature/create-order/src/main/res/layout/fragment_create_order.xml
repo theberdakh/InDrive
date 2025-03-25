@@ -104,15 +104,19 @@
                         android:id="@+id/tv_decrease_500"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:paddingHorizontal="@dimen/padding_medium">
+                        android:layout_weight="1">
 
-                        <View
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_blue_radius_10"
+                            android:gravity="center"
                             android:layout_gravity="center"
-                            android:background="@drawable/ic_remove" />
-
+                            android:paddingHorizontal="@dimen/padding_small"
+                            android:paddingVertical="@dimen/padding_small_50"
+                            android:text="-500"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
+                            android:textColor="@color/white" />
                     </FrameLayout>
 
                     <LinearLayout

@@ -242,7 +242,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                         ?.getItem(ToponymObjectMetadata::class.java)
                         ?.address
                         ?.components
-                        ?.firstOrNull { it.kinds.contains(Address.Component.Kind.HOUSE) }
+                        ?.firstOrNull { it.kinds.contains(Address.Component.Kind.STREET) }
                         ?.name
 
                     val street = selectLocationUiState.searchState.items.firstOrNull()?.geoObject
@@ -254,6 +254,7 @@ class SelectLocationFragment : Fragment(R.layout.fragment_select_location) {
                         ?.name
 
                     Log.i("Search", "$street, $house, $address")
+                    /*selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.name ?: "Unknown Location",*/
                     viewModel.selectLocation(
                         selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.name ?: "Unknown Location",
                         selectLocationUiState.searchState.items.firstOrNull()?.geoObject?.descriptionText ?: "",

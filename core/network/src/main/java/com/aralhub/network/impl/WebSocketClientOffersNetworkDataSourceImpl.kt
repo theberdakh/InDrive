@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.isActive
 
 class WebSocketClientOffersNetworkDataSourceImpl(private val client: HttpClient): WebSocketClientOffersNetworkDataSource {
     private var session: WebSocketSession? = null

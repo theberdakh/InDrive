@@ -9,6 +9,7 @@ import com.aralhub.araltaxi.core.domain.client.ClientGetOffersUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetSearchRideUseCase
 import com.aralhub.araltaxi.core.domain.client.CloseOffersWebSocketUseCase
 import com.aralhub.indrive.core.data.model.offer.Offer
+import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.result.fold
@@ -38,6 +39,9 @@ class OffersViewModel @Inject constructor(
 
     private var _searchRideUiState = MutableStateFlow<SearchRideUiState>(SearchRideUiState.Loading)
     val searchRideUiState = _searchRideUiState.asStateFlow()
+
+    private var _autoTakeOfferUiState = MutableStateFlow<AutoTakeOfferUiState>(AutoTakeOfferUiState.Loading)
+    val autoTakeOfferUiState = _autoTakeOfferUiState.asStateFlow()
 
     init {
         startExpirationChecker()
@@ -108,8 +112,8 @@ class OffersViewModel @Inject constructor(
                 }
 
                 is ClientWebSocketEvent.OfferAccepted -> {
-                    _offersUiState.emit(OffersUiState.Success(offers.map { offer -> offer.asOfferItem() }))
                     Log.i("OffersViewModel", "Offer accepted: ${it.ride}")
+                    _autoTakeOfferUiState.emit(AutoTakeOfferUiState.Success(it.ride))
                 }
             }
         }
@@ -176,6 +180,12 @@ sealed interface OffersUiState {
     data object Loading : OffersUiState
     data class Success(val offers: List<OfferItem>) : OffersUiState
     data class Error(val message: String) : OffersUiState
+}
+
+sealed interface AutoTakeOfferUiState {
+    data object Loading : AutoTakeOfferUiState
+    data class Success(val activeRide: ActiveRide) : AutoTakeOfferUiState
+    data class Error(val message: String) : AutoTakeOfferUiState
 }
 
 sealed interface AcceptOfferUiState {

@@ -19,6 +19,7 @@ import com.aralhub.ui.model.args.SelectedLocation
 import com.aralhub.ui.model.args.SelectedLocations
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.search.Address
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManager
@@ -30,6 +31,7 @@ import com.yandex.mapkit.search.SuggestOptions
 import com.yandex.mapkit.search.SuggestResponse
 import com.yandex.mapkit.search.SuggestSession
 import com.yandex.mapkit.search.SuggestType
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -182,6 +184,7 @@ class RequestViewModel @Inject constructor(
             searchManager.submit(Point(latitude, longitude), 17, searchOptions, object : Session.SearchListener {
                 override fun onSearchResponse(response: Response) {
                     val geoObjects = response.collection.children.mapNotNull { it.obj }
+
                     val name = geoObjects.firstOrNull { it.name != null }?.name
                         ?: "Anıqlap bolmadı"
                     emitFromLocationSuccess(latitude, longitude, name)
