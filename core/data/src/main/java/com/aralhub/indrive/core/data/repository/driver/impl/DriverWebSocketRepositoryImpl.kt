@@ -60,4 +60,5 @@ class DriverWebSocketRepositoryImpl @Inject constructor(
     override suspend fun close() {
         driverNetworkDataSource.close()
     }
+
 }

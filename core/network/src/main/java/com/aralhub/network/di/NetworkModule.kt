@@ -52,9 +52,6 @@ object NetworkModule {
         .addInterceptor(networkErrorInterceptor)
         .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .callTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
     @[Provides Singleton]

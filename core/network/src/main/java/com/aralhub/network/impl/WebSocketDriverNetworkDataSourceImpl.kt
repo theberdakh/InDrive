@@ -36,7 +36,9 @@ class WebSocketDriverNetworkDataSourceImpl(
     private var rideStatusSession: WebSocketSession? = null
 
     override fun getActiveOrders(): Flow<WebSocketEventNetwork> {
+        Log.d("WebSocketLog", "JIJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ")
         return flow {
+            closeStartedRideStatusSocket()
             session = client.webSocketSession {
                 url("ws://araltaxi.aralhub.uz/websocket/wb/driver")
             }
@@ -132,6 +134,7 @@ class WebSocketDriverNetworkDataSourceImpl(
     }
 
     override fun getStartedRideStatus(): Flow<StartedRideWebSocketEventNetwork> {
+        Log.d("WebSocketLog", "RideStarted WebSocket!!!")
         return flow {
             rideStatusSession = client.webSocketSession {
                 url("ws://araltaxi.aralhub.uz/ride/wb")
@@ -169,6 +172,17 @@ class WebSocketDriverNetworkDataSourceImpl(
             }
         }
     }
+
+    override suspend fun closeStartedRideStatusSocket() {
+        rideStatusSession?.close(
+            CloseReason(
+                CloseReason.Codes.NORMAL, "Closing RideStatus Session"
+            )
+        )
+        rideStatusSession = null
+        Log.d("WebSocketLog", "RideStatus Session Closed")
+    }
+
 
     companion object {
         const val NEW_RIDE_REQUEST = "new_ride_request"

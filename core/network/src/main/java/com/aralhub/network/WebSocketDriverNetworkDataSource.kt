@@ -16,4 +16,5 @@ interface WebSocketDriverNetworkDataSource {
     //after offer accepted
     fun getStartedRideStatus(): Flow<StartedRideWebSocketEventNetwork>
 
+    suspend fun closeStartedRideStatusSocket()
 }

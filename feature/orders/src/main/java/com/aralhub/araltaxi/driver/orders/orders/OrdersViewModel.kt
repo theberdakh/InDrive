@@ -23,13 +23,13 @@ import com.aralhub.ui.model.RideCompletedUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
@@ -40,7 +40,7 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     private val driverProfileUseCase: DriverProfileUseCase,
     private val driverLogoutUseCase: DriverLogoutUseCase,
-    getActiveOrdersUseCase: GetActiveOrdersUseCase,
+    private val getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
     private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val updateRideStatusUseCase: UpdateRideStatusUseCase,
@@ -107,41 +107,48 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private val webSocketOrdersState = getActiveOrdersUseCase
-        .invoke()
-        .map {
-            when (it) {
-                is WebSocketEvent.ActiveOffer -> {
-                    addOrder(it.order.asUI())
-                    GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
-                }
+    init {
+        startOrdersWebSocket()
+    }
 
-                is WebSocketEvent.OfferAccepted -> {
-                    GetActiveOrdersUiState.OfferAccepted(it.data.asUI())
-                }
+    private var ordersWebSocketJob: Job? = null
+    private fun startOrdersWebSocket() {
+        ordersWebSocketJob?.cancel()
+        ordersWebSocketJob = viewModelScope.launch {
+            getActiveOrdersUseCase
+                .invoke()
+                .collect {
+                    val state = when (it) {
+                        is WebSocketEvent.ActiveOffer -> {
+                            addOrder(it.order.asUI())
+                            GetActiveOrdersUiState.GetNewOrder(it.order.asUI())
+                        }
 
-                is WebSocketEvent.RideCancel -> {
-                    removeOrder(it.rideId)
-                    GetActiveOrdersUiState.OrderCanceled(it.rideId)
-                }
+                        is WebSocketEvent.OfferAccepted -> {
+                            GetActiveOrdersUiState.OfferAccepted(it.data.asUI())
+                        }
 
-                is WebSocketEvent.OfferReject -> {
-                    rejectOfferState.emit(Unit)
-                    GetActiveOrdersUiState.OfferRejected(it.rideUUID)
-                }
+                        is WebSocketEvent.RideCancel -> {
+                            removeOrder(it.rideId)
+                            GetActiveOrdersUiState.OrderCanceled(it.rideId)
+                        }
 
-                is WebSocketEvent.Unknown -> {
-                    GetActiveOrdersUiState.Error(it.error)
+                        is WebSocketEvent.OfferReject -> {
+                            rejectOfferState.emit(Unit)
+                            GetActiveOrdersUiState.OfferRejected(it.rideUUID)
+                        }
+
+                        is WebSocketEvent.Unknown -> {
+                            GetActiveOrdersUiState.Error(it.error)
+                        }
+                    }
+                    webSocketOrdersState.value = state
                 }
-            }
         }
-        .catch { t ->
-            GetActiveOrdersUiState.Error(t.localizedMessage ?: "WebSocket Error")
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            GetActiveOrdersUiState.Loading
-        )
+    }
+
+    private val webSocketOrdersState =
+        MutableStateFlow<GetActiveOrdersUiState>(GetActiveOrdersUiState.Loading)
 
     val ordersState = merge(
         existingOrdersState,
@@ -178,7 +185,7 @@ class OrdersViewModel @Inject constructor(
         GetActiveOrdersUiState.Loading
     )
 
-    private fun disconnect() {
+    fun disconnect() {
         CoroutineScope(Dispatchers.IO).launch {
             closeDriverWebSocketConnectionUseCase.close()
         }
@@ -251,6 +258,10 @@ class OrdersViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun switchBackToOrdersSocket() {
+        startOrdersWebSocket()
     }
 
 
