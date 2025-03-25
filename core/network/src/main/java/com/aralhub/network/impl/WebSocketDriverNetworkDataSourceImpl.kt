@@ -36,7 +36,6 @@ class WebSocketDriverNetworkDataSourceImpl(
     private var rideStatusSession: WebSocketSession? = null
 
     override fun getActiveOrders(): Flow<WebSocketEventNetwork> {
-        Log.d("WebSocketLog", "JIJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ")
         return flow {
             closeStartedRideStatusSocket()
             session = client.webSocketSession {

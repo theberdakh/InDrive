@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -73,7 +72,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         MoneyFormatter(binding.etPrice)
         setupUI()
         setupListeners()
-//        initObservers()
 
     }
 
@@ -108,7 +106,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         binding.btnSendOffer.setOnClickListener {
             val priceValue = binding.etPrice.text.toString().filter { it.isDigit() }
             offerAmount = if (priceValue.isNotBlank()) priceValue.toInt() else 0
-            Log.i(TAG, "offerAmount: $offerAmount \nsetupListeners: $order")
             if (order != null && offerAmount != 0) {
                 offerViewModel.createOffer(
                     order!!.uuid,
