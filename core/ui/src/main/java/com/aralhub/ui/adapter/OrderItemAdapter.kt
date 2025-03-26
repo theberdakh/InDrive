@@ -29,7 +29,7 @@ class OrderItemAdapter :
         fun bind(orderItem: OrderItem) {
             val context = binding.root.context
             binding.tvClientName.text = orderItem.name
-            binding.tvPickUpLocation.text = orderItem.recommendedPrice
+            binding.tvPickUpLocation.text = orderItem.pickUpAddress
             binding.tvDistance.text = orderItem.pickUpDistance
             binding.tvDistanceRoad.text = orderItem.roadDistance
             binding.tvPrice.text = context.getString(R.string.standard_uzs_price, orderItem.roadPrice)

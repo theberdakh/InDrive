@@ -56,9 +56,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -243,7 +242,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.ordersState
                     .collectLatest { getActiveOrdersUiState ->
-                        Log.d("OrdersFragment", "initObservers: $getActiveOrdersUiState")
+                        Timber.d("initObservers: $getActiveOrdersUiState")
                         when (getActiveOrdersUiState) {
                             is GetActiveOrdersUiState.Error -> showErrorDialog(
                                 getActiveOrdersUiState.message
@@ -265,15 +264,17 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                     getActiveOrdersUiState.data
                                 )
                                 goingToPickUpModalBottomSheet.arguments = bundle
-                                goingToPickUpModalBottomSheet.show(
-                                    childFragmentManager,
-                                    GoingToPickUpModalBottomSheet.TAG
-                                )
+                                if (!goingToPickUpModalBottomSheet.isAdded)
+                                    goingToPickUpModalBottomSheet.show(
+                                        childFragmentManager,
+                                        GoingToPickUpModalBottomSheet.TAG
+                                    )
                                 viewModel.updateRideStatus(
                                     getActiveOrdersUiState.data.id,
                                     RideStatus.DRIVER_ON_THE_WAY.status
                                 )
                                 orderModalBottomSheet.dismissAllowingStateLoss()
+                                viewModel.disconnect()
                                 startedRideStatus()
                             }
 
@@ -312,6 +313,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                     childFragmentManager,
                                     RideFinishedModalBottomSheet.TAG
                                 )
+                                viewModel.switchBackToOrdersSocket()
                             }
                         }
                     }
@@ -405,6 +407,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         rideCanceledByPassengerModalBottomSheet.setOnUnderstandClickListener {
             dismissAllBottomSheets()
             getExistingOrders()
+            viewModel.switchBackToOrdersSocket()
         }
 
         binding.btnFilter.setOnClickListener {
@@ -431,6 +434,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
             dismissAllBottomSheets()
             getExistingOrders()
+            viewModel.switchBackToOrdersSocket()
         }
 
         reasonCancelModalBottomSheet.setOnRideCancelledListener {
@@ -560,6 +564,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     }
 
     private fun showErrorDialog(errorMessage: String?) {
+        dismissLoading()
         errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
         errorDialog?.show(errorMessage)
 
