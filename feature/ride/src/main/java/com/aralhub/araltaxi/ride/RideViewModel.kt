@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
+import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
@@ -23,8 +24,14 @@ class RideViewModel @Inject constructor(
     private val getActiveRideUseCase: ClientGetActiveRideUseCase,
     private val cancelRideWithoutReasonUseCase: ClientCancelRideWithoutReasonUseCase,
     private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
-    private val getClientRideStatusUseCase: GetClientRideStatusUseCase
+    private val getClientRideStatusUseCase: GetClientRideStatusUseCase,
+    private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase
 ) : ViewModel() {
+
+    init {
+        getClientRideState()
+        getActiveRide()
+    }
 
     private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
     val activeRideState = _activeRideState.asStateFlow()
@@ -54,8 +61,8 @@ class RideViewModel @Inject constructor(
                 is Result.Error -> {
                     _cancelRideState.emit(CancelRideUiState.Error(it.message))
                 }
-
                 is Result.Success -> {
+                    disconnectClientActiveRideUseCase()
                     _cancelRideState.emit(CancelRideUiState.Success)
                 }
             }

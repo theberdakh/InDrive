@@ -96,9 +96,10 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
                         }
                         is RideStatus.RideStarted -> {}
                         is RideStatus.Unknown -> {}
-                        is RideStatus.CanceledByDriver -> TripCanceledByDriverFragment(
-                            onClearClick = { navigation.goBackToCreateOfferFromRide() }
-                        ).show(childFragmentManager, CancelTripFragment.TAG)
+                        is RideStatus.CanceledByDriver -> {
+                            Log.i("RideBottomSheet", "initObservers: CanceledByDriver")
+
+                        }
                     }
                 }
             }
@@ -107,7 +108,7 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
 
 
     private fun displayActiveRide(activeRide: ActiveRide) {
-        binding.tvTitle.text = "Aydawshı ~${activeRide.waitAmount} minut ishinde jetip keledi"
+        binding.tvTitle.text = "Mánzilge jetip barıw waqtı: $activeRide."
         binding.btnCall.setOnClickListener {}
         binding.tvDriverName.text = activeRide.driver.fullName
         displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)

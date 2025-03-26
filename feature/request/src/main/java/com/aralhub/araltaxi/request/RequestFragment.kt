@@ -219,6 +219,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
                 }
             }
         }
+
         observeState(viewModel.activeRideUiState) { activeRideUiState ->
             latestActiveRideState = activeRideUiState
             updateLoadingDialog()
@@ -232,10 +233,13 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             }
         }
         observeState(viewModel.profileUiState) { profileUiState ->
+            Log.i("Profile", "${profileUiState}")
             when (profileUiState) {
                 is ProfileUiState.Error -> errorHandler.showToast(profileUiState.message)
                 ProfileUiState.Loading -> {}
-                is ProfileUiState.Success -> displayProfile(profileUiState.profile)
+                is ProfileUiState.Success -> {
+                    displayProfile(profileUiState.profile)
+                }
             }
         }
         observeState(viewModel.logOutUiState) { logOutUiState ->

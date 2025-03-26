@@ -79,9 +79,9 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                             featureRideBottomSheetNavigation.goToRideFromWaitingForDriver()
                         }
                         is RideStatus.Unknown -> {}
-                        is RideStatus.CanceledByDriver -> TripCanceledByDriverFragment(
-                            onClearClick = { navigation.goBackToCreateOfferFromRide() }
-                        ).show(childFragmentManager, CancelTripFragment.TAG)
+                        is RideStatus.CanceledByDriver -> {
+                            Log.i("WaitingForDriver", "initObservers: CanceledByDriver")
+                        }
                     }
                 }
             }
@@ -162,7 +162,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     }
 
     private fun displayActiveRide(activeRide: ActiveRide) {
-        binding.tvTitle.text = "Aydawshı ~${activeRide.waitAmount} minut ishinde jetip keledi"
+        binding.tvTitle.text = "Aydawshı jolda kelatır"
         binding.btnCall.setOnClickListener {}
         binding.tvDriverName.text = activeRide.driver.fullName
         displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)

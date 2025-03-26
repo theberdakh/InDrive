@@ -232,11 +232,7 @@ class RequestViewModel @Inject constructor(
             _profileUiState.emit(ProfileUiState.Loading)
             when (val result = clientProfileUseCase()) {
                 is Result.Success -> _profileUiState.emit(
-                    ProfileUiState.Success(
-                        result.data.copy(
-                            profilePhoto = "${result.data.profilePhoto}"
-                        )
-                    )
+                    ProfileUiState.Success(result.data.copy(profilePhoto = "${result.data.profilePhoto}"))
                 )
                 is Result.Error -> _profileUiState.emit(ProfileUiState.Error(result.message))
             }
