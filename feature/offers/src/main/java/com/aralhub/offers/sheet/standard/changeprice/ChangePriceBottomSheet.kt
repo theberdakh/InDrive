@@ -34,9 +34,7 @@ class ChangePriceBottomSheet: Fragment(R.layout.bottom_sheet_change_price) {
         viewModel.getSearchRide()
     }
 
-    private fun initArgs() {
-        searchRideId = requireArguments().getString(ARG_RIDE_ID, ARG_RIDE_ID_DEFAULT) ?: ARG_RIDE_ID_DEFAULT
-    }
+    private fun initArgs() {}
 
     private fun initListeners() {
        binding.btnChange.setOnClickListener {
@@ -75,6 +73,7 @@ class ChangePriceBottomSheet: Fragment(R.layout.bottom_sheet_change_price) {
                 is SearchRideUiState.Error -> errorHandler.showToast(searchRideUiState.message)
                 SearchRideUiState.Loading -> {}
                 is SearchRideUiState.Success -> {
+                    searchRideId = searchRideUiState.data.uuid
                     currentPrice = if (searchRideUiState.data.updatedAmount == null || searchRideUiState.data.updatedAmount == 0) {
                         searchRideUiState.data.baseAmount.toInt()
                     } else {

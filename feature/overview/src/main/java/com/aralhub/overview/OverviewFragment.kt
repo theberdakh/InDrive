@@ -95,8 +95,8 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
 
                 is DriverBalanceUiState.Success -> {
                     dismissLoading()
-                    binding.tvBalance.text = it.balance.toString()
-                    binding.tvDailyIncome.text = it.dayBalance.toString()
+                    binding.tvBalance.text = getString(com.aralhub.ui.R.string.standard_uzs_price, it.balance.toString())
+                    binding.tvDailyIncome.text = getString(com.aralhub.ui.R.string.standard_uzs_price, it.dayBalance.toString())
                 }
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

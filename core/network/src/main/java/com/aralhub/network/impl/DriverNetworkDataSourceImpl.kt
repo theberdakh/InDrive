@@ -1,5 +1,6 @@
 package com.aralhub.network.impl
 
+import android.util.Log
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.models.NetworkResult
@@ -8,6 +9,8 @@ import com.aralhub.network.models.WebSocketServerResponse
 import com.aralhub.network.models.auth.NetworkAuthToken
 import com.aralhub.network.models.balance.NetworkBalance
 import com.aralhub.network.models.balance.NetworkBalanceInfo
+import com.aralhub.network.models.cancel.NetworkCancelCause
+import com.aralhub.network.models.cancel.NetworkDriverCancelCause
 import com.aralhub.network.models.card.NetworkCard
 import com.aralhub.network.models.driver.NetworkActiveRideByDriverResponse
 import com.aralhub.network.models.driver.NetworkDriverActive
@@ -78,6 +81,7 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
         rideUUID: String,
         amount: Int
     ): NetworkResult<CreateOfferByDriverResponse?> {
+        Log.d("DriverNetworkDataSource", "createOffer: $rideUUID, $amount")
         return api.createOffer(rideUUID, amount).safeRequestServerResponseWithNullData()
     }
 
@@ -95,5 +99,9 @@ class DriverNetworkDataSourceImpl @Inject constructor(private val api: DriverNet
 
     override suspend fun getDriverBalanceInfo(): NetworkResult<NetworkBalanceInfo> {
         return api.getDriverBalanceInfo().safeRequestServerResponse()
+    }
+
+    override suspend fun getCancelCauses(): NetworkResult<List<NetworkDriverCancelCause>> {
+        return api.getCancelCauses().safeRequestServerResponse()
     }
 }

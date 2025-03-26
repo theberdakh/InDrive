@@ -23,11 +23,11 @@ data class ClientRideRequest(
 
 data class ClientRideRequestRecommendedAmount(
     @SerializedName("min_amount")
-    val minAmount: Number,
+    val minAmount: Int,
     @SerializedName("max_amount")
-    val maxAmount: Number,
+    val maxAmount: Int,
     @SerializedName("recommended_amount")
-    val recommendedAmount: Number
+    val recommendedAmount: Int
 )
 
 data class ClientRideRequestLocations(

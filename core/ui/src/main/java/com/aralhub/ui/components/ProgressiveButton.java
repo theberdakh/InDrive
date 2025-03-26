@@ -133,6 +133,8 @@ public class ProgressiveButton extends View {
         fillAnimator.start();
     }
 
+
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -185,15 +187,11 @@ public class ProgressiveButton extends View {
 
         // If already expired
         if (now.isAfter(expirationTime)) {
-            // If we just expired and haven't started the reverse animation yet
-            if (!hasExpired) {
-                hasExpired = true;
-                setupReverseFillAnimation();
-            }
+            hasExpired = true;
             return "Qabıllanbadı";
         }
 
-        // Calculate remaining time using compatible methods
+        // Rest of the method remains unchanged
         long remainingMillis = expirationTime.toEpochMilli() - now.toEpochMilli();
         long seconds = remainingMillis / 1000;
         long minutes = seconds / 60;
@@ -290,24 +288,51 @@ public class ProgressiveButton extends View {
         }
     }
 
+    private Instant startTime; // Add this field to the class
+
     public void setExpirationTime(String expirationTimeString) {
         this.expirationTimeString = expirationTimeString;
         this.expirationTime = ZonedDateTime.parse(expirationTimeString).toInstant();
+        this.startTime = Instant.now(); // Record when we started the countdown
         Log.i("ProgressiveButton", "Expiration time set to: " + expirationTimeString);
         this.showExpiration = true;
         this.hasExpired = false;
 
-        // Set up countdown animation
-        setupCountdownAnimation();
-
         // Start with full progress
         fillProgress = 1f;
+
+        // Set up countdown animation
+        setupCountdownAnimation();
 
         // Start the countdown
         countdownAnimator.start();
 
         // Invalidate to update the view
         invalidate();
+    }
+
+    private void updateFillProgressBasedOnTime() {
+        Instant now = Instant.now();
+
+        // If already expired
+        if (now.isAfter(expirationTime)) {
+            fillProgress = 0f;
+            hasExpired = true;
+            return;
+        }
+
+        // Calculate total duration and elapsed time
+        long totalDuration = expirationTime.toEpochMilli() - startTime.toEpochMilli();
+        long remainingTime = expirationTime.toEpochMilli() - now.toEpochMilli();
+
+        // Calculate progress as remaining time / total time
+        if (totalDuration > 0) {
+            fillProgress = (float) remainingTime / totalDuration;
+            // Ensure progress is between 0 and 1
+            fillProgress = Math.max(0f, Math.min(1f, fillProgress));
+        } else {
+            fillProgress = 0f;
+        }
     }
 
     private void setupCountdownAnimation() {
@@ -321,10 +346,11 @@ public class ProgressiveButton extends View {
         countdownAnimator.setRepeatCount(ValueAnimator.INFINITE);
         countdownAnimator.setInterpolator(new LinearInterpolator());
         countdownAnimator.addUpdateListener(animation -> {
-            // Only invalidate if we're showing expiration time
-            if (showExpiration) {
-                invalidate();
-            }
+            // Calculate remaining time percentage and update fill progress
+            updateFillProgressBasedOnTime();
+
+            // Invalidate to redraw
+            invalidate();
         });
     }
 

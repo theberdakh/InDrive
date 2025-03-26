@@ -14,6 +14,8 @@ import com.aralhub.offers.navigation.FeatureOffersNavigation
 import com.aralhub.offers.navigation.sheet.SheetNavigator
 import com.aralhub.ui.adapter.OfferItemAdapter
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
+import com.aralhub.ui.utils.ViewEx.hide
+import com.aralhub.ui.utils.ViewEx.show
 import com.aralhub.ui.utils.viewBinding
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.model.Config
@@ -29,10 +31,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OffersFragment : Fragment(R.layout.fragment_offers) {
     private val binding by viewBinding(FragmentOffersBinding::bind)
+
     @Inject
     lateinit var navigator: SheetNavigator
+
     @Inject
     lateinit var errorHandler: ErrorHandler
+
     @Inject
     lateinit var featureOffersNavigation: FeatureOffersNavigation
     private val offerItemAdapter by lazy { OfferItemAdapter() }
@@ -84,7 +89,24 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                 OffersUiState.Loading -> {}
                 is OffersUiState.Success -> {
                     offerItemAdapter.submitList(offersUiState.offers)
-                    binding.dotLottie.stop()
+                    if (offersUiState.offers.isNotEmpty()) {
+                        binding.dotLottie.stop()
+                        binding.dotLottie.hide()
+                    } else {
+                        binding.dotLottie.show()
+                        binding.dotLottie.play()
+                    }
+                }
+            }
+        }
+
+        observeState(viewModel.autoTakeOfferUiState) { autoTakeOfferUiState ->
+            when (autoTakeOfferUiState) {
+                is AutoTakeOfferUiState.Error -> errorHandler.showToast(autoTakeOfferUiState.message)
+                AutoTakeOfferUiState.Loading -> {}
+                is AutoTakeOfferUiState.Success -> {
+                    viewModel.closeOffersWebSocket()
+                    featureOffersNavigation.goToRideFragment()
                 }
             }
         }
@@ -94,6 +116,7 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                 is AcceptOfferUiState.Error -> errorHandler.showToast(acceptOfferUiState.message)
                 AcceptOfferUiState.Loading -> {}
                 AcceptOfferUiState.Success -> {
+                    viewModel.closeOffersWebSocket()
                     featureOffersNavigation.goToRideFragment()
                     errorHandler.showToast("Offer accepted")
                 }
@@ -139,8 +162,9 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
 
     private fun updateMap(latitude: Number, longitude: Number) {
 
-        val imageProvider = ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_pickup_marker)
-        val placeMarkObject  = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
+        val imageProvider =
+            ImageProvider.fromResource(context, com.aralhub.ui.R.drawable.ic_pickup_marker)
+        val placeMarkObject = binding.mapView.mapWindow.map.mapObjects.addPlacemark().apply {
             geometry = Point(latitude.toDouble(), longitude.toDouble())
             setIcon(imageProvider)
             setIconStyle(IconStyle().apply {

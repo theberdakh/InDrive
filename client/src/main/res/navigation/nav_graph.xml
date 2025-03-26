@@ -81,6 +81,8 @@
             app:destination="@id/selectLocationFragment"
             app:enterAnim="@anim/to_right"
             app:exitAnim="@anim/to_left"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="false"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"/>
 
@@ -130,7 +132,14 @@
         android:name="com.aralhub.araltaxi.create_order.CreateOrderFragment">
 
         <action android:id="@+id/action_createOrderFragment_to_offersFragment"
+            app:popUpTo="@id/requestFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/offersFragment"/>
+
+        <action
+            android:id="@+id/action_createOrderFragment_to_selectLocationFragment"
+            app:destination="@id/selectLocationFragment"
+            />
 
     </fragment>
 
@@ -143,11 +152,11 @@
             app:popUpToInclusive="true"
             app:destination="@id/rideFragment" />
 
-        <action
+        <!--<action
             android:id="@+id/action_offersFragment_to_requestFragment"
             app:destination="@id/requestFragment"
             app:popUpTo="@id/requestFragment"
-            app:popUpToInclusive="false"/>
+            />-->
 
     </fragment>
 

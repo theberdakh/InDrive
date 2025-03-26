@@ -113,22 +113,7 @@ class SelectLocationViewModel @Inject constructor() : ViewModel() {
     private val searchListener = object : SearchListener {
         override fun onSearchResponse(response: Response) {
             val items = response.collection.children.mapNotNull {
-                Log.i("Search Response", "Success: ${it.collection?.metadataContainer?.getItem(
-                    ToponymObjectMetadata::class.java)
-                    ?.address
-                    ?.components
-                    ?.map { loc ->
-                        Log.i("Search Response", " Success ${loc.name} ${loc.kinds}")
-                    }}")
-
-                Log.i("Search Response", "Success 2: ${it.obj?.metadataContainer?.getItem(
-                    ToponymObjectMetadata::class.java)
-                    ?.address
-                    ?.components
-                    ?.map { loc ->
-                        Log.i("Search Response", "Success 2 ${loc.name} ${loc.kinds}")
-                    }}")
-                val addresses = it.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.components!!.filter { comp -> comp.kinds.contains(Address.Component.Kind.STREET) || comp.kinds.contains(Address.Component.Kind.HOUSE) }
+                val addresses = it.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.components!!.filter { comp -> comp.kinds.contains(Address.Component.Kind.HOUSE) }
                 for(address in addresses){
                     Log.i("Address", "${address.name}")
                 }

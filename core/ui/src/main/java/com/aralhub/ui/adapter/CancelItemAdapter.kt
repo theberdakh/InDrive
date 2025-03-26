@@ -52,3 +52,33 @@ class CancelItemAdapter: ListAdapter<CancelItem, CancelItemAdapter.ViewHolder>(
         holder.bind(getItem(position), position)
     }
 }
+
+class DriverCancelItemAdapter : ListAdapter<CancelItem, DriverCancelItemAdapter.ViewHolder>(
+    CancelItemDiffCallback
+) {
+
+    private var onItemSelected: ((CancelItem, Boolean) -> Unit) = {_, _ ->}
+    fun setOnItemSelected(onItemSelected: (CancelItem, Boolean) -> Unit) {
+        this.onItemSelected = onItemSelected
+    }
+
+    inner class ViewHolder(private val binding: ItemCancelBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(cancelItem: CancelItem) {
+            binding.root.text = cancelItem.title
+            binding.root.isChecked = cancelItem.isSelected
+            binding.root.setOnClickListener {
+                onItemSelected.invoke(cancelItem, binding.root.isChecked)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemCancelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+}
