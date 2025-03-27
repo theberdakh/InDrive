@@ -27,7 +27,12 @@ class ClientRideRepositoryImpl @Inject constructor(private val clientRideNetwork
             clientRideNetworkDataSource.getRide().collect { event ->
                 val status = when(event) {
                     is ClientWebSocketEventRideMessage.DriverOnTheWay -> RideStatus.DriverOnTheWay(event.message)
-                    is ClientWebSocketEventRideMessage.DriverWaitingClientMessage -> RideStatus.DriverWaitingClient(event.message.message)
+                    is ClientWebSocketEventRideMessage.DriverWaitingClientMessage -> RideStatus.DriverWaitingClient(
+                        event.message.waitPricePerMinute,
+                        event.message.startFreeTime,
+                        event.message.endFreeTime,
+                        event.message.message
+                    )
                     is ClientWebSocketEventRideMessage.PaidWaiting -> RideStatus.PaidWaiting(event.message)
                     is ClientWebSocketEventRideMessage.PaidWaitingStarted -> RideStatus.PaidWaitingStarted(event.message)
                     is ClientWebSocketEventRideMessage.RideCompleted -> {

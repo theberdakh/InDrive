@@ -6,10 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
+import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
+import com.aralhub.araltaxi.core.domain.client.GetDriverCardUseCase
+import com.aralhub.araltaxi.core.domain.client.GetStandardPriceUseCase
+import com.aralhub.araltaxi.core.domain.client.GetWaitAmountUseCase
+import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.indrive.core.data.model.ride.StandardPrice
+import com.aralhub.indrive.core.data.model.ride.WaitAmount
 import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.indrive.core.data.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,12 +31,22 @@ class RideViewModel @Inject constructor(
     private val getActiveRideUseCase: ClientGetActiveRideUseCase,
     private val cancelRideWithoutReasonUseCase: ClientCancelRideWithoutReasonUseCase,
     private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
-    private val getClientRideStatusUseCase: GetClientRideStatusUseCase
+    private val getClientRideStatusUseCase: GetClientRideStatusUseCase,
+    private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase,
+    private val getWaitAmountUseCase: GetWaitAmountUseCase,
+    private val getStandardPriceUseCase: GetStandardPriceUseCase,
+    private val getDriverCardUseCase: GetDriverCardUseCase
 ) : ViewModel() {
+
+    init {
+        getClientRideState()
+        getActiveRide()
+
+    }
 
     private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
     val activeRideState = _activeRideState.asStateFlow()
-    fun getActiveRide() = viewModelScope.launch {
+    private fun getActiveRide() = viewModelScope.launch {
         getActiveRideUseCase().let {
             when (it) {
                 is Result.Error -> {
@@ -54,8 +72,8 @@ class RideViewModel @Inject constructor(
                 is Result.Error -> {
                     _cancelRideState.emit(CancelRideUiState.Error(it.message))
                 }
-
                 is Result.Success -> {
+                    disconnectClientActiveRideUseCase()
                     _cancelRideState.emit(CancelRideUiState.Success)
                 }
             }
@@ -82,15 +100,65 @@ class RideViewModel @Inject constructor(
     private var _waitingForDriverRideState = MutableSharedFlow<RideStateUiState>()
     val waitingForDriverRideState = _waitingForDriverRideState.asSharedFlow()
 
-    fun getClientRideState() = viewModelScope.launch {
+    private fun getClientRideState() = viewModelScope.launch {
         getClientRideStatusUseCase().collect {
-            Log.i("RideState ViewModel", it.toString())
             _waitingForDriverRideState.emit(RideStateUiState.Success(it))
             _rideStateUiState.emit(RideStateUiState.Success(it))
         }
     }
+
+    private var _getWaitAmountUiState = MutableSharedFlow<GetWaitAmountUiState>()
+    val getWaitAmountUiState = _getWaitAmountUiState.asSharedFlow()
+    fun getWaitAmount(rideId: Int) = viewModelScope.launch {
+       _getWaitAmountUiState.emit(
+           getWaitAmountUseCase(rideId).fold(
+               onSuccess = {
+                 GetWaitAmountUiState.Success(it)
+               },
+               onError = {
+                  GetWaitAmountUiState.Error(it)
+               }
+           )
+       )
+    }
+
+    private var _getStandardPriceUiState = MutableSharedFlow<GetStandardPriceUiState>()
+    val getStandardPriceUiState = _getStandardPriceUiState.asSharedFlow()
+    fun getStandardPrice() =  viewModelScope.launch {
+        _getStandardPriceUiState.emit(
+            getStandardPriceUseCase().let {
+                when(it){
+                    is Result.Error -> GetStandardPriceUiState.Error(it.message)
+                    is Result.Success -> {
+                        Log.i("RideViewModel", "${it.data}")
+                        GetStandardPriceUiState.Success(it.data)
+                    }
+                }
+            }
+        )
+    }
+
+    private val _getDriverCardUiState = MutableStateFlow<GetDriverCardUiState>(GetDriverCardUiState.Loading)
+    val getDriverCardUiState = _getDriverCardUiState.asStateFlow()
+    fun getDriverCard(driverId: Int)  = viewModelScope.launch {
+        _getDriverCardUiState.emit(
+            getDriverCardUseCase(driverId).let {
+                when(it){
+                    is Result.Error -> GetDriverCardUiState.Error(it.message)
+                    is Result.Success -> GetDriverCardUiState.Success(it.data)
+                }
+            }
+        )
+
+    }
+
 }
 
+sealed interface GetWaitAmountUiState {
+    data object Loading : GetWaitAmountUiState
+    data class Success(val waitAmount: WaitAmount) : GetWaitAmountUiState
+    data class Error(val message: String) : GetWaitAmountUiState
+}
 
 sealed interface RideStateUiState {
     data object Loading : RideStateUiState
@@ -108,4 +176,16 @@ sealed interface CancelRideUiState {
     data object Loading : CancelRideUiState
     data object Success : CancelRideUiState
     data class Error(val message: String) : CancelRideUiState
+}
+
+sealed interface GetStandardPriceUiState {
+    data object Loading: GetStandardPriceUiState
+    data class Success(val standardPrice: StandardPrice): GetStandardPriceUiState
+    data class Error(val message: String): GetStandardPriceUiState
+}
+
+sealed interface GetDriverCardUiState {
+    data object Loading: GetDriverCardUiState
+    data class Success(val driverCard: DriverCard): GetDriverCardUiState
+    data class Error(val message: String): GetDriverCardUiState
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import com.aralhub.araltaxi.client.ride.R
 import com.aralhub.araltaxi.client.ride.databinding.BottomSheetRideFinishedBinding
 import com.aralhub.araltaxi.ride.ActiveRideUiState
+import com.aralhub.araltaxi.ride.GetDriverCardUiState
 import com.aralhub.araltaxi.ride.RideViewModel
 import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideBottomSheetNavigation
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
@@ -43,8 +44,18 @@ class RideFinishedBottomSheet : Fragment(R.layout.bottom_sheet_ride_finished) {
                 is ActiveRideUiState.Error -> {}
                 ActiveRideUiState.Loading -> {}
                 is ActiveRideUiState.Success -> {
+                    rideViewModel.getDriverCard(activeRideUiState.activeRide.driver.driverId)
                     binding.tvTotalMoney.text = "${activeRideUiState.activeRide.amount} + ${activeRideUiState.activeRide.waitAmount}"
-                    binding.tvCardNumber.text = activeRideUiState.activeRide.driver.phoneNumber
+                }
+            }
+        }
+
+        observeState(rideViewModel.getDriverCardUiState){ getDriverCardUiState ->
+            when(getDriverCardUiState){
+                is GetDriverCardUiState.Error -> {}
+                GetDriverCardUiState.Loading -> {}
+                is GetDriverCardUiState.Success -> {
+                    binding.tvCardNumber.text = getDriverCardUiState.driverCard.cardNumber
                 }
             }
         }
@@ -59,6 +70,5 @@ class RideFinishedBottomSheet : Fragment(R.layout.bottom_sheet_ride_finished) {
             getString(com.aralhub.ui.R.string.message_card_number_is_copied),
             Toast.LENGTH_SHORT
         ).show()
-        binding.btnClear.enable()
     }
 }

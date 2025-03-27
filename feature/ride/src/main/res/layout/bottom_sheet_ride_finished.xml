@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_small"
-        tools:text="@string/label_trip_ended_description_payment_online"
+        android:text="@string/label_trip_ended_description_payment_online"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text"/>
 
@@ -96,7 +96,6 @@
     <Button
         style="@style/Widget.InDrive.Button.Primary"
         android:id="@+id/btn_clear"
-        android:enabled="false"
         android:text="@string/label_close"
         android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"

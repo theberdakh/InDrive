@@ -13,6 +13,7 @@ import com.aralhub.indrive.core.data.model.client.ClientRideResponsePaymentMetho
 import com.aralhub.indrive.core.data.model.client.ClientRideResponseRecommendedAmount
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
+import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.payment.toDomain
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.ActiveRideDriver
@@ -25,8 +26,9 @@ import com.aralhub.indrive.core.data.model.ride.RecommendedAmount
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.model.ride.SearchRideDriver
 import com.aralhub.indrive.core.data.model.ride.SearchRideLocations
+import com.aralhub.indrive.core.data.model.ride.StandardPrice
+import com.aralhub.indrive.core.data.model.ride.WaitAmount
 import com.aralhub.indrive.core.data.model.ride.toDomain
-import com.aralhub.indrive.core.data.model.toDomain
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.network.WebSocketClientNetworkDataSource
@@ -312,4 +314,44 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
             }
         }
     }
+
+    override suspend fun getWaitAmount(rideId: Int): Result<WaitAmount> {
+        return dataSource.getWaitTime(rideId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(WaitAmount(
+                    waitAmount = it.data.waitAmount,
+                    waitStartTime = it.data.waitStartTime,
+                    paidWaitingTime = it.data.paidWaitingTime
+                ))
+            }
+        }
+    }
+
+    override suspend fun getStandardPrice(): Result<StandardPrice> {
+        return dataSource.getStandard().let {
+            when(it){
+                is NetworkResult.Success -> Result.Success(StandardPrice(
+                    freeWaitMinutes = it.data.freeWaitMinutes,
+                    waitPricePerMinute = it.data.waitPricePerMinute,
+                    commissionPercent = it.data.commissionPercent,
+                    cashbackPercent = it.data.cashbackPercent
+                ))
+                is NetworkResult.Error -> Result.Error(it.message)
+            }
+        }
+    }
+
+    override suspend fun getDriverCard(driverId: Int): Result<DriverCard> {
+        return dataSource.getDriverCard(driverId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(DriverCard(
+                    it.data.cardNumber,
+                    it.data.nameOnCard
+                ))
+            }
+        }
+    }
+
 }

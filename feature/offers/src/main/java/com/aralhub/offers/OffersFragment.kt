@@ -106,6 +106,7 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
                 AutoTakeOfferUiState.Loading -> {}
                 is AutoTakeOfferUiState.Success -> {
                     viewModel.closeOffersWebSocket()
+                    Log.i("OffersFragment", "going to ride")
                     featureOffersNavigation.goToRideFragment()
                 }
             }
@@ -115,11 +116,7 @@ class OffersFragment : Fragment(R.layout.fragment_offers) {
             when (acceptOfferUiState) {
                 is AcceptOfferUiState.Error -> errorHandler.showToast(acceptOfferUiState.message)
                 AcceptOfferUiState.Loading -> {}
-                AcceptOfferUiState.Success -> {
-                    viewModel.closeOffersWebSocket()
-                    featureOffersNavigation.goToRideFragment()
-                    errorHandler.showToast("Offer accepted")
-                }
+                AcceptOfferUiState.Success -> {}
             }
         }
 
