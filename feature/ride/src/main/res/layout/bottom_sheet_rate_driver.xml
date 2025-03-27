@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:numStars="5"
-        android:progressTint="@color/color_interactive_accent"
+        android:progressTint="@color/color_interactive_control"
         android:secondaryProgressTint="#E1E1E2" />
 
 
@@ -128,11 +128,11 @@
         android:inputType="text|textMultiLine"
         style="@style/Widget.InDrive.EditText"
         android:layout_width="match_parent"
+        android:textColor="@color/color_text_secondary"
         android:layout_height="wrap_content"
         android:gravity="top"
         android:hint="@string/hint_comment_to_driver"
-        android:minLines="4"
-        android:textColor="@color/color_interactive_control" />
+        android:minLines="4" />
 
     <LinearLayout
         android:id="@+id/layout_online"

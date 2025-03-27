@@ -1,7 +1,9 @@
 package com.aralhub.indrive.core.data.repository.review.impl
 
+import com.aralhub.indrive.core.data.model.review.PassengerReview
 import com.aralhub.indrive.core.data.model.review.Review
 import com.aralhub.indrive.core.data.model.review.ReviewType
+import com.aralhub.indrive.core.data.model.review.toNetwork
 import com.aralhub.indrive.core.data.model.review.toNetworkReview
 import com.aralhub.indrive.core.data.model.review.toReview
 import com.aralhub.indrive.core.data.model.review.toReviewType
@@ -30,6 +32,13 @@ class ReviewRepositoryImpl @Inject constructor(private val reviewsNetworkDataSou
         return when(val result = reviewsNetworkDataSource.createReview(review.toNetworkReview())) {
             is NetworkResult.Success -> Result.Success(result.data.toReview())
             is NetworkResult.Error -> Result.Error(result.message)
+        }
+    }
+
+    override suspend fun createPassengerReview(passengerReview: PassengerReview): Result<Review> {
+        return when(val result = reviewsNetworkDataSource.createPassengerReview(passengerReview.toNetwork())){
+            is NetworkResult.Error -> Result.Error(result.message)
+            is NetworkResult.Success -> Result.Success(result.data.toReview())
         }
     }
 }

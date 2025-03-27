@@ -50,7 +50,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     }
 
     private fun initObservers() {
-        observeState(rideViewModel.waitingForDriverRideState){ rideStateUiState ->
+        observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
             when(rideStateUiState){
                 is RideStateUiState.Error -> {
                     Log.i("Ride state", "WaitingForDriver: Error")
@@ -86,30 +86,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                 }
             }
         }
-      /*  lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED){
-                rideViewModel.rideState2.collect { state ->
 
-                    when (state) {
-                        RideBottomSheetUiState.Error -> {}
-                        RideBottomSheetUiState.Loading -> {}
-                        is RideBottomSheetUiState.Success -> {
-                            Log.i("WaitingForDriver", "initObservers: ${state.rideState}")
-                            when (state.rideState) {
-                                RideState.WAITING_FOR_DRIVER -> { initRideData(state.rideData)}
-                                RideState.DRIVER_IS_WAITING -> {
-                                    navigation.goToDriverIsWaiting()
-                                }
-
-                                RideState.DRIVER_CANCELED -> {}
-                                RideState.IN_RIDE -> {}
-                                RideState.FINISHED -> {}
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
         observeState(rideViewModel.cancelRideState){ cancelRideUiState ->
             when(cancelRideUiState){
                 is CancelRideUiState.Error -> {
@@ -123,25 +100,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
             }
         }
 
-     /*   observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {}
-                RideStateUiState.Loading -> {}
-                is RideStateUiState.Success -> {
-                   when(rideStateUiState.rideState){
-                       is RideStatus.CanceledByDriver -> {}
-                       is RideStatus.DriverOnTheWay -> {}
-                       is RideStatus.DriverWaitingClient -> {
-                            navigation.goToDriverIsWaiting()
-                       }
-                       is RideStatus.RideCompleted -> {}
-                       is RideStatus.RideStarted -> {}
-                       is RideStatus.RideStartedAfterWaiting -> {}
-                       is RideStatus.Unknown -> {}
-                   }
-                }
-            }
-        }*/
         observeState(rideViewModel.activeRideState){ activeRideState ->
             when(activeRideState){
                 is ActiveRideUiState.Error -> {
@@ -153,7 +111,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                 }
                 is ActiveRideUiState.Success -> {
                     currentRideId = activeRideState.activeRide.id
-                    errorHandler.showToast("Success")
                   displayActiveRide(activeRideState.activeRide)
                     Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")
                 }

@@ -108,8 +108,7 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
     }
 
     private fun setStartDestination(fragment: Int) {
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.ride_nav_host) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.ride_nav_host) as NavHostFragment
         val navController = navHostFragment.navController
         navController.let { navigator.bind(navController) }
         val inflater = navController.navInflater
@@ -128,6 +127,11 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
                 30.0f
             )
         )
+    }
+
+    override fun onStop() {
+        binding.mapView.onStop()
+        super.onStop()
     }
 
     override fun onDestroyView() {

@@ -5,6 +5,7 @@ import com.aralhub.network.api.AddressNetworkApi
 import com.aralhub.network.api.CancelCauseNetworkApi
 import com.aralhub.network.api.DriverNetworkApi
 import com.aralhub.network.api.PaymentMethodsNetworkApi
+import com.aralhub.network.api.ReviewsNetworkApi
 import com.aralhub.network.api.RideOptionNetworkApi
 import com.aralhub.network.api.UserNetworkApi
 import com.aralhub.network.api.WebSocketClientNetworkApi
@@ -90,5 +91,9 @@ object NetworkModule {
     @[Provides Singleton]
     fun provideAddressNetworkApi(retrofit: Retrofit): AddressNetworkApi =
         retrofit.create(AddressNetworkApi::class.java)
+
+    @[Provides Singleton]
+    fun provideReviewNetworkApi(retrofit: Retrofit): ReviewsNetworkApi =
+        retrofit.create(ReviewsNetworkApi::class.java)
 
 }

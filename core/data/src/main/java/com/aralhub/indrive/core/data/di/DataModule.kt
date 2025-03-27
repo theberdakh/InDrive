@@ -22,6 +22,8 @@ import com.aralhub.indrive.core.data.repository.driver.impl.DriverRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.repository.payment.impl.PaymentRepositoryImpl
+import com.aralhub.indrive.core.data.repository.review.ReviewRepository
+import com.aralhub.indrive.core.data.repository.review.impl.ReviewRepositoryImpl
 import com.aralhub.indrive.core.data.repository.rideoption.RideOptionRepository
 import com.aralhub.indrive.core.data.repository.rideoption.impl.RideOptionRepositoryImpl
 import dagger.Binds
@@ -92,4 +94,9 @@ abstract class DataModule {
     internal abstract fun bindsRideRepository(
         repository: ClientRideRepositoryImpl
     ): ClientRideRepository
+
+    @Binds
+    internal abstract fun bindsReviewRepository(
+        repository: ReviewRepositoryImpl
+    ): ReviewRepository
 }

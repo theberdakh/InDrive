@@ -6,12 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseCase
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
+import com.aralhub.araltaxi.core.domain.client.CreatePassengerReviewUseCase
 import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
 import com.aralhub.araltaxi.core.domain.client.GetDriverCardUseCase
 import com.aralhub.araltaxi.core.domain.client.GetStandardPriceUseCase
 import com.aralhub.araltaxi.core.domain.client.GetWaitAmountUseCase
+import com.aralhub.araltaxi.core.domain.review.CreateReviewUseCase
 import com.aralhub.indrive.core.data.model.driver.DriverCard
+import com.aralhub.indrive.core.data.model.review.PassengerReview
+import com.aralhub.indrive.core.data.model.review.Review
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.indrive.core.data.model.ride.StandardPrice
@@ -35,7 +39,8 @@ class RideViewModel @Inject constructor(
     private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase,
     private val getWaitAmountUseCase: GetWaitAmountUseCase,
     private val getStandardPriceUseCase: GetStandardPriceUseCase,
-    private val getDriverCardUseCase: GetDriverCardUseCase
+    private val getDriverCardUseCase: GetDriverCardUseCase,
+    private val createPassengerReviewUseCase: CreatePassengerReviewUseCase
 ) : ViewModel() {
 
     init {
@@ -149,6 +154,19 @@ class RideViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    private val _createReviewUiState = MutableStateFlow<CreateReviewUiState>(CreateReviewUiState.Loading)
+    val createReviewUiState = _createReviewUiState.asStateFlow()
+    fun createReview(review: PassengerReview) = viewModelScope.launch {
+        _createReviewUiState.emit(
+            createPassengerReviewUseCase(review).let {
+                when(it){
+                    is Result.Error -> CreateReviewUiState.Error(it.message)
+                    is Result.Success -> CreateReviewUiState.Success(it.data)
+                }
+            }
+        )
 
     }
 
@@ -188,4 +206,10 @@ sealed interface GetDriverCardUiState {
     data object Loading: GetDriverCardUiState
     data class Success(val driverCard: DriverCard): GetDriverCardUiState
     data class Error(val message: String): GetDriverCardUiState
+}
+
+sealed interface CreateReviewUiState {
+    data object Loading: CreateReviewUiState
+    data class Success(val review: Review): CreateReviewUiState
+    data class Error(val message: String): CreateReviewUiState
 }
