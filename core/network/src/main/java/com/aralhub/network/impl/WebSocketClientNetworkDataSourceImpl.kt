@@ -4,6 +4,7 @@ import com.aralhub.network.WebSocketClientNetworkDataSource
 import com.aralhub.network.api.WebSocketClientNetworkApi
 import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.driver.NetworkDriverCard
 import com.aralhub.network.models.location.NetworkLocationPoint
 import com.aralhub.network.models.price.NetworkRecommendedPrice
 import com.aralhub.network.models.price.NetworkStandardPrice
@@ -71,5 +72,9 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
 
     override suspend fun getStandard(): NetworkResult<NetworkStandardPrice> {
         return api.getStandardPrice().safeRequest()
+    }
+
+    override suspend fun getDriverCard(driverId: Int): NetworkResult<NetworkDriverCard> {
+        return api.getCardInfo(driverId).safeRequestServerResponse()
     }
 }

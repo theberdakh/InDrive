@@ -2,6 +2,7 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.driver.NetworkDriverCard
 import com.aralhub.network.models.price.NetworkRecommendedPrice
 import com.aralhub.network.models.price.NetworkStandardPrice
 import com.aralhub.network.models.ride.NetworkRideActive
@@ -62,4 +63,7 @@ interface WebSocketClientNetworkApi {
 
     @GET("/ride/standart")
     suspend fun getStandardPrice(): Response<NetworkStandardPrice>
+
+    @GET("/ride/get_card_info/{driver_id}")
+    suspend fun getCardInfo(@Path("driver_id") driverId: Int): Response<ServerResponse<NetworkDriverCard>>
 }

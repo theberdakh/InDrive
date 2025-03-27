@@ -8,8 +8,10 @@ import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseC
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
+import com.aralhub.araltaxi.core.domain.client.GetDriverCardUseCase
 import com.aralhub.araltaxi.core.domain.client.GetStandardPriceUseCase
 import com.aralhub.araltaxi.core.domain.client.GetWaitAmountUseCase
+import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.indrive.core.data.model.ride.StandardPrice
@@ -32,7 +34,8 @@ class RideViewModel @Inject constructor(
     private val getClientRideStatusUseCase: GetClientRideStatusUseCase,
     private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase,
     private val getWaitAmountUseCase: GetWaitAmountUseCase,
-    private val getStandardPriceUseCase: GetStandardPriceUseCase
+    private val getStandardPriceUseCase: GetStandardPriceUseCase,
+    private val getDriverCardUseCase: GetDriverCardUseCase
 ) : ViewModel() {
 
     init {
@@ -135,6 +138,20 @@ class RideViewModel @Inject constructor(
         )
     }
 
+    private val _getDriverCardUiState = MutableStateFlow<GetDriverCardUiState>(GetDriverCardUiState.Loading)
+    val getDriverCardUiState = _getDriverCardUiState.asStateFlow()
+    fun getDriverCard(driverId: Int)  = viewModelScope.launch {
+        _getDriverCardUiState.emit(
+            getDriverCardUseCase(driverId).let {
+                when(it){
+                    is Result.Error -> GetDriverCardUiState.Error(it.message)
+                    is Result.Success -> GetDriverCardUiState.Success(it.data)
+                }
+            }
+        )
+
+    }
+
 }
 
 sealed interface GetWaitAmountUiState {
@@ -165,4 +182,10 @@ sealed interface GetStandardPriceUiState {
     data object Loading: GetStandardPriceUiState
     data class Success(val standardPrice: StandardPrice): GetStandardPriceUiState
     data class Error(val message: String): GetStandardPriceUiState
+}
+
+sealed interface GetDriverCardUiState {
+    data object Loading: GetDriverCardUiState
+    data class Success(val driverCard: DriverCard): GetDriverCardUiState
+    data class Error(val message: String): GetDriverCardUiState
 }

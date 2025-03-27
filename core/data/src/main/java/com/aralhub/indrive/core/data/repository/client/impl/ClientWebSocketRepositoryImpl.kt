@@ -13,6 +13,7 @@ import com.aralhub.indrive.core.data.model.client.ClientRideResponsePaymentMetho
 import com.aralhub.indrive.core.data.model.client.ClientRideResponseRecommendedAmount
 import com.aralhub.indrive.core.data.model.client.GeoPoint
 import com.aralhub.indrive.core.data.model.client.RecommendedPrice
+import com.aralhub.indrive.core.data.model.driver.DriverCard
 import com.aralhub.indrive.core.data.model.payment.toDomain
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.ActiveRideDriver
@@ -340,4 +341,17 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
             }
         }
     }
+
+    override suspend fun getDriverCard(driverId: Int): Result<DriverCard> {
+        return dataSource.getDriverCard(driverId).let {
+            when(it){
+                is NetworkResult.Error -> Result.Error(it.message)
+                is NetworkResult.Success -> Result.Success(DriverCard(
+                    it.data.cardNumber,
+                    it.data.nameOnCard
+                ))
+            }
+        }
+    }
+
 }
