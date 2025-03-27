@@ -25,6 +25,7 @@ import com.aralhub.indrive.core.data.model.ride.RecommendedAmount
 import com.aralhub.indrive.core.data.model.ride.SearchRide
 import com.aralhub.indrive.core.data.model.ride.SearchRideDriver
 import com.aralhub.indrive.core.data.model.ride.SearchRideLocations
+import com.aralhub.indrive.core.data.model.ride.StandardPrice
 import com.aralhub.indrive.core.data.model.ride.WaitAmount
 import com.aralhub.indrive.core.data.model.ride.toDomain
 import com.aralhub.indrive.core.data.repository.client.ClientWebSocketRepository
@@ -322,6 +323,20 @@ class ClientWebSocketRepositoryImpl @Inject constructor(private val localStorage
                     waitStartTime = it.data.waitStartTime,
                     paidWaitingTime = it.data.paidWaitingTime
                 ))
+            }
+        }
+    }
+
+    override suspend fun getStandardPrice(): Result<StandardPrice> {
+        return dataSource.getStandard().let {
+            when(it){
+                is NetworkResult.Success -> Result.Success(StandardPrice(
+                    freeWaitMinutes = it.data.freeWaitMinutes,
+                    waitPricePerMinute = it.data.waitPricePerMinute,
+                    commissionPercent = it.data.commissionPercent,
+                    cashbackPercent = it.data.cashbackPercent
+                ))
+                is NetworkResult.Error -> Result.Error(it.message)
             }
         }
     }

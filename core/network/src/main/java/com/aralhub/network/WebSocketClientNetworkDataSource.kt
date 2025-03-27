@@ -4,6 +4,7 @@ import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.location.NetworkLocationPoint
 import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.price.NetworkStandardPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
 import com.aralhub.network.models.ride.NetworkWaitAmount
@@ -30,5 +31,7 @@ interface WebSocketClientNetworkDataSource {
     suspend fun updateAutoTake(rideId: String, autoTake: Boolean): NetworkResult<ServerResponseEmpty>
 
     suspend fun getWaitTime(rideId: Int): NetworkResult<NetworkWaitAmount>
+
+    suspend fun getStandard(): NetworkResult<NetworkStandardPrice>
 
 }

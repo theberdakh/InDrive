@@ -8,9 +8,11 @@ import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseC
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
+import com.aralhub.araltaxi.core.domain.client.GetStandardPriceUseCase
 import com.aralhub.araltaxi.core.domain.client.GetWaitAmountUseCase
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.indrive.core.data.model.ride.StandardPrice
 import com.aralhub.indrive.core.data.model.ride.WaitAmount
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.result.fold
@@ -29,12 +31,14 @@ class RideViewModel @Inject constructor(
     private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
     private val getClientRideStatusUseCase: GetClientRideStatusUseCase,
     private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase,
-    private val getWaitAmountUseCase: GetWaitAmountUseCase
+    private val getWaitAmountUseCase: GetWaitAmountUseCase,
+    private val getStandardPriceUseCase: GetStandardPriceUseCase
 ) : ViewModel() {
 
     init {
         getClientRideState()
         getActiveRide()
+
     }
 
     private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
@@ -93,9 +97,8 @@ class RideViewModel @Inject constructor(
     private var _waitingForDriverRideState = MutableSharedFlow<RideStateUiState>()
     val waitingForDriverRideState = _waitingForDriverRideState.asSharedFlow()
 
-    fun getClientRideState() = viewModelScope.launch {
+    private fun getClientRideState() = viewModelScope.launch {
         getClientRideStatusUseCase().collect {
-            Log.i("RideState ViewModel", it.toString())
             _waitingForDriverRideState.emit(RideStateUiState.Success(it))
             _rideStateUiState.emit(RideStateUiState.Success(it))
         }
@@ -115,6 +118,23 @@ class RideViewModel @Inject constructor(
            )
        )
     }
+
+    private var _getStandardPriceUiState = MutableSharedFlow<GetStandardPriceUiState>()
+    val getStandardPriceUiState = _getStandardPriceUiState.asSharedFlow()
+    fun getStandardPrice() =  viewModelScope.launch {
+        _getStandardPriceUiState.emit(
+            getStandardPriceUseCase().let {
+                when(it){
+                    is Result.Error -> GetStandardPriceUiState.Error(it.message)
+                    is Result.Success -> {
+                        Log.i("RideViewModel", "${it.data}")
+                        GetStandardPriceUiState.Success(it.data)
+                    }
+                }
+            }
+        )
+    }
+
 }
 
 sealed interface GetWaitAmountUiState {
@@ -139,4 +159,10 @@ sealed interface CancelRideUiState {
     data object Loading : CancelRideUiState
     data object Success : CancelRideUiState
     data class Error(val message: String) : CancelRideUiState
+}
+
+sealed interface GetStandardPriceUiState {
+    data object Loading: GetStandardPriceUiState
+    data class Success(val standardPrice: StandardPrice): GetStandardPriceUiState
+    data class Error(val message: String): GetStandardPriceUiState
 }

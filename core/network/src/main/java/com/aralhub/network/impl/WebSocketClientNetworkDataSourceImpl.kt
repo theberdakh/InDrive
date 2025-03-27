@@ -6,6 +6,7 @@ import com.aralhub.network.models.NetworkResult
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.location.NetworkLocationPoint
 import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.price.NetworkStandardPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
 import com.aralhub.network.models.ride.NetworkWaitAmount
@@ -66,5 +67,9 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
 
     override suspend fun getWaitTime(rideId: Int): NetworkResult<NetworkWaitAmount> {
         return api.getWaitAmount(rideId).safeRequestServerResponse()
+    }
+
+    override suspend fun getStandard(): NetworkResult<NetworkStandardPrice> {
+        return api.getStandardPrice().safeRequest()
     }
 }

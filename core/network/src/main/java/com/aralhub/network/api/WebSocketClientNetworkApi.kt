@@ -3,6 +3,7 @@ package com.aralhub.network.api
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
 import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.price.NetworkStandardPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
 import com.aralhub.network.models.ride.NetworkWaitAmount
@@ -58,4 +59,7 @@ interface WebSocketClientNetworkApi {
 
     @GET("/ride/{ride_id}/get_wait_amount")
     suspend fun getWaitAmount(@Path("ride_id") rideId: Int): Response<ServerResponse<NetworkWaitAmount>>
+
+    @GET("/ride/standart")
+    suspend fun getStandardPrice(): Response<NetworkStandardPrice>
 }
