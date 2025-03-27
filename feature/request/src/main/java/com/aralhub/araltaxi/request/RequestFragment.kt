@@ -98,6 +98,7 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
     private var isFullscreen = false
     private lateinit var mapWindow: MapWindow
     private lateinit var map: Map
+    private var isProgrammaticChange= false
 
     private val geoObjectTapListener = GeoObjectTapListener {
         // Move camera to selected geoObject
@@ -342,6 +343,9 @@ internal class RequestFragment : Fragment(R.layout.fragment_request) {
             val locationOwner = bundle.getInt(SELECT_LOCATION_KEY_LOCATION_OWNER)
             when (locationOwner) {
                 SELECT_LOCATION_OWNER_FROM -> {
+                    isProgrammaticChange = true
+                    binding.etFromLocation.text = locationName
+                    isProgrammaticChange = false
                     requestViewModel2.setFromLocation(
                         SelectedLocation(
                             name = locationName,

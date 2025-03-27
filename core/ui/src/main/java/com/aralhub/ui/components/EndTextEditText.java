@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -21,10 +22,10 @@ import androidx.core.content.ContextCompat;
 
 import com.aralhub.ui.R;
 
-import java.util.Objects;
-
 public class EndTextEditText extends LinearLayout {
+
     private OnClickListener endTextClickListener;
+    private boolean isProgrammaticChange = false; // Flag to track programmatic changes
 
     public EndTextEditText(Context context) {
         super(context);
@@ -65,20 +66,23 @@ public class EndTextEditText extends LinearLayout {
         startIconParams.gravity = Gravity.CENTER_VERTICAL;
         startIconContainer.addView(startIconView, startIconParams);
 
+        // Create EditText
         AppCompatEditText editText = new AppCompatEditText(context, attrs);
         editText.setMaxLines(1);
-        editText.setMaxEms(10);
-        editText.setTextSize(15f);
+        editText.setSingleLine(true);
         editText.setEllipsize(TextUtils.TruncateAt.END);
+        editText.setHorizontallyScrolling(false);
+        editText.setTextSize(14f);
         editText.setTextColor(ContextCompat.getColor(context, R.color.color_content_secondary));
-        editText.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
-        editText.setOnFocusChangeListener((v, hasFocus) -> {
-            setActivated(hasFocus);
-        });
-        LayoutParams editTextParams = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
+        editText.setBackground(null);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS); // No suggestions/autocorrect
+        editText.setTextIsSelectable(true);
+        editText.setOnFocusChangeListener((v, hasFocus) -> setActivated(hasFocus));
+        LayoutParams editTextParams = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f);
         editTextParams.setMargins(0, 0, 0, 0);
         addView(editText, editTextParams);
 
+        // Create end text container
         LinearLayout endTextContainer = new LinearLayout(context);
         endTextContainer.setOrientation(HORIZONTAL);
         endTextContainer.setGravity(Gravity.CENTER_VERTICAL);
@@ -89,6 +93,7 @@ public class EndTextEditText extends LinearLayout {
         containerParams.setMargins(dpToPx(16), 0, dpToPx(16), 0);
         addView(endTextContainer, containerParams);
 
+        // Divider
         View dividerView = new View(context);
         LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
                 dpToPx(1),
@@ -98,6 +103,7 @@ public class EndTextEditText extends LinearLayout {
         dividerView.setBackgroundColor(Color.LTGRAY);
         endTextContainer.addView(dividerView, dividerParams);
 
+        // End TextView
         TextView endTextView = new TextView(context);
         LayoutParams endTextViewParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         endTextViewParams.gravity = Gravity.CENTER_VERTICAL;
@@ -140,30 +146,34 @@ public class EndTextEditText extends LinearLayout {
         }
     }
 
+    private int dpToPx(float dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
+    }
+
     public void setEndTextClickListener(OnClickListener listener) {
-        endTextClickListener = listener;
+        this.endTextClickListener = listener;
     }
 
     public String getText() {
-        AppCompatEditText editText = (AppCompatEditText) getChildAt(1); // Index changed due to added startIconContainer
-        return Objects.requireNonNull(editText.getText()).toString();
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(1);
+        return editText.getText().toString();
     }
 
     public void setText(String text) {
-        AppCompatEditText editText = (AppCompatEditText) getChildAt(1); // Index changed
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(1);
+        isProgrammaticChange = true; // Set flag before programmatic change
         editText.setText(text);
+        isProgrammaticChange = false; // Reset flag after change
     }
 
     public void setHint(String hint) {
-        AppCompatEditText editText = (AppCompatEditText) getChildAt(1); // Index changed
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(1);
         editText.setHint(hint);
     }
 
-    // Method to set start icon programmatically
     public void setStartIconDrawable(Drawable drawable) {
         LinearLayout startIconContainer = (LinearLayout) getChildAt(0);
         ImageView startIconView = (ImageView) startIconContainer.getChildAt(0);
-
         if (drawable != null) {
             startIconView.setImageDrawable(drawable);
             startIconContainer.setVisibility(VISIBLE);
@@ -172,63 +182,56 @@ public class EndTextEditText extends LinearLayout {
         }
     }
 
-    // Method to set start icon tint color programmatically
     public void setStartIconTint(int color) {
         LinearLayout startIconContainer = (LinearLayout) getChildAt(0);
         ImageView startIconView = (ImageView) startIconContainer.getChildAt(0);
         startIconView.setColorFilter(color);
     }
 
-    private int dpToPx(float dp) {
-        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
-    }
-
-    public interface OnTextChangedListener {
-        void onTextChanged(String text);
-    }
-
     public void setEndTextVisible(boolean visible) {
-        LinearLayout endTextContainer = (LinearLayout) getChildAt(2); // Index changed
-        if (visible) {
-            endTextContainer.setVisibility(VISIBLE);
-        } else {
-            endTextContainer.setVisibility(GONE);
-        }
+        LinearLayout endTextContainer = (LinearLayout) getChildAt(2);
+        endTextContainer.setVisibility(visible ? VISIBLE : GONE);
     }
 
     public void setStartIconVisible(boolean visible) {
         LinearLayout startIconContainer = (LinearLayout) getChildAt(0);
-        if (visible) {
-            startIconContainer.setVisibility(VISIBLE);
-        } else {
-            startIconContainer.setVisibility(GONE);
-        }
+        startIconContainer.setVisibility(visible ? VISIBLE : GONE);
     }
 
+    // Interface for activation listener
     public interface OnActivatedListener {
         void onActivated(boolean activated);
     }
 
-    public void setOnActivatedListener(final EndTextEditText.OnActivatedListener onActivatedListener) {
-        AppCompatEditText editText = (AppCompatEditText) getChildAt(1); // Index changed
-        editText.setOnFocusChangeListener((v, hasFocus) -> {
-            onActivatedListener.onActivated(hasFocus);
-        });
+    public void setOnActivatedListener(final OnActivatedListener listener) {
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(1);
+        editText.setOnFocusChangeListener((v, hasFocus) -> listener.onActivated(hasFocus));
     }
 
-    public void setOnTextChangedListener(final EndIconEditText.OnTextChangedListener onTextChangedListener) {
-        AppCompatEditText editText = (AppCompatEditText) getChildAt(1); // Index changed
+    // Interface for text changed listener
+    public interface OnTextChangedListener {
+        void onTextChanged(String text);
+    }
+
+    public void setOnTextChangedListener(final OnTextChangedListener listener) {
+        AppCompatEditText editText = (AppCompatEditText) getChildAt(1);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int before, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
-                onTextChangedListener.onTextChanged(charSequence.toString());
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!isProgrammaticChange) { // Only trigger for manual changes
+                    listener.onTextChanged(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
         });
     }
 }

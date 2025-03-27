@@ -27,7 +27,7 @@ class RequestViewModel2 @Inject constructor() : ViewModel() {
         const val DEFAULT_ZOOM_LEVEL = 17
         val DEFAULT_LOCATION = SelectedLocation(
             locationType = LocationType.FROM,
-            name = "Savıtsky atındaǵı kórkem óner múzeyi",
+            name = "Savıtsky kórkem óner múzeyi",
             latitude = 42.4651, // Example: Nukus, Karakalpakstan
             longitude = 59.6136
         )

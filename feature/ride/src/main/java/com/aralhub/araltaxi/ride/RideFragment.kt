@@ -40,7 +40,6 @@ internal class RideFragment : Fragment(R.layout.fragment_ride) {
         initListeners()
         setUpMapView()
         initObservers()
-        rideViewModel.getActiveRide()
     }
 
     private fun startService() {

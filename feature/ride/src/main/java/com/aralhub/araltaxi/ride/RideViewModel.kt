@@ -39,7 +39,7 @@ class RideViewModel @Inject constructor(
 
     private var _activeRideState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
     val activeRideState = _activeRideState.asStateFlow()
-    fun getActiveRide() = viewModelScope.launch {
+    private fun getActiveRide() = viewModelScope.launch {
         getActiveRideUseCase().let {
             when (it) {
                 is Result.Error -> {

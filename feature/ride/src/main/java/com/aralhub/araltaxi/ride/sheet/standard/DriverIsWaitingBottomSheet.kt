@@ -41,7 +41,6 @@ class DriverIsWaitingBottomSheet : Fragment(R.layout.bottom_sheet_driver_is_wait
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rideViewModel.getActiveRide()
         initListeners()
         initObservers()
         rideTimer = RideTimer()

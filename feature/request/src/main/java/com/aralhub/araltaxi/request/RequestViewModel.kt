@@ -123,6 +123,7 @@ class RequestViewModel @Inject constructor(
                 suggestOptions,
                 object : SuggestSession.SuggestListener {
                     override fun onResponse(response: SuggestResponse) {
+                        _suggestionsUiState.value = SuggestionsUiState.Loading
                         _suggestionsUiState.value = SuggestionsUiState.Success(
                             response.items
                                 .filter { it.center?.let { pt -> pt.latitude < MAX_LAT || pt.longitude < MAX_LON } ?: false }
