@@ -70,7 +70,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     lateinit var errorHandler: ErrorHandler
 
     private val viewModel by viewModels<OrdersViewModel>()
-    private val startedRideStatusViewModel by viewModels<StartedRideStatusViewModel>()
 
     private val orderModalBottomSheet = OrderModalBottomSheet()
     private val goingToPickUpModalBottomSheet = GoingToPickUpModalBottomSheet()
@@ -244,18 +243,16 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                     .collectLatest { getActiveOrdersUiState ->
                         Timber.d("initObservers: $getActiveOrdersUiState")
                         when (getActiveOrdersUiState) {
+
                             is GetActiveOrdersUiState.Error -> showErrorDialog(
                                 getActiveOrdersUiState.message
                             )
 
                             GetActiveOrdersUiState.Loading -> showLoading()
 
-                            is GetActiveOrdersUiState.OrderCanceled -> {
-//                            adapter.submitList(orders)
-                            }
+                            is GetActiveOrdersUiState.OrderRemoved -> {}
 
-                            is GetActiveOrdersUiState.OfferRejected -> {
-                            }
+                            is GetActiveOrdersUiState.OfferRejected -> {}
 
                             is GetActiveOrdersUiState.OfferAccepted -> {
                                 val bundle = Bundle()
@@ -274,8 +271,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                     RideStatus.DRIVER_ON_THE_WAY.status
                                 )
                                 orderModalBottomSheet.dismissAllowingStateLoss()
-                                viewModel.disconnect()
-                                startedRideStatus()
+//                                viewModel.disconnect()
                             }
 
                             is GetActiveOrdersUiState.GetNewOrder -> {
@@ -291,6 +287,13 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                 } else {
                                     binding.tvOrdersNotFound.show()
                                 }
+                            }
+
+                            GetActiveOrdersUiState.RideCanceledByPassenger -> {
+                                rideCanceledByPassengerModalBottomSheet.show(
+                                    childFragmentManager,
+                                    rideCanceledByPassengerModalBottomSheet.tag
+                                )
                             }
                         }
                     }
@@ -315,25 +318,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                 )
                                 viewModel.switchBackToOrdersSocket()
                             }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun startedRideStatus() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                startedRideStatusViewModel.startedRideStatus.collectLatest { result ->
-                    when (result) {
-                        is GetStartedRideStatusUiState.Error -> showErrorDialog(result.message)
-
-                        is GetStartedRideStatusUiState.RideCanceled -> {
-                            rideCanceledByPassengerModalBottomSheet.show(
-                                childFragmentManager,
-                                rideCanceledByPassengerModalBottomSheet.tag
-                            )
                         }
                     }
                 }
@@ -421,13 +405,17 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private fun initTripCanceledModalBottomSheet() {
 
         cancelTripModalBottomSheet.setOnRideCancelClickListener { order: OrderItem? ->
-            val bundle = Bundle()
-            bundle.putInt("rideId", order?.id ?: 0)
-            reasonCancelModalBottomSheet.arguments = bundle
-            reasonCancelModalBottomSheet.show(
-                childFragmentManager,
-                ReasonCancelModalBottomSheet.TAG
-            )
+            if (order != null) {
+                val bundle = Bundle()
+                bundle.putInt("rideId", order.id)
+                reasonCancelModalBottomSheet.arguments = bundle
+                reasonCancelModalBottomSheet.show(
+                    childFragmentManager,
+                    ReasonCancelModalBottomSheet.TAG
+                )
+            } else {
+                Timber.d("initTripCanceledModalBottomSheet: order is null")
+            }
         }
 
         tripCanceledModalBottomSheet.setOnCloseListener {
@@ -438,7 +426,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         }
 
         reasonCancelModalBottomSheet.setOnRideCancelledListener {
-            Log.d("OrdersFragment", "click")
             tripCanceledModalBottomSheet.show(
                 childFragmentManager,
                 TripCanceledModalBottomSheet.TAG
@@ -455,9 +442,14 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             )
             getExistingOrders()
         }
-        rideModalBottomSheet.setOnRideCanceledListener {
-            cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
-        }
+        rideModalBottomSheet.setOnRideCanceledListener { order -> showCancelTripBottomSheet(order) }
+    }
+
+    private fun showCancelTripBottomSheet(order: OrderItem?) {
+        val bundle = Bundle()
+        bundle.putParcelable("OrderDetail", order)
+        cancelTripModalBottomSheet.arguments = bundle
+        cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
     }
 
     private fun initWaitingForClientModalBottomSheet() {
@@ -475,9 +467,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 RideStatus.RIDE_STARTED.status
             )
         }
-        waitingForClientModalBottomSheet.setOnRideCanceledListener {
-            cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
-        }
+        waitingForClientModalBottomSheet.setOnRideCanceledListener { order -> showCancelTripBottomSheet(order)}
     }
 
     private fun initGoingToPickUpModalBottomSheet() {
@@ -498,12 +488,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 RideStatus.DRIVER_WAITING_CLIENT.status
             )
         }
-        goingToPickUpModalBottomSheet.setOnRideCanceledListener { order ->
-            val bundle = Bundle()
-            bundle.putParcelable("OrderDetail", order)
-            cancelTripModalBottomSheet.arguments = bundle
-            cancelTripModalBottomSheet.show(childFragmentManager, CancelTripModalBottomSheet.TAG)
-        }
+        goingToPickUpModalBottomSheet.setOnRideCanceledListener { order -> showCancelTripBottomSheet(order) }
     }
 
     private fun initViews() {

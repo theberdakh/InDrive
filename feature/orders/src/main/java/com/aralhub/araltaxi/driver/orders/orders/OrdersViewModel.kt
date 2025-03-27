@@ -4,10 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aralhub.araltaxi.core.common.utils.rejectOfferState
 import com.aralhub.araltaxi.core.domain.driver.CancelRideUseCase
-import com.aralhub.araltaxi.core.domain.driver.CloseDriverWebSocketConnectionUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverLogoutUseCase
 import com.aralhub.araltaxi.core.domain.driver.DriverProfileUseCase
-import com.aralhub.araltaxi.core.domain.driver.GetActiveOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetCancelCausesUseCase
 import com.aralhub.araltaxi.core.domain.driver.GetExistingOrdersUseCase
 import com.aralhub.araltaxi.core.domain.driver.UpdateRideStatusUseCase
@@ -17,6 +15,8 @@ import com.aralhub.araltaxi.driver.orders.model.asUI
 import com.aralhub.indrive.core.data.model.driver.DriverInfo
 import com.aralhub.indrive.core.data.result.Result
 import com.aralhub.indrive.core.data.util.WebSocketEvent
+import com.aralhub.indrive.core.data.util.closeActiveOrdersWebSocket
+import com.aralhub.indrive.core.data.util.webSocketEvent
 import com.aralhub.ui.model.CancelItem
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.model.RideCompletedUI
@@ -34,18 +34,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
     private val driverProfileUseCase: DriverProfileUseCase,
     private val driverLogoutUseCase: DriverLogoutUseCase,
-    private val getActiveOrdersUseCase: GetActiveOrdersUseCase,
     private val getExistingOrdersUseCase: GetExistingOrdersUseCase,
-    private val closeDriverWebSocketConnectionUseCase: CloseDriverWebSocketConnectionUseCase,
     private val updateRideStatusUseCase: UpdateRideStatusUseCase,
     private val cancelRideUseCase: CancelRideUseCase,
-    private val getCancelCausesUseCase: GetCancelCausesUseCase
+    private val getCancelCausesUseCase: GetCancelCausesUseCase,
 ) : ViewModel() {
 
     private val _ordersListState = MutableStateFlow<List<OrderItem>>(emptyList())
@@ -115,8 +114,7 @@ class OrdersViewModel @Inject constructor(
     private fun startOrdersWebSocket() {
         ordersWebSocketJob?.cancel()
         ordersWebSocketJob = viewModelScope.launch {
-            getActiveOrdersUseCase
-                .invoke()
+            webSocketEvent
                 .collect {
                     val state = when (it) {
                         is WebSocketEvent.ActiveOffer -> {
@@ -130,7 +128,7 @@ class OrdersViewModel @Inject constructor(
 
                         is WebSocketEvent.RideCancel -> {
                             removeOrder(it.rideId)
-                            GetActiveOrdersUiState.OrderCanceled(it.rideId)
+                            GetActiveOrdersUiState.OrderRemoved(it.rideId)
                         }
 
                         is WebSocketEvent.OfferReject -> {
@@ -141,8 +139,15 @@ class OrdersViewModel @Inject constructor(
                         is WebSocketEvent.Unknown -> {
                             GetActiveOrdersUiState.Error(it.error)
                         }
+
+                        WebSocketEvent.RideCancelledByPassenger -> GetActiveOrdersUiState.RideCanceledByPassenger
                     }
-                    webSocketOrdersState.value = state
+                    Timber.tag("OrdersViewModel").d("state: $state")
+                    try {
+                        webSocketOrdersState.emit(state)
+                    } catch (e: Exception) {
+                        Timber.tag("OrdersViewModel").e(e)
+                    }
                 }
         }
     }
@@ -167,8 +172,8 @@ class OrdersViewModel @Inject constructor(
                 GetActiveOrdersUiState.OfferAccepted(result.data)
             }
 
-            is GetActiveOrdersUiState.OrderCanceled -> {
-                GetActiveOrdersUiState.OrderCanceled(result.rideId)
+            is GetActiveOrdersUiState.OrderRemoved -> {
+                GetActiveOrdersUiState.OrderRemoved(result.rideId)
             }
 
             is GetActiveOrdersUiState.OfferRejected -> {
@@ -184,12 +189,6 @@ class OrdersViewModel @Inject constructor(
         SharingStarted.Eagerly,
         GetActiveOrdersUiState.Loading
     )
-
-    fun disconnect() {
-        CoroutineScope(Dispatchers.IO).launch {
-            closeDriverWebSocketConnectionUseCase.close()
-        }
-    }
 
     private var _rideCanceledResult = MutableSharedFlow<RideCancelUiState>()
     val rideCanceledResult = _rideCanceledResult.asSharedFlow()
@@ -264,11 +263,17 @@ class OrdersViewModel @Inject constructor(
         startOrdersWebSocket()
     }
 
+    fun disconnect() {
+        CoroutineScope(Dispatchers.IO).launch {
+            closeActiveOrdersWebSocket.emit(Unit)
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()
         disconnect()
     }
+
 }
 
 sealed interface LogoutUiState {
@@ -281,9 +286,10 @@ sealed interface GetActiveOrdersUiState {
     data object Loading : GetActiveOrdersUiState
     data class GetNewOrder(val data: OrderItem) : GetActiveOrdersUiState
     data class GetExistOrder(val data: List<OrderItem>) : GetActiveOrdersUiState
-    data class OrderCanceled(val rideId: String) : GetActiveOrdersUiState
+    data class OrderRemoved(val rideId: String) : GetActiveOrdersUiState
     data class OfferRejected(val rideUUID: String) : GetActiveOrdersUiState
     data class OfferAccepted(val data: OrderItem) : GetActiveOrdersUiState
+    data object RideCanceledByPassenger : GetActiveOrdersUiState
     data class Error(val message: String) : GetActiveOrdersUiState
 }
 
