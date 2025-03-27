@@ -3,6 +3,7 @@ package com.aralhub.araltaxi.driver.orders.sheet
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.driver.orders.R
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ReasonCancelModalBottomSheet :
@@ -28,7 +30,7 @@ class ReasonCancelModalBottomSheet :
 
     private val binding by viewBinding(ModalBottomSheetReasonCancelBinding::bind)
 
-    private val viewModel by viewModels<OrdersViewModel>()
+    private val viewModel by activityViewModels<OrdersViewModel>()
 
     private var errorDialog: ErrorMessageDialog? = null
     private var loadingDialog: LoadingDialog? = null
@@ -73,6 +75,7 @@ class ReasonCancelModalBottomSheet :
     private fun setupListeners() {
 
         binding.btnSend.setOnClickListener {
+            Timber.w("cancelCauseId: $cancelCauseId \nrideId: ${arguments?.getInt("rideId")}")
             val rideId = arguments?.getInt("rideId")
             if (rideId != null && cancelCauseId != null)
                 viewModel.cancelRide(rideId, cancelCauseId!!)

@@ -9,12 +9,14 @@ sealed class WebSocketEventNetwork {
     data class OfferReject(val rideUUID: String) : WebSocketEventNetwork()
     data class ActiveOffer(val offer: WebSocketServerResponse<NetworkActiveOfferResponse>) :
         WebSocketEventNetwork()
+
     data class OfferAccepted(val data: NetworkActiveRideByDriverResponse) :
         WebSocketEventNetwork()
+
+    data object RideCancelledByPassenger : WebSocketEventNetwork()
     data class Unknown(val error: String) : WebSocketEventNetwork()
 }
 
 sealed class StartedRideWebSocketEventNetwork {
-    data object RideCancelledByPassenger: StartedRideWebSocketEventNetwork()
-    data class UnknownAction(val error: String): StartedRideWebSocketEventNetwork()
+    data class UnknownAction(val error: String) : StartedRideWebSocketEventNetwork()
 }

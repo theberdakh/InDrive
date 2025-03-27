@@ -15,11 +15,9 @@ import com.aralhub.indrive.core.data.repository.client.impl.ClientWebSocketRepos
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.repository.driver.DriverOfferRepository
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
-import com.aralhub.indrive.core.data.repository.driver.DriverWebSocketRepository
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverAuthRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverOfferRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverRepositoryImpl
-import com.aralhub.indrive.core.data.repository.driver.impl.DriverWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.repository.payment.impl.PaymentRepositoryImpl
 import com.aralhub.indrive.core.data.repository.review.ReviewRepository
@@ -69,11 +67,6 @@ abstract class DataModule {
     internal abstract fun bindsAddressRepository(
         topicsRepository: AddressRepositoryImpl,
     ): AddressRepository
-
-    @Binds
-    internal abstract fun bindsDriverWebSocketRepository(
-        topicsRepository: DriverWebSocketRepositoryImpl,
-    ): DriverWebSocketRepository
 
     @Binds
     internal abstract fun bindsDriverOfferRepository(

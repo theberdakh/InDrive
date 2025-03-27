@@ -9,7 +9,7 @@ class SoundManager(context: Context) {
         .setMaxStreams(1)
         .build()
     
-    private val soundId: Int = soundPool.load(context, R.raw.sound_new_order, 1)
+    private val soundId: Int = soundPool.load(context, 1, 1)
 
     fun playSound() {
         soundPool.play(soundId, 1f, 1f, 1, 0, 1f)

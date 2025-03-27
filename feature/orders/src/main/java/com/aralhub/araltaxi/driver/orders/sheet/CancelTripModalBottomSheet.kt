@@ -8,6 +8,7 @@ import com.aralhub.araltaxi.driver.orders.databinding.ModalBottomSheetCancelTrip
 import com.aralhub.ui.model.OrderItem
 import com.aralhub.ui.utils.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import timber.log.Timber
 
 class CancelTripModalBottomSheet :
     BottomSheetDialogFragment(R.layout.modal_bottom_sheet_cancel_trip) {
@@ -39,6 +40,7 @@ class CancelTripModalBottomSheet :
             dismissAllowingStateLoss()
         }
         binding.btnCancel.setOnClickListener {
+            Timber.tag(TAG).e("setupListeners: $order")
             action.invoke(order)
         }
     }
