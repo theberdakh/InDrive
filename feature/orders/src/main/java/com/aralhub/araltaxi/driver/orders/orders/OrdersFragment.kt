@@ -87,8 +87,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
     private var errorDialog: ErrorMessageDialog? = null
     private var loadingDialog: LoadingDialog? = null
 
-    private var soundManager: SoundManager? = null
-
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
     @Inject
@@ -101,7 +99,6 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
         super.onAttach(context)
         errorDialog = ErrorMessageDialog(context)
         loadingDialog = LoadingDialog(context)
-        soundManager = SoundManager(context)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -203,7 +200,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
 
     private fun startService() {
         val intent = Intent(requireContext(), LocationService::class.java)
-        requireActivity().startService(intent)
+        requireActivity().startForegroundService(intent)
     }
 
     private fun stopService() {
@@ -271,11 +268,10 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                     RideStatus.DRIVER_ON_THE_WAY.status
                                 )
                                 orderModalBottomSheet.dismissAllowingStateLoss()
-//                                viewModel.disconnect()
+                                viewModel.disconnect()
                             }
 
                             is GetActiveOrdersUiState.GetNewOrder -> {
-                                soundManager?.playSound()
                                 binding.tvOrdersNotFound.invisible()
                             }
 
@@ -290,10 +286,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                             }
 
                             GetActiveOrdersUiState.RideCanceledByPassenger -> {
-                                rideCanceledByPassengerModalBottomSheet.show(
-                                    childFragmentManager,
-                                    rideCanceledByPassengerModalBottomSheet.tag
-                                )
+                                if (!rideCanceledByPassengerModalBottomSheet.isAdded)
+                                    rideCanceledByPassengerModalBottomSheet.show(
+                                        childFragmentManager,
+                                        rideCanceledByPassengerModalBottomSheet.tag
+                                    )
                             }
                         }
                     }
@@ -317,6 +314,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                                     RideFinishedModalBottomSheet.TAG
                                 )
                                 viewModel.switchBackToOrdersSocket()
+                                startService()
                             }
                         }
                     }
@@ -392,6 +390,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             dismissAllBottomSheets()
             getExistingOrders()
             viewModel.switchBackToOrdersSocket()
+            startService()
         }
 
         binding.btnFilter.setOnClickListener {
@@ -422,6 +421,7 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
             tripCanceledModalBottomSheet.dismissAllowingStateLoss()
             dismissAllBottomSheets()
             getExistingOrders()
+            startService()
             viewModel.switchBackToOrdersSocket()
         }
 
@@ -467,7 +467,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 RideStatus.RIDE_STARTED.status
             )
         }
-        waitingForClientModalBottomSheet.setOnRideCanceledListener { order -> showCancelTripBottomSheet(order)}
+        waitingForClientModalBottomSheet.setOnRideCanceledListener { order ->
+            showCancelTripBottomSheet(
+                order
+            )
+        }
     }
 
     private fun initGoingToPickUpModalBottomSheet() {
@@ -488,7 +492,11 @@ class OrdersFragment : Fragment(R.layout.fragment_orders) {
                 RideStatus.DRIVER_WAITING_CLIENT.status
             )
         }
-        goingToPickUpModalBottomSheet.setOnRideCanceledListener { order -> showCancelTripBottomSheet(order) }
+        goingToPickUpModalBottomSheet.setOnRideCanceledListener { order ->
+            showCancelTripBottomSheet(
+                order
+            )
+        }
     }
 
     private fun initViews() {

@@ -140,7 +140,7 @@ class OrdersViewModel @Inject constructor(
                             GetActiveOrdersUiState.Error(it.error)
                         }
 
-                        WebSocketEvent.RideCancelledByPassenger -> GetActiveOrdersUiState.RideCanceledByPassenger
+                        is WebSocketEvent.RideCancelledByPassenger -> GetActiveOrdersUiState.RideCanceledByPassenger
                     }
                     Timber.tag("OrdersViewModel").d("state: $state")
                     try {
@@ -178,6 +178,10 @@ class OrdersViewModel @Inject constructor(
 
             is GetActiveOrdersUiState.OfferRejected -> {
                 GetActiveOrdersUiState.OfferRejected(result.rideUUID)
+            }
+
+            is GetActiveOrdersUiState.RideCanceledByPassenger -> {
+                GetActiveOrdersUiState.RideCanceledByPassenger
             }
 
             else -> {
