@@ -17,6 +17,7 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.ui.utils.GlideEx.displayAvatar

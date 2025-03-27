@@ -8,9 +8,12 @@ import com.aralhub.araltaxi.core.domain.client.ClientCancelRideWithoutReasonUseC
 import com.aralhub.araltaxi.core.domain.client.ClientGetActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.DisconnectClientActiveRideUseCase
 import com.aralhub.araltaxi.core.domain.client.GetClientRideStatusUseCase
+import com.aralhub.araltaxi.core.domain.client.GetWaitAmountUseCase
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
+import com.aralhub.indrive.core.data.model.ride.WaitAmount
 import com.aralhub.indrive.core.data.result.Result
+import com.aralhub.indrive.core.data.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +28,8 @@ class RideViewModel @Inject constructor(
     private val cancelRideWithoutReasonUseCase: ClientCancelRideWithoutReasonUseCase,
     private val cancelRideWithReasonUseCase: ClientCancelRideWithReasonUseCase,
     private val getClientRideStatusUseCase: GetClientRideStatusUseCase,
-    private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase
+    private val disconnectClientActiveRideUseCase: DisconnectClientActiveRideUseCase,
+    private val getWaitAmountUseCase: GetWaitAmountUseCase
 ) : ViewModel() {
 
     init {
@@ -96,8 +100,28 @@ class RideViewModel @Inject constructor(
             _rideStateUiState.emit(RideStateUiState.Success(it))
         }
     }
+
+    private var _getWaitAmountUiState = MutableSharedFlow<GetWaitAmountUiState>()
+    val getWaitAmountUiState = _getWaitAmountUiState.asSharedFlow()
+    fun getWaitAmount(rideId: Int) = viewModelScope.launch {
+       _getWaitAmountUiState.emit(
+           getWaitAmountUseCase(rideId).fold(
+               onSuccess = {
+                 GetWaitAmountUiState.Success(it)
+               },
+               onError = {
+                  GetWaitAmountUiState.Error(it)
+               }
+           )
+       )
+    }
 }
 
+sealed interface GetWaitAmountUiState {
+    data object Loading : GetWaitAmountUiState
+    data class Success(val waitAmount: WaitAmount) : GetWaitAmountUiState
+    data class Error(val message: String) : GetWaitAmountUiState
+}
 
 sealed interface RideStateUiState {
     data object Loading : RideStateUiState

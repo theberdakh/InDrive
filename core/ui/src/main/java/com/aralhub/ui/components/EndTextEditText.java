@@ -68,6 +68,7 @@ public class EndTextEditText extends LinearLayout {
         AppCompatEditText editText = new AppCompatEditText(context, attrs);
         editText.setMaxLines(1);
         editText.setMaxEms(10);
+        editText.setTextSize(15f);
         editText.setEllipsize(TextUtils.TruncateAt.END);
         editText.setTextColor(ContextCompat.getColor(context, R.color.color_content_secondary));
         editText.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));

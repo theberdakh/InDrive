@@ -49,7 +49,7 @@
     <style name="TextAppearance.InDrive.BodyLarge" parent="TextAppearance.AppCompat.Body1">
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">#464744</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="TextAppearance.InDrive.BodyLarge.Dark" parent="TextAppearance.InDrive.BodyLarge">

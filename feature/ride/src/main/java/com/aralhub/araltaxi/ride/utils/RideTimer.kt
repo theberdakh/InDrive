@@ -2,7 +2,13 @@ package com.aralhub.araltaxi.ride.utils
 
 import android.util.Log
 import android.widget.TextView
-import kotlinx.coroutines.*
+import com.aralhub.araltaxi.client.ride.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToLong
 
 class RideTimer {
@@ -31,15 +37,21 @@ class RideTimer {
 
             // Phase 2: Paid waiting starts after end_free_time
             if (!isRideAccepted) {
-                var paidSeconds = 0
+                val paidWaitingStartMillis = (endFreeTime * 1000).roundToLong() // paidWaitingTime in milliseconds
                 while (!isRideAccepted) {
-                    paidSeconds++
-                    val minutes = paidSeconds / 60
-                    val seconds = paidSeconds % 60
-                    textView.text = "$minutes:${seconds.toString().padStart(2, '0')}"
-                    println("Paid time: $minutes:${seconds.toString().padStart(2, '0')}")
-                    Log.i("RideTimer", "Paid time: $minutes:${seconds.toString().padStart(2, '0')}")
-                    delay(1000)
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val elapsedPaidMillis = currentTimeMillis - paidWaitingStartMillis
+                    val elapsedPaidSeconds = (elapsedPaidMillis / 1000).toInt()
+
+                    if (elapsedPaidSeconds >= 0) { // Ensure no negative values
+                        val minutes = elapsedPaidSeconds / 60
+                        val seconds = elapsedPaidSeconds % 60
+                        textView.setTextColor(textView.context.getColor(com.aralhub.ui.R.color.color_status_error))
+                        textView.text = "$minutes:${seconds.toString().padStart(2, '0')}"
+                        println("Paid time: $minutes:${seconds.toString().padStart(2, '0')}")
+                        Log.i("RideTimer", "Paid time: $minutes:${seconds.toString().padStart(2, '0')}")
+                    }
+                    delay(1000) // Update every second
                 }
             }
 
@@ -49,7 +61,6 @@ class RideTimer {
         }
     }
 
-    // Call this when "ride_accepted" status is received
     fun onRideAccepted() {
         isRideAccepted = true
     }

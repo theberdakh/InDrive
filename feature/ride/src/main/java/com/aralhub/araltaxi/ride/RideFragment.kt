@@ -26,15 +26,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 internal class RideFragment : Fragment(R.layout.fragment_ride) {
     private val binding by viewBinding(FragmentRideBinding::bind)
-
     @Inject
     lateinit var navigator: SheetNavigator
     @Inject
     lateinit var navigation: FeatureRideNavigation
-
     @Inject
     lateinit var bottomSheetNavigation: FeatureRideBottomSheetNavigation
-
     @Inject
     lateinit var errorHandler: ErrorHandler
     private val rideViewModel by activityViewModels<RideViewModel>()

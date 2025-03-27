@@ -8,6 +8,7 @@ import com.aralhub.network.models.location.NetworkLocationPoint
 import com.aralhub.network.models.price.NetworkRecommendedPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
+import com.aralhub.network.models.ride.NetworkWaitAmount
 import com.aralhub.network.requests.price.NetworkRecommendedRidePriceRequest
 import com.aralhub.network.requests.ride.NetworkClientRideRequest
 import com.aralhub.network.utils.ex.NetworkEx.safeRequest
@@ -61,5 +62,9 @@ class WebSocketClientNetworkDataSourceImpl @Inject constructor(private val api: 
         autoTake: Boolean
     ): NetworkResult<ServerResponseEmpty> {
         return api.updateAutoTake(rideId, autoTake).safeRequest()
+    }
+
+    override suspend fun getWaitTime(rideId: Int): NetworkResult<NetworkWaitAmount> {
+        return api.getWaitAmount(rideId).safeRequestServerResponse()
     }
 }

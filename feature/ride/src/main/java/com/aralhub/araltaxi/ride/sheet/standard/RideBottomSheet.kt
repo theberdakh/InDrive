@@ -16,11 +16,13 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.ui.utils.GlideEx.displayAvatar
 import com.aralhub.ui.utils.LifecycleOwnerEx.observeState
 import com.aralhub.ui.utils.StringUtils
+import com.aralhub.ui.utils.ViewEx.hide
 import com.aralhub.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -108,8 +110,19 @@ class RideBottomSheet : Fragment(R.layout.bottom_sheet_ride) {
 
 
     private fun displayActiveRide(activeRide: ActiveRide) {
-        binding.tvTitle.text = "Mánzilge jetip barıw waqtı: $activeRide."
+        binding.tvTitle.hide()
         binding.btnCall.setOnClickListener {}
+        binding.tvPrice.text = activeRide.amount.toString()
+        binding.tvPaymentMethod.text = when(activeRide.paymentMethod.type){
+            PaymentMethodType.CARD -> getString(com.aralhub.ui.R.string.label_online_payment)
+            PaymentMethodType.CASH -> getString(com.aralhub.ui.R.string.label_cash)
+        }
+        binding.iconPaymentMethod.setBackgroundResource(
+            when(activeRide.paymentMethod.type){
+                PaymentMethodType.CARD -> com.aralhub.ui.R.drawable.ic_credit_card_3d
+                PaymentMethodType.CASH -> com.aralhub.ui.R.drawable.ic_cash
+            }
+        )
         binding.tvDriverName.text = activeRide.driver.fullName
         displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)
         Log.i("Vehicle", "${activeRide.driver.vehicleType}")

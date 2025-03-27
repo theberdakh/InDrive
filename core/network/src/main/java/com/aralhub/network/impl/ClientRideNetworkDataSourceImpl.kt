@@ -4,6 +4,8 @@ import android.util.Log
 import com.aralhub.network.ClientRideNetworkDataSource
 import com.aralhub.network.models.ClientWebSocketServerResponse
 import com.aralhub.network.models.ClientWebSocketServerResponseUpdate
+import com.aralhub.network.models.ride.NetworkRideActive
+import com.aralhub.network.models.ride.NetworkRideCompleted
 import com.aralhub.network.utils.ClientWebSocketEventRideMessage
 import com.aralhub.network.utils.NetworkDriverWaitingClientMessage
 import com.aralhub.network.utils.NetworkRideStartedMessage
@@ -72,8 +74,7 @@ class ClientRideNetworkDataSourceImpl(private val client: HttpClient) :
                                                     val message =
                                                         Gson().fromJson<ClientWebSocketServerResponseUpdate<String>>(
                                                             text,
-                                                            object :
-                                                                TypeToken<ClientWebSocketServerResponseUpdate<String>>() {}.type
+                                                            object : TypeToken<ClientWebSocketServerResponseUpdate<String>>() {}.type
                                                         )
                                                     ClientWebSocketEventRideMessage.DriverOnTheWay(
                                                         message.data.message
@@ -134,13 +135,13 @@ class ClientRideNetworkDataSourceImpl(private val client: HttpClient) :
 
                                                 NetworkRideStatus.RIDE_COMPLETED.status -> {
                                                     val message =
-                                                        Gson().fromJson<ClientWebSocketServerResponseUpdate<String>>(
+                                                        Gson().fromJson<ClientWebSocketServerResponseUpdate<NetworkRideCompleted>>(
                                                             text,
                                                             object :
-                                                                TypeToken<ClientWebSocketServerResponseUpdate<String>>() {}.type
+                                                                TypeToken<ClientWebSocketServerResponseUpdate<NetworkRideCompleted>>() {}.type
                                                         )
                                                     ClientWebSocketEventRideMessage.RideCompleted(
-                                                        message.data.message
+                                                        message.data.message.status
                                                     )
                                                 }
                                                 NetworkRideStatus.CANCELED_BY_DRIVER.status -> {

@@ -117,6 +117,7 @@
                             android:text="-500"
                             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                             android:textColor="@color/white" />
+
                     </FrameLayout>
 
                     <LinearLayout
@@ -137,7 +138,7 @@
                             android:maxEms="5"
                             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge.Dark"
                             android:textColorHint="@color/color_gray_3"
-                            android:textSize="22sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -169,10 +170,7 @@
                             android:text="+500"
                             android:textAppearance="@style/TextAppearance.InDrive.BodyLarge"
                             android:textColor="@color/white" />
-
-
                     </FrameLayout>
-
 
                 </LinearLayout>
 
