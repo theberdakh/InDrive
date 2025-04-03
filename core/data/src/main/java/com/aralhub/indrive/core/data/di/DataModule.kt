@@ -15,13 +15,13 @@ import com.aralhub.indrive.core.data.repository.client.impl.ClientWebSocketRepos
 import com.aralhub.indrive.core.data.repository.driver.DriverAuthRepository
 import com.aralhub.indrive.core.data.repository.driver.DriverOfferRepository
 import com.aralhub.indrive.core.data.repository.driver.DriverRepository
-import com.aralhub.indrive.core.data.repository.driver.DriverWebSocketRepository
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverAuthRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverOfferRepositoryImpl
 import com.aralhub.indrive.core.data.repository.driver.impl.DriverRepositoryImpl
-import com.aralhub.indrive.core.data.repository.driver.impl.DriverWebSocketRepositoryImpl
 import com.aralhub.indrive.core.data.repository.payment.PaymentRepository
 import com.aralhub.indrive.core.data.repository.payment.impl.PaymentRepositoryImpl
+import com.aralhub.indrive.core.data.repository.review.ReviewRepository
+import com.aralhub.indrive.core.data.repository.review.impl.ReviewRepositoryImpl
 import com.aralhub.indrive.core.data.repository.rideoption.RideOptionRepository
 import com.aralhub.indrive.core.data.repository.rideoption.impl.RideOptionRepositoryImpl
 import dagger.Binds
@@ -69,11 +69,6 @@ abstract class DataModule {
     ): AddressRepository
 
     @Binds
-    internal abstract fun bindsDriverWebSocketRepository(
-        topicsRepository: DriverWebSocketRepositoryImpl,
-    ): DriverWebSocketRepository
-
-    @Binds
     internal abstract fun bindsDriverOfferRepository(
         repo: DriverOfferRepositoryImpl,
     ): DriverOfferRepository
@@ -92,4 +87,9 @@ abstract class DataModule {
     internal abstract fun bindsRideRepository(
         repository: ClientRideRepositoryImpl
     ): ClientRideRepository
+
+    @Binds
+    internal abstract fun bindsReviewRepository(
+        repository: ReviewRepositoryImpl
+    ): ReviewRepository
 }

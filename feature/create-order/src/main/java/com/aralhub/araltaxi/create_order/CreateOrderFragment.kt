@@ -310,22 +310,27 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
         }
 
         binding.btnSendOffer.setOnClickListener {
+
+            Log.i("Payment", "${viewModel.paymentMethod.value.id}")
+            Log.i("Payment", "${viewModel.paymentMethod.value}")
+            val fakeRecommendedAmount = RecommendedAmount(
+                7000,
+                10000,
+                70000
+            )
+
             enabledOptionsIds.addAll(rideOptionItemAdapter.currentList.filter { it.isEnabled }
                 .map { it.id })
             recommendedPrice?.let {
                 viewModel.createRide(
                     baseAmount = binding.etPrice.text.toString().replace(" ", "").toInt(),
-                    recommendedAmount = RecommendedAmount(
-                        it.minAmount,
-                        it.maxAmount,
-                        it.recommendedAmount
-                    ),
+                    recommendedAmount = fakeRecommendedAmount,
                     selectedLocations = selectedLocations!!,
                     comment = comment,
                     paymentId = viewModel.paymentMethod.value.id,
                     options = enabledOptionsIds
                 )
-            }
+              }
         }
 
         binding.ivChangePaymentMethod.setOnClickListener {
@@ -349,13 +354,14 @@ class CreateOrderFragment : Fragment(R.layout.fragment_create_order) {
 
     private fun initChangePaymentMethodListener() {
         changePaymentMethodModalBottomSheet.setOnCashClickListener {
-            changePaymentMethodModalBottomSheet.dismissAllowingStateLoss()
             viewModel.setPaymentMethodType(PaymentMethodType.CASH)
+            changePaymentMethodModalBottomSheet.dismissAllowingStateLoss()
+
         }
 
         changePaymentMethodModalBottomSheet.setOnOnlineClickListener {
-            changePaymentMethodModalBottomSheet.dismissAllowingStateLoss()
             viewModel.setPaymentMethodType(PaymentMethodType.CARD)
+            changePaymentMethodModalBottomSheet.dismissAllowingStateLoss()
         }
 
         binding.tvDecrease500.setOnClickListener {

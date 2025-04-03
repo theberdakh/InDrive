@@ -120,9 +120,6 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
     }
 
     private fun initListeners() {
-        errorDialog?.setOnDismissClicked {
-            dismissErrorDialog()
-        }
         binding.btnAcceptOrders.setOnClickListener {
             // check for location, if not enabled show: LocationServiceOffModalBottomSheet().show(childFragmentManager, LocationServiceOffModalBottomSheet.TAG)
             navigation.goToAcceptOrders()
@@ -246,6 +243,8 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
 
     private fun showErrorDialog(errorMessage: String?) {
         errorDialog?.show(errorMessage)
+
+        errorDialog?.setOnDismissClicked { errorDialog?.dismiss() }
     }
 
     private fun showLoading() {

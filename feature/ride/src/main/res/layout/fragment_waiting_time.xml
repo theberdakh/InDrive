@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <ImageView
@@ -22,7 +23,7 @@
         android:padding="@dimen/padding_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Biypul kútiw waqtı 2 minut bolıp, bunnan keyingi hárbir minut ushın tólem 600 somdı quraydı."
+        tools:text="Biypul kútiw waqtı 2 minut bolıp, bunnan keyingi hárbir minut ushın tólem 600 somdı quraydı."
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.InDrive.Text"/>
 

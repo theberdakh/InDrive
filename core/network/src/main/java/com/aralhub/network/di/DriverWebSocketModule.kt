@@ -1,12 +1,9 @@
 package com.aralhub.network.di
 
-import android.util.Log
 import com.aralhub.network.ClientRideNetworkDataSource
 import com.aralhub.network.WebSocketClientOffersNetworkDataSource
-import com.aralhub.network.WebSocketDriverNetworkDataSource
 import com.aralhub.network.impl.ClientRideNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketClientOffersNetworkDataSourceImpl
-import com.aralhub.network.impl.WebSocketDriverNetworkDataSourceImpl
 import com.aralhub.network.local.LocalStorage
 import dagger.Module
 import dagger.Provides
@@ -39,13 +36,6 @@ object DriverWebSocketModule {
                 )
             }
         }
-    }
-
-
-    @Singleton
-    @Provides
-    fun provideRealtimeMessagingClient(httpClient: HttpClient): WebSocketDriverNetworkDataSource {
-        return WebSocketDriverNetworkDataSourceImpl(httpClient)
     }
 
     @Singleton

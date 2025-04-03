@@ -5,13 +5,13 @@ import android.content.pm.PackageManager
 import android.graphics.PointF
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.aralhub.araltaxi.driver.orders.R
 import com.aralhub.araltaxi.driver.orders.databinding.FragmentShowOrderRouteBinding
@@ -40,6 +40,9 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
@@ -103,7 +106,10 @@ class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
             )
         routeStartLocation = Point(startPoint.latitude, startPoint.longitude)
         routeEndLocation = Point(endPoint.latitude, endPoint.longitude)
-        submitRouteRequest()
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(1000)
+            submitRouteRequest()
+        }
     }
 
     private fun setupListeners() {
@@ -161,7 +167,7 @@ class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
                 this
             )
         } else {
-            Log.d("ShowOrderRouteFragment", "Marshrut sızıw ımkani bolmadı")
+            Timber.d("Marshrut sızıw ımkani bolmadı")
         }
     }
 
@@ -210,7 +216,7 @@ class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
             if (result[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
                 moveCamera()
             } else {
-                Log.d("ShowOrderRouteFragment", "Permission denied")
+                Timber.d("Permission denied")
             }
         }
     }
@@ -224,19 +230,11 @@ class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             checkLocationPermission()
             return
         } else {
             LocationServices.getFusedLocationProviderClient(requireContext()).lastLocation
                 .addOnSuccessListener { location ->
-//                        createTaxiMarker(location.latitude, location.longitude)
                     binding.mapView.map.move(
                         CameraPosition(
                             Point(location.latitude, location.longitude), 14f, 0f, 0f
@@ -279,6 +277,5 @@ class ShowOrderRouteFragment : Fragment(R.layout.fragment_show_order_route),
             null
         )
     }
-
 
 }

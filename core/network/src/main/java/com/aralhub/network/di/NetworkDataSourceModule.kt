@@ -21,6 +21,7 @@ import com.aralhub.network.CancelCauseNetworkDataSource
 import com.aralhub.network.ClientOffersNetworkDataSource
 import com.aralhub.network.DriverNetworkDataSource
 import com.aralhub.network.PaymentMethodNetworkDataSource
+import com.aralhub.network.ReviewsNetworkDataSource
 import com.aralhub.network.RideOptionNetworkDataSource
 import com.aralhub.network.UserNetworkDataSource
 import com.aralhub.network.WebSocketClientNetworkDataSource
@@ -29,6 +30,7 @@ import com.aralhub.network.impl.CancelCauseNetworkDataSourceImpl
 import com.aralhub.network.impl.ClientOffersNetworkDataSourceImpl
 import com.aralhub.network.impl.DriverNetworkDataSourceImpl
 import com.aralhub.network.impl.PaymentMethodNetworkDataSourceImpl
+import com.aralhub.network.impl.ReviewsNetworkDataSourceImpl
 import com.aralhub.network.impl.RideOptionNetworkDataSourceImpl
 import com.aralhub.network.impl.UserNetworkDataSourceImpl
 import com.aralhub.network.impl.WebSocketClientNetworkDataSourceImpl
@@ -65,5 +67,8 @@ abstract class NetworkDataSourceModule {
 
     @[Binds Singleton]
     abstract fun bindOffersNetworkDataSource(offersNetworkDataSourceImpl: ClientOffersNetworkDataSourceImpl): ClientOffersNetworkDataSource
+
+    @[Binds Singleton]
+    abstract fun bindReviewNetworkDataSource(networkReviewsNetworkDataSourceImpl: ReviewsNetworkDataSourceImpl): ReviewsNetworkDataSource
 
 }

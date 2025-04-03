@@ -4,9 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.View
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.aralhub.araltaxi.core.common.error.ErrorHandler
 import com.aralhub.araltaxi.driver.orders.R
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,7 +38,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private val orderLoadingModalBottomSheet = OrderLoadingModalBottomSheet()
 
-    private val offerViewModel by viewModels<OfferViewModel>()
+    private val offerViewModel by activityViewModels<OfferViewModel>()
 
     private var order: OrderItem? = null
     private var offerAmount = 0
@@ -72,7 +72,6 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         MoneyFormatter(binding.etPrice)
         setupUI()
         setupListeners()
-        initObservers()
 
     }
 
@@ -107,12 +106,12 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
         binding.btnSendOffer.setOnClickListener {
             val priceValue = binding.etPrice.text.toString().filter { it.isDigit() }
             offerAmount = if (priceValue.isNotBlank()) priceValue.toInt() else 0
-            Log.i(TAG, "offerAmount: $offerAmount \nsetupListeners: $order")
             if (order != null && offerAmount != 0) {
                 offerViewModel.createOffer(
                     order!!.uuid,
                     offerAmount
                 )
+                initObservers()
             } else {
                 showErrorDialog("Нельзя отправить оффер")
             }
@@ -143,7 +142,7 @@ class OrderModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_sh
 
     private fun initObservers() {
         offerViewModel.createOfferUiState.onEach { result ->
-            Log.i(TAG, "initObservers: $result")
+            Timber.i("initObservers: $result")
             when (result) {
                 is CreateOfferUiState.Error -> {
                     showErrorDialog(result.message)

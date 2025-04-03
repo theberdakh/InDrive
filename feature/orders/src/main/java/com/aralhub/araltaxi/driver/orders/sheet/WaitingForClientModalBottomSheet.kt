@@ -1,6 +1,5 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
-import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -29,8 +28,8 @@ class WaitingForClientModalBottomSheet :
         this.onGoingToRideListener = onGoingToRide
     }
 
-    private var rideCanceledListener: () -> Unit = {}
-    fun setOnRideCanceledListener(onRideCanceled: () -> Unit) {
+    private var rideCanceledListener: (order: OrderItem?) -> Unit = {}
+    fun setOnRideCanceledListener(onRideCanceled: (order: OrderItem?) -> Unit) {
         this.rideCanceledListener = onRideCanceled
     }
 
@@ -56,7 +55,7 @@ class WaitingForClientModalBottomSheet :
             onGoingToRideListener(order)
         }
         binding.btnCancel.setOnClickListener {
-            rideCanceledListener.invoke()
+            rideCanceledListener.invoke(order)
         }
     }
 

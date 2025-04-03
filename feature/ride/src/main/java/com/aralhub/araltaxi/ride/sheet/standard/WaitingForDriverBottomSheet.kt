@@ -17,6 +17,7 @@ import com.aralhub.araltaxi.ride.navigation.sheet.FeatureRideNavigation
 import com.aralhub.araltaxi.ride.sheet.modal.CancelTripFragment
 import com.aralhub.araltaxi.ride.sheet.modal.TripCanceledByDriverFragment
 import com.aralhub.araltaxi.ride.utils.FragmentEx.sendPhoneNumberToDial
+import com.aralhub.indrive.core.data.model.payment.PaymentMethodType
 import com.aralhub.indrive.core.data.model.ride.ActiveRide
 import com.aralhub.indrive.core.data.model.ride.RideStatus
 import com.aralhub.ui.utils.GlideEx.displayAvatar
@@ -37,7 +38,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
-        rideViewModel.getActiveRide()
         initListeners()
     }
 
@@ -50,7 +50,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     }
 
     private fun initObservers() {
-        observeState(rideViewModel.waitingForDriverRideState){ rideStateUiState ->
+        observeState(rideViewModel.rideStateUiState){ rideStateUiState ->
             when(rideStateUiState){
                 is RideStateUiState.Error -> {
                     Log.i("Ride state", "WaitingForDriver: Error")
@@ -79,37 +79,14 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                             featureRideBottomSheetNavigation.goToRideFromWaitingForDriver()
                         }
                         is RideStatus.Unknown -> {}
-                        is RideStatus.CanceledByDriver -> TripCanceledByDriverFragment(
-                            onClearClick = { navigation.goBackToCreateOfferFromRide() }
-                        ).show(childFragmentManager, CancelTripFragment.TAG)
-                    }
-                }
-            }
-        }
-      /*  lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED){
-                rideViewModel.rideState2.collect { state ->
-
-                    when (state) {
-                        RideBottomSheetUiState.Error -> {}
-                        RideBottomSheetUiState.Loading -> {}
-                        is RideBottomSheetUiState.Success -> {
-                            Log.i("WaitingForDriver", "initObservers: ${state.rideState}")
-                            when (state.rideState) {
-                                RideState.WAITING_FOR_DRIVER -> { initRideData(state.rideData)}
-                                RideState.DRIVER_IS_WAITING -> {
-                                    navigation.goToDriverIsWaiting()
-                                }
-
-                                RideState.DRIVER_CANCELED -> {}
-                                RideState.IN_RIDE -> {}
-                                RideState.FINISHED -> {}
-                            }
+                        is RideStatus.CanceledByDriver -> {
+                            Log.i("WaitingForDriver", "initObservers: CanceledByDriver")
                         }
                     }
                 }
             }
-        }*/
+        }
+
         observeState(rideViewModel.cancelRideState){ cancelRideUiState ->
             when(cancelRideUiState){
                 is CancelRideUiState.Error -> {
@@ -123,25 +100,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
             }
         }
 
-     /*   observeState(rideViewModel.rideStateUiState) { rideStateUiState ->
-            when(rideStateUiState){
-                is RideStateUiState.Error -> {}
-                RideStateUiState.Loading -> {}
-                is RideStateUiState.Success -> {
-                   when(rideStateUiState.rideState){
-                       is RideStatus.CanceledByDriver -> {}
-                       is RideStatus.DriverOnTheWay -> {}
-                       is RideStatus.DriverWaitingClient -> {
-                            navigation.goToDriverIsWaiting()
-                       }
-                       is RideStatus.RideCompleted -> {}
-                       is RideStatus.RideStarted -> {}
-                       is RideStatus.RideStartedAfterWaiting -> {}
-                       is RideStatus.Unknown -> {}
-                   }
-                }
-            }
-        }*/
         observeState(rideViewModel.activeRideState){ activeRideState ->
             when(activeRideState){
                 is ActiveRideUiState.Error -> {
@@ -153,7 +111,6 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
                 }
                 is ActiveRideUiState.Success -> {
                     currentRideId = activeRideState.activeRide.id
-                    errorHandler.showToast("Success")
                   displayActiveRide(activeRideState.activeRide)
                     Log.i("RideBottomSheet", "initObservers: Success ${activeRideState.activeRide}")
                 }
@@ -162,7 +119,7 @@ class WaitingForDriverBottomSheet : Fragment(R.layout.bottom_sheet_waiting_for_d
     }
 
     private fun displayActiveRide(activeRide: ActiveRide) {
-        binding.tvTitle.text = "Aydawshı ~${activeRide.waitAmount} minut ishinde jetip keledi"
+        binding.tvTitle.text = "Aydawshı jolda kelatır"
         binding.btnCall.setOnClickListener {}
         binding.tvDriverName.text = activeRide.driver.fullName
         displayAvatar("https://araltaxi.aralhub.uz/${activeRide.driver.photoUrl}", binding.ivDriver)

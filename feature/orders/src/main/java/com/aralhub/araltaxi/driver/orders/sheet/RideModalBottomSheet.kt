@@ -1,5 +1,6 @@
 package com.aralhub.araltaxi.driver.orders.sheet
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -59,7 +60,7 @@ class RideModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_she
         binding.btnNavigator.setOnClickListener {
             val longitude = order!!.locations.getOrNull(1)?.coordinates?.longitude
             val latitude = order!!.locations.getOrNull(1)?.coordinates?.latitude
-            openNavigationChooser(requireContext(), latitude!!, longitude!!)
+            openYandexNavigator(requireContext(), latitude!!, longitude!!)
         }
     }
 
@@ -82,25 +83,23 @@ class RideModalBottomSheet : BottomSheetDialogFragment(R.layout.modal_bottom_she
             .into(binding.ivAvatar)
     }
 
-    private fun openNavigationChooser(context: Context, latitude: Double, longitude: Double) {
+    private fun openYandexNavigator(context: Context, latitude: Double, longitude: Double) {
+        val yandexPackage = "ru.yandex.yandexnavi"
         val uriYandex = "yandexnavi://build_route_on_map?lat_to=${latitude}&lon_to=${longitude}"
         val intentYandex = Intent(Intent.ACTION_VIEW, Uri.parse(uriYandex))
-        intentYandex.setPackage("ru.yandex.yandexnavi")
 
-        val uriGoogle = Uri.parse("google.navigation:q=${latitude},${longitude}&mode=w")
-        val intentGoogle = Intent(Intent.ACTION_VIEW, uriGoogle)
-        intentGoogle.setPackage("com.google.android.apps.maps")
+        val packageManager = context.packageManager
+        packageManager.getLaunchIntentForPackage(yandexPackage) != null
 
-        val chooserIntent = Intent.createChooser(intentYandex, "Выберите навигатор")
-        val arr = arrayOfNulls<Intent>(1)
-        arr[0] = intentGoogle
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arr)
-
-        val activities = context.packageManager.queryIntentActivities(chooserIntent, 0)
-        if(activities.size>0){
-            startActivity(chooserIntent)
-        }else{
-            //do sth..
+        try {
+            context.startActivity(intentYandex)
+        } catch (e: ActivityNotFoundException) {
+            // Открываем Play Маркет для установки Яндекс.Навигатора
+            val marketUri = Uri.parse("market://details?id=$yandexPackage")
+            val marketIntent = Intent(Intent.ACTION_VIEW, marketUri).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(marketIntent)
         }
     }
 

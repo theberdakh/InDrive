@@ -93,8 +93,8 @@ class RequestViewModel @Inject constructor(
     private val _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState = _profileUiState.asSharedFlow()
 
-    private val _activeRideUiState = MutableStateFlow<ActiveRideUiState>(ActiveRideUiState.Loading)
-    val activeRideUiState = _activeRideUiState.asStateFlow()
+    private val _activeRideUiState = MutableSharedFlow<ActiveRideUiState>()
+    val activeRideUiState = _activeRideUiState.asSharedFlow()
 
     private val _searchRideUiState = MutableStateFlow<SearchRideUiState>(SearchRideUiState.Loading)
     val searchRideUiState = _searchRideUiState.asStateFlow()
@@ -123,6 +123,7 @@ class RequestViewModel @Inject constructor(
                 suggestOptions,
                 object : SuggestSession.SuggestListener {
                     override fun onResponse(response: SuggestResponse) {
+                        _suggestionsUiState.value = SuggestionsUiState.Loading
                         _suggestionsUiState.value = SuggestionsUiState.Success(
                             response.items
                                 .filter { it.center?.let { pt -> pt.latitude < MAX_LAT || pt.longitude < MAX_LON } ?: false }
@@ -232,11 +233,7 @@ class RequestViewModel @Inject constructor(
             _profileUiState.emit(ProfileUiState.Loading)
             when (val result = clientProfileUseCase()) {
                 is Result.Success -> _profileUiState.emit(
-                    ProfileUiState.Success(
-                        result.data.copy(
-                            profilePhoto = "${result.data.profilePhoto}"
-                        )
-                    )
+                    ProfileUiState.Success(result.data.copy(profilePhoto = "${result.data.profilePhoto}"))
                 )
                 is Result.Error -> _profileUiState.emit(ProfileUiState.Error(result.message))
             }

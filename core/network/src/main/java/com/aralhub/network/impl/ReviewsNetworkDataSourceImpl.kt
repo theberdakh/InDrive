@@ -3,6 +3,7 @@ package com.aralhub.network.impl
 import com.aralhub.network.ReviewsNetworkDataSource
 import com.aralhub.network.api.ReviewsNetworkApi
 import com.aralhub.network.models.NetworkResult
+import com.aralhub.network.models.reviews.NetworkPassengerReview
 import com.aralhub.network.models.reviews.NetworkReview
 import com.aralhub.network.models.reviews.NetworkReviewType
 import com.aralhub.network.utils.ex.NetworkEx.safeRequestServerResponse
@@ -19,5 +20,9 @@ class ReviewsNetworkDataSourceImpl @Inject constructor(private val reviewsNetwor
 
     override suspend fun createReview(networkReview: NetworkReview): NetworkResult<NetworkReview> {
         return reviewsNetworkApi.createReview(networkReview).safeRequestServerResponse()
+    }
+
+    override suspend fun createPassengerReview(networkPassengerReview: NetworkPassengerReview): NetworkResult<NetworkReview> {
+        return reviewsNetworkApi.createPassengerReview(networkPassengerReview).safeRequestServerResponse()
     }
 }

@@ -1,6 +1,7 @@
 package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
+import com.aralhub.network.models.reviews.NetworkPassengerReview
 import com.aralhub.network.models.reviews.NetworkReview
 import com.aralhub.network.models.reviews.NetworkReviewType
 import com.aralhub.network.requests.review.NetworkCreatePassengerReviewTypeRequest
@@ -22,4 +23,7 @@ interface ReviewsNetworkApi {
 
     @POST("/reviews")
     suspend fun createReview(@Body networkReview: NetworkReview): Response<ServerResponse<NetworkReview>>
+
+    @POST("/reviews/create_passenger_review")
+    suspend fun createPassengerReview(@Body passengerReview: NetworkPassengerReview): Response<ServerResponse<NetworkReview>>
 }

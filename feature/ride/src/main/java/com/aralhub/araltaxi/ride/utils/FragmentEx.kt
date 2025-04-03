@@ -16,7 +16,7 @@ object FragmentEx {
 
     fun Fragment.loadAvatar(url: String, imageView: ImageView) {
         Glide.with(this)
-            .load("https://randomuser.me/api/portraits/women/3.jpg")
+            .load(url)
             .centerCrop()
             .placeholder(com.aralhub.ui.R.drawable.ic_user)
             .apply(RequestOptions.circleCropTransform())

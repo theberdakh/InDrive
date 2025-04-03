@@ -72,4 +72,6 @@ dependencies {
 
     implementation libs.yandex.mapkit
 
+    implementation(libs.timber)
+
 }

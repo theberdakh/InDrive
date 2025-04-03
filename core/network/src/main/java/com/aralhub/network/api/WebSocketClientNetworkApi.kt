@@ -2,9 +2,12 @@ package com.aralhub.network.api
 
 import com.aralhub.network.models.ServerResponse
 import com.aralhub.network.models.ServerResponseEmpty
+import com.aralhub.network.models.driver.NetworkDriverCard
 import com.aralhub.network.models.price.NetworkRecommendedPrice
+import com.aralhub.network.models.price.NetworkStandardPrice
 import com.aralhub.network.models.ride.NetworkRideActive
 import com.aralhub.network.models.ride.NetworkRideSearch
+import com.aralhub.network.models.ride.NetworkWaitAmount
 import com.aralhub.network.requests.price.NetworkRecommendedRidePriceRequest
 import com.aralhub.network.requests.ride.NetworkClientRideRequest
 import retrofit2.Response
@@ -54,4 +57,13 @@ interface WebSocketClientNetworkApi {
 
     @POST("/websocket/get_ride_price")
     suspend fun getRidePrice(@Body getRideRecommendedRidePriceRequest: NetworkRecommendedRidePriceRequest): Response<ServerResponse<NetworkRecommendedPrice>>
+
+    @GET("/ride/{ride_id}/get_wait_amount")
+    suspend fun getWaitAmount(@Path("ride_id") rideId: Int): Response<ServerResponse<NetworkWaitAmount>>
+
+    @GET("/ride/standart")
+    suspend fun getStandardPrice(): Response<NetworkStandardPrice>
+
+    @GET("/ride/get_card_info/{driver_id}")
+    suspend fun getCardInfo(@Path("driver_id") driverId: Int): Response<ServerResponse<NetworkDriverCard>>
 }

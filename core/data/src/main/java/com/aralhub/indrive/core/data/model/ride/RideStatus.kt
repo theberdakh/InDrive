@@ -9,7 +9,13 @@ package com.aralhub.indrive.core.data.model.ride
  * @param CANCELED_BY_DRIVER cancelled_by_driver
  * */
 sealed class RideStatus {
-    data class DriverWaitingClient(val message: String) : RideStatus()
+    data class DriverWaitingClient(
+        val waitPricePerMinute: Int,
+        val startFreeTime: Double,
+        val endFreeTime: Double,
+        val message: String
+    ) : RideStatus()
+
     data class PaidWaiting(val message: String) : RideStatus()
     data class PaidWaitingStarted(val message: String) : RideStatus()
     data class RideStarted(val message: String) : RideStatus()
